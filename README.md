@@ -9,3 +9,8 @@ When councelors apply for a tour, advisors choose which tours to accept, and for
 ### Guide Interface for guides to join tours and keep track of tours
 Guides can apply to be a guide for a specific through the interface. They also keep track of their timetables, lectures, and can indicate when they start and end the tours.
 ### Data analytics interface to analyze performance of guides and high schools
+Through data analysis, the system will match guides to tours, and recommend tours to guides and guides for tours to advisors.
+There will also be historical data for students who came to Bilkent, which city and highschool they come from, and their rankings.
+There will be highschool specific pages that show statistics, such as tour success rate which compares how many students attended a tour, how many students were in the highschool, and how many came to Bilkent. The head can also view how Bilkent compares against it's rivals, how many choose Bilkent and how many choose rivals, and more.
+### A Comprehensice Review System
+Tour attendees can review guides and tours, and through an interface old reviews will be viewable.
