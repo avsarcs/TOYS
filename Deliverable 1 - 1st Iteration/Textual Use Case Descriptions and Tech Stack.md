@@ -28,9 +28,11 @@ This user persona is a generalization of Coordinator, Amateur Guide, Guide and A
 
 ### Authorized Member Use Cases
 
-- *View review scores*: Any Authorized Member can see the score ratings of any completed tour that were given by the tour Applicant and, if we have their emails, students who attended the tour.
-- *View textual reviews of the tours they themselves attended*: Authorized Members (which include Guides, Amateur Guides and Advisors) can see the textual reviews given to them by the Applicant of the tour and the students that attended the tour. These textual reviews are hidden to other guides, but available to Coordinators.
+- *View tour review scores*: Any Authorized Member can see the score ratings of any completed tour that were given by the tour Applicant and, if we have their emails, students who attended the tour.
+- *View attended tours' textual reviews*: Authorized Members (which include Guides, Amateur Guides and Advisors) can see the textual reviews given to them by the Applicant of the tour and the students that attended the tour. These textual reviews are hidden to other guides, but available to Coordinators.
 - *Login to the system:* Any Authorized Member can login to the web application for the system to recognize them.
+- *View tour and fair info*: Every Authorized Member can view information about tours and fairs, while doing changes depends on which persona is viewing the page.
+- *Update profile*: Every Authorized Member has a profile page, and are allowed to update it as they see fit. The profile has both personal information and other information like the member's schedule to ensure the service can function correctly.
 ## Amateur Guide
 
 This user persona describes the newly registered Guide who is automatically designated as "amateur" until an Advisor promotes them to a regular Guide by deleting that label.
@@ -40,11 +42,25 @@ This user persona describes the newly registered Guide who is automatically desi
 
 ## Guide
 
-### Guide
+This user persona is a generalization of Advisors and describes a Guide who has moved on from being an amateur and is now fully permitted to take part in tours.
+### Guide Use Cases
+
+- *Assign themselves to a tour*: A guide can assign any tour to themselves that can fit in their schedule and still has space for guides without requiring any confirmation from anyone else.
+- *Accept / reject a tour assigned by an advisor*: An Advisor may, if the Guide's schedule allows for it, assign a tour for a certain guide to handle. A guide may accept or cancel their assignment at their own discretion.
+- *Apply to become an advisor*: A guide can apply to become an advisor by filling a form on a dedicated page entering all required information.
+- Report the beginning and end of a tour: At the start and end of a tour, a Guide reports to the system to ensure proper data collection and make sure the next tours can move on without a hitch.
 
 ## Advisor
 
+This user persona describes a volunteer who is responsible for managing tour applications, tours themselves and guides. Since Guide is a generalization of this persona, an Advisor has the use cases of a Guide too.
 ### Advisor Use Cases
+
+- *Request and manage tour detail changes from / to tour applicants*: An Applicant or an Advisor themselves may want to make changes on the details of a tour. The Advisor is responsible for getting in touch with the client and ensuring communication.
+- *Assign themselves to be a guide*: Since every Advisor is also a Guide, if the Advisor sees fit they can assign themselves to be a guide on a tour on the day they are responsible for.
+- *Assign a guide to a tour*: An Advisor is allowed to assign a Guide to a tour, provided that there is space in the tour and that the Guide's time table is free. The assignments are not forced and a Guide may decline.
+- *Accept / reject tour applications*: After an Applicant sends a tour application, an Advisor is responsible for accepting or rejecting that tour application at their own discretion.
+- *Change tour details*:  The advisor has permission to change tour details that are already in the system and has not happened yet. Note that making changes does not necessitate communication between the Applicant and the Advisor.
+- *Update "experience level" of guides*: Every Guide's profile will include their experience level. To minimize misinformation, an Advisor may manually adjust the experience level of a Guide.
 
 ## Coordinator
 
