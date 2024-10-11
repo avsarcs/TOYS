@@ -9,13 +9,13 @@ import java.util.List;
 
 public class TourModel {
     private String id; // this is an internal identifier, to be used for data manipulation
-    private TOUR_TYPE type;
     private TOUR_STATUS status;
     private int visitor_count;
     private ZonedDateTime accepted_date;
+
     private String assigned_location;
     private String notes;
 
-    private List<GuideModel> guides;
+    private List<GuideModel> assigned_guides;
     private TourApplicationModel application;
 }

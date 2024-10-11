@@ -1,16 +1,11 @@
 package models.data.tours;
 
 import enums.types.TOUR_TYPE;
+import models.request.tours.dto.TourChangeRequestDTO;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public class TourApplicationModel {
+public class TourApplicationModel extends TourChangeRequestDTO {
     private ZonedDateTime requested_at;
-    private int visitor_count;
-    private TOUR_TYPE type;
-    private String highschool_id;
-    private String notes;
-    private List<ZonedDateTime> requested_dates;
-    private TourApplicantModel applicant;
 }
