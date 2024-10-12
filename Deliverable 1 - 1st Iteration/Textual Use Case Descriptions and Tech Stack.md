@@ -1,4 +1,5 @@
 # Use Cases
+
 There are 8 different user personas that will be utilizing our software.
 These user personas and their use cases are listed as follows.
 
@@ -9,6 +10,7 @@ This user persona includes highschool counselors and (group of) highschool stude
 ### Applicant Use Cases
 
 An applicant may
+
 - *Invite Bilkent to a fair*: An applicant will be able to fill a form on a dedicated page to invite Bilkent members to a career (or otherwise) fair happening at their school. The applicant will include all the relevant details about the fair (city, highschool, date) and their contact information (email and phone number) on this form.
 - *Apply for a tour*: An applicant will be able to fill a form on a dedicated page to apply for a tour of the Bilkent campus. The form will require all the relevant details including the number of students to visit the campus, contact information of the applicant, several dates that they are available and a free-form text field about their expectations from the tour.
 - *Send tour review*: After the tour is over, the applicant and, if we have their emails, the students that attended the tour will receive an email that opens to a link with a review form. In the review form, they will be able to rate the tour out of a certain score and express their opinions in a free-form text field.
@@ -22,6 +24,7 @@ This user persona includes the Bilkent university students who are not yet quali
 ### Prospective Volunteer Use Cases
 
 - *Apply to become a guide*: Any Bilkent student is able to apply to become a guide by filling a form on a dedicated page that requires name, surname, department information alongside their motivations for becoming a guide.
+
 ## Authorized Member
 
 This user persona is a generalization of Coordinator, Amateur Guide, Guide and Advisor. The use cases of the Authorized Member describes the use cases for all these user personas.
@@ -33,9 +36,11 @@ This user persona is a generalization of Coordinator, Amateur Guide, Guide and A
 - *Login to the system:* Any Authorized Member can login to the web application for the system to recognize them.
 - *View tour and fair info*: Every Authorized Member can view information about tours and fairs, while doing changes depends on which persona is viewing the page.
 - *Update profile*: Every Authorized Member has a profile page, and are allowed to update it as they see fit. The profile has both personal information and other information like the member's schedule to ensure the service can function correctly.
+
 ## Amateur Guide
 
 This user persona describes the newly registered Guide who is automatically designated as "amateur" until an Advisor promotes them to a regular Guide by deleting that label.
+
 ### Amateur Guide Use Cases
 
 - *Register to tag along another guide*: According to their schedule and the tour's availability, an Amateur Guide can arbitrarily reserve a tour to tag along from the application interface.
@@ -43,6 +48,7 @@ This user persona describes the newly registered Guide who is automatically desi
 ## Guide
 
 This user persona is a generalization of Advisors and describes a Guide who has moved on from being an amateur and is now fully permitted to take part in tours.
+
 ### Guide Use Cases
 
 - *Assign themselves to a tour*: A guide can assign any tour to themselves that can fit in their schedule and still has space for guides without requiring any confirmation from anyone else.
@@ -53,6 +59,7 @@ This user persona is a generalization of Advisors and describes a Guide who has 
 ## Advisor
 
 This user persona describes a volunteer who is responsible for managing tour applications, tours themselves and guides. Since Guide is a generalization of this persona, an Advisor has the use cases of a Guide too.
+
 ### Advisor Use Cases
 
 - *Request and manage tour detail changes from / to tour applicants*: An Applicant or an Advisor themselves may want to make changes on the details of a tour. The Advisor is responsible for getting in touch with the client and ensuring communication.
@@ -79,6 +86,7 @@ This user persona describes an official of higher authority than the Advisor who
 *View review details*: Coordinators can view reviews of every tour, including both the score and the textual reviews.
 
 *View the hours of work done by guides*: Coordinators need to determine how much they will pay each Guide so they can view the hours of work done by each guide and during which tours this work was done.
+
 ## Director
 
 Director has the highest authority in the system whose sole purpose is to make sure that this system is serving its bottomline of converting potential high-value Bilkent students, and enacting systemic changes if their monitoring of the performance indicates any declines.
@@ -102,9 +110,12 @@ Director has the highest authority in the system whose sole purpose is to make s
 **Mantine UI**: This is the ready-made component library that we will use. We use this library in order to not "reinvent the wheel"; by using and customizing Mantine UI's components, we will be able to save a lot of time. Since Mantine UI is not a very popular component library like Bootstrap, we decided it would contribute to a unique look in our front-end.
 
 ## Data Analytics
-For the data analytics of our project, we will mainly use Python. For the guide-matching algorithm, we will use libraries such as Pandas and Numpy. Pandas library provides Dataframes and their related methods, which are helpful in manipulating and managing large amounts of data efficiently. Similarly, NumPy involves functionality to carry out advanced mathematical operations on large amounts of data with many fields. Matplotlib may be used for the visualization of graphs and tables, and Scikit-learn may be for various algorithms like guide-matching.
+
+**Python:** For the data analytics of our project, we will mainly use Python. We chose Python because of its variety of data manipulation libraries.
+ For the guide-matching algorithm, we will use libraries such as Pandas and Numpy. Pandas library provides Dataframes and their related methods, which are helpful in manipulating and managing large amounts of data efficiently. Similarly, NumPy involves functionality to carry out advanced mathematical operations on large amounts of data with many fields. Matplotlib may be used for the visualization of graphs and tables, and Scikit-learn may be for various algorithms like guide-matching. Moreover, since web scraping from YÖK Atlas will be required, we will use the scraping framework BeautifulSoup.
 
 ## Back-end
 
-Java + Spring: Java is used because of it's ease of deployment through JAR files and my (Ruşen Ali Yılmaz, the back-end developer of our team) familiarity to it. Spring/Springboot is used to host the API services of the project. It was chosen because it provides necessary functionality through annotation, reduces boilerplate code, and has a wide range of libraries and extensions that we can use in need.
-</br>We will also be using mongoDB for our database. We will host this on bare metal. Through JWT tokens and local mongoDB instance, a reasonable level of data security and privacy will be reached.
+**Java + Spring:** Java is used because of it's ease of deployment through JAR files and my (Ruşen Ali Yılmaz, the back-end developer of our team) familiarity to it. Spring/Springboot is used to host the API services of the project. It was chosen because it provides necessary functionality through annotation, reduces boilerplate code, and has a wide range of libraries and extensions that we can use in need.
+
+**mongoDB:** We will also be using mongoDB for our database. We will host this on bare metal. Through JWT tokens and local mongoDB instance, a reasonable level of data security and privacy will be reached.
