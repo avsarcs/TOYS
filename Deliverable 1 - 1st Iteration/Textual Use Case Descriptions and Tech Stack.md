@@ -107,3 +107,4 @@ For the data analytics of our project, we will mainly use Python. For the guide-
 ## Back-end
 
 Java + Spring: Java is used because of it's ease of deployment through JAR files and my (Ruşen Ali Yılmaz, the back-end developer of our team) familiarity to it. Spring/Springboot is used to host the API services of the project. It was chosen because it provides necessary functionality through annotation, reduces boilerplate code, and has a wide range of libraries and extensions that we can use in need.
+</br>We will also be using mongoDB for our database. We will host this on bare metal. Through JWT tokens and local mongoDB instance, a reasonable level of data security and privacy will be reached.
