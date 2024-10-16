@@ -13,7 +13,7 @@ class University:
 
         # Fetch the university page
         response = get_request_with_retry(self.url)
-        if response.status_code == 200:
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.text
             
@@ -75,7 +75,7 @@ class Year:
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1060.php?y={self.id}")
         else:
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1060.php?y={self.id}")
-        if response.status_code == 200:
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.text    
             # Parse the HTML content using BeautifulSoup
@@ -88,9 +88,9 @@ class Year:
             for row in rows[1:]:  # Skip the first row as it contains summary data
                 columns = row.find_all('td')
                 school_name = columns[0].text.strip()
-                total = int(columns[1].text.strip()) if columns[1].text.strip() != "---" else 0
-                new_graduates = int(columns[2].text.strip()) if columns[2].text.strip() != "---" else 0
-                previous_graduates = int(columns[3].text.strip()) if columns[3].text.strip() != "---" else 0
+                total = int(columns[1].text.strip()) if columns[1].text.strip() != "---" and columns[1].text.strip() != "" else 0
+                new_graduates = int(columns[2].text.strip()) if columns[2].text.strip() != "---" and columns[2].text.strip() != "" else 0
+                previous_graduates = int(columns[3].text.strip()) if columns[3].text.strip() != "---" and columns[3].text.strip() != "" else 0
                 
                 # Append the data as a tuple (or dictionary, if you prefer)
                 self.hs_data.append({
@@ -107,7 +107,7 @@ class Year:
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1000_1.php?y={self.id}")
         else:
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1000_1.php?y={self.id}")
-        if response.status_code == 200:
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.content
 
@@ -129,7 +129,7 @@ class Year:
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1020c.php?y={self.id}")
         else:
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1020c.php?y={self.id}")
-        if response.status_code == 200:
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.content
 

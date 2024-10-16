@@ -38,18 +38,26 @@ if response.status_code == 200:
     # Get the university list for both public and private universities
 
     for uni_fields in extract_universities('Devlet Üniversiteleri'):
+        file_path = os.path.join(directory, uni_fields[1] + ".json")
+        if os.path.exists(file_path):
+            print(f"File {file_path} already exists. Skipping...")
+            continue
+        
         uni = University(*uni_fields)
         uni = uni.to_dict()
-        file_path = os.path.join(directory, uni_fields[1])
 
         #This appends the new university dictionary as a new json file in the directory
         with open(file_path, 'w') as json_file:
             json.dump(uni, json_file, indent=4)
 
     for uni_fields in extract_universities('Vakıf Üniversiteleri'):
+        file_path = os.path.join(directory, uni_fields[1] + ".json")
+        if os.path.exists(file_path):
+            print(f"File {file_path} already exists. Skipping...")
+            continue
+        
         uni = University(*uni_fields)
         uni = uni.to_dict()
-        file_path = os.path.join(directory, uni_fields[1])
 
         with open(file_path, 'w') as json_file:
             json.dump(uni, json_file, indent=4)
