@@ -1,13 +1,16 @@
-import requests
 import json
 from bs4 import BeautifulSoup
 from uni_types import University
+from utils import get_request_with_retry
+import os
 
+directory = "scaraped_data"
+os.makedirs(directory, exist_ok=True)
 # URL of the page to fetch
 main_url = "https://yokatlas.yok.gov.tr/lisans-anasayfa.php"
 
 # Fetch the HTML content from the web
-response = requests.get(main_url)
+response = get_request_with_retry(main_url)
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -28,14 +31,28 @@ if response.status_code == 200:
             for option in universities.find_all('option'):
                 uni_name = option.text
                 uni_id = option['value']
-                university_list.append((uni_name, optgroup_label, uni_id, base_univ_url + uni_id))
+                university_list.append((optgroup_label, uni_name, uni_id, base_univ_url + uni_id))
         return university_list
     
     # Get the university list for both public and private universities
-    universities = [University(*uni_fields) for uni_fields in extract_universities('Devlet Üniversiteleri')]
-    universities.extend([University(*uni_fields) for uni_fields in extract_universities('Vakıf Üniversiteleri')])
-    universities = [uni.to_dict() for uni in universities]
-    with open('data.json', 'w') as json_file:
-        json.dump(universities, json_file, indent=4)
+
+    for uni_fields in extract_universities('Devlet Üniversiteleri'):
+        uni = University(*uni_fields)
+        uni = uni.to_dict()
+        file_path = os.path.join(directory, uni_fields[1])
+
+        #This appends the new university dictionary as a new json file in the directory
+        with open(file_path, 'w') as json_file:
+            json.dump(uni, json_file, indent=4)
+
+    for uni_fields in extract_universities('Vakıf Üniversiteleri'):
+        uni = University(*uni_fields)
+        uni = uni.to_dict()
+        file_path = os.path.join(directory, uni_fields[1])
+        
+        with open(file_path, 'w') as json_file:
+            json.dump(uni, json_file, indent=4)
+
+
 else:
     print(f"Failed to retrieve the page. Status code: {response.status_code}")
