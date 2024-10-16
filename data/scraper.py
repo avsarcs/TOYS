@@ -1,10 +1,11 @@
+# Description: This script scrapes the universities from the YÖK Atlas website and saves them as JSON files in the scraped_data directory.
 import json
 from bs4 import BeautifulSoup
 from uni_types import University
 from utils import get_request_with_retry
 import os
 
-directory = "scaraped_data"
+directory = "scraped_data"
 os.makedirs(directory, exist_ok=True)
 # URL of the page to fetch
 main_url = "https://yokatlas.yok.gov.tr/lisans-anasayfa.php"
@@ -49,7 +50,7 @@ if response.status_code == 200:
         uni = University(*uni_fields)
         uni = uni.to_dict()
         file_path = os.path.join(directory, uni_fields[1])
-        
+
         with open(file_path, 'w') as json_file:
             json.dump(uni, json_file, indent=4)
 
