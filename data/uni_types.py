@@ -2,7 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from datetime import datetime
-
+from utils import get_request_with_retry
 class University:
     def __init__(self, university_type, name, id, url):
         self.university_type = university_type
@@ -12,8 +12,8 @@ class University:
         self.departments = []
 
         # Fetch the university page
-        response = requests.get(self.url)
-        if response.status_code == 200:
+        response = get_request_with_retry(self.url)
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.text
             
@@ -32,7 +32,7 @@ class University:
                     department_name_div = link_tag.find('div')
                     department_name = department_name_div.text.strip() if department_name_div else 'N/A'
                     self.departments.append(Department(department_name, match.group(1)))
-
+            print("Created university object for", self.name)
         else:
             print(f"Failed to retrieve the university page for ID {self.id}. Status code: {response.status_code}")
     def to_dict(self):
@@ -49,9 +49,9 @@ class Department:
         self.name = name
         self.id = id
         self.years = []
-        for year in range(2019, datetime.now().year):
-            response = requests.get(f"https://yokatlas.yok.gov.tr/{year}lisans-dynamic/1060.php?y={self.id}")
-            if response.status_code == 200:
+        for year in range(2019, datetime.now().year - 1):
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{year}/content/lisans-dynamic/1060.php?y={self.id}")
+            if response != None and response.status_code == 200:
                 response.encoding = 'utf-8'
                 self.years.append(Year(year, self.id))
         self.years.append(Year("", self.id)) # Add the current year as well, but the URL will not have a year parameter
@@ -72,10 +72,10 @@ class Year:
 
         # Fetch high school information
         if(self.year == ""):
-            response = requests.get(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1060.php?y={self.id}")
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1060.php?y={self.id}")
         else:
-            response = requests.get(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1060.php?y={self.id}")
-        if response.status_code == 200:
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1060.php?y={self.id}")
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.text    
             # Parse the HTML content using BeautifulSoup
@@ -88,9 +88,9 @@ class Year:
             for row in rows[1:]:  # Skip the first row as it contains summary data
                 columns = row.find_all('td')
                 school_name = columns[0].text.strip()
-                total = int(columns[1].text.strip())
-                new_graduates = int(columns[2].text.strip())
-                previous_graduates = int(columns[3].text.strip())
+                total = int(columns[1].text.strip()) if columns[1].text.strip() != "---" and columns[1].text.strip() != "" else 0
+                new_graduates = int(columns[2].text.strip()) if columns[2].text.strip() != "---" and columns[2].text.strip() != "" else 0
+                previous_graduates = int(columns[3].text.strip()) if columns[3].text.strip() != "---" and columns[3].text.strip() != "" else 0
                 
                 # Append the data as a tuple (or dictionary, if you prefer)
                 self.hs_data.append({
@@ -104,10 +104,10 @@ class Year:
         
         # Fetch general information about department
         if(self.year == ""):
-            response = requests.get(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1000_1.php?y={self.id}")
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1000_1.php?y={self.id}")
         else:
-            response = requests.get(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1000_1.php?y={self.id}")
-        if response.status_code == 200:
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1000_1.php?y={self.id}")
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.content
 
@@ -126,10 +126,10 @@ class Year:
 
         # Fetch the cities where the students are from
         if(self.year == ""):
-            response = requests.get(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1020c.php?y={self.id}")
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/content/lisans-dynamic/1020c.php?y={self.id}")
         else:
-            response = requests.get(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1020c.php?y={self.id}")
-        if response.status_code == 200:
+            response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{self.year}/content/lisans-dynamic/1020c.php?y={self.id}")
+        if response != None and response.status_code == 200:
             response.encoding = 'utf-8'
             page_content = response.content
 
@@ -154,6 +154,8 @@ class Year:
         else:
             print(f"Failed to retrieve the city data for ID {self.id}. Status code: {response.status_code}. URL was {response.url}")
     def to_dict(self):
+        if(self.year == ""):
+            self.year = datetime.now().year
         return {
             'id': self.id,
             'year': self.year,
