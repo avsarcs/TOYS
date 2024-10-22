@@ -1,11 +1,14 @@
 package apply.guide;
 
 import enums.DEPARTMENT;
+import models.Patterns;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class GuideApplicationModel {
+
     private String full_name;
     private String bilkent_id;
     private String email;
@@ -38,8 +41,29 @@ public class GuideApplicationModel {
     }
 
     public boolean isValid() {
-        //TODO: Validate the application
-        return true;
+        boolean valid = true;
+        try {
+            valid = valid && full_name != null && !full_name.isEmpty();
+            valid = valid && bilkent_id != null && !bilkent_id.isEmpty();
+            valid = valid && email != null && !email.isEmpty();
+            valid = valid && Patterns.EMAIL.matcher(email).matches();
+
+            valid = valid && phoneNumber != null && !phoneNumber.isEmpty();
+            valid = valid && Patterns.PHONE_NUMBER.matcher(phoneNumber).matches();
+
+            valid = valid && department != null;
+            valid = valid && birth_date != null;
+            valid = valid && IBAN != null && !IBAN.isEmpty();
+            valid = valid && Patterns.IBAN.matcher(IBAN).matches();
+
+            valid = valid && address != null && !address.isEmpty();
+            valid = valid && current_semester > 0;
+            valid = valid && howdidyouhear != null && !howdidyouhear.isEmpty();
+            valid = valid && whyapply != null && !whyapply.isEmpty();
+        } catch (Exception e) {
+            valid = false;
+        }
+        return valid;
     }
 
     public String getFull_name() {
