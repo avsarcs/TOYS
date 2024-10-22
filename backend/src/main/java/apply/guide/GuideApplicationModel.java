@@ -1,11 +1,11 @@
 package apply.guide;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import enums.DEPARTMENT;
 import models.Patterns;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class GuideApplicationModel {
 
@@ -14,10 +14,11 @@ public class GuideApplicationModel {
     private String email;
     private String phoneNumber;
     private DEPARTMENT department;
+    private String iban;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private ZonedDateTime birth_date;
-    private String IBAN;
     private String address;
-    private int current_semester;
+    private long current_semester;
     private boolean next_semester_exchange;
     private String howdidyouhear;
     private String whyapply;
@@ -31,9 +32,9 @@ public class GuideApplicationModel {
         application.setPhoneNumber((String) map.get("phoneNumber"));
         application.setDepartment(DEPARTMENT.valueOf((String) map.get("department")));
         application.setBirth_date(ZonedDateTime.parse((String) map.get("birth_date")));
-        application.setIBAN((String) map.get("IBAN"));
+        application.setIban((String) map.get("IBAN"));
         application.setAddress((String) map.get("address"));
-        application.setCurrent_semester((int) map.get("current_semester"));
+        application.setCurrent_semester((long) map.get("current_semester"));
         application.setNext_semester_exchange((boolean) map.get("next_semester_exchange"));
         application.setHowdidyouhear((String) map.get("howdidyouhear"));
         application.setWhyapply((String) map.get("whyapply"));
@@ -53,8 +54,8 @@ public class GuideApplicationModel {
 
             valid = valid && department != null;
             valid = valid && birth_date != null;
-            valid = valid && IBAN != null && !IBAN.isEmpty();
-            valid = valid && Patterns.IBAN.matcher(IBAN).matches();
+            valid = valid && iban != null && !iban.isEmpty();
+            valid = valid && Patterns.IBAN.matcher(iban).matches();
 
             valid = valid && address != null && !address.isEmpty();
             valid = valid && current_semester > 0;
@@ -120,12 +121,12 @@ public class GuideApplicationModel {
         return this;
     }
 
-    public String getIBAN() {
-        return IBAN;
+    public String getIban() {
+        return iban;
     }
 
-    public GuideApplicationModel setIBAN(String IBAN) {
-        this.IBAN = IBAN;
+    public GuideApplicationModel setIban(String iban) {
+        this.iban = iban;
         return this;
     }
 
@@ -138,11 +139,11 @@ public class GuideApplicationModel {
         return this;
     }
 
-    public int getCurrent_semester() {
+    public long getCurrent_semester() {
         return current_semester;
     }
 
-    public GuideApplicationModel setCurrent_semester(int current_semester) {
+    public GuideApplicationModel setCurrent_semester(long current_semester) {
         this.current_semester = current_semester;
         return this;
     }
