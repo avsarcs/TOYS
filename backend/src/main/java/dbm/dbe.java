@@ -4,6 +4,7 @@ import auth.UserModel;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
@@ -13,15 +14,15 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import models.AdvisorModel;
 import models.data.guides.GuideModel;
+import models.data.tours.TourModel;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.FirebaseApp;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class dbe {
@@ -30,7 +31,13 @@ public class dbe {
 
     private static final String credentialsFile = "toys-bilkent-67ba3be94a67.json";
 
+    private ObjectMapper objectMapper;
+
     public dbe() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         if (this.firestoreDatabase == null) {
             try {
                 InputStream serviceAccountFile = getCredentials(credentialsFile);
@@ -44,6 +51,8 @@ public class dbe {
                 FirebaseApp.initializeApp(options);
 
                 firestoreDatabase = FirestoreClient.getFirestore();
+
+
 
                 System.out.println("initialized firestore database.");
 
@@ -70,6 +79,9 @@ public class dbe {
         UserModel user = fetchGuide(bilkentID);
         if (user == null) {
             user = fetchAdvisor(bilkentID);
+        }
+        if (user == null){
+            System.out.println("user null");
         }
         return user;
     }
@@ -118,11 +130,8 @@ public class dbe {
         try {
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("guides");
             data.putIfAbsent(guide.getBilkentID(), guide);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
 
-
-            ApiFuture<WriteResult> result = reference.set(mapper.convertValue(Collections.singletonMap("guides", data), new TypeReference<HashMap<String, Object>>() {
+            ApiFuture<WriteResult> result = reference.set(objectMapper.convertValue(Collections.singletonMap("guides", data), new TypeReference<HashMap<String, Object>>() {
             }));
 
             System.out.println("user added to database." + result.get().getUpdateTime());
@@ -138,6 +147,7 @@ public class dbe {
         DocumentReference reference = firestoreDatabase.collection("users").document("advisors");
 
         try {
+            // TODO: fix
             ApiFuture<WriteResult> result = reference.set(advisor);
 
             System.out.println("user added to database." + result.get().getUpdateTime());
@@ -158,5 +168,46 @@ public class dbe {
         }
 
         return false;
+    }
+
+    public List<TourModel> fetchTours() {
+        List<TourModel> tours = new ArrayList<TourModel>();
+        try {
+            DocumentReference reference = firestoreDatabase.collection("applications").document("tours");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
+
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                tours.add(TourModel.fromMap((Map<String, Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to fetch tours from database.");
+        }
+        // TODO : obvious
+        return tours;
+    }
+
+    public boolean addTour(TourModel tour) {
+        DocumentReference reference = firestoreDatabase.collection("applications").document("tours");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
+            data.putIfAbsent(tour.getId(), tour);
+
+
+            ApiFuture<WriteResult> result = reference.set(
+                    objectMapper.convertValue(
+                            Collections.singletonMap("tours", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            System.out.println("tour added to database." + result.get().getUpdateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to add tour to database.");
+            return false;
+        }
+        return true;
     }
 }
