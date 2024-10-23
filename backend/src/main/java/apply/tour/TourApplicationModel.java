@@ -1,6 +1,7 @@
 package apply.tour;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import enums.types.TOUR_TYPE;
 import models.DateWrapper;
 import models.data.tours.TourApplicantModel;
