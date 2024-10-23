@@ -8,7 +8,7 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
   }
 
   return (
-    <div className="w-80 md:w-96 lg:w-[28rem] m-auto lg:m-0 p-10 bg-blue-700 rounded outline outline-2 outline-white">
+    <div className="w-full md:w-[28rem] m-auto lg:m-0 p-10 bg-blue-700 rounded outline outline-2 outline-white">
       <NumberInput label="Bilkent ID" withAsterisk placeholder="Bilkent ID" size="lg" radius="sm"
                    className=""
                    classNames={{

@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
       </div>
       <div
         className={`max-h-screen flex flex-col flex-nowrap justify-start lg:justify-center items-top lg:items-start
-          text-center lg:text-left p-8 lg:p-14 border-t lg:border-l lg:border-t-0 bg-blue-600 
+          text-center lg:text-left md:p-8 lg:p-14 border-t lg:border-l lg:border-t-0 bg-blue-600 
           bg-gradient-to-bl from-50% from-blue-600 via-blue-500 to-red-300 lg:via-blue-600 lg:to-blue-600`}>
         {
           registering ? <RegisterForm setRegistering={setRegistering}/> : <LoginForm setRegistering={setRegistering}/>

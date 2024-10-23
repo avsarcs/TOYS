@@ -1,9 +1,10 @@
 import { ChangeEvent, useState } from "react";
-import { Button, Center, Checkbox, NumberInput, PasswordInput, Select, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, NumberInput, PasswordInput, ScrollArea, Select, Textarea, TextInput } from "@mantine/core";
 import { Link } from "react-router-dom";
 import PhoneInput from "./PhoneInput.tsx";
 import EmailInput from "./EmailInput.tsx";
-import { Department, RegisterFormProps } from "../../types/designed.ts";
+import { Department } from "../../types/enum.ts";
+import { RegisterFormProps } from "../../types/designed.ts";
 
 const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -18,7 +19,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
 
   return (
     <div
-      className="flex flex-col flex-nowrap w-80 md:w-96 lg:w-[28rem] m-auto p-8 bg-blue-700 lg:m-0 overflow-x-clip rounded outline outline-2 outline-white">
+      className="flex flex-col flex-nowrap w-full md:w-[28rem] m-auto p-6 bg-blue-700 lg:m-0 overflow-x-clip rounded outline outline-2 outline-white">
       <span className="text-white text-xl">
         <Button onClick={onPressBack} className={`text-center bg-blue-600 border-2 border-white outline outline-0
               hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800 focus:outline-blue-800 hover:outline-blue-800 
@@ -30,7 +31,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
       <br/>
       <hr/>
       <br/>
-      <div className={"flex-1 p-2 basis-80 overflow-y-auto"}>
+      <ScrollArea className={"p-2 basis-80"}>
         <NumberInput label="Bilkent ID" withAsterisk placeholder="Bilkent ID" size="lg" radius="sm"
                  classNames={{
                    controls: "hidden",
@@ -117,11 +118,11 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
                     label: "text-white text-lg m-2 mb-0",
                     input: "hover:outline focus:outline focus:outline-blue-800 outline-4 outline-blue-800"
                   }}/>
-      </div>
+      </ScrollArea>
       <br/>
       <hr/>
       <br/>
-      <div className={"flex-1"}>
+      <div className={"flex-1 p-2"}>
         <Checkbox
           label={
             <span>
