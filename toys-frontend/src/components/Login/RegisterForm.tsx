@@ -74,7 +74,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
                   input: "hover:outline focus:outline focus:outline-blue-800 outline-4 outline-blue-800"
                 }}
         />
-        <Select label = "Bölüm" placeholder="Bölüm seç" size="lg" radius="sm"
+        <Select label = "Bölüm" withAsterisk placeholder="Bölüm seç" size="lg" radius="sm"
                 classNames={{
                   root: "odd:bg-blue-600 even:bg-blue-700 pb-4",
                   wrapper: "p-2",
