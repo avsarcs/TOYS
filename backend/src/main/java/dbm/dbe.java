@@ -14,6 +14,7 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import models.AdvisorModel;
+import models.data.fairs.FairModel;
 import models.data.guides.GuideModel;
 import models.data.tours.TourModel;
 import org.springframework.stereotype.Service;
@@ -231,5 +232,67 @@ public class dbe {
             return false;
         }
         return true;
+    }
+
+    public boolean addFair(FairModel fair) {
+        DocumentReference reference = firestoreDatabase.collection("applications").document("fairs");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("fairs");
+            data.putIfAbsent(fair.getId(), fair);
+
+
+            ApiFuture<WriteResult> result = reference.set(
+                    objectMapper.convertValue(
+                            Collections.singletonMap("fairs", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            System.out.println("fair [" + fair.getId() + "]  added to database." + result.get().getUpdateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to add fair to database.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateFair(FairModel fair, String fairID) {
+        DocumentReference reference = firestoreDatabase.collection("applications").document("fairs");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("fairs");
+            data.put(fairID, fair);
+
+            ApiFuture<WriteResult> result = reference.set(
+                    objectMapper.convertValue(
+                            Collections.singletonMap("fairs", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            System.out.println("fair [" + fairID + "] updated in database." + result.get().getUpdateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to update fair in database.");
+            return false;
+        }
+        return true;
+    }
+
+    public Map<String,FairModel> fetchFairs() {
+        Map<String, FairModel> fairs = new HashMap<String, FairModel>();
+        try {
+            DocumentReference reference = firestoreDatabase.collection("applications").document("fairs");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("fairs");
+
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                fairs.putIfAbsent(entry.getKey(), FairModel.fromMap((Map<String, Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to fetch fairs from database.");
+        }
+        return fairs;
     }
 }

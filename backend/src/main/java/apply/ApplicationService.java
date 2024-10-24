@@ -1,16 +1,20 @@
 package apply;
 
+import apply.fair.FairApplicationModel;
 import apply.guide.GuideApplicationModel;
 import apply.tour.TourApplicationModel;
 import dbm.dbe;
 import enums.status.TOUR_STATUS;
+import models.data.fairs.FairModel;
 import models.data.guides.GuideModel;
 import models.data.tours.TourModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ApplicationService {
@@ -53,7 +57,7 @@ public class ApplicationService {
         }
 
         // check if there is a time - collision with another tour
-        List<TourModel> tours = db.fetchTours();
+        List<TourModel> tours = db.fetchTours().values().stream().toList();
         List<ZonedDateTime> requestedDates = tourApplication.getRequested_dates();
         if (tours != null) {
             for (TourModel tour : tours) {
@@ -80,5 +84,33 @@ public class ApplicationService {
 
         // save the application to the database
         db.addTour(tourModel);
+    }
+
+    public HttpStatus applyForAFair(FairApplicationModel application) {
+        // check if the application is valid
+        if (!application.isValid()) {
+            // the application is not valid
+            return HttpStatus.BAD_REQUEST;
+        }
+        {
+            // check if a copy of the fair exists within the system
+            Map<String, FairModel> fairs = db.fetchFairs();
+            if (fairs != null) {
+                for (FairModel fair : fairs.values()) {
+                    if (fair.getInvitation().getStart_time().isEqual(application.getStart_time())) {
+                        if (fair.getInvitation().getHighschool_id().equals(application.getHighschool_id())) {
+                            // if the fair exists, reject application
+                            // the fair already exists
+                            return HttpStatus.CONFLICT;
+                        }
+                    }
+                }
+            }
+        }
+        // if the fair does not exist, add the fair to the system
+        if (db.addFair(FairModel.fromInvitation(application))) {
+            return HttpStatus.OK;
+        }
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
