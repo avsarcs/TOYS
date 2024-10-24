@@ -1,5 +1,6 @@
 package dbm;
 
+import apply.fair.FairApplicationModel;
 import auth.UserModel;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -170,21 +171,20 @@ public class dbe {
         return false;
     }
 
-    public List<TourModel> fetchTours() {
-        List<TourModel> tours = new ArrayList<TourModel>();
+    public Map<String,TourModel> fetchTours() {
+        Map<String, TourModel> tours = new HashMap<String, TourModel>();
         try {
             DocumentReference reference = firestoreDatabase.collection("applications").document("tours");
 
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
-                tours.add(TourModel.fromMap((Map<String, Object>) entry.getValue()));
+                tours.putIfAbsent(entry.getKey(), TourModel.fromMap((Map<String, Object>) entry.getValue()));
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to fetch tours from database.");
         }
-        // TODO : obvious
         return tours;
     }
 
@@ -206,6 +206,28 @@ public class dbe {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to add tour to database.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateTour(TourModel tour, String tourId) {
+        DocumentReference reference = firestoreDatabase.collection("applications").document("tours");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
+            data.put(tourId, tour);
+
+            ApiFuture<WriteResult> result = reference.set(
+                    objectMapper.convertValue(
+                            Collections.singletonMap("tours", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            System.out.println("tour [" + tourId + "] updated in database." + result.get().getUpdateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to update tour in database.");
             return false;
         }
         return true;

@@ -3,10 +3,10 @@ package models.data.tours;
 import apply.tour.TourApplicationModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import enums.status.TOUR_STATUS;
-import enums.types.TOUR_TYPE;
 import models.Assignable;
+import models.DateWrapper;
 import models.data.guides.GuideModel;
-import org.conscrypt.OpenSSLMessageDigestJDK;
+import respond.tours.AcceptDeny;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -18,8 +18,7 @@ public class TourModel extends Assignable {
     private String id; // this is an internal identifier, to be used for data manipulation
     private TOUR_STATUS status;
     private long visitor_count;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    private ZonedDateTime accepted_date;
+    private DateWrapper accepted_date;
 
     private String assigned_location;
     private String notes;
@@ -27,8 +26,7 @@ public class TourModel extends Assignable {
     private List<GuideModel> assigned_guides;
     private TourApplicationModel application;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    private ZonedDateTime requested_date;
+    private DateWrapper requested_at;
 
     public static TourModel fromMap(Map<String, Object> map) {
         TourModel tour = new TourModel()
@@ -36,7 +34,7 @@ public class TourModel extends Assignable {
                 .setStatus(TOUR_STATUS.valueOf((String) map.get("status")))
                 .setVisitor_count((long) map.get("visitor_count"))
                 .setNotes((String) map.get("notes"))
-                .setRequested_date(ZonedDateTime.parse((String) map.get("requested_date")));
+                .setRequested_at(ZonedDateTime.parse((String) map.get("requested_at")));
 
         if (map.get("accepted_date") != null) {
             tour.setAccepted_date(ZonedDateTime.parse((String) map.get("accepted_date")));
@@ -54,18 +52,29 @@ public class TourModel extends Assignable {
                 .setVisitor_count(application.getVisitor_count())
                 .setStatus(TOUR_STATUS.AWAITING_CONFIRMATION)
                 .setNotes(application.getNotes())
-                .setRequested_date(ZonedDateTime.now())
+                .setRequested_at(ZonedDateTime.now())
                 .setId();
     }
 
-
-
-    public ZonedDateTime getRequested_date() {
-        return requested_date;
+    public void accept_deny(AcceptDeny response) {
+        if (response == AcceptDeny.REJECT) {
+            setStatus(TOUR_STATUS.REJECTED);
+        } else {
+            setStatus(TOUR_STATUS.CONFIRMED);
+        }
+        setAccepted_date(ZonedDateTime.now());
     }
 
-    public TourModel setRequested_date(ZonedDateTime requested_date) {
-        this.requested_date = requested_date;
+    public ZonedDateTime getRequested_at() {
+        try {
+            return requested_at.getDate();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public TourModel setRequested_at(ZonedDateTime requested_at) {
+        this.requested_at = new DateWrapper(requested_at);
         return this;
     }
 
@@ -102,11 +111,15 @@ public class TourModel extends Assignable {
     }
 
     public ZonedDateTime getAccepted_date() {
-        return accepted_date;
+        try {
+            return accepted_date.getDate();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public TourModel setAccepted_date(ZonedDateTime accepted_date) {
-        this.accepted_date = accepted_date;
+        this.accepted_date = new DateWrapper(accepted_date);
         return this;
     }
 

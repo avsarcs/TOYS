@@ -50,6 +50,15 @@ public class JWTService {
         return result;
     }
 
+    public USER_ROLE getUserRole(String authToken) {
+        try {
+            return USER_ROLE.valueOf(JWT.decode(authToken).getClaim("role").asString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public String generateToken(LoginInfoModel loginInfo, USER_ROLE role) {
         String token = JWT.create()
                 .withClaim("username", loginInfo.getBilkentID())
