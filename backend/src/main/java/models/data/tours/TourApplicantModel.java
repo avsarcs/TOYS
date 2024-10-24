@@ -3,12 +3,23 @@ package models.data.tours;
 import enums.roles.TOUR_APPLICANT_ROLE;
 import models.Patterns;
 
+import java.util.Map;
+
 public class TourApplicantModel {
     private String name;
     private TOUR_APPLICANT_ROLE role;
     private String email;
     private String phone;
     private String notes;
+
+    public static TourApplicantModel fromMap(Map<String, Object> map) {
+        return new TourApplicantModel()
+                .setName((String) map.get("name"))
+                .setRole(TOUR_APPLICANT_ROLE.valueOf((String) map.get("role")))
+                .setEmail((String) map.get("email"))
+                .setPhone((String) map.get("phone"))
+                .setNotes((String) map.get("notes"));
+    }
 
     public boolean isValid() {
         boolean valid = true;

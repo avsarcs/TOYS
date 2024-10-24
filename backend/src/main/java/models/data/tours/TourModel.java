@@ -34,7 +34,11 @@ public class TourModel extends Assignable {
                 .setStatus(TOUR_STATUS.valueOf((String) map.get("status")))
                 .setVisitor_count((long) map.get("visitor_count"))
                 .setNotes((String) map.get("notes"))
-                .setRequested_at(ZonedDateTime.parse((String) map.get("requested_at")));
+                .setRequested_at(ZonedDateTime.parse((String) map.get("requested_at")))
+                .setApplication(TourApplicationModel.fromMap((Map<String, Object>) map.get("application")))
+                .setAccepted_date(map.get("accepted_date") == null ? null : ZonedDateTime.parse((String) map.get("accepted_date")))
+                .setAssigned_location((String) map.get("assigned_location"))
+                .setAssigned_guides((List<GuideModel>) map.get("assigned_guides"));
 
         if (map.get("accepted_date") != null) {
             tour.setAccepted_date(ZonedDateTime.parse((String) map.get("accepted_date")));

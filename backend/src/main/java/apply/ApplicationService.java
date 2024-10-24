@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,8 @@ public class ApplicationService {
 
     }
 
-    public void ApplyForATour(TourApplicationModel tourApplication) {
+    public HttpStatus ApplyForATour(TourApplicationModel tourApplication) {
+        // TODO: complete the http status codes here, it is not significant currently
         // get application
         // check application validity
         if (tourApplication.isValid()) {
@@ -53,17 +55,21 @@ public class ApplicationService {
             // if invalid, send email to the applicant notifying them of invalidity
             // the application is not valid
             // TODO: notify the applicant
-            return;
+            return HttpStatus.OK; // WE do OK here because the response has been recieved properly
         }
 
         // check if there is a time - collision with another tour
         List<TourModel> tours = db.fetchTours().values().stream().toList();
-        List<ZonedDateTime> requestedDates = tourApplication.getRequested_dates();
+        List<ZonedDateTime> requestedDates = new ArrayList<>(tourApplication.getRequested_dates());
         if (tours != null) {
             for (TourModel tour : tours) {
                 if (tour.getAccepted_date() != null) {
-                    if (requestedDates.removeIf(requestedDate -> requestedDate.isEqual(tour.getAccepted_date()))) {
-                        // this time does not work, remove it from the list
+                    for (ZonedDateTime requestedDate : requestedDates) {
+                        if (requestedDate.isEqual(tour.getAccepted_date())) {
+                            // this time does not work, remove it from the list
+                            requestedDates.remove(requestedDate);
+                            break;
+                        }
                     }
                 }
             }
@@ -84,6 +90,8 @@ public class ApplicationService {
 
         // save the application to the database
         db.addTour(tourModel);
+
+        return HttpStatus.OK;
     }
 
     public HttpStatus applyForAFair(FairApplicationModel application) {
