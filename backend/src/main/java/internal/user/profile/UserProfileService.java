@@ -37,4 +37,20 @@ public class UserProfileService {
         return profile;
     }
 
+    public void updateProfile(ProfileModel profile, String authToken) {
+        // Check auth token validity
+        // If invalid, return 422
+        if (!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
+        }
+
+        // check if user match with the auth token
+        // If not, return 442
+        if (!JWTService.getSimpleton().matchUsername(authToken, profile.getId())) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
+        }
+        // update the user profile in the database
+        databaseEngine.updateProfile(profile);
+    }
+
 }
