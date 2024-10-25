@@ -1,0 +1,19 @@
+users:
+    guides: {}
+    advisors: {}
+    coordinators: []
+    directors: []
+    profiles: {
+        "id": PROFILE_OBJ
+    }
+requests:
+    tour_change_requests: {}
+    guide_assign_requests: {}
+    guide_fair_invites: {}
+
+highschools: []
+
+applications:
+    advisors: []
+    tours: []
+    fairs: []

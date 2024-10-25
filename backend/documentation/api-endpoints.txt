@@ -31,7 +31,7 @@ API endpoints:
             body: tourApplicationModel
             response: -
 
-		/request_changes
+		/request_changes #NEEDS TEST
 			method: post
 			body: tourChangeRequestModel
 			response: -
@@ -48,7 +48,7 @@ API endpoints:
 	    method: post
 	    body: auth_token // auth token
 
-	    /changes
+	    /changes # NEEDS TEST
             parameters:
                 idt=identifier_token // to keep track of the request
                 response=response // accept or reject changes
@@ -67,60 +67,65 @@ API endpoints:
 			response: profileModel
 			response_type: json
 
-			/update
+			/update #
+			    parameters:
+			        authToken= jwt token
 				method: post
-				body: profileUpdateRequestModel
+				body: profileModel
 				response: -
 
-		/requests
+		/requests # NEEDS TEST
 			method: get
-			body: auth_token
-			response: TBD ( a list of tour assignments, fair invitations, etc etc)
+			parameters:
+                authToken= jwt token
+			response: List of Requests (List<RequestBase>)
 			response_type: json
 
-			/respond
+			/respond # NEEDS TEST
 				parameters:
 					rid=request_id // which request is beind responded to
 					response=accept/deny // what is the response
 				method: get
-				body: auth_token
 				response: -
 
-		/tours
+		/tours # NEEDS TEST
+		    parameters:
+		        authToken= jwt token
 			method: get
-			body: auth_token
-			response: TBD
+			response: List of tours (List<TourModel>)
 			response_type: json
 
-			/status-update
+			/status-update # NEEDS TEST
 				parameters:
 					tid=tour_id // which tour is this for
-					status=status // which status to update to
+					status=status // which status to update to (ONGOING, FINISHED, CANCELLED)
+				    authToken: auth_token
 				method: post
-				body: auth_token
 				response: -
 
-			/enroll
+            # Just realized we are missing un-enroll
+			/enroll # NEEDS TEST
 				parameters:
 					tid=tour_id // which tour to enroll for
+				    authToken: auth_token
 				method: post
-				body: auth_token
 				response: -
 
-			/invite
+			/invite # NEEDS TEST
 				parameters:
 					tid=tour_id // which tour to invite to
 					guid=guide_id // who to invite
+				    authToken: auth_token
 				method: post
-				body: auth_token
 				response: -
 
-			/respond
+            ## DEPRECATED ##
+			/respond ## THIS IS UNNECESSARY, THIS IS ALREADY BEING DONE
 				parameters:
-					tid=tour_id // which tour to respond to
-					accepted=boolean_here // do you accept or not
+					idt=request id // which tour to respond to
+					accepted=AcceptDeny // do you accept or not
+				    authToken: auth_token
 				method: post
-				body: auth_token
 				response: -
 
 	/management

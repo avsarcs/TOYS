@@ -28,6 +28,9 @@ public class TourModel extends Assignable {
 
     private DateWrapper requested_at;
 
+    private DateWrapper started_at;
+    private DateWrapper ended_at;
+
     public static TourModel fromMap(Map<String, Object> map) {
         TourModel tour = new TourModel()
                 .setId((String) map.get("id"))
@@ -47,7 +50,42 @@ public class TourModel extends Assignable {
         if (map.get("assigned_location") != null) {
             tour.setAssigned_location((String) map.get("assigned_location"));
         }
+
+        if (map.get("started_at") != null) {
+            tour.setStarted_at(new DateWrapper(ZonedDateTime.parse((String) map.get("started_at"))));
+        }
+        if (map.get("ended_at") != null) {
+            tour.setEnded_at(new DateWrapper(ZonedDateTime.parse((String) map.get("ended_at"))));
+        }
         return tour;
+    }
+
+    public TourModel setAccepted_date(DateWrapper accepted_date) {
+        this.accepted_date = accepted_date;
+        return this;
+    }
+
+    public TourModel setRequested_at(DateWrapper requested_at) {
+        this.requested_at = requested_at;
+        return this;
+    }
+
+    public DateWrapper getStarted_at() {
+        return started_at;
+    }
+
+    public TourModel setStarted_at(DateWrapper started_at) {
+        this.started_at = started_at;
+        return this;
+    }
+
+    public DateWrapper getEnded_at() {
+        return ended_at;
+    }
+
+    public TourModel setEnded_at(DateWrapper ended_at) {
+        this.ended_at = ended_at;
+        return this;
     }
 
     public static TourModel fromApplication(TourApplicationModel application) {

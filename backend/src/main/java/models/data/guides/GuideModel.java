@@ -5,8 +5,10 @@ import auth.LoginInfoModel;
 import auth.UserModel;
 import enums.DEPARTMENT;
 import enums.roles.USER_ROLE;
+import models.data.tours.TourModel;
 import models.request.guides.dto.TourScorecardEntryDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,8 @@ public class GuideModel extends UserModel {
 
     private GUIDE_EXPERIENCE_LEVEL experience_level;
     private long previous_tour_count;
-    //private List<TourScorecardEntryDTO> scorecard;
+
+    private List<TourModel> attendedTours;
 
     public static GuideModel fromApplication(GuideApplicationModel originalApplication) {
         GuideModel guide = new GuideModel();
@@ -34,7 +37,19 @@ public class GuideModel extends UserModel {
         guide.setPrevious_tour_count(0);
         guide.setProfile_description(originalApplication.getWhyapply());
         guide.setApplication(originalApplication);
+
+        guide.setAttendedTours(new ArrayList<>());
+
         return guide;
+    }
+
+    public List<TourModel> getAttendedTours() {
+        return attendedTours;
+    }
+
+    public GuideModel setAttendedTours(List<TourModel> attendedTours) {
+        this.attendedTours = attendedTours;
+        return this;
     }
 
     public static GuideModel fromMap(Map<String, Object> map) {
@@ -53,6 +68,11 @@ public class GuideModel extends UserModel {
             guide.setLoginInfo(LoginInfoModel.fromMap((Map<String, Object>) map.get("loginInfo")));
         } catch (Exception e) {
 
+        }
+
+        if (map.get("attendedTours") != null) {
+            // I know this is horrible to debug, it is horrible to understand however, I don't want to waste time writing a for loop. Oh this comment? This is important, and the time I spent writing this comment is worthwhile. Also the funcitonality of this comment cannot be delegated to some complex line of code that
+            guide.setAttendedTours(((List<Map<String, Object>>) map.get("attendedTours")).stream().map(TourModel::fromMap).toList());
         }
 
         guide.setApplication(GuideApplicationModel.fromMap((Map<String, Object>) map.get("application")));

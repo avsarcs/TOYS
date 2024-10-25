@@ -32,7 +32,7 @@ public class PermissionMap {
                     Permission.VIEW_TOUR_INFO,
                     Permission.VIEW_TOUR_REVIEW,
                     Permission.RU_FROM_TOUR,
-                    Permission.AR_TOUR_AGGINMENT,
+                    Permission.AR_TOUR_ASSIGNMENT,
                     Permission.REPORT_TOUR_TIMES
             ));
 

@@ -59,6 +59,25 @@ public class JWTService {
         }
     }
 
+    /// Compare given username with "username" claim in the token, return true if they match
+    public boolean matchUsername(String authToken, String username) {
+        try {
+            return JWT.decode(authToken).getClaim("username").asString().equals(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String decodeUserID(String authToken) {
+        try {
+            return JWT.decode(authToken).getClaim("username").asString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public String generateToken(LoginInfoModel loginInfo, USER_ROLE role) {
         String token = JWT.create()
                 .withClaim("username", loginInfo.getBilkentID())
