@@ -3,12 +3,12 @@ some notes:
 
 API endpoints:
 /auth
-	/login
+	/login #
 		method: post
 		body: loginInfoModel
 		response: jwt_string
 		response_type: string
-	/isvalid
+	/isvalid #
 		parameters:
 			auth=token // token to check for validity
 		method: get
@@ -16,46 +16,54 @@ API endpoints:
 		response_type: string
 
 /apply
-	/guide
+	/guide #
 		method: post
 		body: guideApplicationModel
 		response: -
 
-	/tour
+	/tour #
 		method: post
 		body: tourApplicationModel
 		response: -
+
+        /individual #
+            method: post
+            body: tourApplicationModel
+            response: -
 
 		/request_changes
 			method: post
 			body: tourChangeRequestModel
 			response: -
-	/fair
+	/fair #
 		method: post
 		body: fairApplicationModel
 		response: -
 
-	/advisor
-		method: post
-		body: advisorApplicationModel
-		response: -
-
 /respond
-	/tours
-		parameters:
-			idt=identifier_token // to keep track of the request
-			response=response // accept or reject changes
-		method: post
-		body: -
-		response: -
+	/tours #
+	    parameters:
+	        tid=tour_id // which tour is this for
+	        response=accept/deny // what is the response
+	    method: post
+	    body: auth_token // auth token
+
+	    /changes
+            parameters:
+                idt=identifier_token // to keep track of the request
+                response=response // accept or reject changes
+
+            method: post
+            body: -
+            response: -
 
 /internal
 	/user
-		/profile
+		/profile #
 			parameters:
 				id=id // user bilkent id
+			    authToken= jwt token
 			method: get
-			body: auth token
 			response: profileModel
 			response_type: json
 

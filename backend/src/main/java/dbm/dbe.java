@@ -13,6 +13,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import internal.user.profile.ProfileModel;
 import models.AdvisorModel;
 import models.data.fairs.FairModel;
 import models.data.guides.GuideModel;
@@ -294,5 +295,41 @@ public class dbe {
             System.out.println("Failed to fetch fairs from database.");
         }
         return fairs;
+    }
+
+
+    public Map<String, ProfileModel> fetchProfiles() {
+        Map<String, ProfileModel> profiles = new HashMap<String, ProfileModel>();
+        try {
+            DocumentReference reference = firestoreDatabase.collection("users").document("profiles");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("profiles");
+
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                profiles.putIfAbsent(entry.getKey(), ProfileModel.fromMap((Map<String, Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to fetch profiles from database.");
+        }
+        return profiles;
+    }
+
+    public ProfileModel fetchProfile(String bilkentID) {
+        DocumentReference reference = firestoreDatabase.collection("users").document("profiles");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("profiles");
+            if (data.containsKey(bilkentID)) {
+                return ProfileModel.fromMap((Map<String, Object>) data.get(bilkentID));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to check if profile exists in database.");
+            return null;
+        }
+
+        System.out.println("Profile does not exist in the database");
+        return null;
     }
 }
