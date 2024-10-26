@@ -1,25 +1,66 @@
 # Non-function Requirements of TOYS
 
 ## Performance
-TOYS system is a software product with many features and many users. It will hence contain a large database with a lot of information. Many guides, advisors, students, and school counselors will be able to use it, so the system will hold all of their information and statistics. TOYS will also include information about various high schools. When software systems include large databases, their performance can be impacted negatively. Therefore, the system must find ways to efficiently pull and filter required data from the database in order to maximize performance. 
+"Data" pages are defined as the pages that make requests to the "data" microservice. These pages display scraped and processed data that is large in volume. All the pages that do not interact with the "data" microservice are defined as "non-data" pages.
+
+Non-data pages should take no longer than 1 second to fully load.
+
+Data pages should take no longer than 6 seconds to fully load.
+
+Create, Read, Update, Delete operations on the database on the Tour, Guide, Advisor, Coordinator and Head models should take less than 500 milliseconds when there are less than 100 concurrent users.
+
+Create, Read, Update, Delete operations on the database on the Tour, Guide, Advisor, Coordinator and Head models should take less than 1 second when there are more than 100 concurrent users.
 
 ## Ease of Use
-As mentioned, the system has a lot of users with various backgrounds. Therefore, it is important to create UI/UX that will be easy to use for each and every user. The system should not be too complicated and navigation between different features of the app should be easy and practical. For example, a student should easily navigate to individual tour request pages, a guide should easily navigate to tour management pages, a counselor should easily be able to request school tours, and an advisor should easily see and manage their tours, etc. Thus, a practical front-end structure is significant for the web application. 
+At least 80% of guides new to the app, after 10 minutes of unsupervised meddling, when asked whether they feel confident about using the system for registering to tours and communicating with Advisors and their other daily tasks, should answer "YES".
+
+Applying to a tour should require redirection to no more than 3 pages.
+
+The Head, after 8 minutes of unsupervised meddling with the data pages, should answer "YES" to the question "Do you understand the presented data?".
+
+The Head, after 8 minutes of unsupervised meddling with the data pages, should answer "NO" to the question "Is there a way to layout this data for you that you would find more intuitive to understand?".
+
+An Advisor should never mistakenly assign a Guide to a tour during which the Guide has a lesson.
+
+The registration flow should be optimized and the steps to upload your lesson schedule should be made so obvious such that 90% of registered Guides to the system, within 3 days of registration, should have also uploaded their lesson schedule to the system.
+
+Whenever there is a missing or incorrectly inputted field in any form of the app, there must be a textual warning such as "You did not enter your password" and a visual cue around the incorrect field (e.g. turning the field red).
+
+The character limitations in long-form text fields of forms should be communicated clearly with a progress bar.
 
 ## Reliability
-A reliable system is free of bugs and handles errors well. Since TOYS will be a system with many features and many users, there are a lot of user-system interactions. For each of these interactions, thorough tests should be carried out to identify possible exceptions and handle them properly. For example, a numeric field should not be accepting chars, or a counselor should not be allowed to request a tour at a date that is in the past. All of these edge cases should be thought of and necessary precautions to handle them should be taken. In addition, many users may use the system at the same time. The system should not crash in such a case, or cause long waiting times, so efficiency and concurrency should be prioritized. For example, the system should be able to run multiple processes simultaneously.
+TOYS should be able to support 300 concurrent users -given the scale of the app, it is unlikely to have more than 300 concurrent users at a time.
 
-## Security
-The system should protect itself and its important data from potential attackers. TOYS is a system with a lot of sensitive information: high school information, tour details, success rate of tours (in terms of how effective they were in convincing students to choose Bilkent) etc., so it should protect this information very well with encryption during transmit and establish trust in users with their data. The system should also protect users' personal information (such as their phone number and other means of contact) with authentication and involve a secure login/ signup interface.  
+Whenever a new tour request is sent, the new tour request should display on the Tours page within at most 1 minute.
+
+Whenever a new Guide fills the registration form and hence applies for entrance into the system, Advisor page on accepting or rejecting new guides should display this new application within at most 1 minute.
+
+Whenever an Advisor changes the status of a Tour e.g. from "Awaiting Confirmation" to "Accepted" or "Rejected", this status change should be reflected on the Tour page within at most 10 seconds. Thereby, the time window for another Advisor to send a conflicting status change to the system should be shortened.
+
+
+## Security and Verifiability
+If a given IP address sends 30 applications to register as a Guide back to back, that IP address should be rate limited to 1 application per 3 minutes.
+
+Any form submission with missing required fields or fields that are longer than 1000 characters or fields that contain unexpected special characters including "<", ">", "$", "~", "\" should receive warnings on the front-end and be filtered on the back-end with the usage of regular expressions to never be incorporated into any interactions with the database.
+
+The scraping of YÖK Atlas in the Data microservice should be limited to 1 action per second to avoid getting banned.
+
+After an end-user sends an application to become a Guide in the system, an Advisor should ACCEPT this application before this Prospective Guide can enter the system.
+
+Even if a Prospective Guide somehow circumvents safety measures and enters the system on the front-end, a Prospective Guide should not have been assigned ANY permissions for ANY CRUD operations on the database and the back-end should block such attempts.
 
 ## Maintainability
-Software systems should be designed for long-term use and TOYS should also be designed in a way that allows users to access it for a long time. Well-documented code can be recovered easily, so TOYS should be documented well. A clean and clear architecture should be implemented for it, so that recovering the software when needed is easy and not time-consuming.
+Documentation should cover all the API endpoints of both the back-end and the Data microservice.
+Documentation should cover all the classes used, and the data formats for different models of the database -both formats as they are used in the back-end, and in the format of "transfer" after they lose the fields that will not be required in the front-end.
 
-## Verifiability
-The system should be accessed only by users that are supposed to access it, so the system should verify any user that is trying to log in. For example, someone who is not a registered guide should not have access to tour information and alter it. Or someone who is not an advisor/ coordinator should not be allowed to approve/deny tours. These controls are necessary for a verifiable software.
+Pages and components and React hooks and styles should be modularly separated into their own files in the front-end.
 
 ## Compatibility
-Different browsers should support our system and the system should also work on phones. We chose tools that support cross-platform usage, for example, React allows cross-platform development. This choice allows users to open the system on any browser and device based on their preference.  
+TOYS should look the same on Chromium browsers and Firefox alike.
+
+TOYS should implement all data processing actions on the back-end to reduce the compute load on the front-end as in improving compatibility with older computers.
 
 ## Responsiveness
-The layout of the page and how features are accessed will be dynamic based on the platform/ device the website is opened in. For instance, it would be hard to use a website designed for web usage on a phone, with small texts and features that are not be supported. Therefore, the appearance of the page should be designed to change based on the conditions that it is being used in.
+At least 9 out of 10 users of TOYS on mobile phones, when they are asked whether they find the user experience BAD, SATISFACTORY, or GREAT, should answer at least SATISFACTORY.
+
+At least 9 out of 10 users of TOYS on desktop, when they are asked whether they find the user experience BAD, SATISFACTORY, or GREAT, should answer at least SATISFACTORY.

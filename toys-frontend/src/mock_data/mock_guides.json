@@ -1,0 +1,16 @@
+[
+    {
+        "experience_level": 3,
+        "bilkent_id": 23523505,
+        "role": 1,
+        "high_school": "Fatih Baba Yirmi Sekiz Kasım Okulu",
+        "profile_picture": "lkjfrhgermkerwjtnhlrthlkertjh",
+        "tours": [
+            "123456",
+            "341423",
+            "431412",
+            "234141"
+        ],
+        "profile_description": "I am a Guide."
+    }
+]
