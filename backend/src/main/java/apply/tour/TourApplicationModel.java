@@ -2,22 +2,41 @@ package apply.tour;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import enums.DEPARTMENT;
 import enums.types.TOUR_TYPE;
 import models.DateWrapper;
 import models.data.tours.TourApplicantModel;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class TourApplicationModel {
     private TOUR_TYPE type;
-    private int visitor_count;
+    private long visitor_count;
     private String highschool_id;
 
     private TourApplicantModel applicant;
     private List<DateWrapper> requested_dates;
 
     private String notes;
+
+    private List<DEPARTMENT> requested_departments;
+
+    public static TourApplicationModel fromMap(Map<String, Object> map) {
+        TourApplicationModel application = new TourApplicationModel()
+                .setType(TOUR_TYPE.valueOf((String) map.get("type")))
+                .setVisitor_count((long) map.get("visitor_count"))
+                .setHighschool_id((String) map.get("highschool_id"))
+                .setApplicant(TourApplicantModel.fromMap((Map<String, Object>) map.get("applicant")))
+                .setRequested_dates(((List<String>) map.get("requested_dates")).stream().map(ZonedDateTime::parse).toList())
+                .setNotes((String) map.get("notes"));
+
+        if (map.get("requested_departments") != null) {
+            application.setRequested_departments((List<DEPARTMENT>) map.get("requested_departments"));
+        }
+        return application;
+    }
 
     public boolean isValid() {
         boolean valid = true;
@@ -28,10 +47,24 @@ public class TourApplicationModel {
             valid = valid && applicant != null && applicant.isValid();
             valid = valid && requested_dates != null && !requested_dates.isEmpty();
 
+            if (type == TOUR_TYPE.INDIVIDUAL) {
+                valid = valid && requested_departments != null && !requested_departments.isEmpty();
+            }
+
         } catch (Exception e) {
             valid = false;
         }
         return valid;
+    }
+
+
+    public List<DEPARTMENT> getRequested_departments() {
+        return requested_departments;
+    }
+
+    public TourApplicationModel setRequested_departments(List<DEPARTMENT> requested_departments) {
+        this.requested_departments = requested_departments;
+        return this;
     }
 
     public TOUR_TYPE getType() {
@@ -43,11 +76,11 @@ public class TourApplicationModel {
         return this;
     }
 
-    public int getVisitor_count() {
+    public long getVisitor_count() {
         return visitor_count;
     }
 
-    public TourApplicationModel setVisitor_count(int visitor_count) {
+    public TourApplicationModel setVisitor_count(long visitor_count) {
         this.visitor_count = visitor_count;
         return this;
     }

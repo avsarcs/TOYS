@@ -1,7 +1,9 @@
 package auth.login;
 
 import auth.LoginInfoModel;
+import auth.UserModel;
 import auth.services.JWTService;
+import enums.roles.USER_ROLE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,12 +17,12 @@ public class auth_login_Controller {
 
     @PostMapping("/auth/login")
     public String login(@RequestBody LoginInfoModel loginInfoModel) {
-        boolean loginResult = loginService.loginCredentialCheck(loginInfoModel);
-        if (loginResult) {
+        UserModel loginResult = loginService.loginCredentialCheck(loginInfoModel);
+        if (loginResult != null) {
             try {
                 return JWTService
                         .getSimpleton()
-                        .generateToken(loginInfoModel);
+                        .generateToken(loginInfoModel, loginResult.getRole());
             } catch (Exception e) {
                 e.printStackTrace();
             }

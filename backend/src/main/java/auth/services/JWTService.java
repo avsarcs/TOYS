@@ -4,6 +4,7 @@ import auth.AuthEntryModel;
 import auth.LoginInfoModel;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import enums.roles.USER_ROLE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +50,40 @@ public class JWTService {
         return result;
     }
 
-    public String generateToken(LoginInfoModel loginInfo) {
+    public USER_ROLE getUserRole(String authToken) {
+        try {
+            return USER_ROLE.valueOf(JWT.decode(authToken).getClaim("role").asString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /// Compare given username with "username" claim in the token, return true if they match
+    public boolean matchUsername(String authToken, String username) {
+        try {
+            return JWT.decode(authToken).getClaim("username").asString().equals(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String decodeUserID(String authToken) {
+        try {
+            return JWT.decode(authToken).getClaim("username").asString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String generateToken(LoginInfoModel loginInfo, USER_ROLE role) {
         String token = JWT.create()
                 .withClaim("username", loginInfo.getBilkentID())
                 .withClaim("password", loginInfo.getPassword())
+                .withClaim("time", System.currentTimeMillis())
+                .withClaim("role", role.toString())
                 .sign(Algorithm.HMAC256(SECRET));
 
         while (lock) {

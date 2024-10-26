@@ -11,25 +11,28 @@ public class auth_login_Service {
     @Autowired
     private dbe databaseEngine;
 
-    public boolean loginCredentialCheck(LoginInfoModel loginInfo) {
+    public UserModel loginCredentialCheck(LoginInfoModel loginInfo) {
 
         if (databaseEngine == null) {
-            return false;
+            return null;
         }
 
         UserModel user = databaseEngine.fetchUser(loginInfo.getBilkentID());
 
         if (user == null) {
             // user no - existo
-            return false;
+            return null;
         }
 
 
         try {
-            return user.getLoginInfo().getPassword().equals(loginInfo.getPassword());
+            if (user.getLoginInfo().getPassword().equals(loginInfo.getPassword())) {
+                return user;
+            }
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 }
