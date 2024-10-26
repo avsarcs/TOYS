@@ -33,7 +33,7 @@ TOYS should be able to support 300 concurrent users -given the scale of the app,
 
 Whenever a new tour request is sent, the new tour request should display on the Tours page within at most 1 minute.
 
-Whenever a new Guide fills the registration form and hence applies for entrance into the system, Advisor page on accepting or rejecting new guides should display this new application within at most 1 minute.
+Whenever a new Guide fills the registration form and hence applies for entrance into the system, Coordinator page on accepting or rejecting new guides should display this new application within at most 1 minute.
 
 Whenever an Advisor changes the status of a Tour e.g. from "Awaiting Confirmation" to "Accepted" or "Rejected", this status change should be reflected on the Tour page within at most 10 seconds. Thereby, the time window for another Advisor to send a conflicting status change to the system should be shortened.
 
@@ -45,7 +45,7 @@ Any form submission with missing required fields or fields that are longer than 
 
 The scraping of YÖK Atlas in the Data microservice should be limited to 1 action per second to avoid getting banned.
 
-After an end-user sends an application to become a Guide in the system, an Advisor should ACCEPT this application before this Prospective Guide can enter the system.
+After an end-user sends an application to become a Guide in the system, a Coordinator should ACCEPT this application before this Prospective Guide can enter the system.
 
 Even if a Prospective Guide somehow circumvents safety measures and enters the system on the front-end, a Prospective Guide should not have been assigned ANY permissions for ANY CRUD operations on the database and the back-end should block such attempts.
 
