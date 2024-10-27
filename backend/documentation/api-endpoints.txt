@@ -32,6 +32,12 @@ API endpoints:
 			end=end_time
 		method: get
 
+		/gettype
+		parameters:
+			uuid=uuid of the application
+		method: get
+		response: type of application
+
         /individual #
             method: post
             body: tourApplicationModel
