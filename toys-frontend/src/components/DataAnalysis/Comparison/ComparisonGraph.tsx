@@ -14,13 +14,22 @@ interface ComparisonGraphProps {
  */
 const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
     // List of possible bar colors.
-    const colors = ['rgba(255, 99, 132, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-        'rgba(255, 205, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(201, 203, 207, 0.2)']
+    const colors = [
+        'rgba(255, 99, 132, 0.7)', // Pink
+        'rgba(255, 159, 64, 0.7)', // Orange
+        'rgba(255, 205, 86, 0.7)', // Yellow
+        'rgba(75, 192, 192, 0.7)', // Turquoise
+        'rgba(54, 162, 235, 0.7)', // Blue
+        'rgba(153, 102, 255, 0.7)', // Purple
+        'rgba(33, 33, 33, 1)', // Black
+        'rgba(0, 128, 0, 0.7)', // Green
+        'rgba(128, 0, 128, 0.7)', // Purple
+        'rgba(255, 0, 0, 0.7)', // Red
+        'rgba(0, 0, 255, 0.7)', // Blue
+        'rgba(255, 255, 0, 0.7)', // Yellow
+        'rgba(0, 255, 255, 0.7)', // Cyan
+        'rgba(255, 0, 255, 0.7)' // Magenta
+    ]
 
     // List of dataset groups (in this case, years).
     const years = Object.keys(data);
