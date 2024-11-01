@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Properties for the NavbarButton component.
+ * TODO: Rewrite the following component to use the Mantine library.
  */
 interface NavbarButtonProps {
     label: string;

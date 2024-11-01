@@ -2,11 +2,18 @@ import React from "react";
 import {Chart} from "chart.js/auto";
 
 interface ComparisonGraphProps {
+    // Data to be displayed on the graph.
     data: {[year: string]: {title: string, school1Name: string, school1Min: string, school1Max: string, school2Name: string, school2Min: string, school2Max: string}[]};
+    // Additional graph styling (used for setting the margin).
     style: React.CSSProperties;
 }
 
+/**
+ * Bar chart graph for comparing ranking data of universities over years.
+ * @param data: data to be displayed on the graph.
+ */
 const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
+    // List of possible bar colors.
     const colors = ['rgba(255, 99, 132, 0.2)',
         'rgba(255, 159, 64, 0.2)',
         'rgba(255, 205, 86, 0.2)',
@@ -15,10 +22,13 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
         'rgba(153, 102, 255, 0.2)',
         'rgba(201, 203, 207, 0.2)']
 
+    // List of dataset groups (in this case, years).
     const years = Object.keys(data);
 
+    // Converting the data to a format that can be used by the chart.
     const result: {title: string, data: (string | number)[], color: string}[] = [];
 
+    // Extracting titles (university name + scholarship type) from the data.
     const titles = new Set<string>();
     for (const year in data) {
         data[year].forEach(entry => {
@@ -26,11 +36,13 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
             titles.add(`${entry.school2Name} ${entry.title}`);
         });
     }
-    let i = 0;
+
+    // For each extracted title, find out the ranking.
+    let i = 0; // is used for color selection.
     titles.forEach(title => {
-        const dataArray: (string | number)[] = [];
+        const dataArray: (string | number)[] = []; // Grouping all rankings of a title together.
         for (const year in data) {
-            const entry = data[year].find(e => `${e.school1Name} ${e.title}` === title || `${e.school2Name} ${e.title}` === title);
+            const entry = data[year].find(e => `${e.school1Name} ${e.title}` === title || `${e.school2Name} ${e.title}` === title); // Find the ranking for the title.
             if (entry) {
                 if (`${entry.school1Name} ${entry.title}` === title) {
                     dataArray.push(entry.school1Min);
@@ -41,6 +53,8 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
                 dataArray.push("-");
             }
         }
+        // dataArray: group of rankings for a title.
+        // result: group of titles with their rankings, and an associated color.
         result.push({ title, data: dataArray, color: colors[i % colors.length] });
         i++;
     });
@@ -56,6 +70,7 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
         }
     });
 
+    // I don't know what this does.
     React.useEffect(() => {
         const ctx = document.getElementById('UniversityComparisonChart') as HTMLCanvasElement;
         const ComparisonChart = new Chart(ctx, {
@@ -76,7 +91,7 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
         return () => {
             ComparisonChart.destroy()
         }
-    }, [data]);
+    }, [data]); // and I don't know why there is a warning here. TODO: Find out why.
 
     return <canvas id="UniversityComparisonChart" style={style}></canvas>
 }
