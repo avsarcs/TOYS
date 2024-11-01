@@ -11,14 +11,14 @@ const defaultContainerStyle = {
     borderRadius: '20px',
     boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
     width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '300px', // Set a minimum width to keep it consistent
+    minWidth: '500px', // Set a minimum width to keep it consistent
     maxWidth: '1200px', // Set a maximum width to keep it consistent
-    margin: '0 auto' // Center the container
+    padding: '10px',
 };
 
 //test data
 const universities: string[] = ["Koç", "ODTÜ", "İYTE"];
-const departments = {"Bilkent": ["CS", "EE", "IE"], "Koç": ["CS", "Psychology", "IE"], "ODTÜ": ["CS", "EE", "IE"], "İYTE": ["CS", "EE", "Architecture"]};
+const departments = {"Bilkent": ["CS", "EE", "IE"], "Koç": ["CS", "Psychology", "IE"], "ODTÜ": ["CS", "EE", "IE"], "İYTE": ["CENG", "EE", "Architecture"]};
 const years: string[] = ["2018", "2019", "2020"];
 const data = {
     "2020": [
@@ -53,9 +53,9 @@ const Comparison: React.FC = () => {
         // Handle data change
     };
 
-    const HeaderTextContainer = <Container style={{display: 'flex', justifyContent: 'center'}}>
-        <Text style={{fontSize: 'x-large'}}>
-            Üniversite Karşılaştırma Sayfası
+    const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+        <Text style={{fontSize: 'xx-large'}}>
+            Üniversite Karşılaştırma Sistemi
         </Text>
     </Container>
 
@@ -75,39 +75,50 @@ const Comparison: React.FC = () => {
 
     const ComparisonTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
+        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+            Yıl Bazlı YKS Sıralamaları
+        </Text>
+        <Space h="xs" />
         <ComparisonTable years={years} data={data}/>
         <Space h="xs" />
     </Container>
 
-    const ComparisonGraphContainer = <Container style={defaultContainerStyle}>
+    const ComparisonGraphContainer = <Container style={defaultContainerStyle} >
         <Space h="xs" />
-        <ComparisonGraph data={data}/>
+        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+            YKS Taban Sıralama Yıllık Karşılaştırma
+        </Text>
+        <Space h="xs" />
+        <ComparisonGraph data={data} style={{ margin: '20px' }}/>
         <Space h="xs" />
     </Container>
 
     let ShownDataContainer: JSX.Element;
 
     if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment) {
-        ShownDataContainer = <Container>
+        ShownDataContainer = <div>
             {ComparisonTableContainer}
-            <Space h="md"/>
+            <Space h="xl"/>
             {ComparisonGraphContainer}
-        </Container>
+        </div>
     }
     else {
-        ShownDataContainer = <Container>
+        ShownDataContainer = <div>
             <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Lütfen tüm alanları seçin.</Text>
-        </Container>
+        </div>
     }
 
-    return <div>
+    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full bg-blue-600 lg:bg-gradient-to-bl lg:from-50% lg:from-blue-600 lg:via-blue-500 lg:to-red-300"}>
         <Navbar activeIndex={2}/>
-        <Space h="md"/>
+        <Space h="xl"/>
         {HeaderTextContainer}
-        <Space h="md"/>
+        <hr style={{border: '1px solid black'}}/>
+        <Space h="xl"/>
         {ComparisonSelectorContainer}
-        <Space h="md"/>
+        <Space h="xl"/>
+        <Space h="xl"/>
         {ShownDataContainer}
+        <Space h="xl"/>
     </div>
 }
 

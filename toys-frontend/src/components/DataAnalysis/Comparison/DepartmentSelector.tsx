@@ -18,7 +18,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({departments, sel
     return <Select
         disabled = {selectedUniversity == null}
         label = "Bölüm Seçin"
-        placeholder = {selectedUniversity ? "Department for " + selectedUniversity : "Önce bir üniversite seçin."}
+        placeholder = {selectedUniversity ? selectedUniversity + " için bölüm seçin." : "Önce bir üniversite seçin."}
         data = {departments.map((department) => ({ value: department, label: department }))}
         searchable
         allowDeselect = {false}
