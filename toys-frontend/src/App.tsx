@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./pages/Home/HomePage.tsx";
 import Force404 from "./pages/404/Force404.tsx";
 import LoginPage from "./pages/Login/LoginPage.tsx";
+import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<HomePage/>}/>
           <Route path="/login" element={<LoginPage/>}></Route>
           <Route path="/*" element={<Force404/>}/>
+          <Route path="/comparison" element={<Comparison/>}/>
         </Routes>
       </main>
     </>
