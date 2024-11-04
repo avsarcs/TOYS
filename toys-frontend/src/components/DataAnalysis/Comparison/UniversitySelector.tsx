@@ -11,7 +11,8 @@ interface UniversitySelectorProps {
 
 /**
  * Dropdown menu for selecting a university.
- * @param universities: list of universities to display in the dropdown menu.
+ * @param universities List of universities to display in the dropdown menu.
+ * @param onUniversityChange Function that sets the selected university.
  */
 const UniversitySelector: React.FC<UniversitySelectorProps> = ({universities, onUniversityChange}) => {
     return <Select
@@ -19,6 +20,7 @@ const UniversitySelector: React.FC<UniversitySelectorProps> = ({universities, on
         placeholder = "Seçmek için tıklayın."
         data = {universities.map((university) => ({ value: university, label: university }))}
         searchable
+        nothingFoundMessage="Üniversite bulunamadı."
         allowDeselect = {false}
         radius = "10"
         required

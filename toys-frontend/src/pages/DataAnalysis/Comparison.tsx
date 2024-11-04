@@ -1,6 +1,6 @@
 import React from "react";
 import {Space, Container, Text} from '@mantine/core';
-import Navbar from "../../components/DataAnalysis/Comparison/Navbar.tsx";
+import Navbar from "../../components/DataAnalysis/Navbar.tsx";
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
@@ -53,7 +53,7 @@ const Comparison: React.FC = () => {
         // Handle data change
     };
 
-    const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+    const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
             Üniversite Karşılaştırma Sistemi
         </Text>
@@ -86,7 +86,7 @@ const Comparison: React.FC = () => {
     const ComparisonGraphContainer = <Container style={defaultContainerStyle} >
         <Space h="xs" />
         <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
-            YKS Taban Sıralama Yıllık Karşılaştırma
+            YKS Tavan Sıralama Yıllık Karşılaştırma
         </Text>
         <Space h="xs" />
         <ComparisonGraph data={data} style={{ margin: '20px' }}/>

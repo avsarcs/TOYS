@@ -54,9 +54,9 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
             const entry = data[year].find(e => `${e.school1Name} ${e.title}` === title || `${e.school2Name} ${e.title}` === title); // Find the ranking for the title.
             if (entry) {
                 if (`${entry.school1Name} ${entry.title}` === title) {
-                    dataArray.push(entry.school1Min);
+                    dataArray.push(entry.school1Max);
                 } else if (`${entry.school2Name} ${entry.title}` === title) {
-                    dataArray.push(entry.school2Min);
+                    dataArray.push(entry.school2Max);
                 }
             } else {
                 dataArray.push("-");
@@ -97,10 +97,11 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
             },
         });
 
+        // Destroy the chart when the component is unmounted. Otherwise, it won't load with error.
         return () => {
             ComparisonChart.destroy()
         }
-    }, [data]); // and I don't know why there is a warning here. TODO: Find out why.
+    });
 
     return <canvas id="UniversityComparisonChart" style={style}></canvas>
 }
