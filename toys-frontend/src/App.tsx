@@ -1,6 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom"
 
-import Navbar from "./components/Navbar/Navbar";
+import { Navbar } from "./components/Navbar/Navbar.tsx";
 import HomePage from "./pages/Home/HomePage.tsx";
 import Force404 from "./pages/404/Force404.tsx";
 import LoginPage from "./pages/Login/LoginPage.tsx";
@@ -13,16 +13,17 @@ function App() {
 
   return (
     <>
-      {hasNavbar(location) && <Navbar/>}
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage/>}/>
-          <Route path="/login" element={<LoginPage/>}></Route>
-          <Route path="/*" element={<Force404/>}/>
-          <Route path="/comparison" element={<Comparison/>}/>
-          <Route path="/universitieslist" element={<UniversitiesList/>}/>
-        </Routes>
-      </main>
+      <div className="app-container">
+        {hasNavbar(location) && <Navbar />}
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />}></Route>
+            <Route path="/*" element={<Force404 />} />
+            <Route path="/comparison" element={<Comparison />} />
+          </Routes>
+        </main>
+      </div>
     </>
   )
 }

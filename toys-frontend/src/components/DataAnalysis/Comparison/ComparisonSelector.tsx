@@ -14,24 +14,13 @@ interface ComparisonSelectorProps {
 }
 
 const ComparisonSelector: React.FC<ComparisonSelectorProps> = ({universities, bilkentDepartments, otherDepartments, setSelectedBilkentDepartment, setSelectedOtherUniversity, setSelectedOtherDepartment, selectedOtherUniversity}) => {
-
-    const BilkentDepartmentChanged = (selectedDepartment: string | null) => {
-        setSelectedBilkentDepartment(selectedDepartment);
-    }
-    const OtherUniversityChanged = (selectedUniversity: string | null) => {
-        setSelectedOtherUniversity(selectedUniversity);
-    }
-    const OtherDepartmentChanged = (selectedDepartment: string | null) => {
-        setSelectedOtherDepartment(selectedDepartment);
-    }
-
     return <SimpleGrid cols={3}>
         <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Bilkent</Text>
         <div></div>
-        <div><UniversitySelector universities={universities} onUniversityChange={OtherUniversityChanged}/></div>
-        <div><DepartmentSelector departments={bilkentDepartments} selectedUniversity={"Bilkent"} onDepartmentChange={BilkentDepartmentChanged}/></div>
+        <div><UniversitySelector universities={universities} onUniversityChange={setSelectedOtherUniversity}/></div>
+        <div><DepartmentSelector departments={bilkentDepartments} selectedUniversity={"Bilkent"} onDepartmentChange={setSelectedBilkentDepartment}/></div>
         <div></div>
-        <div><DepartmentSelector departments={selectedOtherUniversity ? otherDepartments[selectedOtherUniversity] : []} selectedUniversity={selectedOtherUniversity} onDepartmentChange={OtherDepartmentChanged}/></div>
+        <div><DepartmentSelector departments={selectedOtherUniversity ? otherDepartments[selectedOtherUniversity] : []} selectedUniversity={selectedOtherUniversity} onDepartmentChange={setSelectedOtherDepartment}/></div>
     </SimpleGrid>
 }
 
