@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <CookiesProvider>
       <UserProvider>
-        <MantineProvider>
+        <MantineProvider withCssVariables withStaticClasses>
           <RouterProvider router={mainRouter}/>
         </MantineProvider>
       </UserProvider>
