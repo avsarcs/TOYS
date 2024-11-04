@@ -5,6 +5,10 @@ export interface User {
   role: string
 }
 
+export interface NavbarProps {
+  mode: string;
+}
+
 export interface LoginFormProps {
   setRegistering: Dispatch<SetStateAction<boolean>>
 }
