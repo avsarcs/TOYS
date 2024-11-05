@@ -1,8 +1,8 @@
 import React from "react";
 import {Space, Container, Text} from '@mantine/core';
 import Navbar from "../../components/DataAnalysis/Navbar.tsx";
-import SearchBar from "../../components/DataAnalysis/UniversitiesList/SearchBar.tsx";
 import UniversitiesTable from "../../components/DataAnalysis/UniversitiesList/UniversitiesTable.tsx";
+import TableFilter from "../../components/DataAnalysis/UniversitiesList/TableFilter.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -16,6 +16,7 @@ const defaultContainerStyle = {
 };
 
 //test data
+const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
 const data = [
     {
         university: "ODTÜ",
@@ -30,7 +31,7 @@ const data = [
     {
         university: "İYTE",
         city: "İzmir",
-        isRival: "false",
+        isRival: "true",
     },
     {
         university: "Boğaziçi",
@@ -220,7 +221,8 @@ const data = [
 ];
 
 const UniversitiesList: React.FC = () => {
-    const [search, setSearch] = React.useState<string>('');
+    const [selectedSearch, setSearch] = React.useState<string>('');
+    const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
 
     const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
         <Text style={{fontSize: 'xx-large'}}>
@@ -228,15 +230,15 @@ const UniversitiesList: React.FC = () => {
         </Text>
     </Container>
 
-    const SearchBarContainer = <Container style={defaultContainerStyle}>
+    const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <SearchBar onSearchChange={setSearch}/>
+        <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
         <Space h="xs" />
     </Container>
 
     const UniversitiesTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <UniversitiesTable data={data} search={search}/>
+        <UniversitiesTable data={data} search={selectedSearch} cities={selectedCities}/>
         <Space h="xs" />
     </Container>
 
@@ -247,7 +249,7 @@ const UniversitiesList: React.FC = () => {
         {HeaderTextContainer}
         <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
-        {SearchBarContainer}
+        {TableFilterContainer}
         <Space h="xl"/>
         <Space h="xl"/>
         {UniversitiesTableContainer}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, keys, Pagination, Space, Container} from '@mantine/core';
+import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container} from '@mantine/core';
 import {IconSelector, IconChevronDown, IconChevronUp} from '@tabler/icons-react';
 import RivalButton from "./RivalButton.tsx";
 
@@ -43,21 +43,22 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
     );
 }
 
-function filterData(data: RowData[], search: string) {
+function filterData(data: RowData[], search: string, cities: string[]) {
     const query = normalizeString(search.trim());
     return data.filter((item) =>
-        keys(data[0]).some((key) => normalizeString(item[key]).includes(query))
+        normalizeString(item["university"]).includes(query) &&
+        (cities.length === 0 || cities.includes(item["city"]))
     );
 }
 
 function sortData(
     data: RowData[],
-    payload: { sortBy: keyof RowData | null; reversed: boolean; search: string }
+    payload: {sortBy: keyof RowData | null; reversed: boolean; search: string; cities: string[]}
 ) {
     const { sortBy } = payload;
 
     if (!sortBy) {
-        return filterData(data, payload.search);
+        return filterData(data, payload.search, payload.cities);
     }
 
     return filterData(
@@ -68,16 +69,18 @@ function sortData(
 
             return a[sortBy].localeCompare(b[sortBy]);
         }),
-        payload.search
+        payload.search,
+        payload.cities
     );
 }
 
 interface UniversitiesTableProps {
     data: RowData[];
     search: string;
+    cities: string[];
 }
 
-const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search}) => {
+const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, cities}) => {
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
@@ -88,12 +91,12 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search}) => 
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        setSortedData(sortData(data, { sortBy: field, reversed, search }));
+        setSortedData(sortData(data, { sortBy: field, reversed, search, cities }));
     };
 
     React.useEffect(() => {
-        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search }));
-    }, [data, reverseSortDirection, search, sortBy]);
+        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search, cities }));
+    }, [data, reverseSortDirection, search, cities, sortBy]);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;

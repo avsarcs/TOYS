@@ -21,6 +21,7 @@ function App() {
             <Route path="/login" element={<LoginPage />}></Route>
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<Comparison />} />
+            <Route path="/universitieslist" element={<UniversitiesList />} />
           </Routes>
         </main>
       </div>

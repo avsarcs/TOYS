@@ -15,8 +15,9 @@ interface SearchBarProps {
  */
 const SearchBar: React.FC<SearchBarProps> = ({onSearchChange}) => {
     return <TextInput
-        label = "Ünversite Arayın"
-        placeholder="Üniversite veya şehir ismi girin."
+        label = "Üniversite Arayın"
+        placeholder="Üniversite ismi girin."
+        radius = "10"
         leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         onChange={(event) => {
             onSearchChange(event.currentTarget.value);
