@@ -7,6 +7,7 @@ import LoginPage from "./pages/Login/LoginPage.tsx";
 import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
+import HighSchoolsList from "./pages/DataAnalysis/HighSchoolsList.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -22,6 +23,7 @@ function App() {
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/universitieslist" element={<UniversitiesList />} />
+            <Route path="/highschoolslist" element={<HighSchoolsList />} />
           </Routes>
         </main>
       </div>
