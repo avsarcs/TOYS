@@ -15,7 +15,7 @@ function App() {
     <>
       <div className="app-container">
         {hasNavbar(location) && <Navbar />}
-        <main>
+        <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />}></Route>
