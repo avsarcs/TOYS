@@ -1,4 +1,4 @@
-import { Group, Code, ScrollArea, rem } from '@mantine/core';
+import { Group, Code, ScrollArea } from '@mantine/core';
 import {
   IconNotes,
   IconCalendarStats,
