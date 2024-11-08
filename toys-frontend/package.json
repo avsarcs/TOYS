@@ -32,7 +32,8 @@
     "libphonenumber-js": "^1.11.13",
     "validate.js": "^0.13.1",
     "http-status-codes": "^2.3.0",
-    "@tabler/icons-react": "^3.21.0"
+    "@tabler/icons-react": "^3.21.0",
+    "chart.js": "^4.4.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
