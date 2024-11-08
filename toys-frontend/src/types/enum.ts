@@ -1,9 +1,9 @@
 export enum TourApplicantRole {
   STUDENT = "Student",
   COUNSELOR = "Counselor",
-  Administrator = "Administrator",
-  Teacher = "Teacher",
-  Other = "Other"
+  ADMINISTRATOR = "Administrator",
+  TEACHER = "Teacher",
+  OTHER = "Other"
 }
 
 export enum Department {

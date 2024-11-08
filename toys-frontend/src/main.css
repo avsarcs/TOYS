@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    .justify-safe-center {
+        justify-content: safe center;
+    }
+}
+
 body {
     font-family: 'Open Sans', sans-serif;
     background-color: #DDEFDD;
