@@ -5,7 +5,7 @@ import { Department } from "../../types/enum.ts";
 import { GuideApplicationData, RegisterFormProps } from "../../types/designed.ts";
 import { useForm } from "@mantine/form";
 import validate from "validate.js"
-import { isValidPhoneNumber } from "libphonenumber-js/max";
+import { isPossiblePhoneNumber, isValidPhoneNumber } from "libphonenumber-js/max";
 import { StatusCodes } from "http-status-codes";
 import { notifications } from "@mantine/notifications";
 
@@ -32,8 +32,8 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
       bilkentId: (value: number) => !isNaN(value) ? null: "Lütfen Bilkent ID'nizi giriniz.",
       password: (value: string) => value.length > 0 ? null: "Lütfen bir şifre giriniz.",
       fullName: (value: string) => value.length > 0 ? null: "Lütfen tam adınızı giriniz.",
-      email: (value: string) => validate(value, { from: { email: true } }) ? null : "Geçersiz e-mail.",
-      phoneNumber: (value: string) => isValidPhoneNumber(value) ? null: "Geçersiz telefon numarası.",
+      email: (value: string) => validate({ from: value }, { from: { email: true } }) === undefined ? null : "Geçersiz e-mail.",
+      phoneNumber: (value: string) => isPossiblePhoneNumber(value, "TR") ? null: "Geçersiz telefon numarası.",
       department: (value: string) => value.length > 0 ? null: "Lütfen bir bölüm seçiniz.",
       semester: (value: number) => !isNaN(value) ? null: "Lütfen Bilkent ID'nizi giriniz.",
       hasExchange: () => null,
@@ -266,7 +266,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
                     focus:outline-blue-800 hover:outline-blue-800 focus:outline-2 hover:outline-2 transition-colors duration-300`}
                     disabled={!(acceptedTerms || registering)}>
                       <span className={`align-text-top text-2xl mr-2 transition-all iconify
-              ${registering ? "solar--file-send-linear animate-spin" : "solar--login-2-linear"}`}/>
+              ${registering ? "solar--traffic-line-duotone animate-spin" : "solar--file-send-linear "}`}/>
               <span>Başvur</span>
             </Button>
           </div>
