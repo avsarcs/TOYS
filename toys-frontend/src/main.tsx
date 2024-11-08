@@ -9,7 +9,9 @@ import ErrorPage from "./pages/Error/ErrorPage.tsx";
 
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"
+import "@mantine/notifications/styles.css"
 import "./main.css"
+import { Notifications } from "@mantine/notifications";
 
 const mainRouter = createBrowserRouter([
   {
@@ -24,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <CookiesProvider>
       <UserProvider>
         <MantineProvider withCssVariables withStaticClasses>
+          <Notifications position={"bottom-right"}/>
           <RouterProvider router={mainRouter}/>
         </MantineProvider>
       </UserProvider>
