@@ -7,8 +7,8 @@ public class MailFactory {
     public MailFactory() {
         if (templates == null) {
             templates = Map.of(
-                MailType.TOUR_ACCEPTANCE, new MailTemplate("About your request for a tour at Bilkent", "Your tour was accepted!\nPlease keep the following number safe and secure, as it is required to make changes: {tour_id}!"),
-                MailType.TOUR_REJECTION, new MailTemplate("About your request for a tour at Bilkent", "We are sad to inform you that your request for a tour at Bilkent was denied!")
+                MailType.TOUR_APPLICATION_ACCEPTANCE, new MailTemplate("About your request for a tour at Bilkent", "Your tour was accepted!\nPlease keep the following number safe and secure, as it is required to make changes: {tour_id}!"),
+                MailType.TOUR_APPLICATION_REJECTION, new MailTemplate("About your request for a tour at Bilkent", "We are sad to inform you that your request for a tour at Bilkent was denied!")
             );
         }
     }

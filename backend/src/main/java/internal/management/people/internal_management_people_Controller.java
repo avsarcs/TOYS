@@ -18,4 +18,7 @@ public class internal_management_people_Controller {
     public List<ProfileModel> getPeople(@RequestParam String authToken) {
         return internalManagementPeopleService.getPeople(authToken);
     }
+
+    @GetMapping ("/internal/management/people/applications")
+    public List<String>
 }

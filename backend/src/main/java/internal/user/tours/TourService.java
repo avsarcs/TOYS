@@ -7,6 +7,9 @@ import auth.PermissionMap;
 import auth.services.JWTService;
 import dbm.dbe;
 import enums.status.TOUR_STATUS;
+import mailService.MailServiceGateway;
+import mailService.MailType;
+import models.AdvisorModel;
 import models.DateWrapper;
 import models.data.guides.GUIDE_EXPERIENCE_LEVEL;
 import models.data.guides.GuideModel;
@@ -27,6 +30,10 @@ import java.util.Map;
 public class TourService {
     @Autowired
     dbe databaseEngine;
+
+    @Autowired
+    MailServiceGateway mailServiceGateway;
+
 
     public List<TourModel> getTours(String authToken) {
         // validate token
@@ -93,6 +100,15 @@ public class TourService {
 
         // save tour
         databaseEngine.updateTour(tours.get(tid), tid);
+
+        for (TourModel tour : databaseEngine.fetchTours().values()) {
+            if (tour.getId().equals(tid)) {
+                AdvisorModel advisor = databaseEngine.fetchAdvisorForDay(tour.getAccepted_date().getDayOfWeek());
+                String advisorEmail = databaseEngine.fetchProfile(advisor.getBilkentID()).getContactDetails().getEmail();
+                mailServiceGateway.sendMail(advisorEmail, MailType.GUIDE_WITHDRAW_FROM_TOUR, Map.of("tour_id", tid));
+                break;
+            }
+        }
     }
 
     public void updateTourStatus(String authToken, String tid, String statusString) {
@@ -199,7 +215,18 @@ public class TourService {
 
         // save tour
         databaseEngine.updateTour(tours.get(tid), tid);
+
+        for (TourModel tour : databaseEngine.fetchTours().values()) {
+            if (tour.getId().equals(tid)) {
+                AdvisorModel advisor = databaseEngine.fetchAdvisorForDay(tour.getAccepted_date().getDayOfWeek());
+                String advisorEmail = databaseEngine.fetchProfile(advisor.getBilkentID()).getContactDetails().getEmail();
+                mailServiceGateway.sendMail(advisorEmail, MailType.GUIDE_TOUR_ENROLL_NOTIFICATION, Map.of("tour_id", tid, "guide_id", userID));
+                break;
+            }
+        }
     }
+
+
 
     public void inviteToTour(String authToken, String tourID, String guideID) {
         // validate token
@@ -243,6 +270,8 @@ public class TourService {
         }
         // save the request
         databaseEngine.addRequest(request);
+
+        mailServiceGateway.sendMail(databaseEngine.fetchProfile(guideID).getContactDetails().getEmail(), MailType.GUIDE_TOUR_ASSIGNMENT, Map.of("tour_id", tourID, "request_id", request.getId()));
     }
 
     public void respondToTourInvite(String authToken, String idt, String responseString) {
@@ -282,5 +311,14 @@ public class TourService {
         // update the request
         request.accept_reject(response);
         databaseEngine.updateRequest(request);
+
+        for (TourModel tour : databaseEngine.fetchTours().values()) {
+            if (tour.getId().equals(request.getTour_id())) {
+                AdvisorModel advisor = databaseEngine.fetchAdvisorForDay(tour.getAccepted_date().getDayOfWeek());
+                String advisorEmail = databaseEngine.fetchProfile(advisor.getBilkentID()).getContactDetails().getEmail();
+                mailServiceGateway.sendMail(advisorEmail, MailType.GUIDE_TOUR_ASSIGNMENT_ACCEPTION, Map.of("tour_id", request.getTour_id()));
+                break;
+            }
+        }
     }
 }

@@ -5,6 +5,8 @@ import apply.guide.GuideApplicationModel;
 import apply.tour.TourApplicationModel;
 import dbm.dbe;
 import enums.status.TOUR_STATUS;
+import mailService.MailServiceGateway;
+import mailService.MailType;
 import models.data.fairs.FairModel;
 import models.data.guides.GuideModel;
 import models.data.tours.TourModel;
@@ -21,6 +23,9 @@ import java.util.Map;
 public class ApplicationService {
     @Autowired
     private dbe db;
+
+    @Autowired
+    private MailServiceGateway mailServiceGateway;
 
     public void ApplytoBeGuide(GuideApplicationModel guideApplication) {
         // get application #
@@ -41,6 +46,8 @@ public class ApplicationService {
         GuideModel guideModel = GuideModel.fromApplication(guideApplication);
         // save the guideModel to the database as a guide that is not approved yet (guide experience level)
         db.addUser(guideModel);
+
+        mailServiceGateway.sendMail(guideApplication.getEmail(), MailType.GUIDE_APPLICATION_CONFIRMATION, Map.of("name", guideApplication.getFull_name()));
 
     }
 
@@ -90,7 +97,7 @@ public class ApplicationService {
 
         // save the application to the database
         db.addTour(tourModel);
-
+        mailServiceGateway.sendMail(tourApplication.getApplicant().getEmail(), MailType.TOUR_APPLICATION_CONFIRMATION, Map.of("name", tourApplication.getApplicant().getName()));
         return HttpStatus.OK;
     }
 
@@ -117,6 +124,7 @@ public class ApplicationService {
         }
         // if the fair does not exist, add the fair to the system
         if (db.addFair(FairModel.fromInvitation(application))) {
+            mailServiceGateway.sendMail(application.getApplicant().getEmail(), MailType.FAIR_APPLICATION_CONFIRMATION, Map.of("name", application.getApplicant().getName()));
             return HttpStatus.OK;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;

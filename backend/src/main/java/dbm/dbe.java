@@ -9,6 +9,7 @@ import auth.UserModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.api.client.util.DateTime;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
@@ -28,6 +29,8 @@ import com.google.firebase.FirebaseApp;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.InputStream;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -118,6 +121,26 @@ public class dbe {
             Map<String, Object> data = (Map<String, Object>) reference.get().get().get("advisors");
             if (data.containsKey(bilkentID)) {
                 return (AdvisorModel) data.get(bilkentID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to check if user exists in database.");
+            return null;
+        }
+
+        return null;
+    }
+
+    public AdvisorModel fetchAdvisorForDay(DayOfWeek day) {
+        DocumentReference reference = firestoreDatabase.collection("users").document("advisors");
+
+        try {
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().get("advisors");
+            for (AdvisorModel advisor : (Collection<AdvisorModel>) data.get("advisors")) {
+                if (advisor.getResponsibleFor().equals(day)) {
+                    return advisor;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
