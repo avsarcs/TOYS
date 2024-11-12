@@ -1,18 +1,25 @@
 package apply;
 
+import apply.advisor.AdvisorApplicationModel;
 import apply.fair.FairApplicationModel;
 import apply.guide.GuideApplicationModel;
 import apply.tour.TourApplicationModel;
+import auth.UserModel;
+import auth.services.JWTService;
 import dbm.dbe;
+import enums.roles.USER_ROLE;
 import enums.status.TOUR_STATUS;
+import internal.user.profile.ProfileModel;
 import mailService.MailServiceGateway;
 import mailService.MailType;
+import models.AdvisorModel;
 import models.data.fairs.FairModel;
 import models.data.guides.GuideModel;
 import models.data.tours.TourModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,6 +33,9 @@ public class ApplicationService {
 
     @Autowired
     private MailServiceGateway mailServiceGateway;
+
+    @Autowired
+    private JWTService jwtService;
 
     public void ApplytoBeGuide(GuideApplicationModel guideApplication) {
         // get application #
@@ -128,5 +138,23 @@ public class ApplicationService {
             return HttpStatus.OK;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    public void applyToAdvisor(String authToken, AdvisorApplicationModel application) {
+        // validate token
+        if (!jwtService.isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid token");
+        }
+
+        // check if user is a guide, no one else can apply to become an advisor
+        if (jwtService.getUserRole(authToken) != USER_ROLE.GUIDE) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only guides can apply to become advisors");
+        }
+        // if not, create a request
+        db.addAdvisor((AdvisorModel) (new AdvisorModel()).setApplication(application).setBilkentID(jwtService.decodeUserID(authToken)));
+
+        ProfileModel profile = db.fetchProfile(application.getBilkentID());
+        String userEmail = profile.getContactDetails().getEmail();
+        mailServiceGateway.sendMail(userEmail, MailType.ADVISOR_APPLICATION_NOTIFICATION, Map.of());
     }
 }
