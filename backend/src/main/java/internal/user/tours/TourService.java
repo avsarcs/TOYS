@@ -47,6 +47,54 @@ public class TourService {
         return tours;
     }
 
+    public void withdrawFromTour(String authToken, String tid) {
+        // validate token
+        if(!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
+        }
+        // check permissions
+        if (!PermissionMap.hasPermission(
+                JWTService.getSimpleton().getUserRole(authToken),
+                Permission.RU_FROM_TOUR)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(authToken);
+
+        // get user
+        GuideModel user = databaseEngine.fetchGuide(userID);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't exist, thus you don't think");
+        }
+
+        // get tours
+        Map<String, TourModel> tours = databaseEngine.fetchTours();
+
+        // check if tour actually exists
+        if (!tours.containsKey(tid)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour not found");
+        }
+
+        boolean found = false;
+        // check if user is already assigned to the tour
+        for (GuideModel guide : tours.get(tid).getAssigned_guides()) {
+            if (guide.getBilkentID().equals(userID)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            // guide is (already) not assigned to the tour, hence just assume the request is successful
+            return;
+        }
+
+        // remove user from tour
+        tours.get(tid).getAssigned_guides().removeIf(guide -> guide.getBilkentID().equals(userID));
+
+        // save tour
+        databaseEngine.updateTour(tours.get(tid), tid);
+    }
+
     public void updateTourStatus(String authToken, String tid, String statusString) {
         // validate token
         if (!JWTService.getSimpleton().isValid(authToken)) {
