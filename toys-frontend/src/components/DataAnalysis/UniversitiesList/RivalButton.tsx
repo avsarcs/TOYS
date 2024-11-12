@@ -6,15 +6,17 @@ import {Button} from '@mantine/core';
  */
 interface RivalButtonProps {
     isRival: boolean; // Whether the university is a rival.
-    setIsRival: (isRival: boolean) => void; // Function that sets the university as a rival or not.
+    setIsRival: (isRival: boolean, university: string) => void; // Function that sets the university as a rival or not.
+    university: string; // Name of the associated university.
 }
 
 /**
- * Dropdown menu for selecting a year.
+ * Button for changing rivalry status of a university.
  * @param isRival Whether the university is a rival.
  * @param setIsRival Function that sets the university as a rival or not.
+ * @param university Name of the associated university.
  */
-const RivalButton: React.FC<RivalButtonProps> = ({isRival, setIsRival}) => {
+const RivalButton: React.FC<RivalButtonProps> = ({isRival, setIsRival, university}) => {
     const [loading, setLoading] = React.useState(false);
 
     return <Button
@@ -24,7 +26,7 @@ const RivalButton: React.FC<RivalButtonProps> = ({isRival, setIsRival}) => {
             setLoading(true);
             setTimeout(() => {
                 setLoading(false);
-                setIsRival(!isRival);
+                setIsRival(!isRival, university);
             }, 2000);
         }}
         loading={loading}
