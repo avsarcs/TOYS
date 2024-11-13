@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { UserRole } from "./enum.ts";
 
 export interface LoginData {
   bilkentId: number,
@@ -6,8 +7,8 @@ export interface LoginData {
 }
 
 export interface User {
-  name: string,
-  role: string
+  id: number,
+  role: UserRole
 }
 
 export interface NavbarProps {
@@ -20,24 +21,6 @@ export interface LoginFormProps {
 
 export interface RegisterFormProps {
   setRegistering: Dispatch<SetStateAction<boolean>>
-}
-
-export enum Department {
-  COMPUTER_ENGINEERING = "Computer Engineering",
-  ELECTRICAL_ENGINEERING = "Electrical Engineering",
-  MECHANICAL_ENGINEERING = "Mechanical Engineering",
-  CIVIL_ENGINEERING = "Civil Engineering",
-  CHEMICAL_ENGINEERING = "Chemical Engineering",
-  PETROLEUM_ENGINEERING = "Petro Engineering",
-  ARCHITECTURE = "Architecture",
-  BUSINESS = "Business",
-  LAW = "Law",
-  MEDICINE = "Medicine",
-  PHARMACY = "Pharmacy",
-  DENTISTRY = "Dentistry",
-  NURSING = "Nursing",
-  ARTS = "Arts",
-  EDUCATION = "Education",
 }
 
 export interface GuideApplicationData extends LoginData {

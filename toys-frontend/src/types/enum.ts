@@ -6,6 +6,14 @@ export enum TourApplicantRole {
   OTHER = "Other"
 }
 
+export enum UserRole {
+  NONE = "NONE",
+  GUIDE = "GUIDE",
+  ADVISOR = "ADVISOR",
+  COORDINATOR = "COORDINATOR",
+  DIRECTOR = "DIRECTOR"
+}
+
 export enum Department {
   COMPUTER_ENGINEERING = "Computer Engineering",
   ELECTRICAL_ENGINEERING = "Electrical Engineering",

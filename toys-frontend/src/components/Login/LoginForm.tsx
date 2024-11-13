@@ -1,5 +1,5 @@
 import { Button, NumberInput, PasswordInput } from "@mantine/core";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LoginData, LoginFormProps } from "../../types/designed.ts";
 import { FormEvent, useState } from "react";
 import { useForm } from "@mantine/form";
@@ -7,12 +7,9 @@ import { useCookies } from "react-cookie";
 import { notifications } from "@mantine/notifications";
 
 const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
-  const [, setCookie, ] = useCookies([], {
-    doNotParse: true
+  const [, setCookie] = useCookies(["auth"], {
   });
   const [loggingIn, setLoggingIn] = useState(false);
-
-  const navigate = useNavigate();
 
   const form = useForm({
     mode: "uncontrolled",
@@ -51,14 +48,12 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
         const token = await res.text();
 
         if(token.length > 0) {
-          // @ts-ignore
-          setCookie("token", token, {});
+          setCookie("auth", token, {});
           notifications.show({
             color: "green",
             title: "Giriş başarılı!",
             message: "Başarıyle giriş yapıldı. Ana sayfaya yönlendiriliyorsunuz."
           });
-          navigate("/home");
           setLoggingIn(false);
         }
         else {
