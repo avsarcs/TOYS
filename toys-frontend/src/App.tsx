@@ -6,6 +6,7 @@ import Force404 from "./pages/404/Force404.tsx";
 import LoginPage from "./pages/Login/LoginPage.tsx";
 import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
+import GuideProfilePage from "./pages/Guide/GuideProfilePage.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 
@@ -24,6 +25,7 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
+            <Route path="/guide/profile" element={<GuideProfilePage />} />
           </Routes>
         </main>
       </div>
