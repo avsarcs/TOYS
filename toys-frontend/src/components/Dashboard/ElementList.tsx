@@ -50,7 +50,8 @@ const ElementList: React.FC<DashboardElementListProps> = (props: DashboardElemen
     }].map((value, i) => {
     return (
       <Grid.Col span={3} key={i}>
-        <Card onClick={() => props.setElement(value)} withBorder shadow="sm" radius="md" className="hover:cursor-pointer">
+        <Card onClick={() => props.setElement(value)} withBorder shadow="sm" radius="md"
+              className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200">
           <Text>
             {
               value.details.map((value, j) => {
