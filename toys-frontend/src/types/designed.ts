@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { UserRole } from "./enum.ts";
+import { DashboardCategory, EventType, UserRole } from "./enum.ts";
 
 export interface LoginData {
   bilkentId: number,
@@ -34,10 +34,16 @@ export interface GuideApplicationData extends LoginData {
   whyApply: string
 }
 
-export interface LoginFormProps {
-  setRegistering: Dispatch<SetStateAction<boolean>>
+export interface DashboardElement {
+  eventType: EventType,
+  category: DashboardCategory
+  details: { title: string, detail: string | number }[]
 }
 
-export interface RegisterFormProps {
-  setRegistering: Dispatch<SetStateAction<boolean>>
+export interface DashboardElementListProps {
+  setElement: Dispatch<SetStateAction<DashboardElement | null>>
+}
+
+export interface DashboardElementInfoProps {
+  element: DashboardElement | null
 }

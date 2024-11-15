@@ -31,3 +31,13 @@ export enum Department {
   ARTS = "Arts",
   EDUCATION = "Education",
 }
+
+export enum EventType {
+  TOUR = "Tour",
+  FAIR = "Fair"
+}
+
+export enum DashboardCategory {
+  ASSIGNED_EVENTS = "Assigned Events",
+  EVENT_INVITATIONS = "Event Invitations"
+}
