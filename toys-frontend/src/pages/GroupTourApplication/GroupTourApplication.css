@@ -1,0 +1,29 @@
+form {
+    min-width: 24rem;
+    margin-bottom: 3rem;
+}
+
+.teacher-info {
+    background-color: #D6E9FB;
+}
+
+.application-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    color: #294AD9;
+    font-weight: bolder;
+}
+
+.fat-button {
+    width: fit-content;
+    max-width: 15rem;
+}
+
+.field-desc {
+    color: gray;
+    font-size: small;
+}
