@@ -25,7 +25,7 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
-            <Route path="/guide/profile" element={<GuideProfilePage />} />
+            <Route path="/profile" element={<GuideProfilePage />} />
           </Routes>
         </main>
       </div>
