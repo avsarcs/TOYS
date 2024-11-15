@@ -10,7 +10,7 @@ const ElementInfoBox: React.FC<DashboardElementInfoProps> = (props: DashboardEle
   return (
     <Stack justify="flex-start" align="center">
       <Title order={2} fw={700} className="text-blue-700 font-main">
-        { props.element.eventType }
+        Detailed Information
       </Title>
       <Container p="xl" ta="center" className="w-full bg-blue-200 rounded-3xl">
         <Center>
@@ -21,7 +21,7 @@ const ElementInfoBox: React.FC<DashboardElementInfoProps> = (props: DashboardEle
           />
         </Center>
         <Space h="sm"/>
-        <Title order={3} fw={700} className="font-main">Tour</Title>
+        <Title order={3} fw={700} className="font-main">{ props.element.eventType }</Title>
         <Space h="sm"/>
         <Container ta="start">
           <Text size="lg" className="text-gray-600">
@@ -41,7 +41,7 @@ const ElementInfoBox: React.FC<DashboardElementInfoProps> = (props: DashboardEle
                 className="text-center border-white bg-blue-600
               border-2 outline outline-0 hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800 
               focus:outline-blue-800 hover:outline-blue-800 focus:outline-2 hover:outline-2 transition-colors duration-300">
-          Go to Tour Page
+          Tur Sayfasına Git
         </Button>
       </Container>
     </Stack>

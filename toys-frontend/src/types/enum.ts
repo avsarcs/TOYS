@@ -33,8 +33,8 @@ export enum Department {
 }
 
 export enum EventType {
-  TOUR = "Tour",
-  FAIR = "Fair"
+  TOUR = "Tur",
+  FAIR = "Fuar"
 }
 
 export enum DashboardCategory {

@@ -11,10 +11,10 @@ const Dashboard: React.FC = () => {
     <Flex direction="column" h="100vh" className="overflow-y-clip">
       <Box className="flex-grow-0 flex-shrink-0">
         <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-          Dashboard
+          Pano
         </Title>
         <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-          All the important things in one place.
+          Önemli olan her şey bir yerde.
         </Title>
         <Space h="xl"/>
         <Divider className="border-gray-400"/>

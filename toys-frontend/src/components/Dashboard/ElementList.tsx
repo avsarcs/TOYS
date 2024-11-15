@@ -12,31 +12,48 @@ const mockdata: {
       {
         eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
         details: [
-          {title: "High School", detail: "A Lisesi"},
-          {title: "Date", detail: "15th of November 2024"},
-          {title: "Number of Attendees", detail: 50},
-          {title: "Time Slot", detail: "10.00-12.00"}
+          {title: "Lise", detail: "A Lisesi"},
+          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Katılımcı Sayısı", detail: 50},
+          {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
       {
         eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
         details: [
-          {title: "High School", detail: "B Lisesi"},
-          {title: "Date", detail: "15th of November 2024"},
-          {title: "Number of Attendees", detail: 50},
-          {title: "Time Slot", detail: "10.00-12.00"}
+          {title: "Lise", detail: "B Lisesi"},
+          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Katılımcı Sayısı", detail: 50},
+          {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
       {
         eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
         details: [
-          {title: "High School", detail: "C Lisesi"},
-          {title: "Date", detail: "15th of November 2024"},
-          {title: "Number of Attendees", detail: 50},
-          {title: "Time Slot", detail: "10.00-12.00"}
+          {title: "Lise", detail: "C Lisesi"},
+          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Katılımcı Sayısı", detail: 50},
+          {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
-
+      {
+        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        details: [
+          {title: "Lise", detail: "C Lisesi"},
+          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Katılımcı Sayısı", detail: 50},
+          {title: "Zaman", detail: "10.00-12.00"}
+        ]
+      },
+      {
+        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        details: [
+          {title: "Lise", detail: "C Lisesi"},
+          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Katılımcı Sayısı", detail: 50},
+          {title: "Zaman", detail: "10.00-12.00"}
+        ]
+      },
     ],
     EVENT_INVITATIONS: []
   }
@@ -73,11 +90,11 @@ const ElementList: React.FC<DashboardElementListProps> = (props: DashboardElemen
       <SegmentedControl
         color="blue" size="lg"
         value={category}
-        onChange={(value: string) => { console.log(value); setCategory(value as DashboardCategory); }}
+        onChange={(value: string) => { props.setElement(null); setCategory(value as DashboardCategory); }}
         data={
          [
-           {value: "ASSIGNED_EVENTS", label: "Assigned Events"},
-           {value: "EVENT_INVITATIONS", label: "Event Invitations"}
+           {value: "ASSIGNED_EVENTS", label: "Atanmış Etkinlikler"},
+           {value: "EVENT_INVITATIONS", label: "Etkinlik Davetiyeleri"}
          ]
         }
       />
