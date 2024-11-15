@@ -130,9 +130,9 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
       <br className="sm:hidden"/>
       <br className="sm:hidden"/>
       <Button size="lg" radius="md"
-              className={`text-center "border-gray-700 brightness-75" border-white bg-blue-600
+              className="text-center border-white bg-blue-600
               border-2 outline outline-0 hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800 
-              focus:outline-blue-800 hover:outline-blue-800 focus:outline-2 hover:outline-2 transition-colors duration-300`}
+              focus:outline-blue-800 hover:outline-blue-800 focus:outline-2 hover:outline-2 transition-colors duration-300"
               onClick={onRegisterClick}>
         <span className="align-text-top iconify solar--clipboard-add-linear text-2xl mr-2"/><span>Rehber Ol</span>
       </Button>
