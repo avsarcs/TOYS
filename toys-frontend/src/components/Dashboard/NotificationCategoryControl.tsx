@@ -26,7 +26,7 @@ const NotificationCategoryControl: React.FC<DashboardCategoryControlProps> = (pr
   ));
 
   return (
-    <Group ref={setRootRef} gap="0" className="w-fit border-2 border-b-1 border-gray-100 bg-gray-100 relative">
+    <Group ref={setRootRef} gap="0" className="w-fit border-2 border-b-1 pr-1 border-gray-100 bg-gray-100 relative">
       {controls}
 
       <FloatingIndicator

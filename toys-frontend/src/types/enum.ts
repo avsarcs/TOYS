@@ -44,7 +44,9 @@ export enum DashboardCategory {
   EVENT_APPLICATIONS = "EVENT_APPLICATIONS",
   GUIDE_ASSIGNED = "GUIDE_ASSIGNED",
   NO_GUIDE_ASSIGNED = "NO_GUIDE_ASSIGNED",
-  TOUR_AWAITING_MODIFICATION = "TOUR_AWAITING_MODIFICATION"
+  TOUR_AWAITING_MODIFICATION = "TOUR_AWAITING_MODIFICATION",
+  GUIDE_APPLICATIONS = "GUIDE_APPLICATIONS",
+  ADVISOR_APPLICATIONS = "ADVISOR_APPLICATIONS"
 }
 
 export enum DashboardCategoryText {
@@ -53,5 +55,7 @@ export enum DashboardCategoryText {
   EVENT_APPLICATIONS = "Etkinlik Başvuruları",
   GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
   NO_GUIDE_ASSIGNED = "Rehber Atanmamış Etkinlikler",
-  TOUR_AWAITING_MODIFICATION = "Değişim Bekleyen Turlar"
+  TOUR_AWAITING_MODIFICATION = "Değişim Bekleyen Turlar",
+  GUIDE_APPLICATIONS = "Rehber Başvuruları",
+  ADVISOR_APPLICATIONS = "Danışman Başvuruları"
 }

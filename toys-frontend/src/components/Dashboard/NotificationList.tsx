@@ -7,6 +7,12 @@ import NotificationCategoryControl from "./NotificationCategoryControl.tsx";
 const mockdata: {
   OWN_EVENTS: DashboardNotification[],
   EVENT_INVITATIONS: DashboardNotification[],
+  EVENT_APPLICATIONS: DashboardNotification[],
+  GUIDE_ASSIGNED: DashboardNotification[],
+  NO_GUIDE_ASSIGNED: DashboardNotification[],
+  TOUR_AWAITING_MODIFICATION: DashboardNotification[],
+  GUIDE_APPLICATIONS: DashboardNotification[],
+  ADVISOR_APPLICATIONS: DashboardNotification[]
 } =
   {
     OWN_EVENTS: [
@@ -40,7 +46,7 @@ const mockdata: {
       {
         eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
-          {title: "Lise", detail: "C Lisesi"},
+          {title: "Lise", detail: "D Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
@@ -49,14 +55,20 @@ const mockdata: {
       {
         eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
-          {title: "Lise", detail: "C Lisesi"},
+          {title: "Lise", detail: "E Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
     ],
-    EVENT_INVITATIONS: []
+    EVENT_INVITATIONS: [],
+    EVENT_APPLICATIONS: [],
+    GUIDE_ASSIGNED: [],
+    NO_GUIDE_ASSIGNED: [],
+    TOUR_AWAITING_MODIFICATION: [],
+    GUIDE_APPLICATIONS: [],
+    ADVISOR_APPLICATIONS: []
   }
 
 const NotificationList: React.FC<DashboardNotificationListProps> = (props: DashboardNotificationListProps) => {
@@ -69,10 +81,7 @@ const NotificationList: React.FC<DashboardNotificationListProps> = (props: Dashb
     lg: 3
   });
 
-  const gridElements = mockdata[category as keyof {
-      OWN_EVENTS: DashboardNotification[],
-      EVENT_INVITATIONS: DashboardNotification[],
-    }].map((value, i) => {
+  const gridElements = mockdata[category as keyof typeof mockdata].map((value, i) => {
     return (
       <Grid.Col span={col} key={i}>
         <Card onClick={() => props.setNotification(value)} withBorder shadow="sm" radius="md"
