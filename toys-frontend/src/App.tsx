@@ -9,6 +9,7 @@ import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
 import GuideProfilePage from "./pages/Guide/GuideProfilePage.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
+import EditGuideProfilePage from "./pages/Guide/EditGuideProfilePage.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -25,7 +26,8 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
-            <Route path="/profile" element={<GuideProfilePage />} />
+            <Route path="/profile" element={<GuideProfilePage />}/>
+            <Route path="/edit-profile" element={<EditGuideProfilePage />}/>
           </Routes>
         </main>
       </div>
