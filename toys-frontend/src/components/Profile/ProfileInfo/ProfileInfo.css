@@ -11,3 +11,19 @@
 .toys-info {
     margin-bottom: 20px;
 }
+.button-group {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+textarea {
+    width: 100%;
+    font-size: 16px;
+}
