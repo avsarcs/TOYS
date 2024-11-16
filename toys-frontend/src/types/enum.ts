@@ -8,6 +8,7 @@ export enum TourApplicantRole {
 
 export enum UserRole {
   NONE = "NONE",
+  TRAINEE = "TRAINEE",
   GUIDE = "GUIDE",
   ADVISOR = "ADVISOR",
   COORDINATOR = "COORDINATOR",
@@ -38,6 +39,19 @@ export enum EventType {
 }
 
 export enum DashboardCategory {
-  ASSIGNED_EVENTS = "Assigned Events",
-  EVENT_INVITATIONS = "Event Invitations"
+  OWN_EVENTS = "OWN_EVENTS",
+  EVENT_INVITATIONS = "EVENT_INVITATIONS",
+  EVENT_APPLICATIONS = "EVENT_APPLICATIONS",
+  GUIDE_ASSIGNED = "GUIDE_ASSIGNED",
+  NO_GUIDE_ASSIGNED = "NO_GUIDE_ASSIGNED",
+  TOUR_AWAITING_MODIFICATION = "TOUR_AWAITING_MODIFICATION"
+}
+
+export enum DashboardCategoryText {
+  OWN_EVENTS = "Atanmış Etkinlikler",
+  EVENT_INVITATIONS = "Rehberlik Etme Davetiyeleri",
+  EVENT_APPLICATIONS = "Etkinlik Başvuruları",
+  GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
+  NO_GUIDE_ASSIGNED = "Rehber Atanmamış Etkinlikler",
+  TOUR_AWAITING_MODIFICATION = "Değişim Bekleyen Turlar"
 }

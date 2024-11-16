@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { DashboardCategory, EventType, UserRole } from "./enum.ts";
+import { DashboardCategory, DashboardCategoryText, EventType, UserRole } from "./enum.ts";
 
 export interface LoginData {
   bilkentId: number,
@@ -34,16 +34,22 @@ export interface GuideApplicationData extends LoginData {
   whyApply: string
 }
 
-export interface DashboardElement {
+export interface DashboardCategoryControlProps {
+  categories: { value: DashboardCategory, label: DashboardCategoryText }[];
+  setCategory: Dispatch<SetStateAction<DashboardCategory>>;
+}
+
+export interface DashboardNotification {
   eventType: EventType,
   category: DashboardCategory
   details: { title: string, detail: string | number }[]
 }
 
-export interface DashboardElementListProps {
-  setElement: Dispatch<SetStateAction<DashboardElement | null>>
+export interface DashboardNotificationListProps {
+  categories: { value: DashboardCategory, label: DashboardCategoryText }[]
+  setNotification: Dispatch<SetStateAction<DashboardNotification | null>>
 }
 
-export interface DashboardElementInfoProps {
-  element: DashboardElement | null
+export interface DashboardNotificationInfoProps {
+  notification: DashboardNotification | null
 }

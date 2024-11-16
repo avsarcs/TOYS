@@ -1,55 +1,56 @@
-import { Card, Divider, Grid, ScrollArea, SegmentedControl, Stack, Text } from "@mantine/core";
-import { DashboardElement, DashboardElementListProps } from "../../types/designed.ts";
+import { Card, Divider, Grid, ScrollArea, Stack, Text, useMatches } from "@mantine/core";
+import { DashboardNotification, DashboardNotificationListProps } from "../../types/designed.ts";
 import { DashboardCategory, EventType } from "../../types/enum.ts";
 import React from "react";
+import NotificationCategoryControl from "./NotificationCategoryControl.tsx";
 
 const mockdata: {
-  ASSIGNED_EVENTS: DashboardElement[],
-  EVENT_INVITATIONS: DashboardElement[],
+  OWN_EVENTS: DashboardNotification[],
+  EVENT_INVITATIONS: DashboardNotification[],
 } =
   {
-    ASSIGNED_EVENTS: [
+    OWN_EVENTS: [
       {
-        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "A Lisesi"},
-          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "B Lisesi"},
-          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "C Lisesi"},
-          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "C Lisesi"},
-          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.ASSIGNED_EVENTS,
+        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "C Lisesi"},
-          {title: "Tarih", detail: "15th of November 2024"},
+          {title: "Tarih", detail: "15 Kasım 2024"},
           {title: "Katılımcı Sayısı", detail: 50},
           {title: "Zaman", detail: "10.00-12.00"}
         ]
@@ -58,16 +59,23 @@ const mockdata: {
     EVENT_INVITATIONS: []
   }
 
-const ElementList: React.FC<DashboardElementListProps> = (props: DashboardElementListProps) => {
-  const [category, setCategory] = React.useState<string>("ASSIGNED_EVENTS");
+const NotificationList: React.FC<DashboardNotificationListProps> = (props: DashboardNotificationListProps) => {
+  const [category, setCategory] = React.useState<DashboardCategory>(DashboardCategory.OWN_EVENTS);
+  const col = useMatches({
+    base: 12,
+    xs: 6,
+    sm: 12,
+    md: 6,
+    lg: 3
+  });
 
   const gridElements = mockdata[category as keyof {
-      ASSIGNED_EVENTS: DashboardElement[],
-      EVENT_INVITATIONS: DashboardElement[],
+      OWN_EVENTS: DashboardNotification[],
+      EVENT_INVITATIONS: DashboardNotification[],
     }].map((value, i) => {
     return (
-      <Grid.Col span={3} key={i}>
-        <Card onClick={() => props.setElement(value)} withBorder shadow="sm" radius="md"
+      <Grid.Col span={col} key={i}>
+        <Card onClick={() => props.setNotification(value)} withBorder shadow="sm" radius="md"
               className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200">
           <Text>
             {
@@ -87,19 +95,9 @@ const ElementList: React.FC<DashboardElementListProps> = (props: DashboardElemen
 
   return (
     <Stack className="h-full">
-      <SegmentedControl
-        color="blue" size="lg"
-        value={category}
-        onChange={(value: string) => { props.setElement(null); setCategory(value as DashboardCategory); }}
-        data={
-         [
-           {value: "ASSIGNED_EVENTS", label: "Atanmış Etkinlikler"},
-           {value: "EVENT_INVITATIONS", label: "Etkinlik Davetiyeleri"}
-         ]
-        }
-      />
+      <NotificationCategoryControl categories={props.categories} setCategory={setCategory} />
       <Divider />
-      <ScrollArea scrollbars="y" mah="50%">
+      <ScrollArea scrollbars="y" mah="60%">
         <Grid p="sm">
           {
             gridElements
@@ -110,4 +108,4 @@ const ElementList: React.FC<DashboardElementListProps> = (props: DashboardElemen
   );
 }
 
-export default ElementList;
+export default NotificationList;
