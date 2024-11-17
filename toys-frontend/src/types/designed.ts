@@ -16,28 +16,29 @@ export interface NavbarProps {
 }
 
 export interface IndividualApplication {
-  name: string,
-  surname: string,
-  email: string,
-  phone: string,
-  school: string,
-  times: string[][],
-  major_choices: string[],
-  applicant_notes: string
+  highschool_name: string,
+  requested_times: string[],
+  requested_majors: string[],
+  visitor_count: number,
+  applicant: {
+    fullname: string,
+    email: string,
+    phone: string,
+    notes: string
+  }
 }
 
 export interface GroupApplication {
-  group_leader: {
-    name: string;
-    surname: string;
-    email: string;
-    phone: string;
-    school: string;
-    role: string;
-  };
-  student_count: number;
-  applicant_notes: string;
-  times: string[][];
+  highschool_name: string,
+  requested_times: string[],
+  visitor_count: number,
+  applicant: {
+    fullname: string,
+    role: string,
+    email: string,
+    phone: string,
+    notes: string
+  }
 }
 
 export interface GroupApplicationStageProps {

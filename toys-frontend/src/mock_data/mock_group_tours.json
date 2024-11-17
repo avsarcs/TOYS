@@ -1,0 +1,138 @@
+[
+    {
+      "highschool_name": "Ankara Fen Lisesi",
+      "guides": [
+        ["G001", "Ahmet Yılmaz"],
+        ["G002", "Ayşe Demir"]
+      ],
+      "trainee_guides": [
+        ["TG001", "Mehmet Can"]
+      ],
+      "type": "group",
+      "requested_times": [
+        "2024-09-30T09:00:00Z",
+        "2024-09-30T11:00:00Z"
+      ],
+      "accepted_time": "2024-09-30T09:00:00Z",
+      "visitor_count": 66,
+      "status": "AWAITING_CONFIRMATION",
+      "notes": "Large group from Ankara Fen Lisesi, requires two guides due to size",
+      "applicant": {
+        "fullname": "Mustafa Öztürk",
+        "role": "teacher",
+        "email": "m.ozturk@ankarafen.edu.tr",
+        "phone": "+90532XXXXXXX",
+        "notes": "Students are particularly interested in computer science labs"
+      },
+      "actual_start_time": "2024-11-15T14:22:14Z",
+      "actual_end_time": "2024-11-15T16:22:14Z",
+      "classroom": "Mithat Çoruh"
+    },
+    {
+      "highschool_name": "TED Ankara Koleji",
+      "guides": [
+        ["G003", "Zeynep Kaya"]
+      ],
+      "trainee_guides": [
+        ["TG002", "Ali Yıldız"],
+        ["TG003", "Selin Arslan"]
+      ],
+      "type": "group",
+      "requested_times": [
+        "2024-10-01T10:00:00Z",
+        "2024-10-01T13:00:00Z"
+      ],
+      "accepted_time": "2024-10-01T10:00:00Z",
+      "visitor_count": 45,
+      "status": "APPROVED",
+      "notes": "Group interested in robotics lab demonstration",
+      "applicant": {
+        "fullname": "Elif Şahin",
+        "role": "teacher",
+        "email": "e.sahin@tedankara.k12.tr",
+        "phone": "+90533XXXXXXX",
+        "notes": "Some students have mobility requirements"
+      },
+      "actual_start_time": null,
+      "actual_end_time": null,
+      "classroom": "Cahit Arf"
+    },
+    {
+      "highschool_name": "Çankaya Anadolu Lisesi",
+      "guides": [
+        ["G004", "Burak Çelik"]
+      ],
+      "trainee_guides": [],
+      "type": "group",
+      "requested_times": [
+        "2024-10-15T12:00:00Z",
+        "2024-10-15T14:00:00Z"
+      ],
+      "accepted_time": "2024-10-15T14:00:00Z",
+      "visitor_count": 35,
+      "status": "TOYS_WANTS_CHANGE",
+      "notes": "Schedule conflict with original time slot",
+      "applicant": {
+        "fullname": "Deniz Yılmaz",
+        "role": "student",
+        "email": "d.yilmaz@student.cankaya.edu.tr",
+        "phone": "+90535XXXXXXX",
+        "notes": "Requesting afternoon slot due to morning classes"
+      },
+      "actual_start_time": null,
+      "actual_end_time": null,
+      "classroom": "Ali Kuşçu"
+    },
+    {
+      "highschool_name": "Bahçelievler Anadolu Lisesi",
+      "guides": [
+        ["G005", "Canan Aksoy"]
+      ],
+      "trainee_guides": [
+        ["TG004", "Emre Kara"]
+      ],
+      "type": "group",
+      "requested_times": [
+        "2024-11-01T09:00:00Z"
+      ],
+      "accepted_time": null,
+      "visitor_count": 25,
+      "status": "APPLICANT_WANTS_CHANGE",
+      "notes": "Group requested alternative date",
+      "applicant": {
+        "fullname": "Ayhan Koç",
+        "role": "teacher",
+        "email": "a.koc@bahcelievler.edu.tr",
+        "phone": "+90536XXXXXXX",
+        "notes": "Prefer a date after midterm exams"
+      },
+      "actual_start_time": null,
+      "actual_end_time": null,
+      "classroom": "İbn-i Sina"
+    },
+    {
+      "highschool_name": "Milli Piyango Anadolu Lisesi",
+      "guides": [
+        ["G006", "Derya Yıldırım"]
+      ],
+      "trainee_guides": [],
+      "type": "group",
+      "requested_times": [
+        "2024-09-28T10:00:00Z"
+      ],
+      "accepted_time": "2024-09-28T10:00:00Z",
+      "visitor_count": 30,
+      "status": "REJECTED",
+      "notes": "Date unavailable due to facility maintenance",
+      "applicant": {
+        "fullname": "Kemal Özdemir",
+        "role": "student",
+        "email": "k.ozdemir@mp.edu.tr",
+        "phone": "+90537XXXXXXX",
+        "notes": "First time visit request"
+      },
+      "actual_start_time": null,
+      "actual_end_time": null,
+      "classroom": "Aziz Sancar"
+    }
+  ]

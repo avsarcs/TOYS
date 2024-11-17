@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Alert } from '@mantine/core';
 import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react"
 import { Stepper } from '@mantine/core';
@@ -19,22 +19,25 @@ import IndividualNotesStage from '../../components/TourApplication/IndividualNot
 const IndividualTourApplication: React.FC = () => {
 
     const [applicationInfo, setApplicationInfo] = useState<IndividualApplication>({
-        "name": "",
-        "surname": "",
-        "email": "",
-        "phone": "",
-        "school": "",
-        "applicant_notes": "",
-        "major_choices": ["Bilgisayar Mühendisliği", "Elektrik Elektronik Mühendisliği", "Peyzaj Mühendisliği"],
-        "times": []
+        "highschool_name": "",
+        "requested_times": [],
+        "requested_majors": ["", "", ""],
+        "visitor_count": -1,
+        "applicant": {
+            "fullname": "",
+            "email": "",
+            "phone": "",
+            "notes": ""
+        }
     })
 
-    const [currentStage, setCurrentStage] = useState(1)
+    const [currentStage, setCurrentStage] = useState(0)
 
     const attemptStageChange = (newStage: number) => {
 
         if (newStage < currentStage) {
             setCurrentStage(newStage)
+            return
         }
 
         if (currentStage == 0 && validateStage1()) {
@@ -49,7 +52,7 @@ const IndividualTourApplication: React.FC = () => {
             setCurrentStage(newStage)
         }
 
-        if (currentStage == 3) {
+        if (currentStage == 3 && validateStage4()) {
             setCurrentStage(newStage)
         }
 
@@ -79,10 +82,10 @@ const IndividualTourApplication: React.FC = () => {
     const validateStage1 = () => {
         let stagePass = true
         let empty_fields = false
-        const firstStageFields = ["name", "surname", "email", "phone", "school"]
+        const firstStageFields = ["fullname", "email", "phone"]
         for (const field of firstStageFields) {
             // @ts-expect-error key coming from applicationInfo, there will be no conflict
-            if (isEmpty(applicationInfo[field], { ignore_whitespace: true })) {
+            if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool_name)) {
 
                 stagePass = false
                 setWarnings((warnings) => ({
@@ -102,7 +105,7 @@ const IndividualTourApplication: React.FC = () => {
             }))
         }
 
-        if (!isEmail(applicationInfo["email"])) {
+        if (!isEmail(applicationInfo.applicant["email"])) {
             setWarnings((warnings) => ({
                 ...warnings,
                 "not_email": true
@@ -117,7 +120,7 @@ const IndividualTourApplication: React.FC = () => {
 
         }
 
-        if (!isMobilePhone(applicationInfo["phone"])) {
+        if (!isMobilePhone(applicationInfo.applicant["phone"])) {
             setWarnings((warnings) => ({
                 ...warnings,
                 "not_phone_no": true
@@ -133,9 +136,14 @@ const IndividualTourApplication: React.FC = () => {
         return stagePass
     }
 
-    // Validate if stage 2 is done.
+    // stage2 is valid all the time
+    const validateStage2 = () => {
+        return true
+    }
+
+    // Validate if stage 3 is done.
     const validateStage3 = () => {
-        if (applicationInfo.times.length > 0) {
+        if (applicationInfo.requested_times.length > 0) {
 
             setWarnings((warnings) => ({
                 ...warnings,
@@ -155,20 +163,30 @@ const IndividualTourApplication: React.FC = () => {
 
     }
 
-    // Validate if stage 3 is done.
-    const validateStage2 = () => {
-        return true
-    }
-
+    // Validate if stage 4 is done.
     const validateStage4 = () => {
-        return true
+        if (applicationInfo.visitor_count < 1) {
+            setWarnings((warnings) => ({
+              ...warnings,
+              "no_student_count": true
+            }))
+            return false
+          }
+          else {
+            setWarnings((warnings) => ({
+              ...warnings,
+              "no_student_count": false
+            }))
+            return true
+          }
     }
 
     const navigate = useNavigate()
     // Placeholder function
     const attemptSubmitForm = () => {
         // Do whatever the fuck you need to submit applicationInfo to the backend.
-        navigate("/application_success")
+        if (validateStage4())
+            navigate("/application-success")
     }
 
     return (
@@ -191,7 +209,7 @@ const IndividualTourApplication: React.FC = () => {
                 <div className='mt-4 flex-col content-center'>
                     {Object.values(warnings).some(value => value) &&
                         <Alert variant="light" color="red" title="Bu aşamayı tamamlayın" icon={<IconAlertCircle />} className='my-4'>
-                            Diğer aşamalara geçebilmek için bu aşamadaki tüm gerekli bilgileri doğru doldurmanız gerekmektedir.
+                            Sonraki aşamalara geçebilmek için bu aşamadaki tüm gerekli bilgileri doğru doldurmanız gerekmektedir.
                             {warnings["empty_fields"] && (<><br /> <strong>Bıraktığınız boş alanları doldurun.</strong></>)}
                             {warnings["not_email"] && (<><br />  <strong>Geçerli bir e-posta adresi girin.</strong></>)}
                             {warnings["not_phone_no"] && (<><br />  <strong>Geçerli bir telefon numarası girin.</strong></>)}

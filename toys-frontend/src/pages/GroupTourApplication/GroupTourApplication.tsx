@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Alert } from '@mantine/core';
 import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react"
 import { Stepper } from '@mantine/core';
@@ -18,17 +18,16 @@ import NotesStage from '../../components/TourApplication/NotesStage';
 export const GroupTourApplication: React.FC = () => {
 
   const [applicationInfo, setApplicationInfo] = useState<GroupApplication>({
-    "group_leader": {
-      "name": "",
-      "surname": "",
+    "highschool_name": "",
+    "requested_times": [],
+    "visitor_count": -1,
+    "applicant": {
+      "fullname": "",
+      "role": "",
       "email": "",
       "phone": "",
-      "school": "",
-      "role": ""
-    },
-    "student_count": -1,
-    "applicant_notes": "",
-    "times": []
+      "notes": ""
+    }
   })
 
   const [currentStage, setCurrentStage] = useState(0)
@@ -37,6 +36,7 @@ export const GroupTourApplication: React.FC = () => {
 
     if (newStage < currentStage) {
       setCurrentStage(newStage)
+      return
     }
 
     if (currentStage == 0 && validateStage1()) {
@@ -69,10 +69,10 @@ export const GroupTourApplication: React.FC = () => {
   const validateStage1 = () => {
     let stagePass = true
     let empty_fields = false
-    const firstStageFields = ["name", "surname", "email", "phone", "school", "role"]
+    const firstStageFields = ["fullname", "email", "phone", "role"]
     for (const field of firstStageFields) {
       // @ts-expect-error key coming from applicationInfo, there will be no conflict
-      if (isEmpty(applicationInfo["group_leader"][field], { ignore_whitespace: true })) {
+      if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool_name)) {
 
         stagePass = false
         setWarnings((warnings) => ({
@@ -92,7 +92,7 @@ export const GroupTourApplication: React.FC = () => {
       }))
     }
 
-    if (!isEmail(applicationInfo["group_leader"]["email"])) {
+    if (!isEmail(applicationInfo["applicant"]["email"])) {
       setWarnings((warnings) => ({
         ...warnings,
         "not_email": true
@@ -107,7 +107,7 @@ export const GroupTourApplication: React.FC = () => {
 
     }
 
-    if (!isMobilePhone(applicationInfo["group_leader"]["phone"])) {
+    if (!isMobilePhone(applicationInfo["applicant"]["phone"])) {
       setWarnings((warnings) => ({
         ...warnings,
         "not_phone_no": true
@@ -125,7 +125,7 @@ export const GroupTourApplication: React.FC = () => {
 
   // Validate if stage 2 is done.
   const validateStage2 = () => {
-    if (applicationInfo.times.length > 0) {
+    if (applicationInfo.requested_times.length > 0) {
 
       setWarnings((warnings) => ({
         ...warnings,
@@ -147,7 +147,7 @@ export const GroupTourApplication: React.FC = () => {
 
   // Validate if stage 3 is done.
   const validateStage3 = () => {
-    if (applicationInfo["student_count"] < 1) {
+    if (applicationInfo.visitor_count < 1) {
       setWarnings((warnings) => ({
         ...warnings,
         "no_student_count": true
@@ -168,9 +168,9 @@ export const GroupTourApplication: React.FC = () => {
   const attemptSubmitForm = () => {
     // Do whatever the fuck you need to submit applicationInfo to the backend.
     if (validateStage3()) {
-      navigate("/application_success")
+      navigate("/application-success")
     }
-    
+
   }
 
   return (
@@ -191,7 +191,7 @@ export const GroupTourApplication: React.FC = () => {
         <div className='mt-4 flex-col content-center'>
           {Object.values(warnings).some(value => value) &&
             <Alert variant="light" color="red" title="Bu aşamayı tamamlayın" icon={<IconAlertCircle />} className='my-4'>
-              Diğer aşamalara geçebilmek için bu aşamadaki tüm gerekli bilgileri doğru doldurmanız gerekmektedir.
+              Sonraki aşamalara geçebilmek için bu aşamadaki tüm gerekli bilgileri doğru doldurmanız gerekmektedir.
               {warnings["empty_fields"] && (<><br /> <strong>Bıraktığınız boş alanları doldurun.</strong></>)}
               {warnings["not_email"] && (<><br />  <strong>Geçerli bir e-posta adresi girin.</strong></>)}
               {warnings["not_phone_no"] && (<><br />  <strong>Geçerli bir telefon numarası girin.</strong></>)}

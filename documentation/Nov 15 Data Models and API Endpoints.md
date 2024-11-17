@@ -30,7 +30,6 @@
 	"highschool_name": "Ankara Fen Lisesi",
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"visitor_count": 66,
-	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
 		"role": "student", // or "teacher"

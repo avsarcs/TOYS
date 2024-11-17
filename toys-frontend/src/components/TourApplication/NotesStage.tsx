@@ -5,7 +5,6 @@ import {
   TextInput,
   Textarea,
   Stack,
-  Text,
   Container
 } from '@mantine/core';
 
@@ -32,10 +31,10 @@ export const NotesStage: React.FC<GroupApplicationStageProps> = ({
               label="Grupta kaç öğrenci olması bekleniyor?"
               withAsterisk
               placeholder="Bir sayı girin..."
-              value={applicationInfo["student_count"] == -1 ? "" : applicationInfo["student_count"]}
+              value={applicationInfo.visitor_count== -1 ? "" : applicationInfo.visitor_count}
               onChange={(e) => setApplicationInfo((application) => ({
                 ...application,
-                "student_count": parseInt(e.target.value)
+                visitor_count: parseInt(e.target.value)
               }))}
               type="number"
               error={warnings["no_student_count"] ? "0'dan büyük bir sayı giriniz." : false}
@@ -46,10 +45,13 @@ export const NotesStage: React.FC<GroupApplicationStageProps> = ({
               label="Bize bırakmak istediğiniz başka notlar var mı?"
               description="(Örneğin özel ihtiyaç sahibi öğrenciler vs.)"
               placeholder="..."
-              value={applicationInfo["applicant_notes"]}
+              value={applicationInfo.applicant.notes}
               onChange={(e) => setApplicationInfo((application) => ({
                 ...application,
-                "applicant_notes": e.target.value
+                applicant: {
+                  ...application.applicant,
+                  notes: e.target.value
+                }
               }))}
               minRows={4}
             />

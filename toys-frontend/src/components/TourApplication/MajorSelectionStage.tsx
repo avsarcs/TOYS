@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
 import { IndividualApplicationStageProps } from '../../types/designed';
-
-const majorOptions = [
-  'Bilgisayar Mühendisliği',
-  'Elektrik Elektronik Mühendisliği',
-  'Peyzaj Mühendisliği',
-  'Felsefe (boş iş)',
-  'Edebiyat cart curt',
-  'Fransız Dili ve Tercümanlığı',
-  "Kimya",
-  "Fizik"
-];
+import majorOptions from "../../mock_data/mock_majors.json"
 
 const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
   applicationInfo,
@@ -24,21 +14,23 @@ const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
   };
 
   const handleMajorSelect = (index: number, selectedMajor: string): void => {
-    const newMajorChoices = [...applicationInfo.major_choices];
+    const newMajorChoices = [...applicationInfo.requested_majors];
     if (newMajorChoices.includes(selectedMajor)) {
       return;
     }
     newMajorChoices[index] = selectedMajor;
     setApplicationInfo((prevInfo) => ({
       ...prevInfo,
-      major_choices: newMajorChoices,
+      requested_majors: newMajorChoices,
     }));
     setOpenDropdown(null);
   };
 
   return (
     <div className="w-full max-w-md space-y-2 p-4">
-      {applicationInfo.major_choices.map((major, index) => (
+      <h1 className='header text-3xl font-semibold mb-2'>Rehber Bölüm Tercihi<br/></h1>
+      <h2 className='subheader mb-4'>Garanti vermemekle birlikte turunuz için seçtiğiniz bölümden bir rehber ayarlamaya çalışacağız. (Bir tercihiniz yoksa bu aşamayı atlayabilirsiniz.)</h2>
+      {applicationInfo.requested_majors.map((major, index) => (
         <div key={index} className="">
           <button
             onClick={() => toggleDropdown(index)}
@@ -60,7 +52,7 @@ const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
           {openDropdown === index && (
             <div className="absolute z-10 max-w-80 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
               <div className="py-1">
-                {majorOptions.filter((option) => !applicationInfo.major_choices.includes(option)).map((option) => (
+                {majorOptions.filter((option) => !applicationInfo.requested_majors.includes(option)).map((option) => (
                   <button
                     key={option}
                     className="w-full px-4 py-2 text-left hover:bg-gray-100"

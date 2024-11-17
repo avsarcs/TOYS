@@ -25,6 +25,9 @@ function App() {
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/universitieslist" element={<UniversitiesList />} />
+            <Route path="/group-tour-application" element={<GroupTourApplication />} />
+            <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
+            <Route path="/application-success" element={<ApplicationSuccess/>}/>
           </Routes>
         </main>
       </div>
