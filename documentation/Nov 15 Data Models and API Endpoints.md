@@ -2,8 +2,8 @@
 ```
 {
 	"highschool_name": "Ankara Fen Lisesi",
-	"guides": [ //array of guide names	],
-	"trainee_guides": [ // array of trainee guide names ],
+	"guides": [ [ "guide id", "guide_name" ] ... ],
+	"trainee_guides": [ [ "trainee_guide id", "trainee_guide_name" ] ],
 	"type": "group", // frontend will do conditional rendering based on this property
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"accepted_time": "2024-09-30T09:00:00Z",
@@ -62,8 +62,8 @@
 ```
 {
 	"highschool_name": "Ankara Fen Lisesi",
-	"guides": [ //array of guide names	],
-	"trainee_guides": [ // array of trainee guide names ],
+	"guides": [ [ "guide id", "guide_name" ] ... ],
+	"trainee_guides": [ [ "trainee guide id", "trainee guide_name" ] ... ],
 	"type": "individual",
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
@@ -91,7 +91,7 @@
 	// time field absent for tours AWAITING_MODIFICATION
 	"time"?: "2024-11-15T14:22:14Z",
 	"visitor_count": 34,
-	"guide": "Guide Name"
+	"guide": [ [ "guide id", "guide_name" ] ... ]
 }
 ```
 
@@ -107,26 +107,27 @@
   "major": "COMPUTER_SCIENCE",
   "current_semester": 5,
   "next_semester_exchange": true,
-  "howdidyouhear": "Through university website",
-  "whyapply": "To gain international experience"
+  "how_did_you_hear": "Through university website",
+  "why_apply": "To gain international experience"
 }
 ```
 
 # Guide Model
 ```
 {
-  "experience_level": "18", // unit: months
+  "experience": "18 events",
   "id": "12345678",
   "fullname": "Mr. Something",
   "phone": "555 555 55 55"
   "high_school": "High School Not Set",
+  "iban": "TR438525023948394",
   "major": "Computer Science",
-  "role": "GUIDE" | "AMATEUR" | "ADVISOR"
+  "role": "GUIDE" | "TRAINEE" | "ADVISOR"
   "profile_picture": "",
   "previous_tour_count": 0,
   "profile_description": "I want to be a guide because I love helping people.",
   "advisor_application_status": True | False
-  "attendedTours": []
+  "attended_tours": []
 }
 ```
 
@@ -138,7 +139,7 @@
   "phone": "555 555 55 55",
   "major": "Computer Science",
   "application_explanation" : "yapyapyap",
-  "experience_level": "18 months"
+  "experience": "18 events"
 }
 ```
 
@@ -148,7 +149,7 @@
 	"id": 22231331, // bilkent id
 	"name": "Balik Baliksatan",
 	"major": "CS",
-	"experience": "3 months"
+	"experience": "3 events"
 }
 ```
 
@@ -165,7 +166,7 @@
 	"start_time": "2024-11-15T14:22:14Z",
 	"end_time": "2024-11-15T14:22:14Z",
 	"fair_name": "KARIYERKE",
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 }
 ```
 
@@ -187,7 +188,7 @@
 #### User
 ```
 {
-"role": "coordinator" | "advisor" | "guide" | "trainee",
+"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE",
 "profile": {
 	...the model
 }
@@ -368,7 +369,7 @@ API endpoints:
 
 			/applications
 				parameters:
-					type: "ADVISOR" | "AMATEUR_GUIDE"
+					type: "ADVISOR" | "TRAINEE"
 				method: get
 				body: auth_token
 				response: list of people applications
