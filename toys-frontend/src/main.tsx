@@ -10,7 +10,9 @@ import { DatesProvider } from '@mantine/dates';
 
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"
+import "@mantine/notifications/styles.css"
 import "./main.css"
+import { Notifications } from "@mantine/notifications";
 
 const mainRouter = createBrowserRouter([
   {
@@ -24,8 +26,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <CookiesProvider>
       <UserProvider>
-        <MantineProvider>
-            <RouterProvider router={mainRouter} />
+        <MantineProvider withCssVariables withStaticClasses>
+          <Notifications position={"bottom-right"}/>
+          <RouterProvider router={mainRouter}/>
         </MantineProvider>
       </UserProvider>
     </CookiesProvider>

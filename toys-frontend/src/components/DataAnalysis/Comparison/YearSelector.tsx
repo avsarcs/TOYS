@@ -11,7 +11,8 @@ interface YearSelectorProps {
 
 /**
  * Dropdown menu for selecting a year.
- * @param years: list of years to display in the dropdown menu.
+ * @param years List of years to display in the dropdown menu.
+ * @param setSelectedYear Function that sets the selected year.
  */
 const YearSelector: React.FC<YearSelectorProps> = ({years, setSelectedYear}) => {
     return <Select

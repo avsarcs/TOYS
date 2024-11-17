@@ -17,4 +17,5 @@ public enum DEPARTMENT {
     NURSING,
     ARTS,
     EDUCATION,
+    MANAGEMENT,
 }
