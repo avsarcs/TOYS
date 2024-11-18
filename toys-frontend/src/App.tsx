@@ -10,6 +10,9 @@ import { hasNavbar } from "./lib/utils.tsx";
 import GroupTourApplication from "./pages/GroupTourApplication/GroupTourApplication.tsx";
 import ApplicationSuccess from "./pages/ApplicationSuccess/ApplicationSuccess.tsx";
 import IndividualTourApplication from "./pages/IndividualTourApplication/IndividualTourApplication.tsx";
+import ToysApplications from "./pages/ToysApplications/ToysApplications.tsx";
+import TraineeApplicationDetails from "./pages/TraineeApplicationDetails/TraineeApplicationDetails.tsx";
+import AdvisorApplicationDetails from "./pages/AdvisorApplicationDetails/AdvisorApplicationDetails.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -28,6 +31,9 @@ function App() {
             <Route path="/group-tour-application" element={<GroupTourApplication />} />
             <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
             <Route path="/application-success" element={<ApplicationSuccess/>}/>
+            <Route path="/toys-applications" element={<ToysApplications/>} />
+            <Route path="/trainee-application-details/:application_id" element={<TraineeApplicationDetails/>} />
+            <Route path="/advisor-application-details/:application_id" element={<AdvisorApplicationDetails/>} />
           </Routes>
         </main>
       </div>

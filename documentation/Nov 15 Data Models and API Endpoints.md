@@ -95,10 +95,10 @@
 ```
 
 
-# Guide Application Model
+# Trainee Guide Application Model
 ```
 {
-  "full_name": "John Doe",
+  "fullname": "John Doe",
   "id": "12345678",
   "high_school": "IBRAHIM KARATAS LISESI",
   "email": "john.doe@example.com",
@@ -108,6 +108,15 @@
   "next_semester_exchange": true,
   "how_did_you_hear": "Through university website",
   "why_apply": "To gain international experience"
+}
+```
+
+# Simple Toys Application Model (Advisor or Trainee Application)
+```
+{
+	"id": "123456789",
+	"fullname": "Balik Baliksatan",
+	"experience": "4 events",
 }
 ```
 
