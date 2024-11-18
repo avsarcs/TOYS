@@ -10,9 +10,14 @@ import GuideProfilePage from "./pages/Guide/GuideProfilePage.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import EditGuideProfilePage from "./pages/Guide/EditGuideProfilePage.tsx";
+import TourPage from "./pages/TourInformation/TourPage.tsx";
+
+import "dayjs/locale/tr"
+import dayjs from "dayjs";
 
 function App() {
   const location = useLocation().pathname;
+  dayjs.locale("tr");
 
   return (
     <>
@@ -25,6 +30,7 @@ function App() {
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/dashboard" element={<Dashboard />}/>
+            <Route path="/tour/:tourId" element={<TourPage />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
             <Route path="/profile" element={<GuideProfilePage />}/>
             <Route path="/edit-profile" element={<EditGuideProfilePage />}/>

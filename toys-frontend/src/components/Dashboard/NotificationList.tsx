@@ -1,6 +1,6 @@
 import { Card, Divider, Grid, ScrollArea, Stack, Text, useMatches } from "@mantine/core";
 import { DashboardNotification, DashboardNotificationListProps } from "../../types/designed.ts";
-import { DashboardCategory, EventType } from "../../types/enum.ts";
+import { DashboardCategory, EventTypeText } from "../../types/enum.ts";
 import React from "react";
 import NotificationCategoryControl from "./NotificationCategoryControl.tsx";
 
@@ -17,7 +17,7 @@ const mockdata: {
   {
     OWN_EVENTS: [
       {
-        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
+        eventType: EventTypeText.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "A Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
@@ -26,7 +26,7 @@ const mockdata: {
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
+        eventType: EventTypeText.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "B Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
@@ -35,7 +35,7 @@ const mockdata: {
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
+        eventType: EventTypeText.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "C Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
@@ -44,7 +44,7 @@ const mockdata: {
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
+        eventType: EventTypeText.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "D Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
@@ -53,7 +53,7 @@ const mockdata: {
         ]
       },
       {
-        eventType: EventType.TOUR, category: DashboardCategory.OWN_EVENTS,
+        eventType: EventTypeText.TOUR, category: DashboardCategory.OWN_EVENTS,
         details: [
           {title: "Lise", detail: "E Lisesi"},
           {title: "Tarih", detail: "15 Kasım 2024"},
@@ -86,17 +86,15 @@ const NotificationList: React.FC<DashboardNotificationListProps> = (props: Dashb
       <Grid.Col span={col} key={i}>
         <Card onClick={() => props.setNotification(value)} withBorder shadow="sm" radius="md"
               className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200">
-          <Text>
-            {
-              value.details.map((value, j) => {
-                return (
-                  <Text key={j}>
-                    <Text span fw={700}>{value.title}:</Text> {value.detail}
-                  </Text>
-                );
-              })
-            }
-          </Text>
+          {
+            value.details.map((value, j) => {
+              return (
+                <Text key={j}>
+                  <Text span fw={700}>{value.title}:</Text> {value.detail}
+                </Text>
+              );
+            })
+          }
         </Card>
       </Grid.Col>
     );

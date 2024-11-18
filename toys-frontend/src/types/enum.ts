@@ -34,6 +34,11 @@ export enum Department {
 }
 
 export enum EventType {
+  TOUR = "TOUR",
+  FAIR = "FAIR"
+}
+
+export enum EventTypeText {
   TOUR = "Tur",
   FAIR = "Fuar"
 }
@@ -58,4 +63,35 @@ export enum DashboardCategoryText {
   TOUR_AWAITING_MODIFICATION = "Değişim Bekleyen Turlar",
   GUIDE_APPLICATIONS = "Rehber Başvuruları",
   ADVISOR_APPLICATIONS = "Danışman Başvuruları"
+}
+
+export enum ApplicantRole {
+  STUDENT = "STUDENT",
+  TEACHER = "TEACHER",
+}
+
+export enum TourType {
+  GROUP = "GROUP",
+  INDIVIDUAL = "INDIVIDUAL",
+}
+
+export enum TourTypeText {
+  GROUP = "Grup Turu",
+  INDIVIDUAL = "Kişisel Tur",
+}
+
+export enum TourStatus {
+  AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION",
+  APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
+  TOYS_WANTS_CHANGE = "TOYS_WANTS_CHANGE",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED"
+}
+
+export enum TourStatusText {
+  AWAITING_CONFIRMATION = "Kabul Bekliyor",
+  APPLICANT_WANTS_CHANGE = "Başvuran Değişiklik İstiyor",
+  TOYS_WANTS_CHANGE = "Tanıtım Ofisi Değişiklik İstiyor",
+  APPROVED = "Kabul Edildi",
+  REJECTED = "Reddedildi"
 }

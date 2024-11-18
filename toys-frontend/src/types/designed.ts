@@ -1,5 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
-import { DashboardCategory, DashboardCategoryText, EventType, UserRole } from "./enum.ts";
+import {
+  ApplicantRole,
+  DashboardCategory,
+  DashboardCategoryText,
+  EventTypeText,
+  TourStatus, TourType,
+  UserRole
+} from "./enum.ts";
 
 export interface LoginData {
   bilkentId: number,
@@ -40,7 +47,7 @@ export interface DashboardCategoryControlProps {
 }
 
 export interface DashboardNotification {
-  eventType: EventType,
+  eventType: EventTypeText,
   category: DashboardCategory
   details: { title: string, detail: string | number }[]
 }
@@ -52,4 +59,32 @@ export interface DashboardNotificationListProps {
 
 export interface DashboardNotificationInfoProps {
   notification: DashboardNotification | null
+}
+
+export interface Applicant {
+  fullname: string,
+  role: ApplicantRole,
+  email: string,
+  phone: string,
+  notes: string
+}
+
+export interface Tour {
+  type: TourType,
+  highschool_name: string,
+  guides: { id: number; name: string }[],
+  trainee_guides: { id: number; name: string }[],
+  requested_times: string[],
+  accepted_time: string,
+  visitor_count: number,
+  status: TourStatus,
+  notes: string,
+  applicant: Applicant,
+  actual_start_time: string,
+  actual_end_time: string,
+  classroom: string,
+}
+
+export interface TourSectionProps {
+  tour: Tour
 }

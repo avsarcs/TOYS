@@ -4,7 +4,7 @@ import React from "react";
 
 const NotificationInfoBox: React.FC<DashboardNotificationInfoProps> = (props: DashboardNotificationInfoProps) => {
   if(props.notification === null) {
-    return (<></>);
+    return null;
   }
 
   return (
@@ -24,17 +24,15 @@ const NotificationInfoBox: React.FC<DashboardNotificationInfoProps> = (props: Da
         <Title order={3} fw={700} className="font-main">{ props.notification.eventType }</Title>
         <Space h="sm"/>
         <Card.Section inheritPadding ta="start">
-          <Text size="lg" className="text-gray-600">
-            {
-              props.notification.details.map((value, index) => {
-                return (
-                  <Text key={index}>
-                    <Text span fw={700}>{value.title}:</Text> {value.detail}
-                  </Text>
-                );
-              })
-            }
-          </Text>
+          {
+            props.notification.details.map((value, index) => {
+              return (
+                <Text size="lg" className="text-gray-600" key={index}>
+                  <Text span fw={700}>{value.title}:</Text> {value.detail}
+                </Text>
+              );
+            })
+          }
         </Card.Section>
         <Space h="sm"/>
         <Card.Section>
