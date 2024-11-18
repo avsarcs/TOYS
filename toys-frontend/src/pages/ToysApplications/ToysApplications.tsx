@@ -2,7 +2,7 @@ import React from 'react';
 import advisorApplications from "../../mock_data/mock_simple_toys_applications1.json"
 import traineeApplications from "../../mock_data/mock_simple_toys_applications2.json"
 import { Tabs } from '@mantine/core';
-import { ApplicationCard } from '../../components/ApplicationCard/ApplicationCard';
+import ApplicationCard from '../../components/ApplicationCard/ApplicationCard';
 import { useNavigate } from 'react-router-dom';
 
 const ToysApplications: React.FC = () => {
@@ -71,6 +71,7 @@ const ToysApplications: React.FC = () => {
               {traineeApplications.map((application) => (
                 <ApplicationCard
                   key={application.id}
+                  variant="alternate"
                   application={application}
                   onGuidePageClick={handleGuidePageClick}
                   onApproveClick={handleApproveClick}

@@ -143,6 +143,7 @@
 ```
 {
   "id": "12345678",
+  "fullname": "Mr. Something"
   "high_school": "High School Not Set",
   "phone": "555 555 55 55",
   "major": "Computer Science",

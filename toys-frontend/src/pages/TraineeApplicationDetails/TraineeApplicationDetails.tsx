@@ -1,9 +1,9 @@
-import { 
-  Paper, 
-  Title, 
-  Group, 
-  Button, 
-  Text, 
+import {
+  Paper,
+  Title,
+  Group,
+  Button,
+  Text,
   Stack,
   Grid,
   ActionIcon,
@@ -19,20 +19,21 @@ import {
   IconCalendar,
   IconWorld,
   IconHelpCircle,
-  IconTarget
+  IconTarget,
+  IconUser
 } from '@tabler/icons-react';
 import { TraineeApplication } from '../../types/designed';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
-const TraineeApplicationDetails : React.FC = () => {
+const TraineeApplicationDetails: React.FC = () => {
 
-    const { application_id } = useParams()
+  const { application_id } = useParams()
 
-    useEffect(() => {
-        // fetch the actual application from the backend using the id
-        console.log(application_id)
-    }, [])
+  useEffect(() => {
+    // fetch the actual application from the backend using the id
+    console.log(application_id)
+  }, [])
 
   const navigate = useNavigate()
 
@@ -53,9 +54,9 @@ const TraineeApplicationDetails : React.FC = () => {
     <Container size="md" p="md">
       {/* Header */}
       <Group mb="lg" justify="flex-start" align="center">
-        <ActionIcon 
-          variant="subtle" 
-          color="blue" 
+        <ActionIcon
+          variant="subtle"
+          color="blue"
           size="lg"
           aria-label="Back"
         >
@@ -72,9 +73,12 @@ const TraineeApplicationDetails : React.FC = () => {
           {/* Left Column */}
           <Grid.Col span={{ base: 12, md: 6 }}>
             <Stack>
-              <Title order={3}>{details.fullname}</Title>
+              <Group mb="lg" gap="xs">
+                <IconUser size={18} />
+                <Text fw={700} size="lg">{details.fullname}</Text>
+              </Group>
               <Group gap="xs">
-                <Text fw={500} w={80}>ID:</Text>
+                <Text fw={500}>ID:</Text>
                 <Text>{details.id}</Text>
               </Group>
               <Group gap="xs">

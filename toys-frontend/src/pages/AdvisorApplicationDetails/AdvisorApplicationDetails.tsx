@@ -1,9 +1,9 @@
-import { 
-  Paper, 
-  Title, 
-  Group, 
-  Button, 
-  Text, 
+import {
+  Paper,
+  Title,
+  Group,
+  Button,
+  Text,
   Stack,
   Grid,
   ActionIcon,
@@ -16,7 +16,8 @@ import {
   IconPhone,
   IconBook2,
   IconBriefcase,
-  IconFileDescription
+  IconFileDescription,
+  IconUser
 } from '@tabler/icons-react';
 import { AdvisorApplication } from '../../types/designed';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -34,19 +35,20 @@ const AdvisorApplicationDetails: React.FC = () => {
   const details: AdvisorApplication = {
     id: "99001122",
     high_school: "DOGA KOLEJI",
+    fullname: "Linda Doe",
     phone: "+8889990000",
     major: "ECONOMICS",
     application_explanation: "I want to help guide new students through their academic journey and share my experiences to help them succeed.",
-    experience: "3 years of mentoring experience in student clubs, organized orientation programs for new students, worked as a teaching assistant for 2 semesters."
+    experience: "4 events"
   };
 
   return (
     <Container size="md" p="md">
       {/* Header */}
       <Group mb="lg" justify="flex-start" align="center">
-        <ActionIcon 
-          variant="subtle" 
-          color="blue" 
+        <ActionIcon
+          variant="subtle"
+          color="blue"
           size="lg"
           aria-label="Back"
           onClick={() => navigate(-1)}
@@ -60,12 +62,18 @@ const AdvisorApplicationDetails: React.FC = () => {
 
       {/* Main Content */}
       <Paper shadow="sm" radius="md" p="xl" withBorder>
+        {/* Applicant Name */}
+        <Group mb="lg" gap="xs">
+          <IconUser size={18} />
+          <Text fw={700} size="lg">{details.fullname}</Text>
+        </Group>
+
         <Grid>
           {/* Left Column */}
           <Grid.Col span={{ base: 12, md: 6 }}>
             <Stack>
               <Group gap="xs">
-                <Text fw={500} w={80}>ID:</Text>
+                <Text fw={500} >ID:</Text>
                 <Text>{details.id}</Text>
               </Group>
               <Group gap="xs">
@@ -109,11 +117,12 @@ const AdvisorApplicationDetails: React.FC = () => {
           <div>
             <Group gap="xs" mb="xs">
               <IconBriefcase size={18} />
-              <Text fw={500}>Relevant Experience</Text>
+              <Text fw={500}>Experience</Text>
+              <Text ml={26}>
+                {details.experience}
+              </Text>
             </Group>
-            <Text ml={26}>
-              {details.experience}
-            </Text>
+
           </div>
         </Stack>
 

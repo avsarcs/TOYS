@@ -75,6 +75,7 @@ export interface TraineeApplication {
 export interface AdvisorApplication {
   id: string,
   high_school: string,
+  fullname: string,
   phone: string,
   major: string,
   application_explanation : string,
