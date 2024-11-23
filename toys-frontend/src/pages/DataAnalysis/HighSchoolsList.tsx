@@ -2,6 +2,8 @@ import React from "react";
 import {Space, Container, Text} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
+import HighSchoolDetails from "./HighSchoolDetails.tsx";
+import HighSchoolAdd from "./HighSchoolAdd.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -143,9 +145,17 @@ const data = [
 const HighSchoolsList: React.FC = () => {
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
+    const [selectedHighSchool, setSelectedHighSchool] = React.useState<any>(null);
+    const [detailsModalOpened, setDetailsModalOpened] = React.useState(false);
+    const [addModalOpened, setAddModalOpened] = React.useState(false);
 
-    function openDetails(): void {
-        throw new Error("Function not implemented.");
+    function openDetails(highSchool: any): void {
+        setSelectedHighSchool(highSchool);
+        setDetailsModalOpened(true);
+    }
+
+    function addHighSchool() {
+        setAddModalOpened(true);
     }
 
     const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
@@ -162,12 +172,12 @@ const HighSchoolsList: React.FC = () => {
 
     const HighSchoolsTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <HighSchoolsTable data={data} search={selectedSearch} cities={selectedCities} openDetails={openDetails}/>
+        <HighSchoolsTable data={data} search={selectedSearch} cities={selectedCities} openDetails={openDetails} addHighSchool={addHighSchool}/>
         <Space h="xs" />
     </Container>
 
 
-    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full bg-blue-600 lg:bg-gradient-to-bl lg:from-50% lg:from-blue-600 lg:via-blue-500 lg:to-red-300"}>
+    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         <Space h="xl"/>
         {HeaderTextContainer}
         <hr style={{border: '1px solid black'}}/>
@@ -177,6 +187,21 @@ const HighSchoolsList: React.FC = () => {
         <Space h="xl"/>
         {HighSchoolsTableContainer}
         <Space h="xl"/>
+        {selectedHighSchool && (
+            <HighSchoolDetails
+                opened={detailsModalOpened}
+                onClose={() => setDetailsModalOpened(false)}
+                highSchool={selectedHighSchool}
+            />
+        )}
+        {
+            <HighSchoolAdd
+                opened={addModalOpened}
+                onClose={() => setAddModalOpened(false)}
+            />
+
+        }
+        <Space h="xl" />
     </div>
 }
 
