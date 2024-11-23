@@ -10,7 +10,7 @@ interface DetailsButtonProps {
 }
 
 /**
- * Dropdown menu for selecting a year.
+ * Button for opening high school details modal.
  * @param openDetails Function that opens the details modal.
  * @param highSchool Name of the associated high school.
  */

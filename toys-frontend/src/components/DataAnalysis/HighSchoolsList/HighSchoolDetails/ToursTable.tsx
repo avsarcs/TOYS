@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
 import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container} from '@mantine/core';
-import {IconSelector, IconChevronDown, IconChevronUp} from '@tabler/icons-react';
-import DetailsButton from "./DetailsButton.tsx";
-import AddButton from "./AddButton.tsx";
+import {IconSelector, IconChevronDown, IconChevronUp, IconStarFilled, IconStarHalfFilled, IconStar} from '@tabler/icons-react';
+
+function renderStars(rating: number) {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            stars.push(<IconStarFilled key={i} style={{ width: rem(16), height: rem(16) }} />);
+        } else if (i - rating < 1) {
+            stars.push(<IconStarHalfFilled key={i} style={{ width: rem(16), height: rem(16) }} />);
+        } else {
+            stars.push(<IconStar key={i} style={{ width: rem(16), height: rem(16) }} />);
+        }
+    }
+    return <div style={{display: 'flex', justifyContent: 'center'}}>{stars}</div>;
+}
 
 interface RowData {
-    highSchool: string;
-    city: string;
-    ranking: string;
-    priority: string;
+    date: string;
+    attendance: number;
+    type: string;
+    reviewID: string;
+    reviewRating: number;
+    contact: string;
 }
 
 interface ThProps {
@@ -16,15 +30,6 @@ interface ThProps {
     reversed: boolean;
     sorted: boolean;
     onSort(): void;
-}
-
-function normalizeString(str: string) {
-    return str
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/ı/g, 'i')
-        .replace(/İ/g, 'i')
-        .toLowerCase();
 }
 
 function Th({children, reversed, sorted, onSort}: ThProps) {
@@ -45,86 +50,68 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
     );
 }
 
-function filterData(data: RowData[], search: string, cities: string[]) {
-    const query = normalizeString(search.trim());
-    return data.filter((item) =>
-        normalizeString(item["highSchool"]).includes(query) &&
-        (cities.length === 0 || cities.includes(item["city"]))
-    );
-}
-
 function sortData(
     data: RowData[],
-    payload: {sortBy: keyof RowData | null; reversed: boolean; search: string; cities: string[]}
+    payload: {sortBy: keyof RowData | null; reversed: boolean}
 ) {
     const { sortBy } = payload;
 
     if (!sortBy) {
-        return filterData(data, payload.search, payload.cities);
+        return data
     }
 
-    return filterData(
-        [...data].sort((a, b) => {
-            if (payload.reversed) {
-                if(sortBy === 'ranking' || sortBy === 'priority') {
-                    return Number(b[sortBy]) - Number(a[sortBy]);
-                }
-                else {
-                    return b[sortBy].localeCompare(a[sortBy]);
-                }
-            }
-
-            if(sortBy === 'ranking' || sortBy === 'priority') {
-                return Number(a[sortBy]) - Number(b[sortBy]);
+    return [...data].sort((a, b) => {
+        if (payload.reversed) {
+            if(sortBy === 'attendance' || sortBy === 'type' || sortBy === 'reviewRating') {
+                return Number(b[sortBy]) - Number(a[sortBy]);
             }
             else {
-                return a[sortBy].localeCompare(b[sortBy]);
+                return b[sortBy].localeCompare(a[sortBy]);
             }
-        }),
-        payload.search,
-        payload.cities
-    );
+        }
+
+        if(sortBy === 'attendance' || sortBy === 'type' || sortBy === 'reviewRating') {
+            return Number(a[sortBy]) - Number(b[sortBy]);
+        }
+        else {
+            return a[sortBy].localeCompare(b[sortBy]);
+        }
+    })
 }
 
-interface HighSchoolsTableProps {
+interface ToursTableProps {
     data: RowData[];
-    search: string;
-    cities: string[];
-    openDetails: (highSchool: string) => void;
-    addHighSchool: () => void;
 }
 
-const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities, openDetails, addHighSchool}) => {
+const ToursTable: React.FC<ToursTableProps> = ({data}) => {
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
+    const itemsPerPage = 5;
 
     const setSorting = (field: keyof RowData) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        setSortedData(sortData(data, { sortBy: field, reversed, search, cities }));
+        setSortedData(sortData(data, { sortBy: field, reversed}));
     };
 
     React.useEffect(() => {
-        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search, cities }));
-    }, [data, reverseSortDirection, search, cities, sortBy]);
+        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection}));
+    }, [data, reverseSortDirection, sortBy]);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedData = sortedData.slice(startIndex, endIndex);
 
     const rows = paginatedData.map((row) => (
-        <Table.Tr key={row.highSchool}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.highSchool}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.city}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.ranking}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.priority}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
-                <DetailsButton openDetails={openDetails} highSchool={row.highSchool}/>
-            </Table.Td>
+        <Table.Tr key={row.date}>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.date}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating)}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
         </Table.Tr>
     ));
 
@@ -136,46 +123,50 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities
                 <Table.Tbody>
                     <Table.Tr>
                         <Th
-                            sorted={sortBy === 'highSchool'}
+                            sorted={sortBy === 'date'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('highSchool')}
+                            onSort={() => setSorting('date')}
                         >
                             <Text size={"xl"}>
-                                Lise
+                                Tarih
                             </Text>
                         </Th>
                         <Th
-                            sorted={sortBy === 'city'}
+                            sorted={sortBy === 'attendance'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('city')}
+                            onSort={() => setSorting('attendance')}
                         >
                             <Text size={"xl"}>
-                                Şehir
+                                Katılımcı Sayısı
                             </Text>
                         </Th>
                         <Th
-                            sorted={sortBy === 'ranking'}
+                            sorted={sortBy === 'type'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('ranking')}
+                            onSort={() => setSorting('type')}
                         >
                             <Text size={"xl"}>
-                                LGS Sıralaması
+                                Tür
                             </Text>
                         </Th>
                         <Th
-                            sorted={sortBy === 'priority'}
+                            sorted={sortBy === 'reviewRating'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('priority')}
+                            onSort={() => setSorting('reviewRating')}
                         >
                             <Text size={"xl"}>
-                                Tur Önceliği
+                                Değerlendirme
                             </Text>
                         </Th>
-                        <Table.Th style={{padding: 0, textAlign: "center"}}>
-                            <Group justify="center">
-                                <AddButton addHighSchool={addHighSchool}/>
-                            </Group>
-                        </Table.Th>
+                        <Th
+                            sorted={sortBy === 'contact'}
+                            reversed={reverseSortDirection}
+                            onSort={() => setSorting('contact')}
+                        >
+                            <Text size={"xl"}>
+                                İletişim
+                            </Text>
+                        </Th>
                     </Table.Tr>
                 </Table.Tbody>
                 <Space h="md"/>
@@ -186,7 +177,7 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities
                         <Table.Tr>
                             <Table.Td colSpan={Object.keys(data[0]).length}>
                                 <Text fw={500} ta="center">
-                                    Lise bulunamadı.
+                                    Tur bulunamadı.
                                 </Text>
                             </Table.Td>
                         </Table.Tr>
@@ -201,5 +192,4 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities
     );
 }
 
-export default HighSchoolsTable;
-
+export default ToursTable;
