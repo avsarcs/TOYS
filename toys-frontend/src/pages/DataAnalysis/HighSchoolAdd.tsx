@@ -36,6 +36,8 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
         }
 
         // TODO: Add the high school to the database
+
+        window.location.reload();
     };
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>

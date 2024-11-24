@@ -54,6 +54,8 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
         }
 
         // TODO: Edit the high school in the database
+
+        window.location.reload();
     };
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
