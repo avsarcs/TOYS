@@ -187,6 +187,7 @@ const HighSchoolsList: React.FC = () => {
         <Space h="xl"/>
         {HighSchoolsTableContainer}
         <Space h="xl"/>
+        <Space h="xl" />
         {selectedHighSchool && (
             <HighSchoolDetails
                 opened={detailsModalOpened}
@@ -199,9 +200,7 @@ const HighSchoolsList: React.FC = () => {
                 opened={addModalOpened}
                 onClose={() => setAddModalOpened(false)}
             />
-
         }
-        <Space h="xl" />
     </div>
 }
 

@@ -17,7 +17,7 @@ const defaultContainerStyle = {
 
 //test data
 const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
-const prioirites = ["1", "2", "3", "4", "5"];
+const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolAddProps {
     opened: boolean;
@@ -50,11 +50,11 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector cities={cities} priorities={prioirites} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector cities={cities} priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 
-    const AddButtonContainer = <Container style={{...defaultContainerStyle, display: 'flex', justifyContent: 'center'}}>
+    const AddButtonContainer = <Container style={{display: 'flex', justifyContent: 'center'}}>
         <Space h="xs" />
         <AddButton addHighSchool={handleAddButtonClick}/>
         <Space h="xs" />
