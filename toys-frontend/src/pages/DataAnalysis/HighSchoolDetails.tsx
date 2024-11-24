@@ -5,6 +5,7 @@ import ToursTable from "../../components/DataAnalysis/HighSchoolsList/HighSchool
 import StudentsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/StudentsTable.tsx";
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/BackButton.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/EditButton.tsx";
+import HighSchoolEdit from "./HighSchoolEdit.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -72,6 +73,12 @@ interface HighSchoolDetailsProps {
 }
 
 const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, highSchool}) => {
+    const [editModalOpened, setEditModalOpened] = React.useState(false);
+
+    function editHighSchool() {
+        setEditModalOpened(true);
+    }
+
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
             {highSchool}
@@ -117,7 +124,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                             {HeaderTextContainer}
                         </Container>
                         <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
-                            <EditButton onEdit={onClose}/>
+                            <EditButton onEdit={editHighSchool}/>
                         </Container>
                     </Group>
 
@@ -135,6 +142,15 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
             </Modal.Body>
         </Modal.Content>
+        {
+            <HighSchoolEdit
+                opened={editModalOpened}
+                onClose={() => setEditModalOpened(false)}
+                currentName={highSchool}
+                currentCity={data.city}
+                currentPriority={data.priority.toString()}
+            />
+        }
     </Modal.Root>
 
 }
