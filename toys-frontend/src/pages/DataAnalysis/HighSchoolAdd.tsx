@@ -48,7 +48,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
 
     const InputSelectorContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}} fw={700}>
+        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />

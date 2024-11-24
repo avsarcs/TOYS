@@ -6,6 +6,7 @@ import StudentsTable from "../../components/DataAnalysis/HighSchoolsList/HighSch
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/BackButton.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/EditButton.tsx";
 import HighSchoolEdit from "./HighSchoolEdit.tsx";
+import HighSchoolStudentDetails from "./HighSchoolStudentDetails.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -74,9 +75,16 @@ interface HighSchoolDetailsProps {
 
 const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, highSchool}) => {
     const [editModalOpened, setEditModalOpened] = React.useState(false);
+    const [studentDetailsModalOpened, setStudentDetailsModalOpened] = React.useState(false);
+    const [studentDetailsModalYear, setStudentDetailsModalYear] = React.useState(0);
 
     function editHighSchool() {
         setEditModalOpened(true);
+    }
+
+    function showStudentDetails(year: number) {
+        setStudentDetailsModalOpened(true);
+        setStudentDetailsModalYear(year);
     }
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
@@ -93,7 +101,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     const ToursTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}} fw={700}>
+        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bu Okul İçin Düzenlenmiş Turlar
         </Text>
         <Space h="xs" />
@@ -103,11 +111,11 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     const StudentsTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}} fw={700}>
+        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bilkent'e Gelen Mezunlar
         </Text>
         <Space h="xs" />
-        <StudentsTable data={data["students"]}/>
+        <StudentsTable data={data["students"]} openDetails={showStudentDetails}/>
         <Space h="xs" />
     </Container>
 
@@ -149,6 +157,14 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 currentName={highSchool}
                 currentCity={data.city}
                 currentPriority={data.priority.toString()}
+            />
+        }
+        {
+            <HighSchoolStudentDetails
+                opened={studentDetailsModalOpened}
+                onClose={() => setStudentDetailsModalOpened(false)}
+                year={studentDetailsModalYear}
+                name={highSchool}
             />
         }
     </Modal.Root>

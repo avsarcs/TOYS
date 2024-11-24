@@ -11,20 +11,20 @@ const DetailsTable: React.FC<DetailsTableProps> = ({priority, ranking, city}) =>
     return <Group>
         <Container style={{ flex: '1'}}>
             <Space h="xs" />
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>Öncelik</Text>
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>{priority}</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Öncelik</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>{priority}</Text>
             <Space h="xs" />
         </Container>
         <Container style={{ flex: '1'}}>
             <Space h="xs" />
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>LGS Sıralaması</Text>
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>{ranking}</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>LGS Sıralaması</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>{ranking}</Text>
             <Space h="xs" />
         </Container>
         <Container style={{ flex: '1'}}>
             <Space h="xs" />
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>Şehir</Text>
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>{city}</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Şehir</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>{city}</Text>
             <Space h="xs" />
         </Container>
     </Group>

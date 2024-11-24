@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container, Button} from '@mantine/core';
+import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container} from '@mantine/core';
 import {IconSelector, IconChevronDown, IconChevronUp} from '@tabler/icons-react';
+import DetailsButton from "./DetailsButton.tsx";
 
 interface RowData {
     year: number;
@@ -53,9 +54,10 @@ function sortData(
 
 interface StudentsTableProps {
     data: RowData[];
+    openDetails: (year: number) => void;
 }
 
-const StudentsTable: React.FC<StudentsTableProps> = ({data}) => {
+const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
@@ -82,7 +84,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data}) => {
             <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.year}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.count}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
-                <Button/>
+                <DetailsButton year={row.year} openDetails={openDetails} />
             </Table.Td>
         </Table.Tr>
     ));
