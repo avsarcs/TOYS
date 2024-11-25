@@ -8,6 +8,12 @@ import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
 import HighSchoolsList from "./pages/DataAnalysis/HighSchoolsList.tsx";
+import GroupTourApplication from "./pages/GroupTourApplication/GroupTourApplication.tsx";
+import ApplicationSuccess from "./pages/ApplicationSuccess/ApplicationSuccess.tsx";
+import IndividualTourApplication from "./pages/IndividualTourApplication/IndividualTourApplication.tsx";
+import ToysApplications from "./pages/ToysApplications/ToysApplications.tsx";
+import TraineeApplicationDetails from "./pages/TraineeApplicationDetails/TraineeApplicationDetails.tsx";
+import AdvisorApplicationDetails from "./pages/AdvisorApplicationDetails/AdvisorApplicationDetails.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -16,7 +22,7 @@ function App() {
     <>
       <div className="app-container">
         {hasNavbar(location) && <Navbar />}
-        <main>
+        <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />}></Route>
@@ -24,6 +30,12 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/universitieslist" element={<UniversitiesList />} />
             <Route path="/highschoolslist" element={<HighSchoolsList />} />
+            <Route path="/group-tour-application" element={<GroupTourApplication />} />
+            <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
+            <Route path="/application-success" element={<ApplicationSuccess/>}/>
+            <Route path="/toys-applications" element={<ToysApplications/>} />
+            <Route path="/trainee-application-details/:application_id" element={<TraineeApplicationDetails/>} />
+            <Route path="/advisor-application-details/:application_id" element={<AdvisorApplicationDetails/>} />
           </Routes>
         </main>
       </div>

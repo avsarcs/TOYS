@@ -33,6 +33,11 @@ public class internal_user_tours_controller {
         tourService.enrollInTour(authToken, tid);
     }
 
+    @PostMapping("/internal/user/tours/withdraw")
+    public void withdrawFromTour(@RequestParam String tid, @RequestParam String authToken) {
+        tourService.withdrawFromTour(authToken, tid);
+    }
+
     @PostMapping("/internal/user/tours/invite")
     public void inviteToTour(@RequestParam String tid, @RequestParam String guid, @RequestParam String authToken) {
         tourService.inviteToTour(authToken, tid, guid);

@@ -5,16 +5,23 @@ import auth.PermissionMap;
 import auth.services.JWTService;
 import dbm.dbe;
 import enums.roles.USER_ROLE;
+import mailService.MailServiceGateway;
+import mailService.MailType;
 import models.data.tours.TourModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class ResponseManager {
 
     @Autowired
     dbe db;
+
+    @Autowired
+    MailServiceGateway mailServiceGateway;
 
     public HttpStatus respondToTourRequest(String tid, String response, String authToken) {
         // validate token
@@ -54,6 +61,7 @@ public class ResponseManager {
         // if all valid, update the tour
         tour.accept_deny(responseEnum);
         if(db.updateTour(tour, tid)) {
+            mailServiceGateway.sendMail(tour.getApplication().getApplicant().getEmail(), MailType.TOUR_APPLICATION_ACCEPTANCE, Map.of("tour_id", tour.getId()));
             return HttpStatus.OK;
         }
         // return 500 if the server could not update for some reason

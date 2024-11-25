@@ -4,6 +4,9 @@ import auth.Permission;
 import auth.PermissionMap;
 import auth.services.JWTService;
 import dbm.dbe;
+import mailService.MailServiceGateway;
+import mailService.MailType;
+import models.data.tours.TourModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,12 +15,16 @@ import respond.tours.AcceptDeny;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RequestService {
 
     @Autowired
     dbe db;
+
+    @Autowired
+    MailServiceGateway mailServiceGateway;
 
     public void requestChanges(TourChangeRequestModel changeRequest) {
         // check if there is an existing request with the same id
@@ -31,7 +38,13 @@ public class RequestService {
 
         // otherwise, save the request to the database
         db.addRequest(changeRequest);
-        // TODO: notify the respnsible person
+
+        for (TourModel tour : db.fetchTours().values()) {
+            if (tour.getId().equals(changeRequest.getTour_id())) {
+                mailServiceGateway.sendMail(tour.getApplication().getApplicant().getEmail(), MailType.TOUR_CHANGE, Map.of("tourModel", changeRequest.getRequestedChanges().toString()));
+                break;
+            }
+        }
     }
 
     public void respondToRequest(String idt, String responseString) {
@@ -67,6 +80,14 @@ public class RequestService {
 
             // save the updated request to the database
             db.updateRequest(request);
+
+            for (TourModel tour : db.fetchTours().values()) {
+                if (tour.getId().equals(request.getTour_id())) {
+                    MailType mailtype = response == AcceptDeny.ACCEPT ? MailType.TOUR_CHANGE_CONFIRMATION : MailType.TOUR_CHANGE_REJECTION;
+                    mailServiceGateway.sendMail(tour.getApplication().getApplicant().getEmail(), mailtype , Map.of("tourModel", request.getRequestedChanges().toString()));
+                    break;
+                }
+            }
 
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something happened, I hope you are not debugging this cuz I'm not giving any details >:)");
