@@ -7,6 +7,7 @@ import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchool
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/EditButton.tsx";
 import HighSchoolEdit from "./HighSchoolEdit.tsx";
 import HighSchoolStudentDetails from "./HighSchoolStudentDetails.tsx";
+import HighSchoolTourReviewDetails from "./HighSchoolTourReviewDetails.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -35,7 +36,7 @@ const data = {
             "date": "25/11/2024",
             "attendance": 60,
             "type": "Tur",
-            "reviewRating": 5,
+            "reviewRating": null,
             "reviewID": "12346",
             "contact": "john.doe@example.com"
         },
@@ -77,6 +78,8 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
     const [editModalOpened, setEditModalOpened] = React.useState(false);
     const [studentDetailsModalOpened, setStudentDetailsModalOpened] = React.useState(false);
     const [studentDetailsModalYear, setStudentDetailsModalYear] = React.useState(0);
+    const [tourReviewDetailsModalOpened, setTourReviewDetailsModalOpened] = React.useState(false);
+    const [tourReviewDetailsModalDate, setTourReviewDetailsModalDate] = React.useState("");
 
     function editHighSchool() {
         setEditModalOpened(true);
@@ -85,6 +88,11 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
     function showStudentDetails(year: number) {
         setStudentDetailsModalOpened(true);
         setStudentDetailsModalYear(year);
+    }
+
+    function showTourReviewDetails(date: string) {
+        setTourReviewDetailsModalOpened(true);
+        setTourReviewDetailsModalDate(date);
     }
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
@@ -105,7 +113,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
             Bu Okul İçin Düzenlenmiş Turlar
         </Text>
         <Space h="xs" />
-        <ToursTable data={data["tours"]}/>
+        <ToursTable data={data["tours"]} openDetails={showTourReviewDetails}/>
         <Space h="xs" />
     </Container>
 
@@ -165,6 +173,14 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 onClose={() => setStudentDetailsModalOpened(false)}
                 year={studentDetailsModalYear}
                 name={highSchool}
+            />
+        }
+        {
+            <HighSchoolTourReviewDetails
+                opened={tourReviewDetailsModalOpened}
+                onClose={() => setTourReviewDetailsModalOpened(false)}
+                tourDate={tourReviewDetailsModalDate}
+                highSchoolName={highSchool}
             />
         }
     </Modal.Root>

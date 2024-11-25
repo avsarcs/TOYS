@@ -5,13 +5,13 @@ import {Button} from '@mantine/core';
  * Properties for see details button.
  */
 interface DetailsButtonProps {
-    openDetails: (year: number) => void; // Function that opens the details modal.
+    openDetails: (year: number) => void; // Function that opens the student details modal.
     year: number; // Year to show details of.
 }
 
 /**
- * Button for opening high school details modal.
- * @param openDetails Function that opens the details modal.
+ * Button for opening high school student details modal.
+ * @param openDetails Function that opens the student details modal.
  * @param year Year to show details of.
  */
 const DetailsButton: React.FC<DetailsButtonProps> = ({openDetails, year}) => {

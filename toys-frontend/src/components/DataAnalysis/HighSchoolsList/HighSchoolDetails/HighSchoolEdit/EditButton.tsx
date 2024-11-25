@@ -23,7 +23,7 @@ const EditButton: React.FC<EditButtonProps> = ({editHighSchool}) => {
         style={{width: "60%"}}
         leftSection={<IconPencil style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
     >
-        <text>Liseyi Düzenleyin</text>
+        <text>Liseyi Düzenle</text>
     </Button>
 }
 

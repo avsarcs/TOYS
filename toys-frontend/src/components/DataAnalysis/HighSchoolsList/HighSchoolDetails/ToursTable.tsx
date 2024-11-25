@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container} from '@mantine/core';
 import {IconSelector, IconChevronDown, IconChevronUp, IconStarFilled, IconStarHalfFilled, IconStar} from '@tabler/icons-react';
+import ReviewButton from "./ReviewButton.tsx";
 
-function renderStars(rating: number) {
+function renderStars(rating: number | null, date: string, openDetails: (date: string) => void) {
+    if(rating === null) {
+        return <Text>Yok</Text>;
+    }
+
     const stars = [];
     for (let i = 1; i <= 5; i++) {
         if (i <= rating) {
@@ -13,7 +18,8 @@ function renderStars(rating: number) {
             stars.push(<IconStar key={i} style={{ width: rem(16), height: rem(16) }} />);
         }
     }
-    return <div style={{display: 'flex', justifyContent: 'center'}}>{stars}</div>;
+
+    return <ReviewButton label={stars} openReview={openDetails} date={date} />;
 }
 
 interface RowData {
@@ -21,7 +27,7 @@ interface RowData {
     attendance: number;
     type: string;
     reviewID: string;
-    reviewRating: number;
+    reviewRating: number | null;
     contact: string;
 }
 
@@ -62,18 +68,25 @@ function sortData(
 
     return [...data].sort((a, b) => {
         if (payload.reversed) {
-            if(sortBy === 'attendance' || sortBy === 'type' || sortBy === 'reviewRating') {
+            if (sortBy === 'attendance' || sortBy === 'reviewRating') {
                 return Number(b[sortBy]) - Number(a[sortBy]);
-            }
-            else {
+            } else if (sortBy === 'date') {
+                const [dayB, monthB, yearB] = b.date.split('/').map(Number);
+                const [dayA, monthA, yearA] = a.date.split('/').map(Number);
+
+                return new Date(yearB, monthB - 1, dayB).getTime() - new Date(yearA, monthA - 1, dayA).getTime();
+            } else {
                 return b[sortBy].localeCompare(a[sortBy]);
             }
         }
 
-        if(sortBy === 'attendance' || sortBy === 'type' || sortBy === 'reviewRating') {
+        if (sortBy === 'attendance' || sortBy === 'reviewRating') {
             return Number(a[sortBy]) - Number(b[sortBy]);
-        }
-        else {
+        } else if (sortBy === 'date') {
+            const [dayA, monthA, yearA] = a.date.split('/').map(Number);
+            const [dayB, monthB, yearB] = b.date.split('/').map(Number);
+            return new Date(yearA, monthA - 1, dayA).getTime() - new Date(yearB, monthB - 1, dayB).getTime();
+        } else {
             return a[sortBy].localeCompare(b[sortBy]);
         }
     })
@@ -81,12 +94,13 @@ function sortData(
 
 interface ToursTableProps {
     data: RowData[];
+    openDetails: (date: string) => void;
 }
 
-const ToursTable: React.FC<ToursTableProps> = ({data}) => {
-    const [sortedData, setSortedData] = useState(data);
-    const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
-    const [reverseSortDirection, setReverseSortDirection] = useState(false);
+const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
+    const [sortBy, setSortBy] = useState<keyof RowData>('date');
+    const [reverseSortDirection, setReverseSortDirection] = useState(true);
+    const [sortedData, setSortedData] = useState(() => sortData(data, { sortBy: 'date', reversed: true }));
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
@@ -110,7 +124,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data}) => {
             <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.date}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating)}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.date, openDetails)}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
         </Table.Tr>
     ));

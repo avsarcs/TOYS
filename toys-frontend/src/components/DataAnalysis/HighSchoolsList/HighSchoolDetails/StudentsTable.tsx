@@ -58,9 +58,9 @@ interface StudentsTableProps {
 }
 
 const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
-    const [sortedData, setSortedData] = useState(data);
-    const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
-    const [reverseSortDirection, setReverseSortDirection] = useState(false);
+    const [sortBy, setSortBy] = useState<keyof RowData>('year');
+    const [reverseSortDirection, setReverseSortDirection] = useState(true);
+    const [sortedData, setSortedData] = useState(() => sortData(data, { sortBy: 'year', reversed: true }));
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
