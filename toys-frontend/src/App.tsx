@@ -7,6 +7,7 @@ import LoginPage from "./pages/Login/LoginPage.tsx";
 import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
+import HighSchoolsList from "./pages/DataAnalysis/HighSchoolsList.tsx";
 import GroupTourApplication from "./pages/GroupTourApplication/GroupTourApplication.tsx";
 import ApplicationSuccess from "./pages/ApplicationSuccess/ApplicationSuccess.tsx";
 import IndividualTourApplication from "./pages/IndividualTourApplication/IndividualTourApplication.tsx";
@@ -28,6 +29,7 @@ function App() {
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/universitieslist" element={<UniversitiesList />} />
+            <Route path="/highschoolslist" element={<HighSchoolsList />} />
             <Route path="/group-tour-application" element={<GroupTourApplication />} />
             <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
             <Route path="/application-success" element={<ApplicationSuccess/>}/>
