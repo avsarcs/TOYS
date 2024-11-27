@@ -1,9 +1,9 @@
 # Group Tour Model
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
-	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
-	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name" ] ],
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"},
+	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}} ... ],
+	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"} } ],
 	"type": "group", // frontend will do conditional rendering based on this property
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"accepted_time": "2024-09-30T09:00:00Z",
@@ -62,8 +62,8 @@
 ```
 {
 	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
-	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
-	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name" ] ],
+	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}} ... ],
+	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"} } ],
 	"type": "individual",
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
