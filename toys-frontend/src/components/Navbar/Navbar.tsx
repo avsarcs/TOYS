@@ -34,7 +34,15 @@ const mockdata = [
       { label: 'Releases schedule', link: '/' },
     ],
   },
-  { label: 'Analytics', icon: IconPresentationAnalytics },
+  {
+    label: 'Üniversite Analizi',
+    icon: IconPresentationAnalytics,
+    links: [
+      { label: 'Tüm Üniversiteler', link: '/universitieslist' },
+      { label: 'Rakip Üniversiteler', link: '/' },
+      { label: 'Üniversite Karşılaştırma', link: '/comparison' },
+    ],
+  },
   { label: 'Contracts', icon: IconFileAnalytics },
   { label: 'Settings', icon: IconAdjustments },
   {

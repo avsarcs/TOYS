@@ -1,6 +1,5 @@
 import React from "react";
 import {Space, Container, Text} from '@mantine/core';
-import Navbar from "../../components/DataAnalysis/Navbar.tsx";
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
@@ -18,7 +17,7 @@ const defaultContainerStyle = {
 
 //test data
 const universities: string[] = ["Koç", "ODTÜ", "İYTE"];
-const departments = {"Bilkent": ["CS", "EE", "IE"], "Koç": ["CS", "Psychology", "IE"], "ODTÜ": ["CS", "EE", "IE"], "İYTE": ["CENG", "EE", "Architecture"]};
+const departments = {"Bilkent": ["CS", "EE", "IE"], "Koç": ["CS", "Psychology", "IE"], "ODTÜ": ["CENG", "EE", "IE"], "İYTE": ["CENG", "EE", "Architecture"]};
 const years: string[] = ["2018", "2019", "2020"];
 const data = {
     "2020": [
@@ -109,7 +108,6 @@ const Comparison: React.FC = () => {
     }
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full bg-blue-600 lg:bg-gradient-to-bl lg:from-50% lg:from-blue-600 lg:via-blue-500 lg:to-red-300"}>
-        <Navbar activeIndex={2}/>
         <Space h="xl"/>
         {HeaderTextContainer}
         <hr style={{border: '1px solid black'}}/>
