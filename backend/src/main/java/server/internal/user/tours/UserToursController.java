@@ -1,7 +1,6 @@
-package internal.user.tours;
+package server.internal.user.tours;
 
-import apply.tour.request_changes.RequestService;
-import models.data.tours.TourModel;
+import server.models.TourRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class internal_user_tours_controller {
+public class UserToursController {
 
     @Autowired
-    TourService tourService;
+    UserTourService tourService;
 
     @GetMapping("/internal/user/tours")
-    public List<TourModel> getTours(@RequestParam String authToken) {
+    public List<TourRegistry> getTours(@RequestParam String authToken) {
         return tourService.getTours(authToken);
     }
 
@@ -38,12 +37,12 @@ public class internal_user_tours_controller {
         tourService.withdrawFromTour(authToken, tid);
     }
 
-    @PostMapping("/internal/user/tours/invite")
+    @PostMapping("/server/internal/user/tours/invite")
     public void inviteToTour(@RequestParam String tid, @RequestParam String guid, @RequestParam String authToken) {
         tourService.inviteToTour(authToken, tid, guid);
     }
 
-    @PostMapping("/internal/user/tours/respond")
+    @PostMapping("/server/internal/user/tours/respond")
     public void respondToTourInvite(@RequestParam String idt, @RequestParam String response, @RequestParam String authToken) {
         tourService.respondToTourInvite(authToken, idt, response);
     }

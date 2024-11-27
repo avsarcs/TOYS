@@ -6,6 +6,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
+import org.springframework.web.server.ResponseStatusException;
 import server.models.TourRegistry;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,9 @@ public class DBToursService {
 
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
 
+            if (!data.containsKey(tid)) {
+                throw new RuntimeException("Tour with id " + tid + " not found.");
+            }
             return TourRegistry.fromMap((Map<String, Object>) data.get(tid));
 
         } catch (Exception e) {

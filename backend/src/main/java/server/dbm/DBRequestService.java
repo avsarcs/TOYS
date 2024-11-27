@@ -26,6 +26,37 @@ public class DBRequestService {
         this.mapper = Database.getObjectMapper();
     }
 
+    public boolean addRequest(Request request, boolean force) {
+        String document = request.getType().name().toLowerCase();
+        DocumentReference reference = firestore.collection("requests").document(document);
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
+            if (force) {
+                data.put(
+                        request.getRequest_id(),
+                        mapper.convertValue(request, new TypeReference<HashMap<String, Object>>() {
+                        }));
+            } else {
+                data.putIfAbsent(
+                        request.getRequest_id(),
+                        mapper.convertValue(request, new TypeReference<HashMap<String, Object>>() {
+                        }));
+            }
+
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap(document, data),
+                            new TypeReference<HashMap<String, Object>>() {
+                            }));
+
+            System.out.println("Request [" + request.getRequest_id() + "] added to database." + result.get().getUpdateTime());
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to add request to database.");
+            return false;
+        }
+    }
     public boolean addRequest(Request request) {
         String document = request.getType().name().toLowerCase();
         DocumentReference reference = firestore.collection("requests").document(document);
@@ -81,6 +112,7 @@ public class DBRequestService {
                         } else if (type == RequestType.WITHDRAWAL) {
                             // requests.add(WithdrawalRequest.fromMap((Map<String, Object>) entry.getValue()));
                         } else {
+                            System.out.println("ELSED");
                             requests.add(Request.fromMap((Map<String, Object>) entry.getValue()));
                         }
                     }
@@ -88,7 +120,6 @@ public class DBRequestService {
             } else {
                 if (data.containsKey(request_id)) {
                     if (((Map<String,Object>)data.get(request_id)).get("type").equals(type.name())) {
-                        requests.add(Request.fromMap((Map<String, Object>) data.get(request_id)));
                         if (type == RequestType.MODIFICATION) {
                             requests.add(TourModificationRequest.fromMap((Map<String, Object>) data.get(request_id)));
                         } else if (type == RequestType.ASSIGNMENT) {

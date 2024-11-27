@@ -13,9 +13,6 @@ class AuthControllerTest {
     @Autowired
     AuthController authController;
 
-    @Autowired
-    JWTService jwtService;
-
     LoginInfo getAuth(User user) {
         return new LoginInfo(user.getBilkent_id(), user.getAuthInfo().getPassword());
     }
@@ -37,8 +34,7 @@ class AuthControllerTest {
         String token = authController.login(getAuth(Guide.getDefault()));
         assert(token != null);
         assert(token.length() > 0);
-        assert(jwtService.isValid(token));
-        assert (!jwtService.isValid(token + "invalid token"));
-        assert (!jwtService.isValid(token + "invalid token"));
+        assert(authController.isvalid(token));
+        assert (!authController.isvalid(token + "invalid token"));
     }
 }
