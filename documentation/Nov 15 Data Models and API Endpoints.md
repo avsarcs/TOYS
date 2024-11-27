@@ -1,7 +1,7 @@
 # Group Tour Model
 ```
 {
-	"highschool_name": "Ankara Fen Lisesi",
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
 	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name" ] ],
 	"type": "group", // frontend will do conditional rendering based on this property
@@ -27,7 +27,7 @@
 # Group Tour Application Model
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999"}
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"visitor_count": 66,
 	"applicant": {
@@ -43,7 +43,7 @@
 # Individual Tour Application Model
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999"},
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"visitor_count": 4,
@@ -61,7 +61,7 @@
 
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999"},
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
 	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name" ] ],
 	"type": "individual",
@@ -88,7 +88,7 @@
 ```
 {
 	"id": "tour_id"
-	"highschool":{"name": "Ankara Fen", "id": "999"},
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
 	// time field absent for tours AWAITING_MODIFICATION
 	"time"?: "2024-11-15T14:22:14Z",
 	"visitor_count": 34,
@@ -102,7 +102,7 @@
 {
   "fullname": "John Doe",
   "id": "12345678",
-  "highschool":{"name": "Ankara Fen", "id": "999"},
+  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
   "email": "john.doe@example.com",
   "phone": "+1234567890",
   "major": "COMPUTER_SCIENCE",
@@ -129,7 +129,7 @@
   "id": "12345678",
   "fullname": "Mr. Something",
   "phone": "555 555 55 55"
-  "high_school": "High School Not Set",
+  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"}
   "iban": "TR438525023948394",
   "major": "Computer Science",
   "role": "GUIDE" | "TRAINEE" | "ADVISOR"
@@ -146,7 +146,7 @@
 {
   "id": "12345678",
   "fullname": "Mr. Something"
-  "high_school": "High School Not Set",
+  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara"},
   "phone": "555 555 55 55",
   "major": "Computer Science",
   "application_explanation" : "yapyapyap",
