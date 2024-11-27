@@ -6,7 +6,6 @@ import {
   Stack,
   Button,
   Text,
-  Paper,
   Group,
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
@@ -15,11 +14,6 @@ import { GroupApplicationStageProps, IndividualApplicationStageProps } from '../
 interface TimeSlot {
   start: string;
   end: string;
-}
-
-interface SelectedSlot {
-  date: Date;
-  timeSlot: TimeSlot;
 }
 
 const TIME_SLOTS: TimeSlot[] = [
@@ -31,102 +25,74 @@ const TIME_SLOTS: TimeSlot[] = [
 ];
 
 const TimeSlotStage: React.FC<GroupApplicationStageProps | IndividualApplicationStageProps> = ({
+  applicationInfo,
   setApplicationInfo
 }) => {
-
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedSlots, setSelectedSlots] = useState<SelectedSlot[]>([]);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
+  // Initialize from applicationInfo
   useEffect(() => {
-    
-    const arrayOfSlots : string[][] = []
-
-    for (const slot of selectedSlots) {
-      const date = slot.date
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      const startTime = `${year}-${month}-${day}T${slot.timeSlot.start}`
-      const endTime = `${year}-${month}-${day}T${slot.timeSlot.end}`
-
-      arrayOfSlots.push([startTime, endTime])
+    if (applicationInfo.requested_times?.length > 0) {
+      setSelectedTimes(applicationInfo.requested_times);
     }
-
-    setApplicationInfo((application) => ({
-      ...application,
-      "times": arrayOfSlots
-    }))
-
-  }, [selectedSlots])
+  }, []);
 
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     if (!selectedDate) return;
 
-    setSelectedSlots((prev) => {
-      const existingSlotIndex = prev.findIndex(
-        (slot) =>
-          slot.date.toDateString() === selectedDate.toDateString() &&
-          slot.timeSlot.start === timeSlot.start
-      );
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const newTime = `${year}-${month}-${day}T${timeSlot.start}`;
 
-      if (existingSlotIndex !== -1) {
-        return prev.filter((_, index) => index !== existingSlotIndex);
+    setSelectedTimes(prev => {
+      const exists = prev.includes(newTime);
+      if (exists) {
+        return prev.filter(time => time !== newTime);
       }
-
       if (prev.length >= 3) {
         return prev;
       }
-
-      return [...prev, { date: selectedDate, timeSlot }];
+      return [...prev, newTime];
     });
   };
 
-  const deleteTimeSlot = (date: Date, timeSlot: TimeSlot) => {
-    if (!date) return;
-
-    setSelectedSlots((prev) => {
-      const existingSlotIndex = prev.findIndex(
-        (slot) =>
-          slot.date.toDateString() === date.toDateString() &&
-          slot.timeSlot.start === timeSlot.start
-      );
-
-      if (existingSlotIndex !== -1) {
-        return prev.filter((_, index) => index !== existingSlotIndex);
-      }
-
-      if (prev.length >= 3) {
-        return prev;
-      }
-
-      return [...prev, { date: date, timeSlot }];
-    });
-  };
-
-  const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('tr-tr', {
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+  // Update applicationInfo whenever selectedTimes changes
+  useEffect(() => {
+    // @ts-expect-error shut up
+    setApplicationInfo(prev => ({
+      ...prev,
+      requested_times: selectedTimes
+    }));
+  }, [selectedTimes]);
 
   const isTimeSlotSelected = (timeSlot: TimeSlot): boolean => {
-    return selectedSlots.some(
-      (slot) =>
-        slot.date.toDateString() === selectedDate?.toDateString() &&
-        slot.timeSlot.start === timeSlot.start
-    );
+    if (!selectedDate) return false;
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const timeString = `${year}-${month}-${day}T${timeSlot.start}`;
+    return selectedTimes.includes(timeString);
+  };
+
+  const formatTimeDisplay = (timeString: string): string => {
+    const date = new Date(timeString);
+    const timeSlot = TIME_SLOTS.find(slot => timeString.endsWith(slot.start));
+    
+    return `${date.toLocaleDateString('tr-tr', {
+      month: 'long',
+      day: 'numeric',
+    })}, ${timeSlot?.start} - ${timeSlot?.end}`;
   };
 
   return (
     <Box p="md" className='flex justify-center'>
       <Stack gap="xl">
         <Title order={2} c="blue">Size Uygun Zaman Aralıklarını Seçin</Title>
-        <Text size="sm">Turunuz için en az bir, en fazla üç zaman aralığı seçin.
-          <br/> Seçtiğiniz zaman aralıkları farklı günlerden olabilir. <br/>
-          <br/> Turunuzun onaylanması halinde belirttiğiniz tarihlerden<br/>Tanıtım Ofisi'nin programına uyan herhangi birinde karar kılınacaktır.
+        <Text size="sm">
+          Turunuz için en az bir, en fazla üç zaman aralığı seçin.
+          <br/> Seçtiğiniz zaman aralıkları farklı günlerden olabilir.
         </Text>
 
         <Group align="flex-start" gap="xl">
@@ -158,17 +124,22 @@ const TimeSlotStage: React.FC<GroupApplicationStageProps | IndividualApplication
           </Box>
         </Group>
 
-        {selectedSlots.length > 0 && (
-          <Paper p="md" withBorder>
+        {selectedTimes.length > 0 && (
+          <Box>
             <Text fw={500} mb="xs">Seçili Zaman Aralıkları:</Text>
-            {selectedSlots.map((slot, index) => (<div className='flex'>
-              <Text key={index} className='mr-2 mb-2'>
-                {formatDate(slot.date)}, {slot.timeSlot.start} - {slot.timeSlot.end}
-              </Text>
-              <Button size='compact-sm' color='red' onClick={() => deleteTimeSlot(slot.date, slot.timeSlot)}>İptal</Button>
+            {selectedTimes.map((time, index) => (
+              <div key={index} className='flex mb-2'>
+                <Text className='mr-2'>{formatTimeDisplay(time)}</Text>
+                <Button 
+                  size='compact-sm' 
+                  color='red' 
+                  onClick={() => setSelectedTimes(prev => prev.filter(t => t !== time))}
+                >
+                  İptal
+                </Button>
               </div>
             ))}
-          </Paper>
+          </Box>
         )}
       </Stack>
     </Box>

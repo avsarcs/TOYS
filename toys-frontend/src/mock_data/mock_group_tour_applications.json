@@ -1,0 +1,82 @@
+[
+    {
+      "highschool_name": "Ankara Fen Lisesi",
+      "requested_times": [
+        "2024-09-30T09:00:00Z",
+        "2024-09-30T11:00:00Z"
+      ],
+      "visitor_count": 66,
+      "notes": "Large group interested in physics laboratories",
+      "applicant": {
+        "fullname": "Ahmet Yılmaz",
+        "role": "student",
+        "email": "ahmet.yilmaz@student.ankarafen.edu.tr",
+        "phone": "+90532XXXXXXX",
+        "notes": "Requesting tour on behalf of science club members"
+      }
+    },
+    {
+      "highschool_name": "Atatürk Anadolu Lisesi",
+      "requested_times": [
+        "2024-10-05T13:00:00Z",
+        "2024-10-06T13:00:00Z"
+      ],
+      "visitor_count": 45,
+      "notes": "Students particularly interested in computer science department",
+      "applicant": {
+        "fullname": "Zeynep Kaya",
+        "role": "teacher",
+        "email": "z.kaya@ataturk.edu.tr",
+        "phone": "+90533XXXXXXX",
+        "notes": "Would prefer afternoon slots due to morning classes"
+      }
+    },
+    {
+      "highschool_name": "ODTÜ Geliştirme Vakfı Özel Lisesi",
+      "requested_times": [
+        "2024-10-15T10:00:00Z"
+      ],
+      "visitor_count": 35,
+      "notes": "International Baccalaureate students interested in research facilities",
+      "applicant": {
+        "fullname": "Can Demir",
+        "role": "student",
+        "email": "can.demir@odtugvo.k12.tr",
+        "phone": "+90535XXXXXXX",
+        "notes": "Group includes exchange students - English tour preferred"
+      }
+    },
+    {
+      "highschool_name": "Çankaya Milli Piyango Anadolu Lisesi",
+      "requested_times": [
+        "2024-11-01T09:00:00Z",
+        "2024-11-01T14:00:00Z",
+        "2024-11-02T09:00:00Z"
+      ],
+      "visitor_count": 50,
+      "notes": "Mathematics club annual university visit",
+      "applicant": {
+        "fullname": "Ayşe Şahin",
+        "role": "teacher",
+        "email": "a.sahin@millipiyango.edu.tr",
+        "phone": "+90536XXXXXXX",
+        "notes": "Students interested in mathematics and engineering departments"
+      }
+    },
+    {
+      "highschool_name": "TED Ankara Koleji",
+      "requested_times": [
+        "2024-11-15T10:00:00Z",
+        "2024-11-15T13:00:00Z"
+      ],
+      "visitor_count": 40,
+      "notes": "Career day university tour for senior students",
+      "applicant": {
+        "fullname": "Mehmet Öztürk",
+        "role": "student",
+        "email": "m.ozturk@tedankara.k12.tr",
+        "phone": "+90537XXXXXXX",
+        "notes": "Would like information about admission requirements and scholarships"
+      }
+    }
+  ]

@@ -4,14 +4,16 @@ import {
     Title,
     Textarea,
     Stack,
-    Container
+    Container,
+    TextInput
 } from '@mantine/core';
 
 import { IndividualApplicationStageProps } from '../../types/designed';
 
 export const IndividualNotesStage: React.FC<IndividualApplicationStageProps> = ({
     applicationInfo,
-    setApplicationInfo
+    setApplicationInfo,
+    warnings
 }) => {
 
     return (
@@ -24,15 +26,33 @@ export const IndividualNotesStage: React.FC<IndividualApplicationStageProps> = (
                                 Son Aşama...
                             </Title>
                         </div>
+                        <TextInput
+                            label="Grupta kaç öğrenci olması bekleniyor?"
+                            withAsterisk
+                            placeholder="Bir sayı girin..."
+                            value={applicationInfo.visitor_count == -1 ? "" : applicationInfo.visitor_count}
+                            onChange={(e) => setApplicationInfo((application) => ({
+                                ...application,
+                                visitor_count: parseInt(e.target.value)
+                            }))}
+                            type="number"
+                            error={warnings["no_student_count"] ? "0'dan büyük bir sayı giriniz." : false}
+                            min={0}
+                        />
                         <Textarea
                             label="Bize bırakmak istediğiniz başka notlar var mı?"
                             description="(Örneğin özel ihtiyaç sahibi öğrenciler vs.)"
                             placeholder="..."
-                            value={applicationInfo["applicant_notes"]}
-                            onChange={(e) => setApplicationInfo((application) => ({
-                                ...application,
-                                "applicant_notes": e.target.value
-                            }))}
+                            value={applicationInfo.applicant["notes"]}
+                            onChange={(e) => {
+                                setApplicationInfo((appInfo) => ({
+                                    ...appInfo,
+                                    applicant: {
+                                        ...appInfo.applicant,
+                                        notes: e.target.value
+                                    }
+                                }))
+                            }}
                             minRows={4}
                         />
                     </Stack>

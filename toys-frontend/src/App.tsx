@@ -8,6 +8,13 @@ import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
 import GuideProfilePage from "./pages/Guide/GuideProfilePage.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
+import HighSchoolsList from "./pages/DataAnalysis/HighSchoolsList.tsx";
+import GroupTourApplication from "./pages/GroupTourApplication/GroupTourApplication.tsx";
+import ApplicationSuccess from "./pages/ApplicationSuccess/ApplicationSuccess.tsx";
+import IndividualTourApplication from "./pages/IndividualTourApplication/IndividualTourApplication.tsx";
+import ToysApplications from "./pages/ToysApplications/ToysApplications.tsx";
+import TraineeApplicationDetails from "./pages/TraineeApplicationDetails/TraineeApplicationDetails.tsx";
+import AdvisorApplicationDetails from "./pages/AdvisorApplicationDetails/AdvisorApplicationDetails.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import EditGuideProfilePage from "./pages/Guide/EditGuideProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
@@ -32,6 +39,13 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/tour/:tourId" element={<TourPage />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
+            <Route path="/highschoolslist" element={<HighSchoolsList />} />
+            <Route path="/group-tour-application" element={<GroupTourApplication />} />
+            <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
+            <Route path="/application-success" element={<ApplicationSuccess/>}/>
+            <Route path="/toys-applications" element={<ToysApplications/>} />
+            <Route path="/trainee-application-details/:application_id" element={<TraineeApplicationDetails/>} />
+            <Route path="/advisor-application-details/:application_id" element={<AdvisorApplicationDetails/>} />
             <Route path="/profile" element={<GuideProfilePage />}/>
             <Route path="/edit-profile" element={<EditGuideProfilePage />}/>
           </Routes>
