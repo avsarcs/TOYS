@@ -2,6 +2,10 @@ package server.internal.user.profile;
 
 import server.auth.JWTService;
 import server.dbm.Database;
+import server.enums.roles.USER_ROLE;
+import server.models.DTO.DTO_Guide;
+import server.models.people.Advisor;
+import server.models.people.Guide;
 import server.models.people.User;
 import server.models.people.details.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,7 @@ public class UserProfileService {
     @Autowired
     Database databaseEngine;
 
-    public Profile getProfile(String id, String authToken) {
+    public Object getProfile(String id, String authToken) {
         // Check auth token validity
         // If invalid, return 422
         if (!JWTService.getSimpleton().isValid(authToken)) {
@@ -32,10 +36,13 @@ public class UserProfileService {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        Profile profile = user.getProfile();
-
-        // return the user profile
-        return profile;
+        if (user.getRole() == USER_ROLE.GUIDE && user instanceof Guide) {
+            return DTO_Guide.fromGuide((Guide) user);
+        } else if (user.getRole() == USER_ROLE.ADVISOR && user instanceof Guide) {
+            return DTO_Guide.fromGuide((Guide) user);
+        } else {
+            return null;
+        }
     }
 
     public void updateProfile(Profile profile, String authToken) {

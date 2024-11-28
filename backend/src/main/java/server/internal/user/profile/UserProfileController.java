@@ -16,7 +16,7 @@ public class UserProfileController {
 
     @GetMapping("/server/internal/user/profile")
     /// id = user bilkent id, authToken = user's authentication token
-    public Profile getProfile(@RequestParam String authToken, @RequestParam String id) {
+    public Object getProfile(@RequestParam String authToken, @RequestParam String id) {
         return userProfileService.getProfile(id, authToken);
     }
 
