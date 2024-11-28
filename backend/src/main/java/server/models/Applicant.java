@@ -20,6 +20,15 @@ public class Applicant {
         this.notes = (String) map.get("notes");
     }
 
+    public static Applicant getDefault() {
+        return new Applicant()
+                .setName("Default Name")
+                .setContact_info(ContactInfo.getDefault())
+                .setRole(ApplicantRole.STUDENT)
+                .setSchool("Default School")
+                .setNotes("Default Notes");
+    }
+
     public static Applicant fromMap(Map<String, Object> map) {
         return new Applicant(map);
     }

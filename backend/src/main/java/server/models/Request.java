@@ -1,5 +1,6 @@
 package server.models;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import server.enums.RequestStatus;
 import server.enums.RequestType;
 import server.models.people.details.ContactInfo;
@@ -7,6 +8,10 @@ import server.models.time.ZTime;
 
 import java.util.Map;
 
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = GuideAssignmentRequest.class, name = "GuideAssignmentRequest"),
+        @JsonSubTypes.Type(value = TourModificationRequest.class, name = "TourModificationRequest")
+})
 public class Request {
 
     public Request() {
@@ -21,6 +26,7 @@ public class Request {
         this.requested_by = ContactInfo.fromMap((Map<String, Object>) map.get("requested_by"));
         this.request_id = (String) map.get("request_id");
     }
+
 
     public static Request fromMap(Map<String, Object> map) {
         return new Request(map);
