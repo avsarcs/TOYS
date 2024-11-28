@@ -167,6 +167,7 @@
 # Fair Model
 ```
 {
+	"fair_id": "fairid",
 	"applicant": {
 		"name": "Yavuz",
 		"surname": "XD",
