@@ -44,25 +44,26 @@ export enum EventTypeText {
 }
 
 export enum DashboardCategory {
+  NONE = "NONE",
   OWN_EVENTS = "OWN_EVENTS",
   EVENT_INVITATIONS = "EVENT_INVITATIONS",
   EVENT_APPLICATIONS = "EVENT_APPLICATIONS",
   GUIDE_ASSIGNED = "GUIDE_ASSIGNED",
   NO_GUIDE_ASSIGNED = "NO_GUIDE_ASSIGNED",
-  TOUR_AWAITING_MODIFICATION = "TOUR_AWAITING_MODIFICATION",
+  AWAITING_MODIFICATION = "AWAITING_MODIFICATION",
   GUIDE_APPLICATIONS = "GUIDE_APPLICATIONS",
   ADVISOR_APPLICATIONS = "ADVISOR_APPLICATIONS"
 }
 
 export enum DashboardCategoryText {
+  NONE = "Boş :(",
   OWN_EVENTS = "Atanmış Etkinlikler",
   EVENT_INVITATIONS = "Rehberlik Etme Davetiyeleri",
   EVENT_APPLICATIONS = "Etkinlik Başvuruları",
   GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
   NO_GUIDE_ASSIGNED = "Rehber Atanmamış Etkinlikler",
-  TOUR_AWAITING_MODIFICATION = "Değişim Bekleyen Turlar",
+  AWAITING_MODIFICATION = "Değişim Bekleyen Turlar",
   GUIDE_APPLICATIONS = "Rehber Başvuruları",
-  ADVISOR_APPLICATIONS = "Danışman Başvuruları"
 }
 
 export enum ApplicantRole {
@@ -94,4 +95,11 @@ export enum TourStatusText {
   TOYS_WANTS_CHANGE = "Tanıtım Ofisi Değişiklik İstiyor",
   APPROVED = "Kabul Edildi",
   REJECTED = "Reddedildi"
+}
+
+export enum FairStatus {
+  AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION",
+  APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED"
 }

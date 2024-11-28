@@ -1,15 +1,15 @@
 import { Box, Divider, Flex, Space, Title } from "@mantine/core";
-import NotificationList from "../../components/Dashboard/NotificationList.tsx";
-import NotificationInfoBox from "../../components/Dashboard/NotificationInfoBox.tsx";
-import React, { useContext, useMemo, useState } from "react";
-import { DashboardNotification } from "../../types/designed.ts";
+import ItemList from "../../components/Dashboard/ItemList.tsx";
+import InfoBox from "../../components/Dashboard/InfoBox.tsx";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { UserContext } from "../../context/UserContext.tsx";
 import { DashboardCategory, DashboardCategoryText, UserRole } from "../../types/enum.ts";
+import { SimpleEventData } from "../../types/data.ts";
 
 const Dashboard: React.FC = () => {
-  const [element, setElement] = useState<DashboardNotification | null>(null);
-
   const userContext = useContext(UserContext);
+
+  const [item, setItem] = useState<SimpleEventData | null>(null);
 
   const categories = useMemo(() => {
     switch(userContext?.user.role) {
@@ -26,18 +26,23 @@ const Dashboard: React.FC = () => {
           {value: DashboardCategory.EVENT_INVITATIONS, label: DashboardCategoryText.EVENT_INVITATIONS},
           {value: DashboardCategory.NO_GUIDE_ASSIGNED, label: DashboardCategoryText.NO_GUIDE_ASSIGNED},
           {value: DashboardCategory.GUIDE_ASSIGNED, label: DashboardCategoryText.GUIDE_ASSIGNED},
-          {value: DashboardCategory.TOUR_AWAITING_MODIFICATION, label: DashboardCategoryText.TOUR_AWAITING_MODIFICATION}
+          {value: DashboardCategory.AWAITING_MODIFICATION, label: DashboardCategoryText.AWAITING_MODIFICATION}
         ]
       case UserRole.COORDINATOR:
       case UserRole.DIRECTOR:
         return ([
+          {value: DashboardCategory.EVENT_APPLICATIONS, label: DashboardCategoryText.EVENT_APPLICATIONS},
           {value: DashboardCategory.GUIDE_APPLICATIONS, label: DashboardCategoryText.GUIDE_APPLICATIONS},
-          {value: DashboardCategory.ADVISOR_APPLICATIONS, label: DashboardCategoryText.ADVISOR_APPLICATIONS}
         ]);
       default:
         return []
     }
   }, [userContext?.user.role]);
+  const [category, setCategory] = useState<DashboardCategory>(categories.length > 0 ? categories[0].value : DashboardCategory.NONE);
+
+  useEffect(() => {
+    setItem(null);
+  }, [category]);
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
@@ -52,8 +57,14 @@ const Dashboard: React.FC = () => {
         <Divider className="border-gray-400"/>
       </Box>
       <Flex p="xl" direction="row" gap="xl" justify="center" wrap="wrap" className="flex-grow flex-shrink">
-        <Box className="basis-1 flex-grow flex-shrink"><NotificationList categories={categories} setNotification={setElement}/></Box>
-        <Box className="min-w-96 flex-shrink-0 flex-grow-0"><NotificationInfoBox notification={element}/></Box>
+        <Box className="basis-1 flex-grow flex-shrink"><ItemList category={category} setCategory={setCategory} categories={categories} setItem={setItem}/></Box>
+        <Box className="min-w-96 flex-shrink-0 flex-grow-0">
+          {
+            item !== null ?
+              <InfoBox category={category} item={item}/>
+            : null
+          }
+        </Box>
       </Flex>
     </Flex>
   );

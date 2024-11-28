@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Group, Stack, Text } from "@mantine/core";
 import { IconCircleCheck, IconCircleX, IconPencil } from "@tabler/icons-react";
 import { TourSectionProps } from "../../types/designed.ts";
-import { TourStatus, TourStatusText, TourTypeText } from "../../types/enum.ts";
+import { TourStatus, TourStatusText, TourTypeText, UserRole } from "../../types/enum.ts";
+import { UserContext } from "../../context/UserContext.tsx";
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>{
+  const userContext = useContext(UserContext);
+
   let statusColorClass = "text-black";
 
   switch (props.tour.status) {
@@ -30,11 +33,16 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         </Text>
         <Text pl="sm" mt="-xs" size="lg" fw={700} className="text-gray-600">{TourTypeText[props.tour.type]}</Text>
       </Stack>
-      <Group>
-        <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-        <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
-        <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
-      </Group>
+      {
+        userContext?.user.role === UserRole.ADVISOR
+          ?
+        <Group>
+          <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
+          <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+          <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
+        </Group>
+          : null
+      }
     </Group>
   )
 }

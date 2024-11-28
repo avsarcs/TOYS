@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DashboardCategoryControlProps } from "../../types/designed.ts";
 import { Text, FloatingIndicator, UnstyledButton, Group } from "@mantine/core";
 
-const NotificationCategoryControl: React.FC<DashboardCategoryControlProps> = (props: DashboardCategoryControlProps) => {
+const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: DashboardCategoryControlProps) => {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
   const [buttonRefs, setButtonRefs] = useState<Record<number, HTMLButtonElement | null>>({});
   const [selectedCategory, setSelectedCategory] = useState(0);
@@ -18,7 +18,7 @@ const NotificationCategoryControl: React.FC<DashboardCategoryControlProps> = (pr
       bd="sm"
       key={index}
       ref={setControlRef(index)}
-      onClick={() => { setSelectedCategory(index); props.setCategory(item.value); }}
+      onClick={() => { setSelectedCategory(index); props.setCategory(item.value);}}
       mod={{ selected: selectedCategory === index }}
     >
       <Text className="transition-color duration-200" size="lg" fw={500}>{item.label}</Text>
@@ -38,4 +38,4 @@ const NotificationCategoryControl: React.FC<DashboardCategoryControlProps> = (pr
   );
 }
 
-export default NotificationCategoryControl;
+export default CategoryControl;

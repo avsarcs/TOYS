@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Divider, Flex, Group, Space, Stack, Title } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { Tour } from "../../types/designed.ts";
+import { TourData } from "../../types/data.ts";
 import { ApplicantRole, TourStatus, TourType } from "../../types/enum.ts";
 import StatusInformation from "../../components/TourInformation/StatusInformation.tsx";
 import GeneralInformation from "../../components/TourInformation/GeneralInformation.tsx";
@@ -10,12 +10,12 @@ import GuideInformation from "../../components/TourInformation/GuideInformation.
 import TimeInformation from "../../components/TourInformation/TimeInformation.tsx";
 
 const mockdata : {
-  0: Tour
+  0: TourData
 } = {
   0: {
     type: TourType.INDIVIDUAL,
     highschool_name: "Ankara Fen Lisesi",
-    guides: [ { id: 0, name: "Scarlett Johansson"} ],
+    guides: [ { id: "0", full_name: "Scarlett Johansson"} ],
     trainee_guides: [],
     requested_times: ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
     accepted_time: "2024-09-30T09:00:00Z",
@@ -23,7 +23,7 @@ const mockdata : {
     status: TourStatus.APPROVED,
     notes: "",
     applicant: {
-      fullname: "John Doe",
+      full_name: "John Doe",
       role: ApplicantRole.STUDENT,
       email: "john.doe@gmail.com",
       phone: "0 (555) 555 55 55",
@@ -43,7 +43,7 @@ const TourPage: React.FC = () => {
     throw Error("TourInformation not found.");
   }
 
-  const tour: Tour = mockdata[key];
+  const tour: TourData = mockdata[key];
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">

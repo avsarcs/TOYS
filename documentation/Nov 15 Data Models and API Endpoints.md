@@ -87,10 +87,12 @@
 # Simple Event Model
 ```
 {
-	"id": "tour_id"
+    "event_type": "TOUR" | "FAIR"
+	"event_id": "id",
 	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
-	// time field absent for tours AWAITING_MODIFICATION
-	"time"?: "2024-11-15T14:22:14Z",
+	// accepted_time field empty/null for tours AWAITING_MODIFICATION
+	"accepted_time": "2024-11-15T14:22:14Z",
+	"requested_time": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
 	"guide": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
@@ -189,7 +191,7 @@
 }
 ```
 
-# Notification Category
+# Dashboard Category
 ```
   "OWN_EVENTS" | "EVENT_INVITATIONS" | "EVENT_APPLICATIONS" | "GUIDE_ASSIGNED" | "NO_GUIDE_ASSIGNED" | "TOUR_AWAITING_MODIFICATION" |
 ```
@@ -199,7 +201,7 @@
 #### User
 ```
 {
-"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE",
+"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR",
 "profile": {
 	...the model
 }
