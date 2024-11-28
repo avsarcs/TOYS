@@ -299,9 +299,9 @@ API endpoints:
 		/profile #
 			parameters:
 				id=id // user bilkent id\ empty to get logged in user
-			    authToken= jwt token
+				auth= jwt token
 			method: get
-			response: profileModel
+			response: guideModel | advisorModel | coordinatorModel
 			response_type: json
 
 			/update #
