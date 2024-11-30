@@ -1,9 +1,9 @@
 # Group Tour Model
 ```
 {
-	"highschool_name": "Ankara Fen Lisesi",
-	"guides": [ [ "guide id", "guide_name" ] ... ],
-	"trainee_guides": [ [ "trainee_guide id", "trainee_guide_name" ] ],
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1},
+	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}} ... ],
+	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1} } ],
 	"type": "group", // frontend will do conditional rendering based on this property
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"accepted_time": "2024-09-30T09:00:00Z",
@@ -12,7 +12,7 @@
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
-		"role": "student", // or "teacher"
+		"role": "management", // or "teacher"
 		"email": "TheEmailOfTheApplicant1",
 		"phone": "ThePhoneOfTheApplicant1",
 		"notes": "Notes added by the applicant."
@@ -27,7 +27,7 @@
 # Group Tour Application Model
 ```
 {
-	"highschool_name": "Ankara Fen Lisesi",
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"visitor_count": 66,
 	"applicant": {
@@ -43,12 +43,13 @@
 # Individual Tour Application Model
 ```
 {
-	"highschool_name": "Ankara Fen Lisesi",
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"visitor_count": 4,
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
+		"role": "student",
 		"email": "TheEmailOfTheApplicant1",
 		"phone": "ThePhoneOfTheApplicant1",
 		"notes": "Notes added by the applicant."
@@ -60,9 +61,9 @@
 
 ```
 {
-	"highschool_name": "Ankara Fen Lisesi",
-	"guides": [ [ "guide id", "guide_name" ] ... ],
-	"trainee_guides": [ [ "trainee guide id", "trainee guide_name" ] ... ],
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
+	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}} ... ],
+	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1} } ],
 	"type": "individual",
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
@@ -73,6 +74,7 @@
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
 		"email": "TheEmailOfTheApplicant1",
+		"role": "roll",
 		"phone": "ThePhoneOfTheApplicant1",
 		"notes": "Notes added by the applicant."
 	},
@@ -86,11 +88,11 @@
 ```
 {
 	"id": "tour_id"
-	"high_school": "Ankara Fen Lisesi",
+	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
 	// time field absent for tours AWAITING_MODIFICATION
 	"time"?: "2024-11-15T14:22:14Z",
 	"visitor_count": 34,
-	"guide": [ [ "guide id", "guide_name" ] ... ]
+	"guide": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
 ```
 
@@ -100,7 +102,7 @@
 {
   "fullname": "John Doe",
   "id": "12345678",
-  "high_school": "IBRAHIM KARATAS LISESI",
+  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
   "email": "john.doe@example.com",
   "phone": "+1234567890",
   "major": "COMPUTER_SCIENCE",
@@ -127,7 +129,7 @@
   "id": "12345678",
   "fullname": "Mr. Something",
   "phone": "555 555 55 55"
-  "high_school": "High School Not Set",
+  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
   "iban": "TR438525023948394",
   "major": "Computer Science",
   "role": "GUIDE" | "TRAINEE" | "ADVISOR"
@@ -144,7 +146,7 @@
 {
   "id": "12345678",
   "fullname": "Mr. Something"
-  "high_school": "High School Not Set",
+  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1},
   "phone": "555 555 55 55",
   "major": "Computer Science",
   "application_explanation" : "yapyapyap",
@@ -165,6 +167,7 @@
 # Fair Model
 ```
 {
+	"fair_id": "fairid",
 	"applicant": {
 		"name": "Yavuz",
 		"surname": "XD",
@@ -297,9 +300,9 @@ API endpoints:
 		/profile #
 			parameters:
 				id=id // user bilkent id\ empty to get logged in user
-			    authToken= jwt token
+				auth= jwt token
 			method: get
-			response: profileModel
+			response: guideModel | advisorModel | coordinatorModel
 			response_type: json
 
 			/update #

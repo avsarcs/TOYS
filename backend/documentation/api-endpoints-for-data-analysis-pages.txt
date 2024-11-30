@@ -1,0 +1,233 @@
+API endpoints:
+/internal
+    /analytics
+        /cities
+            method: get
+            body: auth_token
+            response: ["İzmir", "Ankara", "İstanbul"] // City names are printed as-is. Thus, they should be translated to Turkish before being displayed.
+        /universities
+            /all // Returns all universities
+                method: get
+                body: auth_token
+                parameters:
+                    page_no=1 // which page to get
+                    search= "ODTÜ" // search query
+                    cities= ["Ankara", "İstanbul"] // cities to filter by
+                    sort_by= "name" || "city" || "ranking" || "priority" // which field to sort by
+                    order= "asc" || "desc" // order of sorting
+                response: {
+                    status: "success" || "error" // error when result is empty? or you can add an "empty"
+                    total_page_count: 5,
+                    universities: [
+                        {
+                            name: "ODTÜ",
+                            city: "Ankara",
+                            is_rival: "true",
+                            id: "1"
+                        },
+                        {
+                            name: "Koç",
+                            city: "İstanbul",
+                            is_rival: "true",
+                            id: "2"
+                        }
+                    ]
+                }
+
+            /rivals // Returns rival universities
+                method: get
+                body: auth_token
+                parameters:
+                    page_no=1 // which page to get
+                    search= "ODTÜ" // search query
+                    cities= ["Ankara", "İstanbul"] // cities to filter by
+                    sort_by= "name" || "city" || "isRival" // which field to sort by
+                    order= "asc" || "desc" // order of sorting
+                response: {
+                    status: "success" || "error" // error when result is empty?
+                    total_page_count: 5,
+                    universities: [
+                        {
+                            name: "ODTÜ",
+                            city: "Ankara",
+                            is_rival: "true",
+                            id: "1"
+                        },
+                        {
+                            name: "Koç",
+                            city: "İstanbul",
+                            is_rival: "true",
+                            id: "2"
+                        }
+                    ]
+                }
+
+            /departments
+                method: get
+                parameters:
+                    university_id = "1" // id of the university
+                body: auth_token
+                response: ["CS", "EE", "IE"] // Department names are printed as-is. Thus, they should be translated to Turkish before being displayed.
+
+            /details
+                method: get
+                parameters:
+                    university_id = "1" // id of the university
+                    department_name = "Bilgisayar Mühendisliği" // name of the department (currently the best way is to have a string as parameter)
+                body: auth_token
+                response:
+                    [
+                      {title: "%0 Burs", min: "1600", max: "6000"}, // Titles are printed as-is. Thus, they should be translated to Turkish before being displayed.
+                      {title: "%100 Burs", min: "0", max: "400"}
+                    ]
+
+            /set_rivalry
+                method: post
+                parameters:
+                    university_id = "1" // id of the university
+                    value_to_set = "true" // true or false
+
+        /high_schools
+            /all // Returns all high schools
+                method: get
+                body: auth_token
+                parameters:
+                    pageNo=1 // which page to get
+                    search= "ODTÜ" // search query
+                    cities= ["Ankara", "İstanbul"] // cities to filter by
+                    sortBy= "name" || "city" || "isRival" // which field to sort by
+                    order= "asc" || "desc" // order of sorting
+                response: {
+                    status: "success" || "error" // error when result is empty?
+                    totalPageCount: 5,
+                    high_schools: [
+                          {
+                              name: "İzmir Fen Lisesi",
+                              city: "İzmir",
+                              ranking: "1",
+                              priority: "1"
+                              id: "1"
+                          },
+                          {
+                              name: "Ankara Fen Lisesi",
+                              city: "Ankara",
+                              ranking: "2",
+                              priority: "1"
+                              id: "2"
+                          }
+                    ]
+                }
+
+            /details
+                method: get
+                parameters:
+                    high_school_id = "2" // id of the high school
+                body: auth_token
+                response: {
+                    "priority": 1, "ranking": 1, "city": "Ankara",
+                    "tours": [
+                        {
+                            "date": "18/11/2024", // format is subject to change
+                            "attendance": 50,
+                            "type": "Tur", // "Tur" only
+                            "review_rating": 4, // over 5
+                            "contact": "can.tucer@ug.bilkent.edu.tr"
+                            "tour_id": "12345",
+                        },
+                        {
+                            "date": "25/11/2024",
+                            "attendance": 60,
+                            "type": "Tur",
+                            "review_rating": null,
+                            "contact": "john.doe@example.com"
+                            "tour_id": "12345"
+                        }
+                    ],
+                    "students": [
+                        {"year": 2018, "count": 100},
+                        {"year": 2019, "count": 120},
+                        {"year": 2020, "count": 150},
+                        {"year": 2021, "count": 130},
+                        {"year": 2022, "count": 140},
+                        {"year": 2023, "count": 160},
+                        {"year": 2024, "count": 170},
+                        {"year": 2025, "count": 180},
+                        {"year": 2026, "count": 190},
+                        {"year": 2027, "count": 200},
+                        {"year": 2028, "count": 210},
+                        {"year": 2029, "count": 220},
+                        {"year": 2030, "count": 230},
+                        {"year": 2031, "count": 240},
+                        {"year": 2032, "count": 250},
+                    ]
+                }
+
+            /tour_reviews
+                method: get
+                parameters:
+                    high_school_id = "2" // id of the high school
+                    tour_id = "12345" // id of the tour
+                body: auth_token
+                response: {
+                      "author": "Can Tücer",
+                      "email": "can.tucer@ug.bilkent.edu.tr",
+                      "date": "18/11/2024",
+                      "guide": "Leslie Knope",
+                      "review": "Bilkent Üniversitesi'ni ziyaret ettim ve çok beğendim. Öğrenciler çok yardımsever ve ilgiliydi. Kampüs çok büyük ve güzel. Eğitim kalitesi de oldukça yüksek. Kesinlikle tavsiye ederim. Herkesin bu üniversiteyi görmesini öneririm. Harika bir deneyimdi.",
+                      "reviewRating": 4
+                  }
+
+            /students
+                method: get
+                parameters:
+                    high_school_id = "2" // id of the high school
+                    year = "2024" // year of the students' graduation
+                body: auth_token
+                response: {
+                    "Bilgisayar Mühendisliği": {"total_count": 100, "%50 Burs": 75, "100% scholarship": 25}, // Department name and scholarship title are printed as-is.
+                    "EE": {"total_count": 150, "50% scholarship": 100, "100% scholarship": 50},             // Thus, they should be translated to Turkish before being displayed.
+                    "ME": {"total_count": 120, "50% scholarship": 80, "100% scholarship": 40}              // Also, same scholarship categories should have the exact same name.
+                }
+
+            /edit
+                // This endpoint will be used to edit the details of a high school
+                // It may be used to edit the name, priority, and city
+                // Response with success or error
+                method: post
+                parameters:
+                    high_school_id = "2" // id of the high school
+                    name = "Ankara Fen Lisesi" // new name
+                    priority = "1" // new priority
+                    city = "Ankara" // new city
+                body: auth_token
+                response: {
+                    status: "success" || "error"
+                }
+            /add
+                // This endpoint will be used to add a new high school
+                // It takes the name, priority, and city as parameters
+                // Response with success or error and id
+                method: post
+                parameters:
+                    name = "Ankara Fen Lisesi" // name of the high school
+                    priority = "1" // priority of the high school
+                    city = "Ankara" // city of the high school
+                body: auth_token
+                response: {
+                    status: "success" || "error",
+                    id: "2"
+                }
+
+        /students
+            /all
+                method: get
+                // no parameters
+                body: auth_token
+                response: {
+                    high_schools: {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300},
+                    cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400},
+                    rankings: {"2020": 1000, "2021": 800, "2022": 600, "2023"}
+                }
+
+            /departments
+                //TODO This endpoint will be used to get department specific data for Bilkent students

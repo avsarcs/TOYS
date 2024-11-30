@@ -1,0 +1,1675 @@
+{
+    "Amerikan Kültürü ve Edebiyatı (İngilizce) (%50 İndirimli)": {},
+    "Amerikan Kültürü ve Edebiyatı (İngilizce) (Burslu)": {},
+    "Arkeoloji (İngilizce) (%50 İndirimli)": {},
+    "Arkeoloji (İngilizce) (Burslu)": {
+        "2020": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            }
+        ]
+    },
+    "Bilgisayar Mühendisliği (İngilizce) (%50 İndirimli)": {
+        "2019": [
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2020": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Bilgisayar Mühendisliği (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 2,
+                "ranking": 1
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            }
+        ],
+        "2020": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            },
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ]
+    },
+    "Bilgisayar Mühendisliği (İngilizce) (Ücretli)": {
+        "2019": [
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 2,
+                "ranking": 10
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 3,
+                "ranking": 4
+            }
+        ],
+        "2020": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 4,
+                "ranking": 3
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 2,
+                "ranking": 1
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2024": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Bilişim Sistemleri ve Teknolojileri (İngilizce) (%50 İndirimli)": {
+        "2021": [
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            }
+        ],
+        "2022": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Bilişim Sistemleri ve Teknolojileri (İngilizce) (Burslu)": {
+        "2024": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ]
+    },
+    "Bilişim Sistemleri ve Teknolojileri (İngilizce) (Ücretli)": {
+        "2024": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Elektrik-Elektronik Mühendisliği (İngilizce) (%50 İndirimli)": {
+        "2019": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            }
+        ],
+        "2020": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Elektrik-Elektronik Mühendisliği (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 4,
+                "ranking": 3
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            }
+        ],
+        "2022": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Elektrik-Elektronik Mühendisliği (İngilizce) (Ücretli)": {
+        "2019": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2020": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 2,
+                "ranking": 9
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            },
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 4,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ]
+    },
+    "Endüstri Mühendisliği (İngilizce) (%50 İndirimli)": {
+        "2019": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2021": [
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            }
+        ],
+        "2022": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Endüstri Mühendisliği (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            }
+        ],
+        "2020": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 3,
+                "ranking": 9
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2021": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ],
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ]
+    },
+    "Endüstri Mühendisliği (İngilizce) (Ücretli)": {
+        "2019": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            },
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 2,
+                "ranking": 6
+            }
+        ],
+        "2020": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2024": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Felsefe (İngilizce) (Burslu)": {
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ]
+    },
+    "Fizik (İngilizce) (%50 İndirimli)": {
+        "2020": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ]
+    },
+    "Fizik (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            }
+        ],
+        "2021": [
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            }
+        ],
+        "2022": [
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ]
+    },
+    "Fizik (İngilizce) (Ücretli)": {
+        "2021": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Grafik Tasarımı (İngilizce) (%50 İndirimli)": {
+        "2021": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Grafik Tasarımı (İngilizce) (Burslu)": {
+        "2024": [
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            }
+        ]
+    },
+    "Grafik Tasarımı (İngilizce) (Ücretli)": {},
+    "Hukuk (%50 İndirimli)": {
+        "2019": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2020": [
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2021": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ]
+    },
+    "Hukuk (Burslu)": {
+        "2019": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 3,
+                "ranking": 3
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ],
+        "2022": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ]
+    },
+    "Hukuk (Ücretli)": {
+        "2019": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ],
+        "2022": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2024": [
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            }
+        ]
+    },
+    "İç Mimarlık ve Çevre Tasarımı (İngilizce) (%50 İndirimli)": {},
+    "İç Mimarlık ve Çevre Tasarımı (İngilizce) (Burslu)": {},
+    "İç Mimarlık ve Çevre Tasarımı (İngilizce) (Ücretli)": {},
+    "İktisat (İngilizce) (%50 İndirimli)": {
+        "2019": [
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            },
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2021": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 2,
+                "ranking": 1
+            },
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            }
+        ],
+        "2024": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ]
+    },
+    "İktisat (İngilizce) (Burslu)": {
+        "2022": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ]
+    },
+    "İktisat (İngilizce) (Ücretli)": {
+        "2022": [
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ]
+    },
+    "İletişim ve Tasarımı (İngilizce) (%50 İndirimli)": {},
+    "İletişim ve Tasarımı (İngilizce) (Burslu)": {},
+    "İletişim ve Tasarımı (İngilizce) (Ücretli)": {},
+    "İngiliz Dili ve Edebiyatı (İngilizce) (%50 İndirimli)": {},
+    "İngiliz Dili ve Edebiyatı (İngilizce) (Burslu)": {
+        "2022": [
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            }
+        ],
+        "2024": [
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ]
+    },
+    "İngilizce, Fransızca Mütercim ve Tercümanlık (%50 İndirimli)": {
+        "2020": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "İngilizce, Fransızca Mütercim ve Tercümanlık (Burslu)": {
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "İngilizce, Fransızca Mütercim ve Tercümanlık (Ücretli)": {},
+    "İşletme (İngilizce) (%50 İndirimli)": {
+        "2021": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2022": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2024": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ]
+    },
+    "İşletme (İngilizce) (Burslu)": {
+        "2022": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 2,
+                "ranking": 9
+            }
+        ]
+    },
+    "İşletme (İngilizce) (Ücretli)": {
+        "2019": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2021": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ],
+        "2022": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Kentsel Tasarım ve Peyzaj Mimarlığı (İngilizce) (%50 İndirimli)": {},
+    "Kentsel Tasarım ve Peyzaj Mimarlığı (İngilizce) (Burslu)": {},
+    "Kimya (İngilizce) (%50 İndirimli)": {},
+    "Kimya (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            }
+        ],
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 2,
+                "ranking": 4
+            },
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ]
+    },
+    "Kimya (İngilizce) (Ücretli)": {},
+    "Makine Mühendisliği (İngilizce) (%50 İndirimli)": {
+        "2019": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ],
+        "2020": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2021": [
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2022": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ],
+        "2024": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            }
+        ]
+    },
+    "Makine Mühendisliği (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 2,
+                "ranking": 3
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ],
+        "2020": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            },
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ],
+        "2021": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ],
+        "2024": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            },
+            {
+                "school": "KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 1,
+                "ranking": 1
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Makine Mühendisliği (İngilizce) (Ücretli)": {
+        "2019": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            }
+        ],
+        "2024": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ]
+    },
+    "Matematik (İngilizce) (%50 İndirimli)": {
+        "2022": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ]
+    },
+    "Matematik (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2020": [
+            {
+                "school": "İSTANBUL ATATÜRK FEN LİSESİ (İSTANBUL - KADIKÖY)",
+                "total": 1,
+                "ranking": 5
+            },
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Matematik (İngilizce) (Ücretli)": {},
+    "Mimarlık (İngilizce) (%50 İndirimli)": {
+        "2021": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Mimarlık (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Mimarlık (İngilizce) (Ücretli)": {
+        "2020": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Moleküler Biyoloji ve Genetik (İngilizce) (%50 İndirimli)": {
+        "2020": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "HÜSEYİN AVNİ SÖZEN ANADOLU LİSESİ (İSTANBUL - ÜSKÜDAR)",
+                "total": 1,
+                "ranking": 10
+            }
+        ],
+        "2021": [
+            {
+                "school": "İSTANBUL ERKEK LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 1
+            }
+        ],
+        "2022": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ]
+    },
+    "Moleküler Biyoloji ve Genetik (İngilizce) (Burslu)": {
+        "2021": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2022": [
+            {
+                "school": "ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ],
+        "2024": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ]
+    },
+    "Moleküler Biyoloji ve Genetik (İngilizce) (Ücretli)": {
+        "2020": [
+            {
+                "school": "ÇAPA FEN LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 7
+            }
+        ]
+    },
+    "Psikoloji (İngilizce) (%50 İndirimli)": {},
+    "Psikoloji (İngilizce) (Burslu)": {
+        "2021": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            }
+        ]
+    },
+    "Psikoloji (İngilizce) (Ücretli)": {
+        "2019": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "ÖZEL ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            }
+        ],
+        "2022": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Siyaset Bilimi ve Kamu Yönetimi (İngilizce) (%50 İndirimli)": {
+        "2024": [
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Siyaset Bilimi ve Kamu Yönetimi (İngilizce) (Burslu)": {
+        "2022": [
+            {
+                "school": "ADANA FEN LİSESİ (ADANA - SEYHAN)",
+                "total": 1,
+                "ranking": 9
+            }
+        ]
+    },
+    "Siyaset Bilimi ve Kamu Yönetimi (İngilizce) (Ücretli)": {
+        "2022": [
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Turizm ve Otel İşletmeciliği (İngilizce) (%50 İndirimli)": {},
+    "Turizm ve Otel İşletmeciliği (İngilizce) (Burslu)": {},
+    "Uluslararası İlişkiler (İngilizce) (%50 İndirimli)": {
+        "2021": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ],
+        "2022": [
+            {
+                "school": "CAĞALOĞLU ANADOLU LİSESİ (İSTANBUL - FATİH)",
+                "total": 1,
+                "ranking": 6
+            },
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 1,
+                "ranking": 2
+            },
+            {
+                "school": "MEV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            },
+            {
+                "school": "SINAV KOLEJİ ÖZEL ANKARA FEN LİSESİ (ANKARA - ÇANKAYA)",
+                "total": 1,
+                "ranking": 3
+            }
+        ]
+    },
+    "Uluslararası İlişkiler (İngilizce) (Burslu)": {
+        "2019": [
+            {
+                "school": "GALATASARAY ÜNİVERSİTESİ GALATASARAY LİSESİ (İSTANBUL - BEYOĞLU)",
+                "total": 2,
+                "ranking": 2
+            },
+            {
+                "school": "BEŞİKTAŞ KABATAŞ ERKEK LİSESİ (İSTANBUL - BEŞİKTAŞ)",
+                "total": 2,
+                "ranking": 1
+            }
+        ],
+        "2022": [
+            {
+                "school": "İZMİR FEN LİSESİ (İZMİR - BORNOVA)",
+                "total": 1,
+                "ranking": 4
+            }
+        ],
+        "2024": [
+            {
+                "school": "TOFAŞ FEN LİSESİ (BURSA - NİLÜFER)",
+                "total": 1,
+                "ranking": 8
+            }
+        ]
+    },
+    "Uluslararası İlişkiler (İngilizce) (Ücretli)": {}
+}
