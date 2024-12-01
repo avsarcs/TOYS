@@ -1,9 +1,9 @@
 # Group Tour Model
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1},
-	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}} ... ],
-	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1} } ],
+	"highschool": HighSchoolModel,
+	"guides": [ { "id": "guide id", "full_name":"guide_name", "highschool": HighSchoolModel } ],
+	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": HighSchoolModel } ],
 	"type": "group", // frontend will do conditional rendering based on this property
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"accepted_time": "2024-09-30T09:00:00Z",
@@ -27,7 +27,7 @@
 # Group Tour Application Model
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
+	"highschool": HighSchoolModel
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"visitor_count": 66,
 	"applicant": {
@@ -43,7 +43,7 @@
 # Individual Tour Application Model
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
+	"highschool": HighSchoolModel
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"visitor_count": 4,
@@ -61,9 +61,9 @@
 
 ```
 {
-	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
-	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}} ... ],
-	"trainee_guides": [ [ "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1} } ],
+	"highschool": HighSchoolModel
+	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool": { "name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1 } } ],
+	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": { "name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1 } } ],
 	"type": "individual",
 	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
 	"requested_majors": [ "major1", "major2", "major3" ],
@@ -88,7 +88,7 @@
 ```
 {
 	"id": "tour_id"
-	"highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
+	"highschool": HighSchoolModel
 	// time field absent for tours AWAITING_MODIFICATION
 	"time"?: "2024-11-15T14:22:14Z",
 	"visitor_count": 34,
@@ -102,7 +102,7 @@
 {
   "fullname": "John Doe",
   "id": "12345678",
-  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
+  "highschool": HighSchoolModel
   "email": "john.doe@example.com",
   "phone": "+1234567890",
   "major": "COMPUTER_SCIENCE",
@@ -113,7 +113,62 @@
 }
 ```
 
-# Simple Toys Application Model (Advisor or Trainee Application)
+# Highschool Model
+{
+	"id": "id of the highschool",
+	"name": "Ankara Fen",
+	"location": "Ankara",
+	"priority": 1 (min. 1, max. 4)
+}
+
+# Review Model
+`tour_id` and `tour_date` fields are ALWAYS included.
+`guide_id` and `guide_name` are included only if for=GUIDE
+```
+{
+	"id": "id of the review"
+	"for": "TOUR" | "GUIDE",
+	"tour_id": "id of the reviewed tour",
+	"tour_date": "date of the reviewed tour in ISO 8601 format",
+	"guides": {
+		"id": "141242asfdf",
+		"name": "Mahmut"
+	}[],
+	"body" (OPTIONAL): "free form text of the review",
+	"approved": bool
+}
+```
+
+
+# Review Tour Detail Model
+```
+{
+	"tour_id": "id of the reviewed tour",
+	"tour_date": "date of the reviewed tour in ISO 8601 format",
+	"guides": {
+		"id": "141242asfdf",
+		"name": "Mahmut"
+	}[],
+}
+```
+
+# Review User Model
+`tour_id` and `tour_date` fields are ALWAYS included.
+`guide_id` and `guide_name` are included only if for=GUIDE
+```
+{
+	"for": "TOUR" | "GUIDE",
+	"tour_id": "id of the reviewed tour",
+	"tour_date": "date of the reviewed tour in ISO 8601 format",
+	"guides": {
+		"id": "141242asfdf",
+		"name": "Mahmut"
+	}[],
+	"body" (OPTIONAL): "free form text of the review",
+}
+```
+
+# Simple Toys Application Model (Trainee Application)
 ```
 {
 	"id": "123456789",
@@ -127,31 +182,30 @@
 {
   "experience": "18 events",
   "id": "12345678",
+  "created_at": "2024-11-15T14:22:14Z",
+  "updated_at": "2024-11-18T14:22:14Z",
   "fullname": "Mr. Something",
-  "phone": "555 555 55 55"
-  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1}
+  "phone": "5313319696",
+  "highschool": HighSchoolModel,
+  "schedule": ScheduleModel,
   "iban": "TR438525023948394",
+  "bank": "QNB Finansbank",
   "major": "Computer Science",
   "role": "GUIDE" | "TRAINEE" | "ADVISOR"
-  "profile_picture": "",
+  "responsible_days": DayOfTheWeek[]
+  "profile_picture": "base 64 string of the profile picture",
   "previous_tour_count": 0,
   "profile_description": "I want to be a guide because I love helping people.",
-  "advisor_application_status": True | False
-  "attended_tours": []
+  "advisor_offer": True | False
 }
 ```
 
-# Advisor Application Model
+# Day of The Week
+"Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday"
+
+# Schedule Model
 ```
-{
-  "id": "12345678",
-  "fullname": "Mr. Something"
-  "highschool":{"name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1},
-  "phone": "555 555 55 55",
-  "major": "Computer Science",
-  "application_explanation" : "yapyapyap",
-  "experience": "18 events"
-}
+??? Someone figure this out. If we import "busy" times from Google Calendar, I think that's the best solution.
 ```
 
 # Simple Guide Model
@@ -195,6 +249,58 @@
 "AWAITING_CONFIRMATION" | "GUIDE_ASSIGNED" | "NO_GUIDE_ASSIGNED" | "AWAITING_MODIFICATION" | "OWN_TOUR"
 ```
 
+# Advisor Offer Model
+`rejection_reason` field included only if `status=REJECTED`
+```
+{
+	"offer_made_to": "user id",
+	"status": ACCEPTED | REJECTED | PENDING,
+	"offer_date": "2024-11-15T14:22:14Z",
+	"response_date": "2024-11-18T14:22:14Z",
+	"rejection_reason": "Yappi yap yap"
+}
+```
+
+# Money for Guide Model
+```
+{
+	"guide": {
+		"id": 22554342412 // Bilkent ID
+		"name": "Sydney Bleeney",
+		"iban": "TR43525345345",
+		"bank": "QNB Finansbank"
+	},
+	"unpaid_hours": 3.28 // float, can be zero, can even be negative to indicate forward-paid fees. negative values will be handled properly in the front-end
+	"debt": 24 // in TL, can be zero, can even be negative to indicate forward-paid fees. negative values will be handled properly in the front-end
+	"money_paid": 1248.5 // float, in TL. Sum of any and all money paid to the guide at any point in time.
+}
+```
+
+# Money for Tour Model
+Coordinator will ask for this model providing a guide ID.
+The `hours_worked` and such refer to the guide with ID provided as a parameter
+```
+{
+	"tour_id": 41234343241sfd,
+	"tour_date": date the tour happened,
+	"hourly_rate": 2.5 // float, in TL. This returns the hourly rate AT the date tour happened.
+	"tour_highschool": "Ankara Fen",
+	"hours_worked": 3.2 // float, can NOT be lower than zero. zero will be interpreted as "Guide didn't enter Tour Start and End times yet."
+	"money_debted": 2.0 // float, in TL.
+	"money_paid": 1.8 // float, in TL. You see, MoneyForGuide model keeps track of the total `money_paid` to that Guide. What you do is that you assume that money was used to pay every tour STARTING FROM THE OLDEST one.
+}
+```
+
+# Hourly Rate Model
+```
+{
+	"rate": 2.2 // float, in TL
+	"applied_from": date in ISO 8601 format,
+	"applied_until": date in ISO 8601 format | "TODAY"
+}
+```
+
+
 ### Just Front-end
 
 #### User
@@ -210,6 +316,12 @@
 
 
 # API Endpoints
+ALL endpoints specified as "Requires Auth" require authentication which will be provided as `Bearer {jwt_token}` in the Authorization header.
+"Requries Auth" means Guide level authorization is sufficient. "Requires Auth as Coordinator" and "Requires Auth as Director" are further options.
+
+"Requires Auth" tag besides a URL applies to all the endpoints prefixed with that URL.
+Tag can be provided for individual endpoints as well.
+
 ```
 API endpoints:
 /auth
@@ -262,6 +374,20 @@ API endpoints:
 		body: fairApplicationModel
 		response: -
 
+/review
+	/tour
+		parameters:
+			review_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE
+		method: post
+		body:
+			ReviewUserModel[] // one for the tour, one for the guide, and another one for the other guide if applicable
+	/tour_details
+		parameters:
+			review_id=12354asd654 // Unique ID attached to the link in the participant's email
+		method: get
+		response: ReviewTourDetailModel
+		response_type: json
+
 /respond
 	/tours #
 	    parameters:
@@ -280,13 +406,14 @@ API endpoints:
             body: -
             response: -
 
-/internal
+/internal (Requires Auth)
 	/user
-		/simple
+		/guides
 			parameters:
-				type="TRAINEE" | "GUIDE" | "ADVISOR"
+				name (OPTIONAL) = "Orhun Eg" // optional name search string
+				type (OPTIONAL)  = "TRAINEE" | "GUIDE" | "ADVISOR" // optional parameter to filter by type 
 			method: get
-			response: simpleGuideModel[]
+			response: SimpleGuideModel[]
 			response_type: json
 			
 		/available_guides
@@ -294,24 +421,56 @@ API endpoints:
 				time=time in ISO 8601 format
 				type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
 			method: post
-			response: simpleGuideModel[]
+			response: SimpleGuideModel[]
 			response_type: json
+
+		/advisor_offer (Requires Auth as Coordinator)
+			parameters:
+				name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
+				type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
+				from_date (OPTIONAL) = time in ISO 8601 format
+				to_date (OPTIONAL) = time in ISO 8601 format
+				// from_date & to_date should be provided together, never only one
+			method: get
+			response: AdvisorOfferModel[]
+			response_type: json
+
+			/accept (Requires Auth as Guide who has pending Advisor Offer)
+				method: post
+				body: empty
+				response: 403 if has no Auth as Guide who has pending Advisor Offer, 200 otherwise
+				response_type: status code
+			
+			/reject (Requires Auth as Guide who has pending Advisor Offer)
+				method: post
+				body: {
+					"reason": "Yappi yap yap"
+				}
+				response: 403 if has no Auth as Guide who has pending Advisor Offer
+				response_type: status code
 			
 		/profile #
 			parameters:
-				id=id // user bilkent id\ empty to get logged in user
-				auth= jwt token
+				id=id // user bilkent id / empty to get logged in user
 			method: get
-			response: guideModel | advisorModel | coordinatorModel
+			response: GuideModel | CoordinatorModel
 			response_type: json
 
 			/update #
 			    parameters:
-			        authToken= jwt token
+					id= id // user bilkent id
 				method: post
-				body: profileModel
+				body: GuideModel
 				response: -
 
+			/simple
+				parameters:
+					id=id // user bilkent id / empty to get logged in user
+					auth= jwt token
+				method: get
+				response: simpleGuideModel
+				response_type: json
+		
 		/requests # NEEDS TEST
 			method: get
 			parameters:
@@ -321,7 +480,7 @@ API endpoints:
 
 			/respond # NEEDS TEST
 				parameters:
-					rid=request_id // which request is beind responded to
+					rid=request_id // which request is being responded to
 					response=accept/deny // what is the response
 					// bool value, True=accept
 				method: get
@@ -334,7 +493,7 @@ API endpoints:
 		response: List of tours (List<TourModel>)
 		response_type: json
 
-		/status-update # NEEDS TEST
+		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
 				status=status // which status to update to (ONGOING, FINISHED, CANCELLED)
@@ -373,10 +532,65 @@ API endpoints:
 			response: SimpleEventModel[]
 
 	/management
+		/timesheet (Requires Auth as Coordinator)
+			/hourly_rate
+				method: post
+				body: HourlyRateModel
+				response: 200 or 400
+				response_type: status code
+				description: If the time interval of the provided HourlyRateModel overlaps with a previously existing HourlyRateModel,
+				you do the following:
+					- If the time interval of the NEW HourlyRateModel is a subset of a previous HourlyRateModel, you delete the previous HourlyRateModel, add the new HourlyRateModel, and adjust the time interval of the remaining chronologically following AND / OR preceding HourlyRateModels so that there is no date remaining for which there is no corresponding hourly rate
+					- If the time interval of the NEW HourlyRateModel is both overlapping with the time interval of a previous HourlyRateModel and NOT a subset of the previous HourlyRateModel's time interval, REJECT the request and send status code 400 
+			
+				method: get // different method request to the same endpoint
+				response: HourlyRateModel[]
+				response_type: json
+
+			/payment_state
+				/guides
+					parameters:
+						name (OPTIONAL)="Orhun Eg" // optional filter by name string
+					method: get
+					response: MoneyForGuideModel[]
+					response_type: json
+
+				/guide
+					parameters:
+						guide_id="bilko Id of the guide. Advisor is also guide"
+					method: get
+					response: MoneyForGuideModel
+					response_type: json
+
+				/tour
+					parameters:
+						guide_id="bilko Id of the guide. Advisor is also guide"
+					method: get
+					response: MoneyForTourModel[]
+					response_type: json
+
+			/pay
+				/guide
+					parameters:
+						guide_id="bilko Id of the guide. Advisor is also guide"
+						how_much=43.5 // float, in TL
+					method: post
+					response: 200
+					response_type: status code
+			
+			/unpay // to fix mistakes
+				/guide
+					parameters:
+						guide_id="bilko Id of the guide. Advisor is also guide"
+						how_much=43.5 // float, in TL
+					method: post
+					response: 200
+					response_type: status code
+
 		/people
 			method: get
 			body: auth_token
-			response: a list of guides/advisors etc and work done by them etc etc
+			response: Simple
 			response_type: json
 
 			/applications
@@ -420,6 +634,10 @@ API endpoints:
 
 		/fairs
 			method: get
+			parameters:
+				status (OPTIONAL): "AWAITING_CONFIRMATION" | "COMPLETED" | "ACCEPTED" | "REJECTED" | "CANCELLED"
+				guide_not_assigned (OPTIONAL): bool
+				enrolled_in_fair (OPTIONAL): 
 			body: auth_token
 			response: list of fairs
 			response_type: json
