@@ -10,14 +10,14 @@ import java.util.Map;
 
 public class User {
     private USER_ROLE role;
-    private String bilkent_id;
+    protected String bilkent_id;
 
     private AuthInfo authInfo;
-    private UserStatus status;
+    protected UserStatus status;
 
     private Application application;
 
-    private Profile profile;
+    protected Profile profile;
 
     public User() {
 

@@ -26,7 +26,7 @@ public class UserProfileController {
     }*/
 
     @PostMapping("/server/internal/user/profile/update")
-    public void updateProfile(@RequestBody Profile profileMap, @RequestParam String authToken) {
+    public void updateProfile(@RequestBody Map<String, Object> profileMap, @RequestParam String authToken) {
         userProfileService.updateProfile(profileMap, authToken);
     }
 

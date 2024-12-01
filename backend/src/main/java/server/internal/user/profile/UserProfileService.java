@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
+
 @Service
 public class UserProfileService {
 
@@ -45,7 +47,7 @@ public class UserProfileService {
         }
     }
 
-    public void updateProfile(Profile profile, String authToken) {
+    public void updateProfile(Map<String, Object> profileMap, String authToken) {
         // Check auth token validity
         // If invalid, return 422
         if (!JWTService.getSimpleton().isValid(authToken)) {
@@ -55,6 +57,16 @@ public class UserProfileService {
         String userID = JWTService.getSimpleton().decodeUserID(authToken);
         // get the user
         User user = databaseEngine.people.fetchUser(userID);
+        // form the profile
+        Profile profile = null;
+        if (user.getRole() == USER_ROLE.GUIDE && user instanceof Guide) {
+            profile = ((Guide) user).modifyWithDTO(DTO_Guide.fromMap(profileMap)).getProfile();
+            ((Guide) user).setHigh_school(profile.getHighschool_id());
+        } else if (user.getRole() == USER_ROLE.ADVISOR && user instanceof Advisor) {
+            profile = ((Advisor) user).modifyWithDTO(DTO_Guide.fromMap(profileMap)).getProfile();
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid user role");
+        }
         // update profile
         user.setProfile(profile);
         // update the user profile in the database

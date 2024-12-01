@@ -1,14 +1,20 @@
 package server.internal.user.profile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import server.auth.JWTService;
 import server.dbm.Database;
+import server.models.DTO.DTO_Guide;
+import server.models.DTO.DTO_Highschool;
 import server.models.people.Guide;
 import server.models.people.details.Profile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,20 +27,27 @@ class UserProfileControllerTest {
 
     @Test
     void getProfile() {
-        Profile profile = userProfileController.getProfile(JWTService.testToken, Guide.getDefault().getBilkent_id());
-        Profile original = Guide.getDefault().getProfile();
-        assertEquals(profile.getHighschool_id(), original.getHighschool_id());
-        assertEquals(profile.getContact_info().getEmail(), original.getContact_info().getEmail());
-        assertEquals(profile.getProfile_picture(), original.getProfile_picture());
+        Object profile = userProfileController.getProfile(JWTService.testToken, Guide.getDefault().getBilkent_id());
+        if (profile instanceof DTO_Guide) {
+            DTO_Guide original = DTO_Guide.fromGuide(Guide.getDefault());
+            assertEquals(((DTO_Guide) profile).getPhone(), original.getPhone());
+            assertEquals(((DTO_Guide) profile).getHigh_school().getId(), original.getHigh_school().getId());
+            assertEquals(((DTO_Guide) profile).getProfile_picture(), original.getProfile_picture());
+        }
+        //TODO: add checks for other types of profiles, such as advisors, etc
     }
 
     @Test
     void updateProfile() {
-        Profile profile = Guide.getDefault().getProfile();
-        profile.setHighschool_id("new highschool id");
-        userProfileController.updateProfile(profile, JWTService.testToken);
-        String updatedHS_ID = userProfileController.getProfile(JWTService.testToken, Guide.getDefault().getBilkent_id()).getHighschool_id();
+        DTO_Guide profile = DTO_Guide.fromGuide(Guide.getDefault());
+        DTO_Highschool hs = profile.getHigh_school();
+        hs.setId("new highschool id");
+        profile.setHigh_school(hs);
+        userProfileController.updateProfile(
+                Database.getObjectMapper().convertValue(profile, Map.class), JWTService.testToken);
+        String updatedHS_ID = ((DTO_Guide) userProfileController.getProfile(JWTService.testToken, Guide.getDefault().getBilkent_id())).getHigh_school().getId();
         assertEquals(updatedHS_ID, "new highschool id");
-        userProfileController.updateProfile(Guide.getDefault().getProfile(), JWTService.testToken);
+        userProfileController.updateProfile(
+                Database.getObjectMapper().convertValue(DTO_Guide.fromGuide(Guide.getDefault()), Map.class), JWTService.testToken);
     }
 }

@@ -5,6 +5,7 @@ import server.enums.roles.USER_ROLE;
 import server.models.people.Guide;
 
 import java.util.List;
+import java.util.Map;
 
 public class DTO_Guide {
     private String id;
@@ -34,6 +35,26 @@ public class DTO_Guide {
         dto.setAdvisor_application_status(false); // TODO wtf is this
         dto.setAttended_events(guide.getExperience().getPrevious_events());
         return dto;
+    }
+
+    public DTO_Guide() {
+    }
+    protected DTO_Guide(Map<String, Object> map) {
+        this.id = (String) map.get("id");
+        this.fullname = (String) map.get("fullname");
+        this.phone = (String) map.get("phone");
+        this.high_school = DTO_Highschool.fromMap((Map<String, Object>) map.get("high_school"));
+        this.major = Department.valueOf((String) map.get("major"));
+        this.role = USER_ROLE.valueOf((String) map.get("role"));
+        this.profile_picture = (String) map.get("profile_picture");
+        this.previous_tour_count = (long) map.get("previous_tour_count");
+        this.profile_description = (String) map.get("profile_description");
+        this.advisor_application_status = (boolean) map.get("advisor_application_status");
+        this.attended_events = (List<String>) map.get("attended_events");
+    }
+
+    public static DTO_Guide fromMap(Map<String,Object> map) {
+        return new DTO_Guide(map);
     }
 
     public String getId() {

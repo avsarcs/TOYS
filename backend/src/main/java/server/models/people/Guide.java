@@ -2,6 +2,7 @@ package server.models.people;
 
 import server.enums.*;
 import server.enums.roles.USER_ROLE;
+import server.models.DTO.DTO_Guide;
 import server.models.Experience;
 import server.models.GuideApplication;
 import server.models.people.details.*;
@@ -56,6 +57,23 @@ public class Guide extends User {
 
     public Guide() {
 
+    }
+
+    public Guide modifyWithDTO(DTO_Guide dto) {
+        this.setBilkent_id(dto.getId());
+
+        profile.setName(dto.getFullname());
+        profile.getContact_info().setPhone(dto.getPhone());
+        profile.setHighschool_id(dto.getHigh_school().getId());
+        profile.setMajor(dto.getMajor());
+        profile.setProfile_picture(dto.getProfile_picture());
+
+        profile.setProfile_description(dto.getProfile_description());
+        this.setRole(dto.getRole());
+
+        experience.setPrevious_events(dto.getAttended_events());
+
+        return this;
     }
     protected Guide(Map<String, Object> map) {
         super(map);
