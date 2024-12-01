@@ -134,17 +134,18 @@
 		"id": "141242asfdf",
 		"name": "Mahmut"
 	}[],
+	"score": 8, // int
 	"body" (OPTIONAL): "free form text of the review",
 	"approved": bool
 }
 ```
 
 
-# Review Tour Detail Model
+# Tour to Review Model
 ```
 {
-	"tour_id": "id of the reviewed tour",
-	"tour_date": "date of the reviewed tour in ISO 8601 format",
+	"tour_id": "id of the tour to be reviewed",
+	"tour_date": "date of the tour to be reviewed in ISO 8601 format",
 	"guides": {
 		"id": "141242asfdf",
 		"name": "Mahmut"
@@ -152,7 +153,7 @@
 }
 ```
 
-# Review User Model
+# Review Create Model
 `tour_id` and `tour_date` fields are ALWAYS included.
 `guide_id` and `guide_name` are included only if for=GUIDE
 ```
@@ -164,6 +165,7 @@
 		"id": "141242asfdf",
 		"name": "Mahmut"
 	}[],
+	"score": 8, // int
 	"body" (OPTIONAL): "free form text of the review",
 }
 ```
@@ -367,7 +369,7 @@ API endpoints:
 
 		/request_changes #NEEDS TEST
 			method: post
-			body: tourChangeRequestModel
+			body: tourChangeRequestModelReviewTourDetail
 			response: -
 	/fair #
 		method: post
@@ -377,16 +379,57 @@ API endpoints:
 /review
 	/tour
 		parameters:
-			review_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE
+			reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE
 		method: post
 		body:
-			ReviewUserModel[] // one for the tour, one for the guide, and another one for the other guide if applicable
+			ReviewCreateModel[] // one for the tour, one for the guide, and another one for the other guide if applicable
+	
 	/tour_details
 		parameters:
-			review_id=12354asd654 // Unique ID attached to the link in the participant's email
+			reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email
 		method: get
-		response: ReviewTourDetailModel
+		response: TourToReviewModel
 		response_type: json
+	
+	/accept (Requires Auth as Coordinator)
+		parameters:
+			review_id=12354asd654
+		method: post
+		response: 200 or 400
+		response_type: status code
+	
+	/reject (Requires Auth as Coordinator)
+		parameters:
+			review_id=12354asd654,
+			still_consider_points=bool
+		method: post
+		response: 200 or 400
+		response_type: status code
+		description: Even though the body of a review might be inappropriate, the Coordinator may still find it fair that the SCORE of that review should still apply while the body of the review stays invisible. If `still_consider_points` is False, just delete the Review. If `still_consider_points` is True, then set the body of the Review to an empty string and status to REJECTED.
+
+	/of_tour (Requires Auth)
+		parameters:
+			tour_id=2590545wdge
+		method: get
+		response: {
+			"average": 5.67,
+			"count": 25
+			"reviews": ReviewModel[]
+		}
+		description: Only return reviews with status ACCEPTED and non-empty bodies.
+		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
+
+	/of_guide (Requires Auth)
+		parameters:
+			guide_id=2590545wdge
+		method: get
+		response: {
+			"average": 5.67,
+			"count": 25
+			"reviews": ReviewModel[]
+		}
+		description: Only return reviews with status ACCEPTED and non-empty bodies.
+		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
 /respond
 	/tours #
