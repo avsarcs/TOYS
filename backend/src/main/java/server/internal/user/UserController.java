@@ -16,12 +16,12 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/server/internal/user/simple")
+    @GetMapping("/internal/user/simple")
     public List<DTO_SimpleGuide> getSimpleGuides(@RequestParam String auth, @RequestParam DTO_UserType type) {
         return userService.getSimpleGuides(auth, type);
     }
 
-    @GetMapping("/server/internal/user/available_guides")
+    @GetMapping("/internal/user/available_guides")
     public List<DTO_SimpleGuide> getAvailableGuides(@RequestParam String auth, @RequestParam DTO_UserType type, @RequestParam String time) {
         return userService.getAvailableGuides(auth, type, time);
     }

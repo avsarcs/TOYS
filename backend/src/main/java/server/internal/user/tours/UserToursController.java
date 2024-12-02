@@ -37,12 +37,12 @@ public class UserToursController {
         tourService.withdrawFromTour(authToken, tid);
     }
 
-    @PostMapping("/server/internal/user/tours/invite")
+    @PostMapping("/internal/user/tours/invite")
     public void inviteToTour(@RequestParam String tid, @RequestParam String guid, @RequestParam String authToken) {
         tourService.inviteToTour(authToken, tid, guid);
     }
 
-    @PostMapping("/server/internal/user/tours/respond")
+    @PostMapping("/internal/user/tours/respond")
     public void respondToTourInvite(@RequestParam String idt, @RequestParam String response, @RequestParam String authToken) {
         tourService.respondToTourInvite(authToken, idt, response);
     }

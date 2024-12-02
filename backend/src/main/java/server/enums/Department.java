@@ -1,6 +1,6 @@
-package enums;
+package server.enums;
 
-public enum DEPARTMENT {
+public enum Department {
     // TODO: add the ACTUAL departments
     COMPUTER_ENGINEERING,
     ELECTRICAL_ENGINEERING,
