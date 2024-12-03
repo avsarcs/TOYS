@@ -224,10 +224,29 @@ API endpoints:
                 // no parameters
                 body: auth_token
                 response: {
-                    high_schools: {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300},
-                    cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400},
+                    high_schools: {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300, "Diğer": 500}, // Send up to ~5 high schools, then send "Diğer" with the total count of the rest
+                    cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Diğer": 500}, // Send up to ~5 cities, then send "Diğer" with the total count of the rest
                     rankings: {"2020": 1000, "2021": 800, "2022": 600, "2023"}
+                    departments: ["CS", "EE", "IE"]; // Department names are printed as-is. Thus, they should be translated to Turkish before being displayed.
                 }
 
             /departments
-                //TODO This endpoint will be used to get department specific data for Bilkent students
+                method: get
+                parameters:
+                    department = "CS" // name of the department
+                body: auth_token
+                response: {
+                    years: ["2018", "2019", "2020"]; // List of years that this department took students in.
+                    rankings: {"2020": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "2021": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "2022": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}}; // Years and scholarship names are printed as-is. Thus, they should be translated to Turkish before being displayed.
+                }
+
+            /department_high_schools // This is seperated from /departments as I expect each year to have many high schools. Thus, I believe it is better to have a separate endpoint for year based data. I will only call this when user changes year.
+                                    // If you think otherwise, you can insert the students data into the /departments endpoint with the following format: students: {year: rankings, year: rankings...}.
+                method: get
+                parameters:
+                    department = "CS" // name of the department
+                    year = "2024" // data year to show in highschool student counts table
+                body: auth_token
+                response: {
+                   students: {"İzmir Fen Lisesi": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "Ankara Fen Lisesi": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "İstanbul Erkek Lisesi": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "Kabataş Erkek Lisesi": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "Galatasaray Lisesi": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}, "Bornova Anadolu Lisesi": {"%0 Burs": 2, "%50 Burs": 60, "%100 Burs": 50}, "Kadıköy Anadolu Lisesi": {"%0 Burs": 1, "%50 Burs": 70, "%100 Burs": 40}};
+                }
