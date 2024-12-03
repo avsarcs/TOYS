@@ -14,8 +14,8 @@ interface HighSchoolsGraphProps {
  * @param style additional graph styling (used for setting the margin).
  */
 const HighSchoolsGraph: React.FC<HighSchoolsGraphProps> = React.memo(({ data, style }) => {
-    const highSchools = Object.keys(data);
-    const values = Object.values(data);
+    const highSchools = React.useMemo(() => Object.keys(data), [data]);
+    const values = React.useMemo(() => Object.values(data), [data]);
 
     React.useEffect(() => {
         const ctx = document.getElementById('StudentHighSchoolsChart') as HTMLCanvasElement;
@@ -30,7 +30,7 @@ const HighSchoolsGraph: React.FC<HighSchoolsGraphProps> = React.memo(({ data, st
         return () => {
             ComparisonChart.destroy();
         };
-    }, [data]);
+    }, [values, highSchools]);
 
     return <canvas id="StudentHighSchoolsChart" style={style}></canvas>;
 });

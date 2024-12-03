@@ -80,7 +80,7 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search}) => {
     const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
+    const itemsPerPage = 10;
 
     const setSorting = (field: keyof RowData) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -120,7 +120,7 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search}) => {
                             onSort={() => setSorting(key)}
                         >
                             <Text size={"xl"}>
-                                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                                {key === "highSchool" ? "Lise" : key.charAt(0).toUpperCase() + key.slice(1)}
                             </Text>
                         </Th>
                         ))}

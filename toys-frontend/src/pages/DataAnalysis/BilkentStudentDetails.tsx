@@ -7,6 +7,7 @@ import DepartmentSelector from "../../components/DataAnalysis/BilkentStudentDeta
 import YearSelector from "../../components/DataAnalysis/BilkentStudentDetails/YearSelector.tsx";
 import SearchBar from "../../components/DataAnalysis/BilkentStudentDetails/SearchBar.tsx";
 import HighSchoolsTable from "../../components/DataAnalysis/BilkentStudentDetails/HighSchoolsTable.tsx";
+import DepartmentRankingGraph from "../../components/DataAnalysis/BilkentStudentDetails/DepartmentRankingGraph.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -26,10 +27,10 @@ const rankingData = {"2020": 1000, "2021": 800, "2022": 600, "2023": 400, "2024"
 const departments = ["CS", "EE", "IE"];
 const years = ["2018", "2019", "2020"];
 const departmentData = {"İzmir Fen Lisesi": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "Ankara Fen Lisesi": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "İstanbul Erkek Lisesi": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "Kabataş Erkek Lisesi": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "Galatasaray Lisesi": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}, "Bornova Anadolu Lisesi": {"%0 Burs": 2, "%50 Burs": 60, "%100 Burs": 50}, "Kadıköy Anadolu Lisesi": {"%0 Burs": 1, "%50 Burs": 70, "%100 Burs": 40}};
-
+const scholarshipData = {"2020": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "2021": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "2022": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "2023": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "2024": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}};
 
 const BilkentStudentDetails: React.FC = () => {
-    const [selectedDepartment, setSelectedDepartment] = React.useState<string | null>(departments[0]);
+    const [selectedDepartment, setSelectedDepartment] = React.useState<string | null>(null);
     const [selectedYear, setSelectedYear] = React.useState<string | null>(years[years.length-1]);
     const [selectedSearch, setSelectedSearch] = React.useState<string>('');
 
@@ -58,7 +59,7 @@ const BilkentStudentDetails: React.FC = () => {
                         Öğrencilerin Liseleri
                     </Text>
                     <Space h="xs" />
-                    <HighSchoolsGraph data={highSchoolsData} style={{ margin: '20px', maxHeight: '400px' }} />;
+                    <HighSchoolsGraph data={highSchoolsData} style={{ margin: '20px', maxHeight: '400px' }} />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
@@ -76,9 +77,7 @@ const BilkentStudentDetails: React.FC = () => {
                 <Space h="xs" />
                 <TopStudentsGraph data={rankingData} style={{ margin: '20px', maxHeight: '400px'}}/>
             </div>
-
         </Stack>
-
         <Space h="xs" />
     </Container>
 
@@ -89,40 +88,52 @@ const BilkentStudentDetails: React.FC = () => {
         }));
     };
 
-    const DepartmentDetailsContainer = <Container style={defaultContainerStyle}>
-        <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
-            Bölüm Bazlı Veriler
-        </Text>
-        <Space h="xs" />
-        <Stack>
-            <Group>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <DepartmentSelector departments={departments} onDepartmentChange={setSelectedDepartment}/>
-                </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <YearSelector years={years} onYearChange={setSelectedYear}/>
-                </div>
-            </Group>
-            <Space h="xl"/>
+    let ShownDataContainer: JSX.Element;
+
+    if(selectedDepartment) {
+        ShownDataContainer = <Stack>
             <div>
                 <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
-                    İlk 10 Liseden Gelen Öğrenciler
+                    {selectedDepartment} İçin YKS Tavan Sıralama
                 </Text>
-                <Space h="xs" />
-            </div>
-            <Space h="xl"/>
-            <div>
-                <SearchBar onSearchChange={setSelectedSearch}/>
+                <Space h="xs"/>
+                <DepartmentRankingGraph data={scholarshipData} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
             <Space h="xs"/>
             <div>
+                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+                    {selectedDepartment} Öğrencilerinin Liseleri
+                </Text>
+                <Space h="xs"/>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '75px', marginRight: '75px' }}>
+                    <div style={{ flex: 0.75, marginRight: '10px' }}>
+                        <SearchBar onSearchChange={setSelectedSearch}/>
+                    </div>
+                    <div style={{ flex: 0.25, marginLeft: '10px' }}>
+                        <YearSelector years={years} onYearChange={setSelectedYear}/>
+                    </div>
+                </div>
+                <Space h="md"/>
                 <HighSchoolsTable data={dataForTable(departmentData)} search={selectedSearch}/>
             </div>
-
         </Stack>
+    }
+    else {
+        ShownDataContainer = <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>İncelemek için bölüm seçin.</Text>
+    }
 
-        <Space h="xs" />
+    const DepartmentDetailsContainer = <Container style={defaultContainerStyle}>
+        <Space h="xs"/>
+        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+            Bölüm Bazlı Veriler
+        </Text>
+        <div style={{marginLeft: '75px', marginRight: '75px'}}>
+            <DepartmentSelector departments={departments} onDepartmentChange={setSelectedDepartment}/>
+        </div>
+        <Space h="xl"/>
+        <Space h="xl"/>
+        {ShownDataContainer}
+        <Space h="xs"/>
     </Container>
 
 

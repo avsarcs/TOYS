@@ -17,7 +17,6 @@ interface DepartmentSelectorProps {
 const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({departments, onDepartmentChange}) => {
     return <Select
         label = "Bölüm Seçin"
-        defaultValue={departments[0]}
         placeholder = {"İncelemek için bölüm seçin."}
         data = {departments.map((department) => ({ value: department, label: department }))}
         searchable

@@ -14,8 +14,8 @@ interface CitiesGraphProps {
  * @param style additional graph styling (used for setting the margin).
  */
 const CitiesGraph: React.FC<CitiesGraphProps> = React.memo(({ data, style }) => {
-    const cities = Object.keys(data);
-    const values = Object.values(data);
+    const cities = React.useMemo(() => Object.keys(data), [data]);
+    const values = React.useMemo(() => Object.values(data), [data]);
 
     React.useEffect(() => {
         const ctx = document.getElementById('StudentCitiesChart') as HTMLCanvasElement;
@@ -30,7 +30,7 @@ const CitiesGraph: React.FC<CitiesGraphProps> = React.memo(({ data, style }) => 
         return () => {
             ComparisonChart.destroy();
         };
-    }, [data]);
+    }, [values, cities]);
 
     return <canvas id="StudentCitiesChart" style={style}></canvas>;
 });

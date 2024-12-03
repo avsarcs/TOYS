@@ -13,8 +13,8 @@ interface TopStudentsGraphProps {
  * @param data: data to be displayed on the graph.
  */
 const TopStudentsGraph: React.FC<TopStudentsGraphProps> = React.memo(({ data, style }) => {
-    const years = Object.keys(data);
-    const values = Object.values(data);
+    const years = React.useMemo(() => Object.keys(data), [data]);
+    const values = React.useMemo(() => Object.values(data), [data]);
 
     React.useEffect(() => {
         const ctx = document.getElementById('TopStudentsChart') as HTMLCanvasElement;

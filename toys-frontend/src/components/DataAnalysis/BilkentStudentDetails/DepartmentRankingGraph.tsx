@@ -1,9 +1,9 @@
 import React from "react";
 import {Chart} from "chart.js/auto";
 
-interface ComparisonGraphProps {
+interface DepartmentRankingGraphProps {
     // Data to be displayed on the graph.
-    data: {[year: string]: {title: string, school1Name: string, school1Min: string, school1Max: string, school2Name: string, school2Min: string, school2Max: string}[]};
+    data: {[year: string]: {[scholarship: string]: number}};
     // Additional graph styling (used for setting the margin).
     style: React.CSSProperties;
 }
@@ -12,7 +12,7 @@ interface ComparisonGraphProps {
  * Bar chart graph for comparing ranking data of universities over years.
  * @param data: data to be displayed on the graph.
  */
-const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
+const DepartmentRankingGraph: React.FC<DepartmentRankingGraphProps> = React.memo(({ data, style }) => {
     // List of possible bar colors.
     const colors = [
         'rgba(255, 99, 132, 0.7)', // Pink
@@ -31,62 +31,34 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
         'rgba(255, 0, 255, 0.7)' // Magenta
     ]
 
-    // List of dataset groups (in this case, years).
-    const years = Object.keys(data);
+    const years = React.useMemo(() => Object.keys(data), [data]);
 
-    // Converting the data to a format that can be used by the chart.
-    const result: {title: string, data: (string | number)[], color: string}[] = [];
-
-    // Extracting titles (university name + scholarship type) from the data.
-    const titles = new Set<string>();
-    for (const year in data) {
-        data[year].forEach(entry => {
-            titles.add(`${entry.school1Name} ${entry.title}`);
-            titles.add(`${entry.school2Name} ${entry.title}`);
+    const scholarships = React.useMemo(() => {
+        const allScholarships = new Set<string>();
+        Object.values(data).forEach(yearData => {
+            Object.keys(yearData).forEach(scholarship => allScholarships.add(scholarship));
         });
-    }
+        return Array.from(allScholarships);
+    }, [data]);
 
-    // For each extracted title, find out the ranking.
-    let i = 0; // is used for color selection.
-    titles.forEach(title => {
-        const dataArray: (string | number)[] = []; // Grouping all rankings of a title together.
-        for (const year in data) {
-            const entry = data[year].find(e => `${e.school1Name} ${e.title}` === title || `${e.school2Name} ${e.title}` === title); // Find the ranking for the title.
-            if (entry) {
-                if (`${entry.school1Name} ${entry.title}` === title) {
-                    dataArray.push(entry.school1Max);
-                } else if (`${entry.school2Name} ${entry.title}` === title) {
-                    dataArray.push(entry.school2Max);
-                }
-            } else {
-                dataArray.push("-");
-            }
-        }
-        // dataArray: group of rankings for a title.
-        // result: group of titles with their rankings, and an associated color.
-        result.push({ title, data: dataArray, color: colors[i % colors.length] });
-        i++;
-    });
+    const datasets = React.useMemo(() => {
+        return scholarships.map((scholarship, index) => {
+            const values = years.map(year => data[year][scholarship] || 0);
+            return {
+                label: scholarship,
+                data: values,
+                backgroundColor: colors[index % colors.length]
+            };
+        });
+    }, [data, scholarships, years]);
 
-    // Preparing the chart
-    const labels = years;
-
-    const datasets = result.map(r => {
-        return {
-            label: r.title,
-            data: r.data,
-            backgroundColor: r.color
-        }
-    });
-
-    // I don't know what this does.
     React.useEffect(() => {
-        const ctx = document.getElementById('UniversityComparisonChart') as HTMLCanvasElement;
-        const ComparisonChart = new Chart(ctx, {
+        const ctx = document.getElementById('DepartmentRankingChart') as HTMLCanvasElement;
+        const DepartmentRankingChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels,
-                datasets
+                labels: years,
+                datasets: datasets
             },
             options: {
                 scales: {
@@ -97,13 +69,12 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({data, style}) => {
             },
         });
 
-        // Destroy the chart when the component is unmounted. Otherwise, it won't load with error.
         return () => {
-            ComparisonChart.destroy()
-        }
-    });
+            DepartmentRankingChart.destroy();
+        };
+    }, [datasets, years]);
 
-    return <canvas id="UniversityComparisonChart" style={style}></canvas>
-}
+    return <canvas id="DepartmentRankingChart" style={style}></canvas>;
+});
 
-export default ComparisonGraph;
+export default DepartmentRankingGraph;
