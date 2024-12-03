@@ -14,6 +14,7 @@ import IndividualTourApplication from "./pages/IndividualTourApplication/Individ
 import ToysApplications from "./pages/ToysApplications/ToysApplications.tsx";
 import TraineeApplicationDetails from "./pages/TraineeApplicationDetails/TraineeApplicationDetails.tsx";
 import AdvisorApplicationDetails from "./pages/AdvisorApplicationDetails/AdvisorApplicationDetails.tsx";
+import BilkentStudentDetails from "./pages/DataAnalysis/BilkentStudentDetails.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -30,6 +31,7 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/universitieslist" element={<UniversitiesList />} />
             <Route path="/highschoolslist" element={<HighSchoolsList />} />
+            <Route path="bilkentstudentdetails" element={<BilkentStudentDetails />} />
             <Route path="/group-tour-application" element={<GroupTourApplication />} />
             <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
             <Route path="/application-success" element={<ApplicationSuccess/>}/>
