@@ -1,5 +1,6 @@
 import React from 'react';
-import {Select} from '@mantine/core';
+import {rem, Select} from '@mantine/core';
+import {IconCalendarFilled} from '@tabler/icons-react';
 
 /**
  * Properties for year selector dropdown menu.
@@ -23,6 +24,7 @@ const YearSelector: React.FC<YearSelectorProps> = ({years, onYearChange}) => {
         allowDeselect = {false}
         radius = "10"
         required
+        leftSection={<IconCalendarFilled style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         onChange={(selectedValue) => {
             onYearChange(selectedValue);
         }}
