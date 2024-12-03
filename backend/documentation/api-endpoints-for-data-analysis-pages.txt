@@ -13,7 +13,7 @@ API endpoints:
                     page_no=1 // which page to get
                     search= "ODTÜ" // search query
                     cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sort_by= "name" || "city" || "ranking" || "priority" // which field to sort by
+                    sort_by= "name" || "city" || "isRival" // which field to sort by
                     order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty? or you can add an "empty"
@@ -41,7 +41,7 @@ API endpoints:
                     page_no=1 // which page to get
                     search= "ODTÜ" // search query
                     cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sort_by= "name" || "city" || "isRival" // which field to sort by
+                    sort_by= "name" || "city" // which field to sort by
                     order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty?
@@ -95,7 +95,7 @@ API endpoints:
                     pageNo=1 // which page to get
                     search= "ODTÜ" // search query
                     cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sortBy= "name" || "city" || "isRival" // which field to sort by
+                    sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
                     order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty?
