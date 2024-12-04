@@ -1,4 +1,4 @@
-package enums.status;
+package server.enums.status;
 
 public enum FAIR_STATUS {
     INVITED,

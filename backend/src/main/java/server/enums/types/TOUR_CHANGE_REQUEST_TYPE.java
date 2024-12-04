@@ -1,4 +1,4 @@
-package enums.types;
+package server.enums.types;
 
 public enum TOUR_CHANGE_REQUEST_TYPE {
     DATE,

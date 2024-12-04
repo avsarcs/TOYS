@@ -1,4 +1,4 @@
-package enums.status;
+package server.enums.status;
 
 public enum GUIDE_ASSIGNMENT_STATUS {
     REQUESTED,

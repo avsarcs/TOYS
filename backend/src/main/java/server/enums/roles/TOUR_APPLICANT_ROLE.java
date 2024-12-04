@@ -1,4 +1,4 @@
-package enums.roles;
+package server.enums.roles;
 
 public enum TOUR_APPLICANT_ROLE {
     STUDENT,
