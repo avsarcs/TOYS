@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
-import { UserRole } from "./enum.ts";
-
-export interface LoginData {
-  bilkentId: number,
-  password: string
-}
+import {
+  DashboardCategory,
+  DashboardCategoryText, EventType,
+  EventTypeText,
+  UserRole
+} from "./enum.ts";
+import { SimpleEventData, TourData } from "./data.ts";
 
 export interface User {
   id: number,
@@ -90,21 +91,29 @@ export interface RegisterFormProps {
   setRegistering: Dispatch<SetStateAction<boolean>>
 }
 
-export interface GuideApplicationData extends LoginData {
-  fullName: string,
-  email: string,
-  phoneNumber: string,
-  department: string,
-  semester: number,
-  hasExchange: boolean,
-  howDidYouHear: string,
-  whyApply: string
+export interface DashboardCategoryControlProps {
+  categories: { value: DashboardCategory, label: DashboardCategoryText }[],
+  setCategory: Dispatch<SetStateAction<DashboardCategory>>,
 }
 
-export interface LoginFormProps {
-  setRegistering: Dispatch<SetStateAction<boolean>>
+export interface DashboardItemProps {
+  item: SimpleEventData,
+  setItem: Dispatch<SetStateAction<SimpleEventData | null>>
 }
 
-export interface RegisterFormProps {
-  setRegistering: Dispatch<SetStateAction<boolean>>
+export interface DashboardItemListProps {
+  categories: { value: DashboardCategory, label: DashboardCategoryText }[],
+  category: DashboardCategory,
+  setCategory: Dispatch<SetStateAction<DashboardCategory>>
+  setItem: Dispatch<SetStateAction<SimpleEventData | null>>
 }
+
+export interface DashboardInfoBoxProps {
+  category: DashboardCategory,
+  item: SimpleEventData
+}
+
+export interface TourSectionProps {
+  tour: TourData
+}
+

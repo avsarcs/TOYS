@@ -87,10 +87,12 @@
 # Simple Event Model
 ```
 {
-	"id": "tour_id"
+    "event_type": "TOUR" | "FAIR"
+	"event_id": "id",
 	"highschool": HighSchoolModel
-	// time field absent for tours AWAITING_MODIFICATION
-	"time"?: "2024-11-15T14:22:14Z",
+	// accepted_time field empty/null for tours AWAITING_MODIFICATION
+	"accepted_time": "2024-11-15T14:22:14Z",
+	"requested_time": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
 	"guide": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
@@ -246,9 +248,9 @@
 }
 ```
 
-# Notification Category
+# Dashboard Category
 ```
-"AWAITING_CONFIRMATION" | "GUIDE_ASSIGNED" | "NO_GUIDE_ASSIGNED" | "AWAITING_MODIFICATION" | "OWN_TOUR"
+  "OWN_EVENTS" | "EVENT_INVITATIONS" | "EVENT_APPLICATIONS" | "GUIDE_ASSIGNED" | "NO_GUIDE_ASSIGNED" | "TOUR_AWAITING_MODIFICATION" |
 ```
 
 # Advisor Offer Model
@@ -308,7 +310,7 @@ The `hours_worked` and such refer to the guide with ID provided as a parameter
 #### User
 ```
 {
-"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE",
+"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR",
 "profile": {
 	...the model
 }
