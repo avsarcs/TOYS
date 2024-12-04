@@ -15,6 +15,7 @@ public class DTO_Fair {
     private String fair_name;
     private FAIR_STATUS status;
     private DTO_Highschool school;
+    private String fair_id;
 
     public static DTO_Fair fromFair(FairRegistry fair) {
         DTO_Fair dto = new DTO_Fair();
@@ -25,9 +26,19 @@ public class DTO_Fair {
         dto.setStatus(fair.getFair_status());
         dto.setFair_name(fair.getFair_name());
         dto.setSchool(new DTO_Highschool(fair.getApplicant().getSchool()));
-
+        dto.setFair_id(fair.getFair_id());
 
         return dto;
+    }
+
+
+    public String getFair_id() {
+        return fair_id;
+    }
+
+    public DTO_Fair setFair_id(String fair_id) {
+        this.fair_id = fair_id;
+        return this;
     }
 
     public DTO_Applicant getApplicant() {

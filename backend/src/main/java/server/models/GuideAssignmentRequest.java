@@ -1,5 +1,12 @@
 package server.models;
 
+import server.enums.RequestStatus;
+import server.enums.RequestType;
+import server.models.people.Guide;
+import server.models.people.details.ContactInfo;
+import server.models.time.ZTime;
+
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class GuideAssignmentRequest extends Request{
@@ -11,6 +18,25 @@ public class GuideAssignmentRequest extends Request{
         super(map);
         this.event_id = (String) map.get("event_id");
         this.requested_guide_id = (String) map.get("requested_guide_id");
+    }
+
+    public static GuideAssignmentRequest getDefault() {
+        GuideAssignmentRequest gar = new GuideAssignmentRequest();
+
+        gar.setRequest_id("gar_-1");
+        gar.setRequested_by(ContactInfo.getDefault());
+        gar.setType(RequestType.ASSIGNMENT);
+        gar.setNotes("test notes");
+        gar.setRequested_at(new ZTime(ZonedDateTime.now()));
+        gar.setStatus(RequestStatus.PENDING);
+        gar.setRequested_by(ContactInfo.getDefault());
+        gar.setRequested_guide_id(Guide.getDefault().getBilkent_id());
+        gar.setEvent_id(TourRegistry.getDefault().getTour_id());
+        return gar;
+    }
+
+    public static GuideAssignmentRequest fromMap(Map<String, Object> map) {
+        return new GuideAssignmentRequest(map);
     }
 
     private String event_id;
@@ -33,4 +59,6 @@ public class GuideAssignmentRequest extends Request{
         this.requested_guide_id = requested_guide_id;
         return this;
     }
+
+
 }

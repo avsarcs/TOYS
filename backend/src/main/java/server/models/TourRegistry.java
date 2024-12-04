@@ -10,6 +10,8 @@ import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.GroupTourStatus;
 import server.models.time.ZTime;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,31 @@ public class TourRegistry extends TourApplication{
         tour_id = "tour_" + System.currentTimeMillis();
     }
 
+    public static TourRegistry getDefault() {
+        TourRegistry tour = new TourRegistry();
+        tour.setTour_id("tour_-1");
+        tour.setTour_status(TOUR_STATUS.CONFIRMED);
+        tour.setAccepted_time(new ZTime(ZonedDateTime.now()));
+        tour.setEnded_at(new ZTime(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"))));
+        tour.setStarted_at(tour.getEnded_at());
+        tour.setInterested_in(new ArrayList<>());
+        tour.setNotes("Default Notes");
+        tour.setClassroom("Default Classroom");
+        tour.setRequested_hours(new ArrayList<>());
+        tour.setGuides(new ArrayList<>());
+        tour.setApplicant(Applicant.getDefault());
+        tour.setStatus(ApplicationStatus.APPROVED);
+        tour.setType(ApplicationType.TOUR);
+        tour.setTour_type(TourType.Group);
+        tour.setReviews(new ArrayList<>());
+        return tour;
+    }
+
     protected TourRegistry(Map<String,Object> map) {
         super(map);
         this.accepted_time = new ZTime(ZonedDateTime.parse((String) map.get("accepted_time")));
         this.guides = (List<String>) map.get("guides");
-        this.tour_status = TOUR_STATUS.valueOf((String) map.get("status"));
+        this.tour_status = TOUR_STATUS.valueOf((String) map.get("tourStatus"));
         this.notes = (String) map.get("notes");
         this.reviews = (List<String>) map.get("reviews");
         this.started_at = new ZTime(ZonedDateTime.parse((String) map.get("started_at")));
@@ -180,6 +202,21 @@ public class TourRegistry extends TourApplication{
     }
 
 
+    public TourRegistry setTour_id(String tour_id) {
+        this.tour_id = tour_id;
+        return this;
+    }
+
+    @Override
+    public TourRegistry setNotes(String notes) {
+        this.notes = notes;
+        return this;
+    }
+
+    public TourRegistry setReviews(List<String> reviews) {
+        this.reviews = reviews;
+        return this;
+    }
 
     private String tour_id;
     private ZTime accepted_time;

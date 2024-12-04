@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import server.enums.ApplicationStatus;
 import server.enums.ApplicationType;
 import server.models.DTO.DTO_GuideApplication;
+import server.models.people.Guide;
 import server.models.people.details.ContactInfo;
 import server.models.people.details.PaymentInfo;
 import server.models.people.details.Profile;
@@ -17,6 +18,19 @@ public class GuideApplication extends Application {
     private String heardFrom;
     private String applicationReason;
     private boolean futureExchange;
+
+    public static GuideApplication getDefault() {
+        GuideApplication guideApplication = new GuideApplication();
+        Guide defaultGuide = Guide.getDefault();
+        guideApplication.setBilkent_id(defaultGuide.getBilkent_id());
+        guideApplication.setProfile(Profile.getDefault());
+        guideApplication.setStatus(ApplicationStatus.RECIEVED);
+        guideApplication.setType(ApplicationType.GUIDE);
+        guideApplication.setApplicationReason("Application reason");
+        guideApplication.setHeardFrom("heard from");
+        guideApplication.setFutureExchange(false);
+        return guideApplication;
+    }
 
     public GuideApplication() {
         super();

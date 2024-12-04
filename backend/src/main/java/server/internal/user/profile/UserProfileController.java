@@ -16,7 +16,7 @@ public class UserProfileController {
 
     @GetMapping("/server/internal/user/profile")
     /// id = user bilkent id, authToken = user's authentication token
-    public Profile getProfile(@RequestParam String authToken, @RequestParam String id) {
+    public Object getProfile(@RequestParam String authToken, @RequestParam String id) {
         return userProfileService.getProfile(id, authToken);
     }
 
@@ -26,7 +26,7 @@ public class UserProfileController {
     }*/
 
     @PostMapping("/server/internal/user/profile/update")
-    public void updateProfile(@RequestBody Profile profileMap, @RequestParam String authToken) {
+    public void updateProfile(@RequestBody Map<String, Object> profileMap, @RequestParam String authToken) {
         userProfileService.updateProfile(profileMap, authToken);
     }
 
