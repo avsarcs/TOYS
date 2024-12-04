@@ -7,7 +7,7 @@ import {
 import { SimpleEventData, TourData } from "./data.ts";
 
 export interface User {
-  id: number,
+  id: string,
   role: UserRole,
   profile: any
 }

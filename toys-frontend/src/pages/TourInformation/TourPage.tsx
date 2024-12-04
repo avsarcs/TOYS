@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Divider, Flex, Group, Space, Stack, Title } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { TourData } from "../../types/data.ts";
+import { HighschoolData, TourData } from "../../types/data.ts";
 import { ApplicantRole, TourStatus, TourType } from "../../types/enum.ts";
 import StatusInformation from "../../components/TourInformation/StatusInformation.tsx";
 import GeneralInformation from "../../components/TourInformation/GeneralInformation.tsx";
@@ -15,12 +15,13 @@ const mockdata : {
   0: {
     type: TourType.INDIVIDUAL,
     highschool_name: "Ankara Fen Lisesi",
-    guides: [ { id: "0", full_name: "Scarlett Johansson"} ],
+    guides: [ { id: "0", full_name: "Scarlett Johansson", highschool: {} as HighschoolData } ],
     trainee_guides: [],
     requested_times: ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
     accepted_time: "2024-09-30T09:00:00Z",
     visitor_count: 1,
     status: TourStatus.APPROVED,
+    requested_majors: [],
     notes: "",
     applicant: {
       full_name: "John Doe",

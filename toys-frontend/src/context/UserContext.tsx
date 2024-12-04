@@ -19,7 +19,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [cookies, setCookie] = useCookies(["auth"], {})
   const [user, setUser] = useState<User>({
-    id: NaN,
+    id: "",
     role: UserRole.NONE,
     profile: {}
   });
@@ -31,7 +31,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   useEffect(() => {
     if(!cookies.auth || cookies.auth.length === 0) {
       setUser({
-        id: NaN,
+        id: "",
         role: UserRole.NONE,
         profile: {}
       });
@@ -54,7 +54,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
           }
           else {
             setUser({
-              id: NaN,
+              id: "",
               role: UserRole.NONE,
               profile: {}
             });
@@ -64,7 +64,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
 
     return () => {
       setUser({
-        id: NaN,
+        id: "",
         role: UserRole.NONE,
         profile: {}
       });

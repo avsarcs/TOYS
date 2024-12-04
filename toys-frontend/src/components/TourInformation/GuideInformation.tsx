@@ -14,7 +14,7 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
   const userAssignedToTour = props.tour.guides.some(value => value.id === userContext?.user.id);
 
   const guideListText = props.tour.guides.length > 0 ?
-    props.tour.guides.map(value => value.name).join(", ") : "Kimse";
+    props.tour.guides.map(value => value.full_name).join(", ") : "Kimse";
 
   const guideListColor = props.tour.guides.length > 0 ? "dark" : "red";
 
@@ -38,7 +38,10 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
         <Space h="sm"/>
         <Button size="md" leftSection={<IconUserPlus/>}>Rehber Ol</Button>
       </Box>
-      <Button size="md" leftSection={<IconUsers/>}>Rehberleri Yönet</Button>
+      {
+
+        <Button size="md" leftSection={<IconUsers/>}>Rehberleri Yönet</Button>
+      }
     </Group>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { Button, Group, Stack, Text } from "@mantine/core";
 import { IconCircleCheck, IconCircleX, IconPencil } from "@tabler/icons-react";
 import { TourSectionProps } from "../../types/designed.ts";
@@ -7,6 +7,41 @@ import { UserContext } from "../../context/UserContext.tsx";
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>{
   const userContext = useContext(UserContext);
+
+  const buttons = useMemo(() => {
+    switch(userContext?.user.role) {
+      case UserRole.GUIDE:
+      case UserRole.ADVISOR:
+        switch(props.tour.status) {
+          case TourStatus.AWAITING_CONFIRMATION:
+            return (
+              <>
+                <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
+                <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+                <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
+              </>
+            );
+          case TourStatus.TOYS_WANTS_CHANGE:
+            return (
+              <>
+                <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
+                <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+              </>
+            );
+          default: return null;
+        }
+      case UserRole.NONE:
+        switch (props.tour.status) {
+          case TourStatus.TOYS_WANTS_CHANGE:
+            return (
+              <>
+                <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
+                <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+              </>
+            );
+        }
+    }
+  }, [props.tour.status, userContext?.user.role])
 
   let statusColorClass = "text-black";
 
@@ -37,9 +72,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         userContext?.user.role === UserRole.ADVISOR
           ?
         <Group>
-          <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-          <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
-          <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
+          { buttons }
         </Group>
           : null
       }
