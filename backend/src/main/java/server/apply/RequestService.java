@@ -74,6 +74,7 @@ public class RequestService {
             if (request == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request not found");
             }
+            System.out.println("Request found: "+request.getRequest_id() + "::" + request.getStatus().name());
             // check if the request is already responded
             if (request.getStatus() != RequestStatus.PENDING) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request already responded");

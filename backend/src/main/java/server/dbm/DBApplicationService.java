@@ -92,18 +92,18 @@ public class DBApplicationService {
         return applications;
     }
     public void updateApplication(String applicationID, ApplicationType type, ApplicationStatus update) {
-        String document = type.name().toLowerCase();
+        String document = type.name().toLowerCase() + "s";
         DocumentReference reference = firestore.collection("applications").document(document);
 
         try {
-            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("applications");
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
             Map<String, Object> application = (Map<String, Object>) data.get(applicationID);
             application.put("status", update.name());
 
             data.put(applicationID, application);
             reference.set(
                     mapper.convertValue(
-                            Collections.singletonMap("applications", data),
+                            Collections.singletonMap(document, data),
                             new TypeReference<HashMap<String, Object>>() {}
                     )
             );
