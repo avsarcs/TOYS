@@ -1,4 +1,4 @@
-import { Group, Code, ScrollArea } from '@mantine/core';
+import { Group, Code, ScrollArea, Burger } from '@mantine/core';
 import {
   IconNotes,
   IconCalendarStats,
@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
 import { LinksGroup } from './NavbarLinksGroup';
+import { useDisclosure } from "@mantine/hooks";
 import classes from './Navbar.module.css';
 
 const mockdata = [
@@ -49,23 +50,27 @@ const mockdata = [
 ];
 
 export function Navbar() {
+  const [opened, { toggle }] = useDisclosure(false);
+
   const links = mockdata.map((item) => <LinksGroup {...item} key={item.label} />);
 
   return (
-    <nav className={classes.navbar}>
+    <nav className={`${opened ? (classes.navbar + " " + classes.open) : classes.navbar}`}>
       <div className={classes.header}>
         <Group justify="space-between">
-          <Code fw={700}>TOYS</Code>
+          {opened ? <Code fw={700}>TOYS</Code> : <></>}
+          <Burger size="md" opened={opened} onClick={toggle}/>
         </Group>
       </div>
 
       <ScrollArea className={classes.links}>
-        <div className={classes.linksInner}>{links}</div>
+        <div className={classes.linksInner}>{opened ? links : <></>}</div>
       </ScrollArea>
 
       <div className={classes.footer}>
-        <UserButton />
+        {opened ? <UserButton/> : <></>}
       </div>
+
     </nav>
   );
 }

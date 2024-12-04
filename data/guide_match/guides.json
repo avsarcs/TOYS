@@ -1,0 +1,62 @@
+[
+    {
+        "experience": "18 events",
+        "id": 1,
+        "fullname": "Alice Johnson",
+        "phone": "555-1234",
+        "highschool": {
+            "name": "Sunrise High School",
+            "id": 1,
+            "location": "İstanbul / Kadıköy",
+            "priority": 5
+        },
+        "iban": "TR1234567890",
+        "major": "Engineering",
+        "role": "Senior Guide",
+        "profile_picture": "pic1.jpg",
+        "previous_tour_count": 15,
+        "profile_description": "An experienced guide with a passion for teaching.",
+        "advisor_application_status": true,
+        "attended_tours": ["Tour A", "Tour B"]
+    },
+    {
+        "experience": "1 event",
+        "id": 2,
+        "fullname": "Bob Smith",
+        "phone": "555-5678",
+        "highschool": {
+            "name": "Lakeside High School",
+            "id": 2,
+            "location": "Ankara / Çankaya",
+            "priority": 15
+        },
+        "iban": "TR0987654321",
+        "major": "Biology",
+        "role": "Junior Guide",
+        "profile_picture": "pic2.jpg",
+        "previous_tour_count": 3,
+        "profile_description": "New to guiding but eager to learn.",
+        "advisor_application_status": false,
+        "attended_tours": ["Tour C"]
+    },
+    {
+        "experience": "0 events",
+        "id": 3,
+        "fullname": "Charlie Brown",
+        "phone": "555-9876",
+        "highschool": {
+            "name": "Sunrise High School",
+            "id": 1,
+            "location": "İstanbul / Beşiktaş",
+            "priority": 5
+        },
+        "iban": "TR1122334455",
+        "major": "History",
+        "role": "Volunteer",
+        "profile_picture": "pic3.jpg",
+        "previous_tour_count": 0,
+        "profile_description": "A dedicated volunteer looking to gain experience.",
+        "advisor_application_status": true,
+        "attended_tours": []
+    }
+]

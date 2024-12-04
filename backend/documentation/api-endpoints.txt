@@ -2,26 +2,31 @@ some notes:
 	If a request is done with insufficient authorizations, the server will return 422 Unprocessable Content
 
 API endpoints:
-/auth
-	/login #
+/auth ##COMPLETE
+	/login
 		method: post
 		body: loginInfoModel
 		response: jwt_string
 		response_type: string
-	/isvalid #
+	/isvalid
 		parameters:
 			auth=token // token to check for validity
 		method: get
 		response: true/false
 		response_type: string
 
-/apply
-	/guide #
+/apply ## Complete
+	/guide
 		method: post
 		body: guideApplicationModel
 		response: -
-
-	/tour #
+    /advisor
+        method: post
+        parameters:
+            authToken= jwt token
+        body: advisorApplicationModel
+        response: -
+	/tour
 		method: post
 		body: tourApplicationModel
 		response: -
@@ -47,13 +52,13 @@ API endpoints:
 			method: post
 			body: tourChangeRequestModel
 			response: -
-	/fair #
+	/fair
 		method: post
 		body: fairApplicationModel
 		response: -
 
 /respond
-	/tours #
+	/tours
 	    parameters:
 	        tid=tour_id // which tour is this for
 	        response=accept/deny // what is the response
@@ -70,8 +75,25 @@ API endpoints:
             response: -
 
 /internal
-	/user
-		/profile #
+	/user ## COMPLETE
+	    /simple
+            parameters:
+                type="TRAINEE" | "GUIDE" | "ADVISOR"
+                auth=auth_token
+            method: get
+            response: simpleGuideModel[]
+            response_type: json
+
+        /available_guides
+            parameters:
+                time=time in ISO 8601 format, String
+                type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
+                auth=auth_token
+            method: get
+            response: simpleGuideModel[]
+            response_type: json
+
+		/profile
 			parameters:
 				id=id // user bilkent id
 			    authToken= jwt token
@@ -79,35 +101,35 @@ API endpoints:
 			response: profileModel
 			response_type: json
 
-			/update #
+			/update
 			    parameters:
 			        authToken= jwt token
 				method: post
 				body: profileModel
 				response: -
 
-		/requests # NEEDS TEST
+		/requests
 			method: get
 			parameters:
                 authToken= jwt token
 			response: List of Requests (List<RequestBase>)
 			response_type: json
 
-			/respond # NEEDS TEST
+			/respond
 				parameters:
 					rid=request_id // which request is beind responded to
 					response=accept/deny // what is the response
 				method: get
 				response: -
 
-		/tours # NEEDS TEST
+		/tours
 		    parameters:
 		        authToken= jwt token
 			method: get
 			response: List of tours (List<TourModel>)
 			response_type: json
 
-			/status-update # NEEDS TEST
+			/status-update
 				parameters:
 					tid=tour_id // which tour is this for
 					status=status // which status to update to (ONGOING, FINISHED, CANCELLED)
@@ -115,15 +137,22 @@ API endpoints:
 				method: post
 				response: -
 
-            # Just realized we are missing un-enroll
-			/enroll # NEEDS TEST
+
+			/enroll
 				parameters:
 					tid=tour_id // which tour to enroll for
 				    authToken: auth_token
 				method: post
 				response: -
 
-			/invite # NEEDS TEST
+			/withdraw
+                parameters:
+                    tid=tour_id // which tour to withdraw from
+                    authToken: auth_token
+                method: post
+                response: -
+
+			/invite
 				parameters:
 					tid=tour_id // which tour to invite to
 					guid=guide_id // who to invite
@@ -140,54 +169,65 @@ API endpoints:
 				method: post
 				response: -
 
+			/notifications
+            			parameters:
+            				authToken: auth_token
+            				notification_category: NotificationCategory
+            			method: get
+            			response: SimpleEventModel[]
+
 	/management
 		/people
 			method: get
-			body: auth_token
-			response: a list of guides/advisors etc and work done by them etc etc
+			parameters:
+			    authToken= jwt token
+			response: a list of profiles for every personel in the system
 			response_type: json
 
 			/applications
-				method: get
-				body: auth_token
-				response: list of people applications
-				response_type: json
+                parameters:
+                    type: "ADVISOR" | "AMATEUR_GUIDE"
+                    auth: auth_token
+                method: get
+                response: list of people applications
+                response_type: SimpleGuideModel[]
 
 				/respond
 					parameters:
-						id=id // id of the applicant
+					    auth: auth_token
+						applicationId=id // application ID
 						response=response // accepted or rejected etc
 					method: post
-					body: auth_token
 					response: -
 
 			/invite
 				parameters:
-					fid=fair_id // which fair to invite to
-					id=id // who to invite
-				method: post
-				body: auth_token
+				    auth: auth_token
+					invitee=id // who to invite
+					fairId=fair_id // which fair to invite to
+				method: get
 				response: -
 
 			/fire
 				parameters:
 					id=fireeid // id of the person to fire
-				method: post
-				body: auth_token
+				    auth: auth_token
+				method: get
 				response: -
 
 		/fairs
 			method: get
-			body: auth_token
+			parameters:
+			    auth= jwt token
 			response: list of fairs
 			response_type: json
 
 			/respond
 				parameters:
+				    auth: auth_token
 					fid=fair_id // which fair application (all applications are fairs with status applied) to respond to
 					response=response // what is the response (accept/deny)
 				method: post
-				body: auth_token
 				response: -
 
 

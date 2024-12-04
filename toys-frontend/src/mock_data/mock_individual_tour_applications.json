@@ -1,0 +1,97 @@
+[
+    {
+      "highschool_name": "Ankara Fen Lisesi",
+      "requested_times": [
+        "2024-09-30T09:00:00Z",
+        "2024-09-30T11:00:00Z"
+      ],
+      "requested_majors": [
+        "Computer Engineering",
+        "Electrical Engineering",
+        "Software Engineering"
+      ],
+      "visitor_count": 4,
+      "applicant": {
+        "fullname": "Deniz Yıldırım",
+        "email": "deniz.yildirim@student.ankarafen.edu.tr",
+        "phone": "+90532XXXXXXX",
+        "notes": "Particularly interested in AI and robotics labs"
+      }
+    },
+    {
+      "highschool_name": "TED Ankara Koleji",
+      "requested_times": [
+        "2024-10-15T13:00:00Z",
+        "2024-10-16T13:00:00Z"
+      ],
+      "requested_majors": [
+        "Industrial Design",
+        "Architecture",
+        "Interior Architecture"
+      ],
+      "visitor_count": 3,
+      "applicant": {
+        "fullname": "Elif Kaya",
+        "email": "elif.kaya@tedankara.k12.tr",
+        "phone": "+90533XXXXXXX",
+        "notes": "Would like to see design studios and workshops"
+      }
+    },
+    {
+      "highschool_name": "Çankaya Anadolu Lisesi",
+      "requested_times": [
+        "2024-11-01T10:00:00Z",
+        "2024-11-01T14:00:00Z"
+      ],
+      "requested_majors": [
+        "Physics",
+        "Mathematics",
+        "Computer Science"
+      ],
+      "visitor_count": 2,
+      "applicant": {
+        "fullname": "Mehmet Can",
+        "email": "mehmet.can@cankaya.edu.tr",
+        "phone": "+90535XXXXXXX",
+        "notes": "Looking to learn about double major opportunities"
+      }
+    },
+    {
+      "highschool_name": "Eryaman Anadolu Lisesi",
+      "requested_times": [
+        "2024-11-10T09:00:00Z",
+        "2024-11-10T11:00:00Z"
+      ],
+      "requested_majors": [
+        "Mechanical Engineering",
+        "Aerospace Engineering",
+        "Mechatronics Engineering"
+      ],
+      "visitor_count": 4,
+      "applicant": {
+        "fullname": "Zeynep Arslan",
+        "email": "zeynep.arslan@eryaman.edu.tr",
+        "phone": "+90536XXXXXXX",
+        "notes": "Interested in research labs and ongoing projects"
+      }
+    },
+    {
+      "highschool_name": "ODTÜ Geliştirme Vakfı Özel Lisesi",
+      "requested_times": [
+        "2024-12-01T10:00:00Z",
+        "2024-12-01T13:00:00Z"
+      ],
+      "requested_majors": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Bioengineering"
+      ],
+      "visitor_count": 3,
+      "applicant": {
+        "fullname": "Can Öztürk",
+        "email": "can.ozturk@odtugvo.k12.tr",
+        "phone": "+90537XXXXXXX",
+        "notes": "Would like to see laboratory facilities and meet with faculty members"
+      }
+    }
+  ]

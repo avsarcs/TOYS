@@ -14,10 +14,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
     if (typeof schoolName == "string") {
       setApplicationInfo((appInfo) => ({
         ...appInfo,
-        group_leader: {
-          ...appInfo.group_leader,
-          school: schoolName
-        }
+        highschool_name: schoolName
       }))
     }
   }, [schoolName])
@@ -32,44 +29,20 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         <div className="mb-4">
           <TextInput
             type="text"
-            label="İsim"
+            label="İsim Soyisim"
             withAsterisk
             id="name"
             name="name"
-            placeholder="Adınız"
-            error={warnings["empty_fields"] ? "Bu alanı boş bırakamazsınız." : false}
+            placeholder="Adınız ve Soyadınız"
+            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.fullname)) ? "Bu alanı boş bırakamazsınız." : false}
             maxLength={100}
-            value={applicationInfo["group_leader"]["name"]}
+            value={applicationInfo.applicant["fullname"]}
             onChange={(e) => {
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
-                group_leader: {
-                  ...appInfo.group_leader,
-                  name: e.target.value,
-                },
-              }))
-            }}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <TextInput
-            type="text"
-            label="Soyisim"
-            withAsterisk
-            id="surname"
-            name="surname"
-            placeholder="Soyadınız"
-            error={warnings["empty_fields"] ? "Bu alanı boş bırakamazsınız." : false}
-            maxLength={100}
-            value={applicationInfo["group_leader"]["surname"]}
-            onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                group_leader: {
-                  ...appInfo.group_leader,
-                  surname: e.target.value,
+                applicant: {
+                  ...appInfo.applicant,
+                  fullname: e.target.value,
                 },
               }))
             }}
@@ -87,12 +60,12 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             placeholder="E-postanız"
             error={warnings["not_email"] ? "Geçerli bir e-posta adresi girin." : false}
             maxLength={100}
-            value={applicationInfo["group_leader"]["email"]}
+            value={applicationInfo.applicant["email"]}
             onChange={(e) => {
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
-                group_leader: {
-                  ...appInfo.group_leader,
+                applicant: {
+                  ...appInfo.applicant,
                   email: e.target.value,
                 },
               }))
@@ -111,12 +84,12 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             placeholder="İletişim numaranız"
             error={warnings["not_phone_no"] ? "Geçerli bir telefon numarası girin." : false}
             maxLength={60}
-            value={applicationInfo["group_leader"]["phone"]}
+            value={applicationInfo.applicant["phone"]}
             onChange={(e) => {
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
-                group_leader: {
-                  ...appInfo.group_leader,
+                applicant: {
+                  ...appInfo.applicant,
                   phone: e.target.value,
                 },
               }))
@@ -127,8 +100,8 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
 
         <div className="mb-4">
           <label htmlFor="school" className="block font-medium mb-2">Okul <span className='text-red-400'>*</span></label>
-          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo["group_leader"]["school"])) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
-            {applicationInfo["group_leader"]["school"] && `Şu anki seçiminiz: ${applicationInfo["group_leader"]["school"]}`}
+          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool_name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
+            {applicationInfo.highschool_name && `Şu anki seçiminiz: ${applicationInfo.highschool_name}`}
             <SearchableSelect available_options={schools} value={schoolName} setValue={setSchoolName} placeholder='Okulunuzun adını giriniz' />
           </div>
         </div>
@@ -143,12 +116,12 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             placeholder="Rolünüz; rehber öğretmen, müdür yardımcısı, öğretmen vs."
             error={warnings["empty_fields"] ? "Bu alanı boş bırakamazsınız." : false}
             maxLength={200}
-            value={applicationInfo["group_leader"]["role"]}
+            value={applicationInfo.applicant["role"]}
             onChange={(e) => {
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
-                group_leader: {
-                  ...appInfo.group_leader,
+                applicant: {
+                  ...appInfo.applicant,
                   role: e.target.value,
                 },
               }))
