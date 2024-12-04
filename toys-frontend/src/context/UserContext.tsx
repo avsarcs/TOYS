@@ -1,47 +1,87 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { OnlyChildrenProps } from '../types/generic';
 import { User } from '../types/designed';
 import { useCookies } from "react-cookie";
 import { UserRole } from "../types/enum.ts";
 
 interface UserContextType {
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  authToken: string;
+  setAuthToken: (token: string) => void;
   user: User;
-  setUser: React.Dispatch<React.SetStateAction<User>>
+  isLoggedIn: boolean;
 }
+
+const USER_PROFILE_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/server/internal/user/profile";
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [cookies] = useCookies(["auth"], {})
+  const [cookies, setCookie] = useCookies(["auth"], {})
   const [user, setUser] = useState<User>({
     id: NaN,
-    role: UserRole.NONE
+    role: UserRole.NONE,
+    profile: {}
   });
+
+  const setAuthToken = useCallback((auth: string) => {
+    setCookie("auth", auth);
+  }, [setCookie]);
 
   useEffect(() => {
     if(!cookies.auth || cookies.auth.length === 0) {
       setUser({
         id: NaN,
-        role: UserRole.NONE
+        role: UserRole.NONE,
+        profile: {}
       });
+      setIsLoggedIn(false);
     }
     else {
       //fetch new user data
+      fetch(USER_PROFILE_URL + (new URLSearchParams({
+        authToken: cookies.auth,
+        id: ""
+      }).toString()))
+        .then(async (res) => {
+          if(res.status === 200) {
+            const profile = await res.json();
+            setUser({
+              id: profile.id,
+              role: profile.role,
+              profile: profile,
+            })
+          }
+          else {
+            setUser({
+              id: NaN,
+              role: UserRole.NONE,
+              profile: {}
+            });
+          }
+        })
     }
 
     return () => {
       setUser({
         id: NaN,
-        role: UserRole.NONE
+        role: UserRole.NONE,
+        profile: {}
       });
     }
   }, [cookies.auth]);
 
+  const userContextValue = useMemo(() => {
+    return {
+      authToken: cookies.auth,
+      setAuthToken,
+      user,
+      isLoggedIn,
+    }
+  }, [cookies.auth, setAuthToken, user, isLoggedIn])
+
   return (
-    <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, setUser }}>
+    <UserContext.Provider value={userContextValue}>
       {children}
     </UserContext.Provider>
   )

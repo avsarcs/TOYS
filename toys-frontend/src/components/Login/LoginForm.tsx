@@ -1,14 +1,15 @@
 import { Button, NumberInput, PasswordInput } from "@mantine/core";
-import { Link } from "react-router-dom";
-import { LoginData, LoginFormProps } from "../../types/designed.ts";
-import { FormEvent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginFormProps } from "../../types/designed.ts";
+import { LoginData } from "../../types/data.ts";
+import { FormEvent, useContext, useState } from "react";
 import { useForm } from "@mantine/form";
-import { useCookies } from "react-cookie";
 import { notifications } from "@mantine/notifications";
+import { UserContext } from "../../context/UserContext.tsx";
 
 const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
-  const [, setCookie] = useCookies(["auth"], {
-  });
+  const navigate = useNavigate();
+  const userContext = useContext(UserContext);
   const [loggingIn, setLoggingIn] = useState(false);
 
   const form = useForm({
@@ -48,12 +49,13 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
         const token = await res.text();
 
         if(token.length > 0) {
-          setCookie("auth", token, {});
           notifications.show({
             color: "green",
             title: "Giriş başarılı!",
             message: "Başarıyle giriş yapıldı. Ana sayfaya yönlendiriliyorsunuz."
           });
+          userContext?.setAuthToken(token);
+          navigate("/dashboard");
           setLoggingIn(false);
         }
         else {

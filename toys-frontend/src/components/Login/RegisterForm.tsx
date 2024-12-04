@@ -2,10 +2,11 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Button, Checkbox, NumberInput, PasswordInput, ScrollArea, Select, Textarea, TextInput } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { Department } from "../../types/enum.ts";
-import { GuideApplicationData, RegisterFormProps } from "../../types/designed.ts";
+import { RegisterFormProps } from "../../types/designed.ts";
+import { GuideApplicationData } from "../../types/data.ts";
 import { useForm } from "@mantine/form";
 import validate from "validate.js"
-import { isPossiblePhoneNumber, isValidPhoneNumber } from "libphonenumber-js/max";
+import { isPossiblePhoneNumber } from "libphonenumber-js/max";
 import { StatusCodes } from "http-status-codes";
 import { notifications } from "@mantine/notifications";
 

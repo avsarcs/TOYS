@@ -1,15 +1,15 @@
 import { Dispatch, SetStateAction } from "react";
 import {
   DashboardCategory,
-  DashboardCategoryText, EventType,
-  EventTypeText,
+  DashboardCategoryText,
   UserRole
 } from "./enum.ts";
 import { SimpleEventData, TourData } from "./data.ts";
 
 export interface User {
   id: number,
-  role: UserRole
+  role: UserRole,
+  profile: any
 }
 
 export interface NavbarProps {
