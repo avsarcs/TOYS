@@ -1,6 +1,7 @@
 package server.internal.user.profile;
 
 import server.auth.JWTService;
+import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.roles.USER_ROLE;
 import server.models.DTO.DTO_Guide;
@@ -28,10 +29,14 @@ public class UserProfileService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
         }
 
-        // check if user match with the auth token
-        // If not, return 442
-        if (!JWTService.getSimpleton().matchUsername(authToken, id)) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
+        if (id != null) {
+            // check if user match with the auth token
+            // If not, return 442
+            if (!JWTService.getSimpleton().matchUsername(authToken, id)) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
+            }
+        } else {
+            id = JWTService.getSimpleton().decodeUserID(authToken);
         }
         // get the user profile from the database
         User user = databaseEngine.people.fetchUser(id);
