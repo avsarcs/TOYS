@@ -1,10 +1,20 @@
 import { Image } from "@mantine/core"
 import LoginForm from "../../components/Login/LoginForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RegisterForm from "../../components/Login/RegisterForm.tsx";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
   const [registering, setRegistering] = useState(false);
+  const [cookies] = useCookies(["auth"], {});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(cookies.auth && cookies.auth.length > 0) {
+      navigate("../dashboard");
+    }
+  }, [navigate, cookies.auth]);
 
   return (
     <div className={"w-full min-h-screen grid lg:grid-cols-2 grid-cols-1 lg:grid-rows-1 grid-rows-2"}>
@@ -32,8 +42,8 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
       <div
-        className={`max-h-screen flex flex-col flex-nowrap justify-start lg:justify-center items-top lg:items-start
-          text-center lg:text-left md:p-8 lg:p-14 border-t lg:border-l lg:border-t-0 bg-blue-600 
+        className={`max-h-screen overflow-y-auto flex flex-col flex-nowrap justify-start lg:justify-safe-center items-top
+          md:p-8 lg:p-14 border-t lg:border-l lg:border-t-0 bg-blue-600 
           bg-gradient-to-bl from-50% from-blue-600 via-blue-500 to-red-300 lg:via-blue-600 lg:to-blue-600`}>
         {
           registering ? <RegisterForm setRegistering={setRegistering}/> : <LoginForm setRegistering={setRegistering}/>

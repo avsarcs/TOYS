@@ -1,15 +1,20 @@
 .navbar {
   background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
   height: 100vh;
-  width: rem(300px);
   padding: var(--mantine-spacing-md);
   padding-bottom: 0;
 
-  position: fixed;
+  flex-shrink: 0;
+  flex-basis: 0;
 
   display: flex;
   flex-direction: column;
   border-right: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  transition: flex-basis 0.2s linear;
+}
+
+.navbar.open {
+  flex-basis: rem(300px);
 }
 
 .header {

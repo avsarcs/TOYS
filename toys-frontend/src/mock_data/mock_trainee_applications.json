@@ -1,0 +1,99 @@
+[
+    {
+      "fullname": "John Doe",
+      "id": "12345678",
+      "high_school": "IBRAHIM KARATAS LISESI",
+      "email": "john.doe@example.com",
+      "phone": "+1234567890",
+      "major": "COMPUTER_SCIENCE",
+      "current_semester": 5,
+      "next_semester_exchange": true,
+      "how_did_you_hear": "Through university website",
+      "why_apply": "To gain international experience"
+    },
+    {
+      "fullname": "Jane Smith",
+      "id": "87654321",
+      "high_school": "SEVGI LISESI",
+      "email": "jane.smith@example.com",
+      "phone": "+0987654321",
+      "major": "BIOLOGY",
+      "current_semester": 4,
+      "next_semester_exchange": false,
+      "how_did_you_hear": "Through a friend",
+      "why_apply": "To explore new cultures"
+    },
+    {
+      "fullname": "Alice Brown",
+      "id": "11223344",
+      "high_school": "ATA ANADOLU LISESI",
+      "email": "alice.brown@example.com",
+      "phone": "+1112223333",
+      "major": "PHYSICS",
+      "current_semester": 3,
+      "next_semester_exchange": true,
+      "how_did_you_hear": "Via social media",
+      "why_apply": "To broaden academic horizons"
+    },
+    {
+      "fullname": "Bob White",
+      "id": "33445566",
+      "high_school": "MILLI EGITIM LISESI",
+      "email": "bob.white@example.com",
+      "phone": "+4445556666",
+      "major": "CHEMISTRY",
+      "current_semester": 6,
+      "next_semester_exchange": true,
+      "how_did_you_hear": "At a university fair",
+      "why_apply": "To improve language skills"
+    },
+    {
+      "fullname": "Emily Green",
+      "id": "55667788",
+      "high_school": "YUNUS EMRE LISESI",
+      "email": "emily.green@example.com",
+      "phone": "+5556667777",
+      "major": "MATHEMATICS",
+      "current_semester": 7,
+      "next_semester_exchange": false,
+      "how_did_you_hear": "Through university email",
+      "why_apply": "To gain research opportunities"
+    },
+    {
+      "fullname": "Chris Black",
+      "id": "66778899",
+      "high_school": "KOC LİSESI",
+      "email": "chris.black@example.com",
+      "phone": "+6667778888",
+      "major": "ENGINEERING",
+      "current_semester": 5,
+      "next_semester_exchange": true,
+      "how_did_you_hear": "Via professor recommendation",
+      "why_apply": "To network with international students"
+    },
+    {
+      "fullname": "Sophia Turner",
+      "id": "77889900",
+      "high_school": "ANKARA FEN LISESI",
+      "email": "sophia.turner@example.com",
+      "phone": "+7778889999",
+      "major": "LITERATURE",
+      "current_semester": 2,
+      "next_semester_exchange": false,
+      "how_did_you_hear": "Through the alumni network",
+      "why_apply": "To gain international work experience"
+    },
+    {
+      "fullname": "Liam Johnson",
+      "id": "99001122",
+      "high_school": "DOGA KOLEJI",
+      "email": "liam.johnson@example.com",
+      "phone": "+8889990000",
+      "major": "ECONOMICS",
+      "current_semester": 8,
+      "next_semester_exchange": true,
+      "how_did_you_hear": "On the university noticeboard",
+      "why_apply": "To learn in a diverse academic environment"
+    }
+  ]
+  
