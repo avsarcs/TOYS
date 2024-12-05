@@ -242,7 +242,7 @@ const UniversitiesList: React.FC = () => {
     </Container>
 
 
-    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full bg-blue-600 lg:bg-gradient-to-bl lg:from-50% lg:from-blue-600 lg:via-blue-500 lg:to-red-300"}>
+    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         <Space h="xl"/>
         {HeaderTextContainer}
         <hr style={{border: '1px solid black'}}/>
