@@ -1,6 +1,5 @@
 import React from "react";
 import {Space, Container, Text} from '@mantine/core';
-import Navbar from "../../components/DataAnalysis/Navbar.tsx";
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
@@ -108,8 +107,7 @@ const Comparison: React.FC = () => {
         </div>
     }
 
-    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full bg-blue-600 lg:bg-gradient-to-bl lg:from-50% lg:from-blue-600 lg:via-blue-500 lg:to-red-300"}>
-        <Navbar activeIndex={2}/>
+    return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
         <Space h="xl"/>
         {HeaderTextContainer}
         <hr style={{border: '1px solid black'}}/>
