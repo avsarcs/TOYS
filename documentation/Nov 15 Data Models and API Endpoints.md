@@ -396,12 +396,14 @@ API endpoints:
 	/accept (Requires Auth as Coordinator)
 		parameters:
 			review_id=12354asd654
+			auth= auth_token
 		method: post
 		response: 200 or 400
 		response_type: status code
 	
 	/reject (Requires Auth as Coordinator)
 		parameters:
+			auth= auth?toıken
 			review_id=12354asd654,
 			still_consider_points=bool
 		method: post
@@ -412,6 +414,7 @@ API endpoints:
 	/of_tour (Requires Auth)
 		parameters:
 			tour_id=2590545wdge
+			auth = auth_token
 		method: get
 		response: {
 			"average": 5.67,
