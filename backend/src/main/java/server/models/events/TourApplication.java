@@ -1,10 +1,11 @@
-package server.models;
+package server.models.events;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import server.enums.ApplicationStatus;
-import server.enums.ApplicationType;
+import server.enums.status.ApplicationStatus;
+import server.enums.types.ApplicationType;
 import server.enums.Department;
-import server.enums.TourType;
+import server.enums.types.TourType;
+import server.models.Application;
 import server.models.DTO.DTO_GroupTourApplication;
 import server.models.DTO.DTO_IndividualTourApplication;
 import server.models.time.ZTime;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TourApplication extends Application{
+public class TourApplication extends Application {
 
     private TourType tour_type;
     private List<ZTime> requested_hours;
@@ -54,7 +55,7 @@ public class TourApplication extends Application{
         TourApplication application = new TourApplication();
 
         application.setType(ApplicationType.TOUR);
-        application.setTour_type(TourType.Group);
+        application.setTour_type(TourType.GROUP);
         application.setNotes(dto.getNotes());
         application.setExpected_souls(dto.getVisitor_count());
         application.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getId()));
@@ -68,7 +69,7 @@ public class TourApplication extends Application{
         TourApplication application = new TourApplication();
 
         application.setType(ApplicationType.TOUR);
-        application.setTour_type(TourType.Individual);
+        application.setTour_type(TourType.INDIVIDUAL);
         application.setExpected_souls(dto.getVisitor_count());
         application.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getId()));
         application.setStatus(ApplicationStatus.RECIEVED);
@@ -84,16 +85,16 @@ public class TourApplication extends Application{
         try {
             valid = valid && tour_type != null;
             valid = valid && requested_hours != null && !requested_hours.isEmpty();
-            if (tour_type == TourType.Individual) {
+            if (tour_type == TourType.INDIVIDUAL) {
                 valid = valid && interested_in != null && !interested_in.isEmpty();
             }
             valid = valid && expected_souls > 0;
             valid = valid && applicant != null && applicant.isValid();
 
             if (expected_souls > 10) {
-                valid = valid && tour_type == TourType.Group;
+                valid = valid && tour_type == TourType.GROUP;
             } else {
-                valid = valid && tour_type == TourType.Individual;
+                valid = valid && tour_type == TourType.INDIVIDUAL;
             }
         } catch (Exception e) {
             valid = false;

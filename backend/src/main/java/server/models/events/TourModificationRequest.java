@@ -1,6 +1,7 @@
-package server.models;
+package server.models.events;
 
-import server.enums.TourModificationType;
+import server.enums.types.TourModificationType;
+import server.models.Request;
 
 import java.util.Map;
 

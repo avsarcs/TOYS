@@ -5,14 +5,11 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import server.enums.Reviewee;
-import server.models.people.Guide;
+import server.enums.roles.Reviewee;
 import server.models.review.DTO_GuideReview;
 import server.models.review.DTO_ReviewCreate;
 import server.models.review.ReviewRecord;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

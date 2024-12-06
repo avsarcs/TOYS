@@ -1,7 +1,5 @@
 package server.models.review;
 
-import server.enums.ApplicationStatus;
-
 public class ReviewRecord {
     private String event_id;
     private ReviewResponse status;

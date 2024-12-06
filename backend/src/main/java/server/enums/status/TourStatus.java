@@ -1,6 +1,6 @@
 package server.enums.status;
 
-public enum TOUR_STATUS {
+public enum TourStatus {
     CONFLICT,
     AWAITING_CONFIRMATION,
     AWAITING_CHANGES,

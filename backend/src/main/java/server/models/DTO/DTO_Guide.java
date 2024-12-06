@@ -1,7 +1,7 @@
 package server.models.DTO;
 
 import server.enums.Department;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 import server.models.people.Guide;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class DTO_Guide {
     private String phone;
     private DTO_Highschool high_school;
     private Department major;
-    private USER_ROLE role;
+    private UserRole role;
     private String profile_picture;
     private long previous_tour_count;
     private String profile_description;
@@ -45,7 +45,7 @@ public class DTO_Guide {
         this.phone = (String) map.get("phone");
         this.high_school = DTO_Highschool.fromMap((Map<String, Object>) map.get("high_school"));
         this.major = Department.valueOf((String) map.get("major"));
-        this.role = USER_ROLE.valueOf((String) map.get("role"));
+        this.role = UserRole.valueOf((String) map.get("role"));
         this.profile_picture = (String) map.get("profile_picture");
         this.previous_tour_count = (long) map.get("previous_tour_count");
         this.profile_description = (String) map.get("profile_description");
@@ -102,11 +102,11 @@ public class DTO_Guide {
         return this;
     }
 
-    public USER_ROLE getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public DTO_Guide setRole(USER_ROLE role) {
+    public DTO_Guide setRole(UserRole role) {
         this.role = role;
         return this;
     }

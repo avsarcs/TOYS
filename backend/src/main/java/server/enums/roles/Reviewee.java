@@ -1,4 +1,4 @@
-package server.enums;
+package server.enums.roles;
 
 public enum Reviewee {
     TOUR,

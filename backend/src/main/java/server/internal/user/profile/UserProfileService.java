@@ -3,7 +3,7 @@ package server.internal.user.profile;
 import server.auth.JWTService;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 import server.models.DTO.DTO_Guide;
 import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.DTO_UserType;
@@ -43,12 +43,12 @@ public class UserProfileService {
                 }
             } else if (type == DTO_UserType.GUIDE) {
                 if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
-                    if (guide.getRole() == USER_ROLE.GUIDE) {
+                    if (guide.getRole() == UserRole.GUIDE) {
                         guides.add(DTO_SimpleGuide.fromGuide(guide));
                     }
                 }
             } else if (type == DTO_UserType.ADVISOR){
-                if (guide.getRole() == USER_ROLE.ADVISOR) {
+                if (guide.getRole() == UserRole.ADVISOR) {
                     guides.add(DTO_SimpleGuide.fromGuide(guide));
                 }
             }
@@ -78,9 +78,9 @@ public class UserProfileService {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        if (user.getRole() == USER_ROLE.GUIDE && user instanceof Guide) {
+        if (user.getRole() == UserRole.GUIDE && user instanceof Guide) {
             return DTO_Guide.fromGuide((Guide) user);
-        } else if (user.getRole() == USER_ROLE.ADVISOR && user instanceof Guide) {
+        } else if (user.getRole() == UserRole.ADVISOR && user instanceof Guide) {
             return DTO_Guide.fromGuide((Guide) user);
         } else {
             return null;
@@ -99,10 +99,10 @@ public class UserProfileService {
         User user = database.people.fetchUser(userID);
         // form the profile
         Profile profile = null;
-        if (user.getRole() == USER_ROLE.GUIDE && user instanceof Guide) {
+        if (user.getRole() == UserRole.GUIDE && user instanceof Guide) {
             profile = ((Guide) user).modifyWithDTO(DTO_Guide.fromMap(profileMap)).getProfile();
             ((Guide) user).setHigh_school(profile.getHighschool_id());
-        } else if (user.getRole() == USER_ROLE.ADVISOR && user instanceof Advisor) {
+        } else if (user.getRole() == UserRole.ADVISOR && user instanceof Advisor) {
             profile = ((Advisor) user).modifyWithDTO(DTO_Guide.fromMap(profileMap)).getProfile();
         } else {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid user role");

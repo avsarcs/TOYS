@@ -1,7 +1,6 @@
 package server.models.review;
 
 import server.models.DTO.DTO_SimpleGuide;
-import server.models.TourRegistry;
 import server.models.time.ZTime;
 
 import java.util.List;

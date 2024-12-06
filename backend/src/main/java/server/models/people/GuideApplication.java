@@ -1,10 +1,10 @@
-package server.models;
+package server.models.people;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import server.enums.ApplicationStatus;
-import server.enums.ApplicationType;
+import server.enums.status.ApplicationStatus;
+import server.enums.types.ApplicationType;
+import server.models.Application;
 import server.models.DTO.DTO_GuideApplication;
-import server.models.people.Guide;
 import server.models.people.details.Profile;
 
 import java.util.Map;

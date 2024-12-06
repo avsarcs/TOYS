@@ -1,6 +1,6 @@
 package server.enums.roles;
 
-public enum USER_ROLE {
+public enum UserRole {
     GUIDE,
     ADVISOR,
     COORDINATOR,

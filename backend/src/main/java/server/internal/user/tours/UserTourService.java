@@ -6,18 +6,17 @@ import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
-import server.enums.RequestStatus;
-import server.enums.RequestType;
-import server.enums.status.TOUR_STATUS;
+import server.enums.status.RequestStatus;
+import server.enums.types.RequestType;
+import server.enums.status.TourStatus;
 import server.mailService.MailServiceGateway;
-import server.mailService.MailType__;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.people.details.ContactInfo;
 import server.models.time.ZTime;
-import server.models.GuideAssignmentRequest;
-import server.models.TourRegistry;
+import server.models.people.GuideAssignmentRequest;
+import server.models.events.TourRegistry;
 import server.models.people.Guide;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -203,19 +202,19 @@ public class UserTourService {
         }
         // check the status
         // update status
-        TOUR_STATUS status = TOUR_STATUS.valueOf(statusString);
-        if (status == TOUR_STATUS.ONGOING && tour.getTourStatus() == TOUR_STATUS.CONFIRMED) {
+        TourStatus status = TourStatus.valueOf(statusString);
+        if (status == TourStatus.ONGOING && tour.getTourStatus() == TourStatus.CONFIRMED) {
             // ok so this is start of the tour, then we need to log the work hours
             tour.setStarted_at(new ZTime(ZonedDateTime.now()));
-            tour.setTour_status(TOUR_STATUS.ONGOING);
-        } else if (status == TOUR_STATUS.FINISHED && tour.getTourStatus() == TOUR_STATUS.ONGOING) {
+            tour.setTour_status(TourStatus.ONGOING);
+        } else if (status == TourStatus.FINISHED && tour.getTourStatus() == TourStatus.ONGOING) {
             // ok so this is end of the tour, then we need to log end
             tour.setEnded_at(new ZTime(ZonedDateTime.now()));
-            tour.setTour_status(TOUR_STATUS.FINISHED);
+            tour.setTour_status(TourStatus.FINISHED);
             // TODO: LOG WORK HOURS FOR GUIDES MODELS ALSO
-        } else if (status == TOUR_STATUS.CANCELLED) {
+        } else if (status == TourStatus.CANCELLED) {
             // ok so this is end of the tour, then we need to log end
-            tour.setTour_status(TOUR_STATUS.CANCELLED);
+            tour.setTour_status(TourStatus.CANCELLED);
         } else {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid status change");
         }

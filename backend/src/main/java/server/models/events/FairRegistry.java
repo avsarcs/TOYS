@@ -1,13 +1,13 @@
-package server.models;
+package server.models.events;
 
-import server.enums.status.FAIR_STATUS;
+import server.enums.status.FairStatus;
 
 import java.util.List;
 import java.util.Map;
 
-public class FairRegistry extends FairApplication{
+public class FairRegistry extends FairApplication {
     private List<String> guides;
-    private FAIR_STATUS fair_status;
+    private FairStatus fair_status;
     private String notes;
     private List<String> reviews;
     private String fair_id;
@@ -24,7 +24,7 @@ public class FairRegistry extends FairApplication{
     protected FairRegistry(Map<String,Object> map) {
         super(map);
         this.guides = (List<String>) map.get("guides");
-        this.fair_status = FAIR_STATUS.valueOf((String) map.get("status"));
+        this.fair_status = FairStatus.valueOf((String) map.get("status"));
         this.notes = (String) map.get("notes");
         this.reviews = (List<String>) map.get("reviews");
         this.fair_id = (String) map.get("fair_id");
@@ -37,7 +37,7 @@ public class FairRegistry extends FairApplication{
         return guides;
     }
 
-    public FAIR_STATUS getFair_status() {
+    public FairStatus getFair_status() {
         return fair_status;
     }
 

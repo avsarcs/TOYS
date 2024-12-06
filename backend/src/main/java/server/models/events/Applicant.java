@@ -1,6 +1,6 @@
-package server.models;
+package server.models.events;
 
-import server.enums.ApplicantRole;
+import server.enums.roles.ApplicantRole;
 import server.models.DTO.DTO_Applicant;
 import server.models.people.details.ContactInfo;
 

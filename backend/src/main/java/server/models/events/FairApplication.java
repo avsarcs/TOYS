@@ -1,10 +1,11 @@
-package server.models;
+package server.models.events;
 
+import server.models.Application;
 import server.models.time.ZTime;
 
 import java.util.Map;
 
-public class FairApplication extends Application{
+public class FairApplication extends Application {
     public FairApplication() {
         super();
     }

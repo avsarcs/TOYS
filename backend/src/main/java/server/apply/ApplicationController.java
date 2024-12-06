@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.*;
 import server.models.DTO.DTO_GroupTourApplication;
 import server.models.DTO.DTO_GuideApplication;
 import server.models.DTO.DTO_IndividualTourApplication;
-import server.models.FairApplication;
-import server.models.GuideApplication;
+import server.models.events.FairApplication;
+import server.models.people.GuideApplication;
 import server.models.Request;
-import server.models.TourApplication;
+import server.models.events.TourApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController

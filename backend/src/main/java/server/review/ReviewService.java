@@ -8,23 +8,20 @@ import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
-import server.enums.ApplicationStatus;
-import server.enums.Reviewee;
+import server.enums.roles.Reviewee;
 import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.DTO.DTO_SimpleGuide;
-import server.models.FairRegistry;
-import server.models.Review;
-import server.models.TourRegistry;
+import server.models.events.FairRegistry;
+import server.models.events.TourRegistry;
 import server.models.people.Guide;
 import server.models.review.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class ReviewService {

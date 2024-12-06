@@ -1,9 +1,7 @@
 package server.models.review;
 
-import com.fasterxml.jackson.annotation.JsonKey;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import server.enums.Reviewee;
+import server.enums.roles.Reviewee;
 import server.models.DTO.DTO_SimpleGuide;
 import server.models.time.ZTime;
 

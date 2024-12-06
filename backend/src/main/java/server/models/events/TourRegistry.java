@@ -1,9 +1,9 @@
-package server.models;
+package server.models.events;
 
-import server.enums.ApplicationStatus;
-import server.enums.ApplicationType;
-import server.enums.TourType;
-import server.enums.status.TOUR_STATUS;
+import server.enums.status.ApplicationStatus;
+import server.enums.types.ApplicationType;
+import server.enums.types.TourType;
+import server.enums.status.TourStatus;
 import server.models.DTO.DTO_GroupTour;
 import server.models.DTO.DTO_IndividualTour;
 import server.models.DTO.DTO_SimpleGuide;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TourRegistry extends TourApplication{
+public class TourRegistry extends TourApplication {
     public TourRegistry() {
         super();
         tour_id = "tour_" + System.currentTimeMillis();
@@ -31,7 +31,7 @@ public class TourRegistry extends TourApplication{
     public static TourRegistry getDefault() {
         TourRegistry tour = new TourRegistry();
         tour.setTour_id("tour_-1");
-        tour.setTour_status(TOUR_STATUS.CONFIRMED);
+        tour.setTour_status(TourStatus.CONFIRMED);
         tour.setAccepted_time(new ZTime(ZonedDateTime.now()));
         tour.setEnded_at(new ZTime(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"))));
         tour.setStarted_at(tour.getEnded_at());
@@ -43,7 +43,7 @@ public class TourRegistry extends TourApplication{
         tour.setApplicant(Applicant.getDefault());
         tour.setStatus(ApplicationStatus.APPROVED);
         tour.setType(ApplicationType.TOUR);
-        tour.setTour_type(TourType.Group);
+        tour.setTour_type(TourType.GROUP);
         tour.setReviews(new ArrayList<>());
         return tour;
     }
@@ -52,7 +52,7 @@ public class TourRegistry extends TourApplication{
         super(map);
         this.accepted_time = new ZTime(ZonedDateTime.parse((String) map.get("accepted_time")));
         this.guides = (List<String>) map.get("guides");
-        this.tour_status = TOUR_STATUS.valueOf((String) map.get("tourStatus"));
+        this.tour_status = TourStatus.valueOf((String) map.get("tourStatus"));
         this.notes = (String) map.get("notes");
         this.reviews = (List<String>) map.get("reviews");
         this.started_at = new ZTime(ZonedDateTime.parse((String) map.get("started_at")));
@@ -79,7 +79,7 @@ public class TourRegistry extends TourApplication{
         tour.setRequested_hours(dto.getRequested_times());
         tour.setExpected_souls(dto.getVisitor_count());
         tour.setNotes(dto.getNotes());
-        tour.setTour_type(TourType.Group);
+        tour.setTour_type(TourType.GROUP);
         tour.setInterested_in(new ArrayList<>());
         if (dto.getStatus() == GroupTourStatus.REJECTED) {
             tour.setStatus(ApplicationStatus.REJECTED);
@@ -90,10 +90,10 @@ public class TourRegistry extends TourApplication{
         }
 
         try {
-            tour.setTour_status(TOUR_STATUS.valueOf(dto.getStatus().name()));
+            tour.setTour_status(TourStatus.valueOf(dto.getStatus().name()));
         } catch (Exception e) {
             System.out.println("Error in setting tour status, defaulting to CONFIRMED");
-            tour.setTour_status(TOUR_STATUS.CONFIRMED);
+            tour.setTour_status(TourStatus.CONFIRMED);
         }
 
         tour.setClassroom(dto.getClassroom());
@@ -113,7 +113,7 @@ public class TourRegistry extends TourApplication{
         tour.setRequested_hours(dto.getRequested_times());
         tour.setExpected_souls(dto.getVisitor_count());
         tour.setNotes(dto.getNotes());
-        tour.setTour_type(TourType.Group);
+        tour.setTour_type(TourType.GROUP);
         tour.setInterested_in(dto.getRequested_majors());
         if (dto.getStatus() == GroupTourStatus.REJECTED) {
             tour.setStatus(ApplicationStatus.REJECTED);
@@ -124,10 +124,10 @@ public class TourRegistry extends TourApplication{
         }
 
         try {
-            tour.setTour_status(TOUR_STATUS.valueOf(dto.getStatus().name()));
+            tour.setTour_status(TourStatus.valueOf(dto.getStatus().name()));
         } catch (Exception e) {
             System.out.println("Error in setting tour status, defaulting to CONFIRMED");
-            tour.setTour_status(TOUR_STATUS.CONFIRMED);
+            tour.setTour_status(TourStatus.CONFIRMED);
         }
 
         tour.setClassroom(dto.getClassroom());
@@ -152,7 +152,7 @@ public class TourRegistry extends TourApplication{
     }
 
 
-    public TOUR_STATUS getTourStatus() {
+    public TourStatus getTourStatus() {
         return tour_status;
     }
 
@@ -167,7 +167,7 @@ public class TourRegistry extends TourApplication{
 
 
 
-    public TourRegistry setTour_status(TOUR_STATUS tour_status) {
+    public TourRegistry setTour_status(TourStatus tour_status) {
         this.tour_status = tour_status;
         return this;
     }
@@ -221,7 +221,7 @@ public class TourRegistry extends TourApplication{
     private String tour_id;
     private ZTime accepted_time;
     private List<String> guides;
-    private TOUR_STATUS tour_status;
+    private TourStatus tour_status;
     private String notes;
     private List<String> reviews;
     private ZTime started_at;

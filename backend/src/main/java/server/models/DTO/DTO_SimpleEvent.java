@@ -1,10 +1,8 @@
 package server.models.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import server.dbm.Database;
-import server.models.FairRegistry;
-import server.models.TourRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import server.models.events.FairRegistry;
+import server.models.events.TourRegistry;
 
 import java.util.ArrayList;
 import java.util.List;

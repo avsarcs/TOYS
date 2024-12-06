@@ -1,8 +1,5 @@
 package server.models.review;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import server.enums.Reviewee;
-
 import java.util.Map;
 
 public class DTO_Review extends DTO_ReviewCreate{

@@ -1,4 +1,4 @@
-package server.enums;
+package server.enums.status;
 
 public enum UserStatus {
     ACTIVE,

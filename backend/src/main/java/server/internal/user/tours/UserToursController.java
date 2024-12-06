@@ -1,6 +1,6 @@
 package server.internal.user.tours;
 
-import server.models.TourRegistry;
+import server.models.events.TourRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

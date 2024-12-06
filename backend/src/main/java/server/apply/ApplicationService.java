@@ -2,7 +2,7 @@ package server.apply;
 
 import server.auth.JWTService;
 import server.dbm.Database;
-import server.enums.ApplicationStatus;
+import server.enums.status.ApplicationStatus;
 import server.mailService.MailServiceGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,11 @@ import org.springframework.web.server.ResponseStatusException;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
-import server.models.*;
+import server.models.events.FairApplication;
+import server.models.events.FairRegistry;
+import server.models.events.TourApplication;
+import server.models.events.TourRegistry;
+import server.models.people.GuideApplication;
 import server.models.time.ZTime;
 
 import java.util.ArrayList;

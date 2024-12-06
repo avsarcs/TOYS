@@ -1,15 +1,16 @@
-package server.models;
+package server.models.people;
 
-import server.enums.RequestStatus;
-import server.enums.RequestType;
-import server.models.people.Guide;
+import server.enums.status.RequestStatus;
+import server.enums.types.RequestType;
+import server.models.Request;
+import server.models.events.TourRegistry;
 import server.models.people.details.ContactInfo;
 import server.models.time.ZTime;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-public class GuideAssignmentRequest extends Request{
+public class GuideAssignmentRequest extends Request {
 
     public GuideAssignmentRequest() {
         super();

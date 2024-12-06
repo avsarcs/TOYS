@@ -1,4 +1,4 @@
-package server.enums;
+package server.enums.types;
 
 public enum ApplicationType {
     GUIDE,

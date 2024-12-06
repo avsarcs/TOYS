@@ -1,6 +1,6 @@
 package server.enums.status;
 
-public enum FAIR_STATUS {
+public enum FairStatus {
     INVITED,
     ACCEPTED,
     REJECTED,

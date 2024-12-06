@@ -6,8 +6,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
-import org.springframework.web.server.ResponseStatusException;
-import server.models.TourRegistry;
+import server.models.events.TourRegistry;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

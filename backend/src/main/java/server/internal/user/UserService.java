@@ -6,24 +6,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import server.auth.JWTService;
-import server.auth.Permission;
-import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
-import server.enums.roles.USER_ROLE;
-import server.enums.status.FAIR_STATUS;
-import server.enums.status.TOUR_STATUS;
+import server.enums.roles.UserRole;
+import server.enums.status.FairStatus;
+import server.enums.status.TourStatus;
 import server.models.DTO.DTO_AdvisorOffer;
 import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.DTO_UserType;
-import server.models.FairRegistry;
-import server.models.TourRegistry;
+import server.models.events.FairRegistry;
+import server.models.events.TourRegistry;
 import server.models.people.Guide;
 import server.models.time.ZTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -41,7 +38,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authorization!");
         }
 
-        if (!List.of(USER_ROLE.COORDINATOR, USER_ROLE.DIRECTOR).contains(JWTService.getSimpleton().getUserRole(auth))) {
+        if (!List.of(UserRole.COORDINATOR, UserRole.DIRECTOR).contains(JWTService.getSimpleton().getUserRole(auth))) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unsatisfactory permissions!");
         }
 
@@ -110,12 +107,12 @@ public class UserService {
                 }
             } else if (type == DTO_UserType.GUIDE) {
                 if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
-                    if (guide.getRole() == USER_ROLE.GUIDE) {
+                    if (guide.getRole() == UserRole.GUIDE) {
                         guides.add(DTO_SimpleGuide.fromGuide(guide));
                     }
                 }
             } else if (type == DTO_UserType.ADVISOR){
-                if (guide.getRole() == USER_ROLE.ADVISOR) {
+                if (guide.getRole() == UserRole.ADVISOR) {
                     guides.add(DTO_SimpleGuide.fromGuide(guide));
                 }
             }
@@ -151,7 +148,7 @@ public class UserService {
         // now do a time check and see if they are available
         Map<String,TourRegistry> tours = database.tours.fetchTours();
         for (TourRegistry tour : tours.values()) {
-            if (tour.getTourStatus() == TOUR_STATUS.CONFIRMED) {
+            if (tour.getTourStatus() == TourStatus.CONFIRMED) {
                 for (Guide guide : people) {
 
                     if (tour.getGuides().contains(guide.getBilkent_id())) {
@@ -165,7 +162,7 @@ public class UserService {
 
         Map<String, FairRegistry> fairs = database.fairs.fetchFairs();
         for (FairRegistry fair : fairs.values()) {
-            if (fair.getFair_status() == FAIR_STATUS.ACCEPTED) {
+            if (fair.getFair_status() == FairStatus.ACCEPTED) {
                 for (Guide guide : people) {
                     if (fair.getGuides().contains(guide.getBilkent_id())) {
                         if (fair.getStarts_at().inRange(time, 24)) {
