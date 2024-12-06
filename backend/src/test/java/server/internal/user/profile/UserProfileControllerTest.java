@@ -10,10 +10,13 @@ import server.auth.JWTService;
 import server.dbm.Database;
 import server.models.DTO.DTO_Guide;
 import server.models.DTO.DTO_Highschool;
+import server.models.DTO.DTO_SimpleGuide;
+import server.models.DTO.DTO_UserType;
 import server.models.people.Guide;
 import server.models.people.details.Profile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +27,17 @@ class UserProfileControllerTest {
 
     @Autowired
     UserProfileController userProfileController;
+
+
+    @Test
+    void getSimpleGuides() {
+        String auth = JWTService.testToken;
+        assert(auth != null);
+        List<DTO_SimpleGuide> list = userProfileController.getSimpleGuides(auth, DTO_UserType.GUIDE);
+        assert(list != null);
+        assert(list.size() > 0);
+
+    }
 
     @Test
     void getProfile() {

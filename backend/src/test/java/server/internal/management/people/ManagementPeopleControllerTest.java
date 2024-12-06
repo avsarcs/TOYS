@@ -12,8 +12,6 @@ import server.models.people.Guide;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class ManagementPeopleControllerTest {
 
@@ -50,7 +48,7 @@ class ManagementPeopleControllerTest {
         Map<String, Application> applications = managementPeopleController.getApplications(JWTService.testToken);
         List<Long> appplicationIDs = applications.keySet().stream().map(e -> e.split("_")[1]).map(e -> Long.parseLong(e)).sorted().toList();
         String applicationId = "GUIDE_" + appplicationIDs.get(appplicationIDs.size() - 1);
-        managementPeopleController.respondToApplication(JWTService.testToken, applicationId, "ACCEPTED");
+        managementPeopleController.respondToApplication(JWTService.testToken, applicationId, ApplicationStatus.APPROVED.name());
         assert managementPeopleController.getApplications(JWTService.testToken).get(applicationId).getStatus().equals(ApplicationStatus.APPROVED);
     }
 

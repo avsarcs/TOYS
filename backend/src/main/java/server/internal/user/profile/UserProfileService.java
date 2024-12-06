@@ -1,10 +1,12 @@
 package server.internal.user.profile;
 
 import server.auth.JWTService;
-import server.auth.PermissionMap;
 import server.dbm.Database;
+import server.enums.ExperienceLevel;
 import server.enums.roles.USER_ROLE;
 import server.models.DTO.DTO_Guide;
+import server.models.DTO.DTO_SimpleGuide;
+import server.models.DTO.DTO_UserType;
 import server.models.people.Advisor;
 import server.models.people.Guide;
 import server.models.people.User;
@@ -14,13 +16,46 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class UserProfileService {
 
     @Autowired
-    Database databaseEngine;
+    Database database;
+
+
+    public List<DTO_SimpleGuide> getSimpleGuides(String authToken, DTO_UserType type) {
+        List<DTO_SimpleGuide> guides = new ArrayList<>();
+        // validate jwt token
+        if (!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        List<Guide> people = database.people.fetchGuides(null);
+        people.addAll(database.people.fetchAdvisors(null));
+        for (Guide guide : people) {
+            if (type == DTO_UserType.TRAINEE) {
+                if (guide.getExperience().getExperienceLevel_level() == ExperienceLevel.TRAINEE) {
+                    guides.add(DTO_SimpleGuide.fromGuide(guide));
+                }
+            } else if (type == DTO_UserType.GUIDE) {
+                if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
+                    if (guide.getRole() == USER_ROLE.GUIDE) {
+                        guides.add(DTO_SimpleGuide.fromGuide(guide));
+                    }
+                }
+            } else if (type == DTO_UserType.ADVISOR){
+                if (guide.getRole() == USER_ROLE.ADVISOR) {
+                    guides.add(DTO_SimpleGuide.fromGuide(guide));
+                }
+            }
+        }
+
+        return guides;
+    }
 
     public Object getProfile(String id, String authToken) {
         // Check auth token validity
@@ -39,7 +74,7 @@ public class UserProfileService {
             id = JWTService.getSimpleton().decodeUserID(authToken);
         }
         // get the user profile from the database
-        User user = databaseEngine.people.fetchUser(id);
+        User user = database.people.fetchUser(id);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -61,7 +96,7 @@ public class UserProfileService {
 
         String userID = JWTService.getSimpleton().decodeUserID(authToken);
         // get the user
-        User user = databaseEngine.people.fetchUser(userID);
+        User user = database.people.fetchUser(userID);
         // form the profile
         Profile profile = null;
         if (user.getRole() == USER_ROLE.GUIDE && user instanceof Guide) {
@@ -75,7 +110,7 @@ public class UserProfileService {
         // update profile
         user.setProfile(profile);
         // update the user profile in the database
-        databaseEngine.people.updateUser(user);
+        database.people.updateUser(user);
     }
 
 }

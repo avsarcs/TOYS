@@ -9,7 +9,6 @@ import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.ApplicationStatus;
-import server.enums.RequestStatus;
 import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;

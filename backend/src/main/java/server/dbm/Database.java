@@ -43,6 +43,7 @@ public class Database {
     public DBUsersService people;
     public DBSchoolService schools;
     public DBRequestService requests;
+    public DBReviewService reviews;
 
     private Database() {
 
@@ -76,6 +77,7 @@ public class Database {
         fairs = new DBFairsService();
         schools = new DBSchoolService();
         requests = new DBRequestService();
+        reviews = new DBReviewService();
 
     }
 

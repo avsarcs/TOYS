@@ -1,6 +1,7 @@
 package server.internal.user.profile;
 
 import server.models.DTO.DTO_SimpleGuide;
+import server.models.DTO.DTO_UserType;
 import server.models.people.details.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,10 @@ public class UserProfileController {
         return userProfileService.getProfile(id, authToken);
     }
 
-   /* @PostMapping("/server/internal/user/profile/update")
-    public void updateProfile(@RequestBody Map<String,Object> profileMap, @RequestParam String authToken) {
-        userProfileService.updateProfile(Profile.fromMap(profileMap), authToken);
-    }*/
+    @GetMapping("/internal/user/profile/simple")
+    public List<DTO_SimpleGuide> getSimpleGuides(@RequestParam String auth, @RequestParam DTO_UserType type) {
+        return userProfileService.getSimpleGuides(auth, type);
+    }
 
     @PostMapping("/internal/user/profile/update")
     public void updateProfile(@RequestBody Map<String, Object> profileMap, @RequestParam String authToken) {

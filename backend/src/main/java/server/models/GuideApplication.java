@@ -5,10 +5,7 @@ import server.enums.ApplicationStatus;
 import server.enums.ApplicationType;
 import server.models.DTO.DTO_GuideApplication;
 import server.models.people.Guide;
-import server.models.people.details.ContactInfo;
-import server.models.people.details.PaymentInfo;
 import server.models.people.details.Profile;
-import server.models.people.details.Schedule;
 
 import java.util.Map;
 

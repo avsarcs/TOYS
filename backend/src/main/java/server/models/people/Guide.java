@@ -7,7 +7,6 @@ import server.models.Experience;
 import server.models.GuideApplication;
 import server.models.people.details.*;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class Guide extends User {
