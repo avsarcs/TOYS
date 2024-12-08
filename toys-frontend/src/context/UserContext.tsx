@@ -11,7 +11,7 @@ interface UserContextType {
   isLoggedIn: boolean;
 }
 
-const USER_PROFILE_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/server/internal/user/profile";
+const USER_PROFILE_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile";
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
