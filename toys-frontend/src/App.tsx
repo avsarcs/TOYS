@@ -13,6 +13,9 @@ import IndividualTourApplication from "./pages/IndividualTourApplication/Individ
 import ToysApplications from "./pages/ToysApplications/ToysApplications.tsx";
 import TraineeApplicationDetails from "./pages/TraineeApplicationDetails/TraineeApplicationDetails.tsx";
 import AdvisorApplicationDetails from "./pages/AdvisorApplicationDetails/AdvisorApplicationDetails.tsx";
+import AdvisorOffers from "./pages/CoordinatorActions/AdvisorOffers.tsx";
+import GuidePayments from "./pages/Puantaj/GuidePayments.tsx";
+import PaymentDetail from "./pages/Puantaj/PaymentDetail.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -34,6 +37,9 @@ function App() {
             <Route path="/toys-applications" element={<ToysApplications/>} />
             <Route path="/trainee-application-details/:application_id" element={<TraineeApplicationDetails/>} />
             <Route path="/advisor-application-details/:application_id" element={<AdvisorApplicationDetails/>} />
+            <Route path="/advisor-offers" element={<AdvisorOffers/>} />
+            <Route path="/guide-payments" element={<GuidePayments/>} />
+            <Route path="/payment-detail/:guideId" element={<PaymentDetail/>} />
           </Routes>
         </main>
       </div>
