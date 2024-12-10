@@ -483,6 +483,14 @@ API endpoints:
 			response: AdvisorOfferModel[]
 			response_type: json
 
+			/make-offer (Requires Auth as Coordinator)
+				parameters:
+					id="Bilko ID of the guide whom we are inviting to be an advisor"
+				method: post
+				response: 200 OK or 400 Bad Request
+				response_type: HTTP status code
+
+
 			/accept (Requires Auth as Guide who has pending Advisor Offer)
 				method: post
 				body: empty
