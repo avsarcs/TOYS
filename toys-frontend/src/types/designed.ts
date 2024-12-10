@@ -116,4 +116,3 @@ export interface DashboardInfoBoxProps {
 export interface TourSectionProps {
   tour: TourData
 }
-

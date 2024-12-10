@@ -1,338 +1,318 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import offersData from "../../mock_data/mock_advisor_offers.json";
-import DatePicker from "react-datepicker";
+import { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import "./AdvisorOffers.css"
-
-const OFFERS_PER_PAGE = 5;
-
-interface Offer {
-    id: string;
-    high_school: string;
-    phone: string;
-    major: string;
-    experience: string;
-    fullname: string;
-    status: string;
-    rejection_explanation: string;
-    date_of_offer: string;
-    date_of_decision: string;
-}
+import { AdvisorOffer } from "../../types/data";
+import { IconSearch, IconFilter, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { TextInput, Button, Group, Center, Box, Collapse, Modal, Text } from '@mantine/core';
+import { DatePickerInput } from "@mantine/dates";
+import 'dayjs/locale/tr';
+import mockAdvisorOffers from "../../mock_data/mock_advisor_offers.json";
 
 const AdvisorOffers = () => {
-    const [offers, setOffers] = useState<Offer[]>([]);
-    const [filter, setFilter] = useState("all");
+    const [offers, setOffers] = useState<AdvisorOffer[]>([]);
+    const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    
-
-    useEffect(() => {
-        // Load data from the JSON file
-        setOffers(offersData);
-    }, []);
-
-    const filteredOffers = offers.filter((offer) => {
-        if (filter === "all") return true;
-        return offer.status === filter;
-    });
-
-    const totalPages = Math.ceil(filteredOffers.length / OFFERS_PER_PAGE);
-
-    const paginatedOffers = filteredOffers.slice(
-        (currentPage - 1) * OFFERS_PER_PAGE,
-        currentPage * OFFERS_PER_PAGE
-    );
-
-    const handleSearch = () => {
-        if (searchTerm.trim() === "") {
-            setOffers(offersData);
-        } else {
-            const filtered = offersData.filter((offer) =>
-                offer.fullname.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            setOffers(filtered);
-        }
-    };
-
-    const handlePageChange = (direction: string) => {
-        if (direction === "prev" && currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        } else if (direction === "next" && currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
+    const [selectedOffer, setSelectedOffer] = useState<AdvisorOffer | null>(null);
+    const [dateError, setDateError] = useState<string>("");
 
-    const handleDateFilter = () => {
-        if (startDate && endDate) {
-            const filtered = offersData.filter((offer) => {
-                const offerDate = new Date(offer.date_of_offer);
-                return offerDate >= startDate && offerDate <= endDate;
-            });
-            setOffers(filtered);
-        } else {
-            setOffers(offersData);
+    const statusOptions = ["ACCEPTED", "REJECTED", "PENDING"];
+
+    const handleStartDateChange = (date: Date | null) => {
+        setStartDate(date);
+        setDateError("");
+
+        // If end date is set but start date is being cleared, clear end date too
+        if (!date && endDate) {
+            setEndDate(null);
         }
+        // If end date exists, validate the range
+        else if (date && endDate && date > endDate) {
+            setDateError("Başlangıç tarihi bitiş tarihinden sonra olamaz");
+        }
+    };
+
+    const handleEndDateChange = (date: Date | null) => {
+        setEndDate(date);
+        setDateError("");
+
+        // If start date is not set, show error
+        if (date && !startDate) {
+            setDateError("Lütfen önce başlangıç tarihini seçin");
+            setEndDate(null);
+            return;
+        }
+        // Validate the range if start date exists
+        if (date && startDate && startDate > date) {
+            setDateError("Bitiş tarihi başlangıç tarihinden önce olamaz");
+        }
+    };
+
+    const fetchOffers = async () => {
+        try {
+            const params = {
+                page: currentPage,
+                name: searchTerm || "",
+                type: selectedStatuses,
+                from_date: startDate ? startDate.toISOString() : "",
+                to_date: endDate ? endDate.toISOString() : ""
+            };
+
+            // For now, using mock data - replace with actual API call
+            // const response = await axios.get('/api/advisor-offers', { params });
+            // setOffers(response.data);
+
+            // @ts-expect-error using mock data temporarily
+            setOffers(mockAdvisorOffers);
+        } catch (error) {
+            console.error('Error fetching offers:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchOffers();
+    }, [currentPage, searchTerm, selectedStatuses, startDate, endDate]);
+
+    const handleStatusToggle = (status: string) => {
+        setSelectedStatuses(prev => {
+            if (prev.includes(status)) {
+                return prev.filter(s => s !== status);
+            } else {
+                return [...prev, status];
+            }
+        });
+    };
+
+    const handlePageChange = (direction: "next" | "prev") => {
+        const newPage = direction === "next" ? currentPage + 1 : currentPage - 1;
+        setCurrentPage(newPage);
+    };
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('tr-TR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    };
+
+    const handleShowRejectionReason = (offer: AdvisorOffer) => {
+        setSelectedOffer(offer);
+        setRejectionModalOpen(true);
+    };
+
+    const clearDateFilters = () => {
+        setStartDate(null);
+        setEndDate(null);
+        setDateError("");
     };
 
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-            <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Advisor Offers</b></h1>
-            <div style={{ height: "20px" }}></div>
-            <div style={{ marginBottom: "20px", textAlign: "center" }}>
-                <input
-                    type="text"
-                    placeholder="Search by Name..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{
-                        padding: "10px",
-                        width: "60%",
-                        marginBottom: "10px",
-                        borderRadius: "4px",
-                        border: "1px solid #ccc",
-                    }}
-                />
-                <button
-                    onClick={handleSearch}
-                    style={{
-                        padding: "10px 15px",
-                        marginLeft: "10px",
-                        borderRadius: "4px",
-                        background: "#5c6bc0",
-                        color: "#fff",
-                        border: "none",
-                    }}
-                >
-                    Search
-                </button>
-            </div>
-            
-            <div style={{ marginBottom: "20px", textAlign: "center" }}>
-    <div style={{ display: "inline-block", position: "relative" }}>
-        <span style={{ marginRight: "10px", fontWeight: "bold", color: "blue", fontSize: "1.5em" }}>Select a range for the date the offer was made:</span><DatePicker
-            selected={startDate}
-            onChange={(date) => {
-                setStartDate(date);
-                setEndDate(null); // Reset end date when start date changes
-            }}
-            selectsStart
-            startDate={startDate || undefined}
-            endDate={endDate || undefined}
-            placeholderText="From Date"
-            isClearable
-            dateFormat="yyyy/MM/dd"
-            className="custom-datepicker"
-        />
-    </div>
-    <div style={{ display: "inline-block", position: "relative", marginLeft: "10px" }}>
-        <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            selectsEnd
-            startDate={startDate || undefined}
-            endDate={endDate || undefined}
-            minDate={startDate || undefined}
-            placeholderText="To Date"
-            isClearable
-            dateFormat="yyyy/MM/dd"
-            className="custom-datepicker custom-datepicker-end"
-        />
-    </div>
-    <button
-        onClick={handleDateFilter}
-        style={{
-            padding: "10px 15px",
-            marginLeft: "10px",
-            borderRadius: "8px", /* Rounded button */
-            background: "#5c6bc0",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-        }}
-    >
-        Filter by Date
-    </button>
-</div>
+        <Box className="p-6 max-w-6xl mx-auto">
+            <Center mb={32}>
+                <h1 className="text-4xl font-bold text-blue-600">Danışmanlık Teklifleri</h1>
+            </Center>
 
-            <div>
-                <button
-                    onClick={() => setFilter("all")}
-                    style={{
-                        padding: "10px 15px",
-                        marginRight: "10px",
-                        border: "none",
-                        background: filter === "all" ? "#5c6bc0" : "#f1f1f1",
-                        color: filter === "all" ? "#fff" : "#000",
-                        borderRadius: "4px",
-                    }}
-                >
-                    All
-                </button>
-                <button
-                    onClick={() => setFilter("accepted")}
-                    style={{
-                        padding: "10px 15px",
-                        marginRight: "10px",
-                        border: "none",
-                        background: filter === "accepted" ? "#4caf50" : "#f1f1f1",
-                        color: filter === "accepted" ? "#fff" : "#000",
-                        borderRadius: "4px",
-                    }}
-                >
-                    Accepted
-                </button>
-                <button
-                    onClick={() => setFilter("rejected")}
-                    style={{
-                        padding: "10px 15px",
-                        marginRight: "10px",
-                        border: "none",
-                        background: filter === "rejected" ? "#f44336" : "#f1f1f1",
-                        color: filter === "rejected" ? "#fff" : "#000",
-                        borderRadius: "4px",
-                    }}
-                >
-                    Rejected
-                </button>
-                <button
-                    onClick={() => setFilter("pending")}
-                    style={{
-                        padding: "10px 15px",
-                        border: "none",
-                        background: filter === "pending" ? "#ff9800" : "#f1f1f1",
-                        color: filter === "pending" ? "#fff" : "#000",
-                        borderRadius: "4px",
-                    }}
-                >
-                    Pending
-                </button>
-            </div>
+            {/* Search and Filter Section */}
+            <Box className="bg-gray-200 rounded-lg p-6 mb-8">
+                <Group mb="md">
+                    <TextInput
+                        placeholder="İsim ile ara..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        rightSection={<IconSearch size={16} />}
+                        className="flex-1"
+                    />
+                    <Button
+                        leftSection={<IconFilter size={16} />}
+                        variant="filled"
+                        className="bg-purple-600"
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    >
+                        Filtrele
+                    </Button>
+                </Group>
 
-            <div style={{ marginTop: "20px" }}>
-                {paginatedOffers.length === 0 ? (
-                    <p style={{ textAlign: "center", color: "red" }}>No record found.</p>
-                ) : (
-                    paginatedOffers.map((offer) => (
-                        <div
-                            key={offer.id}
-                            style={{
-                                padding: "20px",
-                                marginBottom: "10px",
-                                border: "1px solid #ccc",
+                <Collapse in={isFilterOpen}>
+                    <Box className="space-y-4">
+                        <Group>
+                            <Box className="font-semibold min-w-[80px]">Durum:</Box>
+                            <Group>
+                                {statusOptions.map((statusOption) => (
+                                    <Button
+                                        key={statusOption}
+                                        variant={selectedStatuses.includes(statusOption) ? "filled" : "subtle"}
+                                        onClick={() => handleStatusToggle(statusOption)}
+                                        className={`
+                                            ${selectedStatuses.includes(statusOption)
+                                                ? "bg-blue-600 text-white"
+                                                : "hover:bg-blue-100"}
+                                            transition-colors
+                                        `}
+                                    >
+                                        {statusOption}
+                                    </Button>
+                                ))}
+                                {selectedStatuses.length > 0 && (
+                                    <Button
+                                        variant="subtle"
+                                        onClick={() => setSelectedStatuses([])}
+                                        className="text-gray-600"
+                                    >
+                                        Temizle
+                                    </Button>
+                                )}
+                            </Group>
+                        </Group>
 
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                backgroundColor: "lightblue", 
-                                borderRadius: "8px", 
+                        <Box className="space-y-2">
+                            <Group>
+                                <Box className="font-semibold">Teklif Tarihi:</Box>
+                                {(startDate || endDate) && (
+                                    <Button
+                                        variant="subtle"
+                                        onClick={clearDateFilters}
+                                        className="text-gray-600"
+                                    >
+                                        Temizle
+                                    </Button>
+                                )}
+                            </Group>
+                            <Group>
+                                <Box className="space-y-1">
+                                    <Text size="sm">Başlangıç</Text>
+                                    <DatePickerInput
+                                        value={startDate}
+                                        onChange={handleStartDateChange}
+                                        locale="tr"
+                                        placeholder="gg/aa/yyyy"
+                                        valueFormat="DD/MM/YYYY"
+                                        classNames={{
+                                            input: 'p-2 rounded-lg border border-gray-300'
+                                        }}
+                                    />
+                                </Box>
+                                <Box className="space-y-1">
+                                    <Text size="sm">Bitiş</Text>
+                                    <DatePickerInput
+                                        value={endDate}
+                                        onChange={handleEndDateChange}
+                                        locale="tr"
+                                        placeholder="gg/aa/yyyy"
+                                        valueFormat="DD/MM/YYYY"
+                                        minDate={startDate || undefined}
+                                        classNames={{
+                                            input: 'p-2 rounded-lg border border-gray-300'
+                                        }}
+                                    />
+                                </Box>
+                            </Group>
+                            {dateError && (
+                                <Text className="text-red-500 text-sm">{dateError}</Text>
+                            )}
+                        </Box>
+                    </Box>
+                </Collapse>
+            </Box>
 
-                            }}
+            {/* Offers List */}
+            <Box className="space-y-4">
+                {offers.map((offer) => (
+                    <Box key={offer.recipient.id} className="bg-blue-100 rounded-lg p-4 flex justify-between items-center">
+                        <Box className="space-y-1">
+                            <Box className="font-bold text-lg">{offer.recipient.name}</Box>
+                            <Box>Teklif Tarihi: {formatDate(offer.offer_date)}</Box>
+                            <Box>Cevap Tarihi: {offer.response_date ? formatDate(offer.response_date) : 'Bekliyor'}</Box>
+                            <Group>
+                                <span>Durum:</span>
+                                <span className={`font-bold ${offer.status === 'ACCEPTED' ? 'text-green-600' :
+                                    offer.status === 'REJECTED' ? 'text-red-600' :
+                                        'text-orange-600'
+                                    }`}>
+                                    {offer.status === "ACCEPTED" ? "KABUL EDİLDİ" :
+                                        offer.status === "REJECTED" ? "REDDEDİLDİ" : "BEKLİYOR"}
+                                </span>
+                                {offer.status === 'REJECTED' && (
+                                    <Button
+                                        variant="subtle"
+                                        size="compact-md"
+                                        className="text-blue-600 underline"
+                                        onClick={() => handleShowRejectionReason(offer)}
+                                    >
+                                        Reddetme Sebebini Gör
+                                    </Button>
+                                )}
+                            </Group>
+                        </Box>
+                        <Button
+                            variant="filled"
+                            className="bg-blue-600"
+                            size="lg"
+                            radius="xl"
                         >
-                            <div>
-                                <h1><b>{offer.fullname}</b></h1>
-                                <p><b>Date of Offer:</b> {offer.date_of_offer}</p>
-                                <p><b>Date of Response:</b> {offer.date_of_decision}</p>
-                                <p><b>High School:</b> {offer.high_school}</p>
-                                <p><b>Major: </b>{offer.major}</p>
-                                {offer.status === "rejected" && (
-                                    <div>
-                                        <p>
-                                        <b>Status of Offer:</b>{" "}
-                                            <span style={{ color: "red", fontWeight:"bold", textTransform: "uppercase" }}>
-                                                {offer.status}
-                                            </span>
-                                        </p>
-                                        <p>
-                                        <b>Rejection Reason:</b>{" "}
-                                            <span>
-                                                {offer.rejection_explanation}
-                                            </span>
-                                        </p>
-                                    </div>
-                                )}
-                                {offer.status === "accepted" && (
-                                    <p>
-                                        <b>Status of Offer:</b>{" "}
-                                        <span style={{ color: "green", fontWeight:"bold", textTransform: "uppercase" }}>
-                                            {offer.status}
-                                        </span>
-                                    </p>
-                                )}
-                                {offer.status === "pending" && (
-                                    <p>
-                                        <b>Status of Offer:</b>{" "}
-                                        <span style={{ color: "orange", fontWeight:"bold", textTransform: "uppercase" }}>
-                                            {offer.status}
-                                        </span>
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <button
-                                    style={{
-                                        padding: "20px 60px",
-                                        background: "#5c6bc0",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "20px",
-                                        cursor: "pointer",
-                                        fontWeight: "bold",
-                                        fontSize: "1.2em",
-                                    }}
-                                >
-                                    View Profile
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
+                            Profil Sayfası
+                        </Button>
+                    </Box>
+                ))}
+            </Box>
 
-            {/* Pagination Controls */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "20px",
-                }}
+            {/* Pagination */}
+            <Center mt={32}>
+                <Group>
+                    <Button
+                        variant="subtle"
+                        onClick={() => handlePageChange("prev")}
+                        disabled={currentPage === 1}
+                        leftSection={<IconChevronLeft size={16} />}
+                    >
+                        Önceki
+                    </Button>
+                    <Box>Sayfa {currentPage}</Box>
+                    <Button
+                        variant="subtle"
+                        onClick={() => handlePageChange("next")}
+                        rightSection={<IconChevronRight size={16} />}
+                    >
+                        Sonraki
+                    </Button>
+                </Group>
+            </Center>
+
+            {/* Rejection Modal */}
+            <Modal
+                opened={rejectionModalOpen}
+                onClose={() => setRejectionModalOpen(false)}
+                centered
+                size="md"
+                transitionProps={{ duration: 0 }}
             >
-                <button
-                    onClick={() => handlePageChange("prev")}
-                    disabled={currentPage === 1}
-                    style={{
-                        padding: "10px 15px",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        marginRight: "10px",
-                        cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                        background: currentPage === 1 ? "#f1f1f1" : "#fff",
-                    }}
-                >
-                    Previous
-                </button>
-                <span>
-                    Page {currentPage} of {totalPages}
-                </span>
-                <button
-                    onClick={() => handlePageChange("next")}
-                    disabled={currentPage === totalPages}
-                    style={{
-                        padding: "10px 15px",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        marginLeft: "10px",
-                        cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                        background: currentPage === totalPages ? "#f1f1f1" : "#fff",
-                    }}
-                >
-                    Next
-                </button>
-            </div>
-        </div>
+                <Box className="space-y-4">
+                    <Text className="text-xl font-bold">Reddetme Sebebi</Text>
+
+                    {selectedOffer && (
+                        <>
+                            <Box className="space-y-2 bg-gray-100 p-4 rounded-lg">
+                                <Text className="font-semibold">Rehber Bilgileri:</Text>
+                                <Text>İsim: {selectedOffer.recipient.name}</Text>
+                                <Text>Teklif Tarihi: {formatDate(selectedOffer.offer_date)}</Text>
+                                <Text>Cevap Tarihi: {selectedOffer.response_date ? formatDate(selectedOffer.response_date) : 'Bekliyor'}</Text>
+                                <Text className="text-red-600 font-semibold">Durum: REDDEDİLDİ</Text>
+                            </Box>
+
+                            <Box className="space-y-2">
+                                <Text className="font-semibold">Reddetme Açıklaması:</Text>
+                                <Text className="bg-red-50 p-4 rounded-lg">
+                                    {selectedOffer.rejection_reason}
+                                </Text>
+                            </Box>
+                        </>
+                    )}
+                </Box>
+            </Modal>
+        </Box>
     );
 };
 
