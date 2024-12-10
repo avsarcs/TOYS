@@ -153,7 +153,8 @@ const AdvisorOffers = () => {
                                             transition-colors
                                         `}
                                     >
-                                        {statusOption}
+                                        {statusOption === "ACCEPTED" ? "KABUL EDİLENLER" :
+                                        statusOption === "REJECTED" ? "REDDEDİLENLER" : "BEKLEYENLER"}
                                     </Button>
                                 ))}
                                 {selectedStatuses.length > 0 && (
@@ -305,7 +306,7 @@ const AdvisorOffers = () => {
                             <Box className="space-y-2">
                                 <Text className="font-semibold">Reddetme Açıklaması:</Text>
                                 <Text className="bg-red-50 p-4 rounded-lg">
-                                    {selectedOffer.rejection_reason}
+                                    {selectedOffer.rejection_reason == "" ? "Sebep belirtilmedi." : selectedOffer.rejection_reason }
                                 </Text>
                             </Box>
                         </>
