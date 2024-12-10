@@ -1,4 +1,4 @@
-import { Button, NumberInput, PasswordInput } from "@mantine/core";
+import {Button, PasswordInput, TextInput} from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginFormProps } from "../../types/designed.ts";
 import { LoginData } from "../../types/data.ts";
@@ -15,11 +15,11 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      bilkentId: NaN,
-      password: "",
+      bilkentId: "",
+      password: ""
     },
     validate: {
-      bilkentId: (value: number) => !isNaN(value) ? null: "Lütfen Bilkent ID'nizi giriniz.",
+      bilkentId: (value: string) => value.length > 0 ? null: "Lütfen Bilkent ID'nizi giriniz.",
       password: (value: string) => value.length > 0 ? null: "Lütfen bir şifre giriniz.",
     }
   });
@@ -32,16 +32,18 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
 
     setLoggingIn(true);
 
-    const loginData: LoginData = form.getValues();
-
-    console.log(import.meta.env);
+    const formData = form.getValues();
+    const loginData: LoginData = {
+      bilkentID: formData.bilkentId.toString(),
+      password: formData.password
+    };
 
     try {
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
       const res = await fetch(import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: new Headers({"Content-Type": "application/json"}),
         body: JSON.stringify(loginData)
       });
 
@@ -92,10 +94,9 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
 
   return (
     <form onSubmit={onLogin} className="w-full md:w-[28rem] m-auto lg:m-0 p-10 bg-blue-700 rounded outline outline-2 outline-white">
-      <NumberInput label="Bilkent ID" withAsterisk placeholder="Bilkent ID" size="lg" radius="sm"
+      <TextInput label="Bilkent ID" withAsterisk placeholder="Bilkent ID" size="lg" radius="sm"
                    className=""
                    classNames={{
-                     controls: "hidden",
                      label: "text-white text-lg m-2",
                      input: "hover:outline focus:outline focus:outline-blue-800 outline-4 outline-blue-800",
                      error: "ml-2"
