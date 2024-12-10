@@ -195,7 +195,11 @@
   "iban": "TR438525023948394",
   "bank": "QNB Finansbank",
   "major": "Computer Science",
-  "role": "GUIDE" | "TRAINEE" | "ADVISOR"
+  "reviews": {
+	"average": 4.28,
+	"count": 12
+  },
+  "role": "GUIDE" | "TRAINEE" | "ADVISOR",
   "responsible_days": DayOfTheWeek[]
   "profile_picture": "base 64 string of the profile picture",
   "previous_tour_count": 0,
@@ -209,7 +213,31 @@
 
 # Schedule Model
 ```
-??? Someone figure this out. If we import "busy" times from Google Calendar, I think that's the best solution.
+{
+	DayOfWeek: DailyPlan
+	... Monday through Sunday
+}
+```
+
+# Daily Plan Model
+```
+{
+	_830_930: TimeSlotStatus,
+    _930_1030: TimeSlotStatus,
+    _1030_1130: TimeSlotStatus,
+    _1130_1230: TimeSlotStatus,
+    _1230_1330: TimeSlotStatus,
+    _1330_1430: TimeSlotStatus,
+    _1430_1530: TimeSlotStatus,
+    _1530_1630: TimeSlotStatus,
+    _1630_1730: TimeSlotStatus,
+    _1730_1830: TimeSlotStatus,
+}
+```
+
+# Time Slot Status Enum
+```
+"FREE" | "BUSY" | "tour id guide needs to go at that time"
 ```
 
 # Simple Guide Model
@@ -237,6 +265,22 @@
 	"end_time": "2024-11-15T14:22:14Z",
 	"fair_name": "KARIYERKE",
 	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+}
+```
+
+# Fair Application Model
+```
+{
+	"applicant": {
+		"name": "Yavuz",
+		"surname": "XD",
+		"email": "yavuz.xd@something.com",
+		"phone": "5555555555",
+		"school": "Ankara Fen Lisesi",
+	},
+	"start_time": "2024-11-15T14:22:14Z",
+	"end_time": "2024-11-15T14:22:14Z",
+	"fair_name": "KARIYERKE"
 }
 ```
 
