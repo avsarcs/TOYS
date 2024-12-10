@@ -22,6 +22,7 @@
     "postcss": "^8.4.47",
     "autoprefixer": "^10.4.20",
     "react-cookie": "^7.2.1",
+    "react-datepicker": "^7.5.0",
     "@mantine/hooks": "^7.13.4",
     "@mantine/core": "^7.13.4",
     "@mantine/form": "^7.13.4",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@eslint/js": "^9.11.1",
     "@types/react": "^18.3.10",
+    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.3.0",
     "@types/validator": "^13.12.2",
     "eslint": "^9.11.1",
