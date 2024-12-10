@@ -1,7 +1,7 @@
 import { ApplicantRole, Department, EventType, TourStatus, TourType } from "./enum.ts";
 
 export interface LoginData {
-  bilkentId: number,
+  bilkentID: string,
   password: string
 }
 
