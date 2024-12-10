@@ -301,7 +301,10 @@
 `rejection_reason` field included only if `status=REJECTED`
 ```
 {
-	"offer_made_to": "user id",
+	"recipient": {
+		"id": "bilko id of the guide who received the offer",
+		"name": "Orhun Ege Çelik"
+	},
 	"status": ACCEPTED | REJECTED | PENDING,
 	"offer_date": "2024-11-15T14:22:14Z",
 	"response_date": "2024-11-18T14:22:14Z",
