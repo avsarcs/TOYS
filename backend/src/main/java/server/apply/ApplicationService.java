@@ -2,9 +2,8 @@ package server.apply;
 
 import server.auth.JWTService;
 import server.dbm.Database;
-import server.enums.ApplicationStatus;
+import server.enums.status.ApplicationStatus;
 import server.mailService.MailServiceGateway;
-import server.mailService.MailType__;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,11 @@ import org.springframework.web.server.ResponseStatusException;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
-import server.models.*;
+import server.models.events.FairApplication;
+import server.models.events.FairRegistry;
+import server.models.events.TourApplication;
+import server.models.events.TourRegistry;
+import server.models.people.GuideApplication;
 import server.models.time.ZTime;
 
 import java.util.ArrayList;
@@ -29,6 +32,26 @@ public class ApplicationService {
 
     @Autowired
     private JWTService jwtService;
+
+    public String getTourType(String tour_id) {
+        TourRegistry tour = null;
+        try {
+            tour = db.tours.fetchTour(tour_id);
+            return tour.getTour_type().name();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found!");
+        }
+    }
+
+    public boolean isFree(String starts, String ends) {
+        ZTime start = new ZTime(starts);
+        ZTime end = new ZTime(ends);
+
+        List<TourRegistry> tours =  db.tours.fetchTours().values().stream().toList();
+        return tours.stream().anyMatch(
+                t -> ZTime.overlap(start, t.getAccepted_time(), end, t.getAccepted_time())
+        );
+    }
 
     public void applyToBeGuide(GuideApplication guideApplication) {
         // get application #

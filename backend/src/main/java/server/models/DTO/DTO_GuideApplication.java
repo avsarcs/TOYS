@@ -1,7 +1,7 @@
 package server.models.DTO;
 
 import server.enums.Department;
-import server.models.GuideApplication;
+import server.models.people.GuideApplication;
 
 public class DTO_GuideApplication {
     private String full_name;

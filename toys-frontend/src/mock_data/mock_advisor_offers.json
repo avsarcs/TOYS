@@ -1,0 +1,74 @@
+[
+    {
+        "id": "12345678",
+        "high_school": "Bilkent Erzurum Laboratory School",
+        "phone": "555 555 55 55",
+        "major": "Computer Science",
+        "experience": "18 events",
+        "fullname": "Begüm Öz",
+        "status": "accepted",
+        "rejection_explanation": "N/A",
+        "date_of_offer": "2021-06-01",
+        "date_of_decision": "2021-06-01"
+    },
+    {
+        "id": "22202123",
+        "high_school": "ODTÜ Koleji",
+        "phone": "555 555 55 55",
+        "major": "Computer Science",
+        "experience": "18 events",
+        "fullname": "Orhun Ege Çelik",
+        "status": "rejected",
+        "rejection_explanation": "I'm too busy with my OS class.",
+        "date_of_offer": "2021-06-01",
+        "date_of_decision": "2021-06-01"
+    },
+    {
+        "id": "22398593",
+        "high_school": "Kabataş Lisesi",
+        "phone": "555 555 55 55",
+        "major": "Computer Science",
+        "experience": "10 events",
+        "fullname": "Kim Kardashian",
+        "status": "pending",
+        "rejection_explanation": "N/A",
+        "date_of_offer": "2021-08-01",
+        "date_of_decision": "N/A"   
+    },
+    {
+        "id": "12345658",
+        "high_school": "Muğla Fen Lisesi",
+        "phone": "555 555 55 55",
+        "major": "Computer Science",
+        "experience": "17 events",
+        "fullname": "Begüm Tan",
+        "status": "accepted",
+        "rejection_explanation": "N/A",
+        "date_of_offer": "2021-06-01",
+        "date_of_decision": "2021-06-01"
+    },
+    {
+        "id": "22202321",
+        "high_school": "ODTÜ Koleji",
+        "phone": "555 555 55 55",
+        "major": "Computer Science",
+        "experience": "7 events",
+        "fullname": "Orhun Ege Öz",
+        "status": "rejected",
+        "rejection_explanation": "I don't want it.",
+        "date_of_offer": "2021-06-01",
+        "date_of_decision": "2021-06-01"
+    },
+    {
+        "id": "22378593",
+        "high_school": "Galatasaray Lisesi",
+        "phone": "555 555 55 55",
+        "major": "Computer Science",
+        "experience": "10 events",
+        "fullname": "Arda Turan",
+        "status": "pending",
+        "rejection_explanation": "N/A",
+        "date_of_offer": "2021-08-01",
+        "date_of_decision": "N/A"
+    }
+]

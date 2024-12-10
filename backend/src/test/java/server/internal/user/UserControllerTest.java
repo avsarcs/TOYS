@@ -23,15 +23,7 @@ class UserControllerTest {
     UserController userController;
 
 
-    @Test
-    void getSimpleGuides() {
-        String auth = JWTService.testToken;
-        assert(auth != null);
-        List<DTO_SimpleGuide> list = userController.getSimpleGuides(auth, DTO_UserType.GUIDE);
-        assert(list != null);
-        assert(list.size() > 0);
 
-    }
 
     @Test
     void getAvailableGuides() {

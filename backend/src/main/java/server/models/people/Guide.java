@@ -1,13 +1,14 @@
 package server.models.people;
 
 import server.enums.*;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
+import server.enums.status.ApplicationStatus;
+import server.enums.status.UserStatus;
+import server.enums.types.ApplicationType;
 import server.models.DTO.DTO_Guide;
 import server.models.Experience;
-import server.models.GuideApplication;
 import server.models.people.details.*;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class Guide extends User {
@@ -38,7 +39,7 @@ public class Guide extends User {
         guide.setDepartment(Department.MANAGEMENT);
         guide.setExperience(Experience.getDefault());
 
-        guide.setRole(USER_ROLE.GUIDE);
+        guide.setRole(UserRole.GUIDE);
         guide.setHigh_school("Columbine High School");
         guide.setAuthInfo(new AuthInfo().setPassword("batman"));
         guide.setStatus(UserStatus.ACTIVE);

@@ -6,13 +6,13 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
-import server.enums.ApplicationStatus;
-import server.enums.ApplicationType;
+import server.enums.status.ApplicationStatus;
+import server.enums.types.ApplicationType;
 import org.springframework.stereotype.Service;
 import server.models.Application;
-import server.models.FairApplication;
-import server.models.GuideApplication;
-import server.models.TourApplication;
+import server.models.events.FairApplication;
+import server.models.people.GuideApplication;
+import server.models.events.TourApplication;
 
 import java.util.*;
 

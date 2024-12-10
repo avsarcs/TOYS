@@ -21,4 +21,6 @@ public enum Permission {
     VIEW_WORK_DONE_BY_GUIDE,
 
     TOTAL_ANALYTICS_ACCESS,
+
+    AR_REVIEWS,
 }

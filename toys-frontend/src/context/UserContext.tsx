@@ -11,7 +11,8 @@ interface UserContextType {
   isLoggedIn: boolean;
 }
 
-const USER_PROFILE_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/server/internal/user/profile";
+const AUTH_VALID_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/isvalid";
+const USER_PROFILE_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile";
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -28,39 +29,46 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     setCookie("auth", auth);
   }, [setCookie]);
 
-  useEffect(() => {
-    if(!cookies.auth || cookies.auth.length === 0) {
+  async function checkAuth(auth: string) {
+    setUser({
+      id: "",
+      role: UserRole.NONE,
+      profile: {}
+    });
+    setIsLoggedIn(false);
+
+    if(!auth || auth.length === 0) {
+      return;
+    }
+
+    const validRes = await fetch(AUTH_VALID_URL + (new URLSearchParams({
+      auth,
+    }).toString()));
+
+    const isValid = await validRes.json();
+
+    if (validRes.status !== 200 || isValid !== true) {
+      return;
+    }
+
+    const profileRes = await fetch(USER_PROFILE_URL + (new URLSearchParams({
+      auth,
+      id: ""
+    }).toString()));
+
+    if(profileRes.status === 200) {
+      const profile = await profileRes.json();
       setUser({
-        id: "",
-        role: UserRole.NONE,
-        profile: {}
+        id: profile.id,
+        role: profile.role,
+        profile: profile,
       });
-      setIsLoggedIn(false);
+      setIsLoggedIn(true);
     }
-    else {
-      //fetch new user data
-      fetch(USER_PROFILE_URL + (new URLSearchParams({
-        authToken: cookies.auth,
-        id: ""
-      }).toString()))
-        .then(async (res) => {
-          if(res.status === 200) {
-            const profile = await res.json();
-            setUser({
-              id: profile.id,
-              role: profile.role,
-              profile: profile,
-            })
-          }
-          else {
-            setUser({
-              id: "",
-              role: UserRole.NONE,
-              profile: {}
-            });
-          }
-        })
-    }
+  }
+
+  useEffect(() => {
+    checkAuth(cookies.auth)
 
     return () => {
       setUser({

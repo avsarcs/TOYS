@@ -1,14 +1,11 @@
 package server.models.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
-import server.models.TourRegistry;
+import server.models.events.TourRegistry;
 import server.models.people.Guide;
-import org.springframework.beans.factory.annotation.Autowired;
 import server.models.time.ZTime;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
