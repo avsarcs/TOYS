@@ -483,6 +483,7 @@ API endpoints:
 			response: AdvisorOfferModel[]
 			response_type: json
 
+
 			/accept (Requires Auth as Guide who has pending Advisor Offer)
 				method: post
 				body: empty
@@ -640,6 +641,13 @@ API endpoints:
 			body: auth_token
 			response: Simple
 			response_type: json
+
+			/invite-advisor
+                parameters:
+                    auth: auth_token
+                    guide_id=id // who to invite
+                method: post
+                response: -
 
 			/applications
 				parameters:
