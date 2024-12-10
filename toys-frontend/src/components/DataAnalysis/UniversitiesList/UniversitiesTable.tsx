@@ -115,6 +115,7 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
                         );
                         setSortedData(updatedData);
                     }}
+                    university={row.university}
                 />
             </Table.Td>
         </Table.Tr>

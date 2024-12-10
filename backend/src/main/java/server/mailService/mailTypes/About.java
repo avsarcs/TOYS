@@ -1,0 +1,15 @@
+package server.mailService.mailTypes;
+
+public enum About {
+    TOUR_APPLICATION,
+    TOUR_MODIFICATION,
+    FAIR_APPLICATION,
+    FAIR_MODIFICATION,
+
+    GUIDE_APPLICATION,
+    GUIDE_ASSIGNMENT,
+    GUIDE_WITHDRAW,
+    ADVISOR_APPLICATION,
+
+    REVIEW,
+}

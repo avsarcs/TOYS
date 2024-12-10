@@ -34,9 +34,9 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             id="name"
             name="name"
             placeholder="Adınız ve Soyadınız"
-            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.fullname)) ? "Bu alanı boş bırakamazsınız." : false}
+            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.full_name)) ? "Bu alanı boş bırakamazsınız." : false}
             maxLength={100}
-            value={applicationInfo.applicant["fullname"]}
+            value={applicationInfo.applicant["full_name"]}
             onChange={(e) => {
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
