@@ -1,74 +1,82 @@
 [
     {
-        "id": "12345678",
-        "high_school": "Bilkent Erzurum Laboratory School",
-        "phone": "555 555 55 55",
-        "major": "Computer Science",
-        "experience": "18 events",
-        "fullname": "Begüm Öz",
-        "status": "accepted",
-        "rejection_explanation": "N/A",
-        "date_of_offer": "2021-06-01",
-        "date_of_decision": "2021-06-01"
+      "recipient": {
+        "id": "g_124578",
+        "name": "Orhun Ege Çelik"
+      },
+      "status": "ACCEPTED",
+      "offer_date": "2024-11-15T14:22:14Z",
+      "response_date": "2024-11-18T14:22:14Z",
+      "rejection_reason": ""
     },
     {
-        "id": "22202123",
-        "high_school": "ODTÜ Koleji",
-        "phone": "555 555 55 55",
-        "major": "Computer Science",
-        "experience": "18 events",
-        "fullname": "Orhun Ege Çelik",
-        "status": "rejected",
-        "rejection_explanation": "I'm too busy with my OS class.",
-        "date_of_offer": "2021-06-01",
-        "date_of_decision": "2021-06-01"
+      "recipient": {
+        "id": "g_987432",
+        "name": "Ayşe Yılmaz"
+      },
+      "status": "REJECTED",
+      "offer_date": "2024-11-16T09:15:00Z",
+      "response_date": "2024-11-16T15:30:22Z",
+      "rejection_reason": "Schedule conflict with existing commitments"
     },
     {
-        "id": "22398593",
-        "high_school": "Kabataş Lisesi",
-        "phone": "555 555 55 55",
-        "major": "Computer Science",
-        "experience": "10 events",
-        "fullname": "Kim Kardashian",
-        "status": "pending",
-        "rejection_explanation": "N/A",
-        "date_of_offer": "2021-08-01",
-        "date_of_decision": "N/A"   
+      "recipient": {
+        "id": "g_456123",
+        "name": "Mehmet Kaya"
+      },
+      "status": "PENDING",
+      "offer_date": "2024-11-18T11:45:33Z",
+      "response_date": "",
+      "rejection_reason": ""
     },
     {
-        "id": "12345658",
-        "high_school": "Muğla Fen Lisesi",
-        "phone": "555 555 55 55",
-        "major": "Computer Science",
-        "experience": "17 events",
-        "fullname": "Begüm Tan",
-        "status": "accepted",
-        "rejection_explanation": "N/A",
-        "date_of_offer": "2021-06-01",
-        "date_of_decision": "2021-06-01"
+      "recipient": {
+        "id": "g_789012",
+        "name": "Zeynep Demir"
+      },
+      "status": "ACCEPTED",
+      "offer_date": "2024-11-14T16:20:00Z",
+      "response_date": "2024-11-15T08:10:15Z",
+      "rejection_reason": ""
     },
     {
-        "id": "22202321",
-        "high_school": "ODTÜ Koleji",
-        "phone": "555 555 55 55",
-        "major": "Computer Science",
-        "experience": "7 events",
-        "fullname": "Orhun Ege Öz",
-        "status": "rejected",
-        "rejection_explanation": "I don't want it.",
-        "date_of_offer": "2021-06-01",
-        "date_of_decision": "2021-06-01"
+      "recipient": {
+        "id": "g_345678",
+        "name": "Can Özturk"
+      },
+      "status": "REJECTED",
+      "offer_date": "2024-11-17T13:25:45Z",
+      "response_date": "2024-11-19T10:15:30Z",
+      "rejection_reason": ""
     },
     {
-        "id": "22378593",
-        "high_school": "Galatasaray Lisesi",
-        "phone": "555 555 55 55",
-        "major": "Computer Science",
-        "experience": "10 events",
-        "fullname": "Arda Turan",
-        "status": "pending",
-        "rejection_explanation": "N/A",
-        "date_of_offer": "2021-08-01",
-        "date_of_decision": "N/A"
+      "recipient": {
+        "id": "g_234567",
+        "name": "Elif Şahin"
+      },
+      "status": "PENDING",
+      "offer_date": "2024-11-19T09:30:00Z",
+      "response_date": "",
+      "rejection_reason": ""
+    },
+    {
+      "recipient": {
+        "id": "g_890123",
+        "name": "Burak Yıldız"
+      },
+      "status": "ACCEPTED",
+      "offer_date": "2024-11-16T12:00:00Z",
+      "response_date": "2024-11-17T14:45:20Z",
+      "rejection_reason": ""
+    },
+    {
+      "recipient": {
+        "id": "g_567890",
+        "name": "Deniz Aksoy"
+      },
+      "status": "REJECTED",
+      "offer_date": "2024-11-15T10:20:30Z",
+      "response_date": "2024-11-16T11:30:45Z",
+      "rejection_reason": "Already committed to another tour during requested dates"
     }
-]
+  ]
