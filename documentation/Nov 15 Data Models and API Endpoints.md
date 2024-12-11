@@ -137,8 +137,7 @@
 		"name": "Mahmut"
 	}[],
 	"score": 8, // int
-	"body" (OPTIONAL): "free form text of the review",
-	"approved": bool
+	"body" (OPTIONAL): "free form text of the review"
 }
 ```
 
@@ -440,23 +439,13 @@ API endpoints:
 		response: TourToReviewModel
 		response_type: json
 	
-	/accept (Requires Auth as Coordinator)
+	/delete (Requires Auth as Coordinator)
 		parameters:
 			review_id=12354asd654
 			auth= auth_token
 		method: post
 		response: 200 or 400
 		response_type: status code
-	
-	/reject (Requires Auth as Coordinator)
-		parameters:
-			auth= auth?toıken
-			review_id=12354asd654,
-			still_consider_points=bool
-		method: post
-		response: 200 or 400
-		response_type: status code
-		description: Even though the body of a review might be inappropriate, the Coordinator may still find it fair that the SCORE of that review should still apply while the body of the review stays invisible. If `still_consider_points` is False, just delete the Review. If `still_consider_points` is True, then set the body of the Review to an empty string and status to REJECTED.
 
 	/of_tour (Requires Auth)
 		parameters:
