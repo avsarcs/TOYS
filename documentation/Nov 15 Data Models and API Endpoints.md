@@ -132,10 +132,10 @@
 	"for": "TOUR" | "GUIDE",
 	"tour_id": "id of the reviewed tour",
 	"tour_date": "date of the reviewed tour in ISO 8601 format",
-	"guides": {
+	"guide": {
 		"id": "141242asfdf",
 		"name": "Mahmut"
-	}[],
+	},
 	"score": 8, // int
 	"body" (OPTIONAL): "free form text of the review"
 }
