@@ -11,8 +11,13 @@ interface UserContextType {
   isLoggedIn: boolean;
 }
 
-const AUTH_VALID_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/isvalid";
-const USER_PROFILE_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile";
+let AUTH_VALID_URL = new URL("https://www.orhunegecelik.com")
+let USER_PROFILE_URL = new URL("https://www.orhunegecelik.com")
+
+if (import.meta.env.VITE_BACKEND_API_ADDRESS) {
+  AUTH_VALID_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/isvalid");
+  USER_PROFILE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile");
+}
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -37,13 +42,19 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     });
     setIsLoggedIn(false);
 
-    if(!auth || auth.length === 0) {
+    if (!auth || auth.length === 0) {
       return;
     }
 
-    const validRes = await fetch(AUTH_VALID_URL + (new URLSearchParams({
-      auth,
-    }).toString()));
+    const validURL = new URL(AUTH_VALID_URL);
+    validURL.searchParams.append("auth", auth);
+    const validRes = await fetch(
+      validURL,
+      {
+        method: "GET",
+        mode: "cors"
+      }
+    );
 
     const isValid = await validRes.json();
 
@@ -51,12 +62,18 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
       return;
     }
 
-    const profileRes = await fetch(USER_PROFILE_URL + (new URLSearchParams({
-      auth,
-      id: ""
-    }).toString()));
+    const profileURL = new URL(USER_PROFILE_URL);
+    profileURL.searchParams.append("auth", auth);
+    profileURL.searchParams.append("id", "");
+    const profileRes = await fetch(
+      profileURL,
+      {
+        method: "GET",
+        mode: "cors"
+      }
+    );
 
-    if(profileRes.status === 200) {
+    if (profileRes.status === 200) {
       const profile = await profileRes.json();
       setUser({
         id: profile.id,
@@ -68,7 +85,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   }
 
   useEffect(() => {
-    checkAuth(cookies.auth)
+    checkAuth(cookies.auth);
 
     return () => {
       setUser({
