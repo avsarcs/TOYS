@@ -21,6 +21,7 @@ import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import EditGuideProfilePage from "./pages/Guide/EditGuideProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
+import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -58,6 +59,7 @@ function App() {
             <Route path="/profile" element={<GuideProfilePage />}/>
             <Route path="/edit-profile" element={<EditGuideProfilePage />}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
+            <Route path="/review/:review-id" element={<ReviewDetailsPage />}/>
           </Routes>
         </main>
       </div>
