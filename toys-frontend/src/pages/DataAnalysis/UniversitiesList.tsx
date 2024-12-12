@@ -252,6 +252,7 @@ const UniversitiesList: React.FC = () => {
         <Space h="xl"/>
         {UniversitiesTableContainer}
         <Space h="xl"/>
+        <Space h="xl"/>
     </div>
 }
 
