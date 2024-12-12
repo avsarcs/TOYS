@@ -122,6 +122,7 @@ const Comparison: React.FC = () => {
         <Space h="xl"/>
         {ShownDataContainer}
         <Space h="xl"/>
+        <Space h="xl"/>
     </div>
 }
 
