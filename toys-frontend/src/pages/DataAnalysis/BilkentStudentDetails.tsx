@@ -146,7 +146,7 @@ const BilkentStudentDetails: React.FC = () => {
         <Space h="xl"/>
         {DepartmentDetailsContainer}
         <Space h="xl"/>
-        <Space h="xl" />
+        <Space h="xl"/>
     </div>
 
 }
