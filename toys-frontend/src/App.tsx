@@ -26,6 +26,7 @@ import "dayjs/locale/tr"
 import dayjs from "dayjs";
 import BilkentStudentDetails from "./pages/DataAnalysis/BilkentStudentDetails.tsx";
 import RivalsList from "./pages/DataAnalysis/RivalsList.tsx";
+import TourStatistics from "./pages/TourStatistics/TourStatistics.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -58,6 +59,7 @@ function App() {
             <Route path="/profile" element={<GuideProfilePage />}/>
             <Route path="/edit-profile" element={<EditGuideProfilePage />}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
+            <Route path="/tourstatistics" element={<TourStatistics />}/>
           </Routes>
         </main>
       </div>
