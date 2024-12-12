@@ -176,6 +176,16 @@ API endpoints:
             			method: get
             			response: SimpleEventModel[]
 
+            /statistics
+                parameters:
+                    authToken: auth_token
+                method: get
+                response: {
+                    days: {"Pazartesi": 1000, "Salı": 800, "Çarşamba": 600, "Perşembe": 400, "Cuma": 200, "Cumartesi": 100, "Pazar": 50},
+                    statuses: {"Tamamlandı": 1000, "Beklemede": 600, "İptal Edildi": 400},
+                    cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Diğer": 25},
+                }
+
 	/management
 		/people
 			method: get
