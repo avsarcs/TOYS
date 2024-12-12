@@ -212,6 +212,7 @@ const RivalsList: React.FC = () => {
         <Space h="xl"/>
         {RivalsTableContainer}
         <Space h="xl"/>
+        <Space h="xl"/>
     </div>
 }
 
