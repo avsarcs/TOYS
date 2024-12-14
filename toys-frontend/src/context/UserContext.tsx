@@ -1,8 +1,8 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { OnlyChildrenProps } from '../types/generic';
-import { User } from '../types/designed';
-import { useCookies } from "react-cookie";
-import { UserRole } from "../types/enum.ts";
+import React, {createContext, useCallback, useEffect, useMemo, useState} from 'react';
+import {OnlyChildrenProps} from '../types/generic';
+import {User} from '../types/designed';
+import {useCookies} from "react-cookie";
+import {UserRole} from "../types/enum.ts";
 
 interface UserContextType {
   authToken: string;
@@ -14,7 +14,16 @@ interface UserContextType {
 const AUTH_VALID_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/isvalid");
 const USER_PROFILE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile");
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType>({
+  authToken: "",
+  setAuthToken: () => {},
+  user: {
+    id: "",
+    role: UserRole.NONE,
+    profile: {}
+  },
+  isLoggedIn: false,
+});
 
 export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -29,7 +38,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     setCookie("auth", auth);
   }, [setCookie]);
 
-  async function checkAuth(auth: string) {
+  const checkAuth = async (auth: string) => {
     setUser({
       id: "",
       role: UserRole.NONE,
@@ -46,8 +55,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     const validRes = await fetch(
       validURL,
       {
-          method: "GET",
-          mode: "cors"
+          method: "GET"
       }
     );
 
@@ -63,8 +71,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     const profileRes = await fetch(
       profileURL,
       {
-        method: "GET",
-        mode: "cors"
+        method: "GET"
       }
     );
 
@@ -80,7 +87,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   }
 
   useEffect(() => {
-    checkAuth(cookies.auth);
+    checkAuth(cookies.auth).catch(console.error);
 
     return () => {
       setUser({

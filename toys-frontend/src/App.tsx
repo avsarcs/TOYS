@@ -26,6 +26,7 @@ import "dayjs/locale/tr"
 import dayjs from "dayjs";
 import BilkentStudentDetails from "./pages/DataAnalysis/BilkentStudentDetails.tsx";
 import RivalsList from "./pages/DataAnalysis/RivalsList.tsx";
+import TourListPage from "./pages/TourList/TourListPage.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -43,6 +44,7 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/tour/:tourId" element={<TourPage />}/>
+            <Route path="/tours" element={<TourListPage />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
             <Route path="/rivalslist" element={<RivalsList />} />
             <Route path="/highschoolslist" element={<HighSchoolsList />} />
