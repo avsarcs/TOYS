@@ -104,7 +104,7 @@
 {
   "fullname": "John Doe",
   "id": "12345678",
-  "highschool": HighSchoolModel
+  "highschool": HighschoolModel
   "email": "john.doe@example.com",
   "phone": "+1234567890",
   "major": "COMPUTER_SCIENCE",
@@ -250,7 +250,7 @@
 
 # Dashboard Category
 ```
-  "OWN_EVENTS" | "EVENT_INVITATIONS" | "EVENT_APPLICATIONS" | "GUIDE_ASSIGNED" | "NO_GUIDE_ASSIGNED" | "TOUR_AWAITING_MODIFICATION" |
+  "OWN_EVENT" | "EVENT_INVITATION" | "PENDING_APPLICATIONS" | "GUIDE_ASSIGNED" | "GUIDELESS" | "PENDING_MODIFICATION" |
 ```
 
 # Advisor Offer Model
@@ -534,6 +534,21 @@ API endpoints:
 					// bool value, True=accept
 				method: get
 				response: -
+		/dashboard
+			parameters:
+				authToken: auth_token
+				dashboard_category: NotificationCategory
+			method: get
+			response: SimpleEventModel[]
+			
+	/event
+		/tour
+			parameters:
+				auth= jwt token
+				tid=tour_id
+			method: get
+			response: TourModel
+			response_type: json
 
 	/tours # NEEDS TEST
 		parameters:
@@ -572,13 +587,6 @@ API endpoints:
 				authToken: auth_token
 			method: post
 			response: -
-
-		/notifications
-			parameters:
-				authToken: auth_token
-				notification_category: NotificationCategory
-			method: get
-			response: SimpleEventModel[]
 
 	/management
 		/timesheet (Requires Auth as Coordinator)

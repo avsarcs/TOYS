@@ -8,7 +8,7 @@ export interface LoginData {
 export interface TraineeGuideApplicationData {
   fullname: string,
   id: string,
-  password: string,
+  highschool: HighschoolData
   email: string,
   phone: string,
   major: string,
@@ -19,7 +19,7 @@ export interface TraineeGuideApplicationData {
 }
 
 export interface ApplicantData {
-  full_name: string,
+  fullname: string,
   role: ApplicantRole,
   email: string,
   phone: string,
@@ -35,7 +35,7 @@ export interface HighschoolData {
 
 export interface TourData {
   type: TourType,
-  highschool_name: string,
+  highschool: HighschoolData,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
   requested_majors: Department[],
   trainee_guides: { id: string; full_name: string, highschool: HighschoolData }[],
