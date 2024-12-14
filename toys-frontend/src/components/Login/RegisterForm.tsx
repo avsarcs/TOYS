@@ -3,7 +3,7 @@ import { Button, Checkbox, NumberInput, PasswordInput, ScrollArea, Select, Texta
 import { Link } from "react-router-dom";
 import { Department } from "../../types/enum.ts";
 import { RegisterFormProps } from "../../types/designed.ts";
-import { GuideApplicationData } from "../../types/data.ts";
+import { TraineeGuideApplicationData } from "../../types/data.ts";
 import { useForm } from "@mantine/form";
 import validate from "validate.js"
 import { isPossiblePhoneNumber } from "libphonenumber-js/max";
@@ -18,7 +18,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      bilkentId: NaN,
+      bilkentId: "",
       password: "",
       fullName: "",
       email: "",
@@ -30,7 +30,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
       whyApply: ""
       },
     validate: {
-      bilkentId: (value: number) => !isNaN(value) ? null: "Lütfen Bilkent ID'nizi giriniz.",
+      bilkentId: (value: string) => value.length > 0 ? null: "Lütfen Bilkent ID'nizi giriniz.",
       password: (value: string) => value.length > 0 ? null: "Lütfen bir şifre giriniz.",
       fullName: (value: string) => value.length > 0 ? null: "Lütfen tam adınızı giriniz.",
       email: (value: string) => validate({ from: value }, { from: { email: true } }) === undefined ? null : "Geçersiz e-mail.",
@@ -59,7 +59,19 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
 
     setRegistering(true);
 
-    const applicationData: GuideApplicationData = form.getValues();
+    const formData = form.getValues();
+    const applicationData: TraineeGuideApplicationData = {
+      fullname: formData.fullName,
+      id: formData.bilkentId,
+      password: formData.password,
+      email: formData.email,
+      phone: formData.phoneNumber,
+      major: formData.department,
+      current_semester: formData.semester,
+      next_semester_exchange: formData.hasExchange,
+      how_did_you_hear: formData.howDidYouHear,
+      why_apply: formData.whyApply
+    }
     try {
       const res = await fetch(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/guide", {
         method: "POST",
