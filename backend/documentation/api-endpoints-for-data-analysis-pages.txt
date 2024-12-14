@@ -76,10 +76,28 @@ API endpoints:
                     department_name = "Bilgisayar Mühendisliği" // name of the department (currently the best way is to have a string as parameter)
                 body: auth_token
                 response:
-                    [
-                      {title: "%0 Burs", min: "1600", max: "6000"}, // Titles are printed as-is. Thus, they should be translated to Turkish before being displayed.
-                      {title: "%100 Burs", min: "0", max: "400"}
-                    ]
+                    {
+                        "2020":
+                        [
+                          {title: "%0 Burs", min: "1600", max: "6000"}, // Titles are printed as-is. Thus, they should be translated to Turkish before being displayed.
+                          {title: "%100 Burs", min: "0", max: "400"}
+                        ],
+                        "2021":
+                        [
+                          {title: "%0 Burs", min: "1700", max: "6100"},
+                          {title: "%100 Burs", min: "0", max: "450"}
+                        ],
+                        "2022":
+                        [
+                          {title: "%0 Burs", min: "1800", max: "6200"},
+                          {title: "%100 Burs", min: "0", max: "500"}
+                        ],
+                        "2023":
+                        [
+                          {title: "%0 Burs", min: "1900", max: "6300"},
+                          {title: "%100 Burs", min: "0", max: "550"}
+                        ]
+                    }
 
             /set_rivalry
                 method: post
