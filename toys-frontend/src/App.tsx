@@ -21,11 +21,14 @@ import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import EditGuideProfilePage from "./pages/Guide/EditGuideProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
+import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
 import BilkentStudentDetails from "./pages/DataAnalysis/BilkentStudentDetails.tsx";
 import RivalsList from "./pages/DataAnalysis/RivalsList.tsx";
+import TourStatistics from "./pages/TourStatistics/TourStatistics.tsx";
+import TourListPage from "./pages/TourList/TourListPage.tsx";
 
 function App() {
   const location = useLocation().pathname;
@@ -43,6 +46,7 @@ function App() {
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/tour/:tourId" element={<TourPage />}/>
+            <Route path="/tours" element={<TourListPage />}/>
             <Route path="/universitieslist" element={<UniversitiesList />} />
             <Route path="/rivalslist" element={<RivalsList />} />
             <Route path="/highschoolslist" element={<HighSchoolsList />} />
@@ -58,6 +62,8 @@ function App() {
             <Route path="/profile" element={<GuideProfilePage />}/>
             <Route path="/edit-profile" element={<EditGuideProfilePage />}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
+            <Route path="/review/:review-id" element={<ReviewDetailsPage />}/>
+            <Route path="/tourstatistics" element={<TourStatistics />}/>
           </Routes>
         </main>
       </div>

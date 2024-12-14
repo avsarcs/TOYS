@@ -5,15 +5,17 @@ export interface LoginData {
   password: string
 }
 
-export interface GuideApplicationData extends LoginData {
-  fullName: string,
+export interface TraineeGuideApplicationData {
+  fullname: string,
+  id: string,
+  password: string,
   email: string,
-  phoneNumber: string,
-  department: string,
-  semester: number,
-  hasExchange: boolean,
-  howDidYouHear: string,
-  whyApply: string
+  phone: string,
+  major: string,
+  current_semester: number,
+  next_semester_exchange: boolean,
+  how_did_you_hear: string,
+  why_apply: string
 }
 
 export interface ApplicantData {
@@ -79,4 +81,17 @@ export interface TourToReview {
     id: string,
     name: string
   }[];
+}
+
+export interface Review {
+  id: string;
+  for: "TOUR" | "GUIDE";
+  tour_id: string;
+  tour_date: string;
+  guide?: {
+    id: string;
+    name: string;
+  };
+  score: number;
+  body?: string;
 }
