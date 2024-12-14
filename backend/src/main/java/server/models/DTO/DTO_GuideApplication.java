@@ -1,5 +1,6 @@
 package server.models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import server.enums.Department;
 import server.models.people.GuideApplication;
 
@@ -12,7 +13,9 @@ public class DTO_GuideApplication {
     private Department major;
     private long current_semester;
     private boolean next_semester_exchange;
+    @JsonProperty("how_did_you_hear")
     private String howdidyouhear;
+    @JsonProperty("why_apply")
     private String whyapply;
 
     public static DTO_GuideApplication getDefault() {
