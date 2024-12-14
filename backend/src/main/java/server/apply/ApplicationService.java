@@ -79,12 +79,24 @@ public class ApplicationService {
         // check application validity
         if (tourApplication.isValid()) {
             // if valid, send email to the applicant notifying them of the application has been received
-            // TODO: notify the applicant
+            mailServiceGateway.sendMail(
+                    tourApplication.getApplicant().getContact_info().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.TOUR_APPLICATION,
+                    Status.RECIEVED,
+                    Map.of("name", tourApplication.getApplicant().getName())
+            );
         } else {
             // if invalid, send email to the applicant notifying them of invalidity
             // the application is not valid
             System.out.println("Invalid tour application!");
-            mailServiceGateway.sendMail(tourApplication.getApplicant().getContact_info().getEmail(), Concerning.EVENT_APPLICANT, About.TOUR_APPLICATION, Status.ERROR, Map.of("name", tourApplication.getApplicant().getName()));
+            mailServiceGateway.sendMail(
+                    tourApplication.getApplicant().getContact_info().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.TOUR_APPLICATION,
+                    Status.ERROR,
+                    Map.of("name", tourApplication.getApplicant().getName())
+            );
             return HttpStatus.OK; // WE do OK here because the response has been recieved properly, its just not valid
         }
 

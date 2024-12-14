@@ -82,3 +82,16 @@ export interface TourToReview {
     name: string
   }[];
 }
+
+export interface Review {
+  id: string;
+  for: "TOUR" | "GUIDE";
+  tour_id: string;
+  tour_date: string;
+  guide?: {
+    id: string;
+    name: string;
+  };
+  score: number;
+  body?: string;
+}

@@ -16,9 +16,9 @@ public class UserProfileController {
     UserProfileService userProfileService;
 
     @GetMapping("/internal/user/profile")
-    /// id = user bilkent id, authToken = user's authentication token
-    public Object getProfile(@RequestParam String authToken, @RequestParam String id) {
-        return userProfileService.getProfile(id, authToken);
+    /// id = user bilkent id, auth = user's authentication token
+    public Object getProfile(@RequestParam String auth, @RequestParam String id) {
+        return userProfileService.getProfile(id, auth);
     }
 
     @GetMapping("/internal/user/profile/simple")
@@ -27,8 +27,8 @@ public class UserProfileController {
     }
 
     @PostMapping("/internal/user/profile/update")
-    public void updateProfile(@RequestBody Map<String, Object> profileMap, @RequestParam String authToken) {
-        userProfileService.updateProfile(profileMap, authToken);
+    public void updateProfile(@RequestBody Map<String, Object> profileMap, @RequestParam String auth) {
+        userProfileService.updateProfile(profileMap, auth);
     }
 
 }
