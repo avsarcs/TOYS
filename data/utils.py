@@ -5,6 +5,7 @@ def get_request_with_retry(url, retries=3, delay=0.05):
         try:
             response = requests.get(url)
             response.raise_for_status()
+            response.encoding = 'utf-8'
             time.sleep(delay) # Add a delay to prevent overwhelming the server
             return response
         except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
