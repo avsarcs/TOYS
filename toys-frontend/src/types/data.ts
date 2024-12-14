@@ -58,3 +58,27 @@ export interface SimpleEventData {
   accepted_time: string,
   requested_times: string[],
 }
+
+interface Recipient {
+  id: string;
+  name: string;
+}
+
+export type OfferStatus = 'ACCEPTED' | 'REJECTED' | 'PENDING';
+
+export interface AdvisorOffer {
+  recipient: Recipient;
+  status: OfferStatus;
+  offer_date: string;  // ISO 8601 datetime string
+  response_date: string;
+  rejection_reason: string;
+}
+
+export interface TourToReview {
+  tour_id: string;
+  tour_date: string;  // ISO 8601 format
+  guides: {
+    id: string,
+    name: string
+  }[];
+}

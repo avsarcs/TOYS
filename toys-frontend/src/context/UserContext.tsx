@@ -46,7 +46,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     });
     setIsLoggedIn(false);
 
-    if(!auth || auth.length === 0) {
+    if (!auth || auth.length === 0) {
       return;
     }
 
@@ -75,7 +75,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
       }
     );
 
-    if(profileRes.status === 200) {
+    if (profileRes.status === 200) {
       const profile = await profileRes.json();
       setUser({
         id: profile.id,
