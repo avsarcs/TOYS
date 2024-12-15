@@ -83,14 +83,18 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         };
 
         try {
-            const response = await fetch(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/profile/update", {
+            const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
+
+            // Add query parameters
+            url.searchParams.append("authToken", userContext.authToken);
+
+            const response = await fetch(url.toString(), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    authToken: userContext.authToken,
-                    profileModel: updatedProfile,
+                    updatedProfile,
                 }),
             });
 
