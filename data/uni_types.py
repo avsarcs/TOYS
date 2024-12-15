@@ -43,10 +43,10 @@ class University:
                         department_name = department_name.replace(" (%75 İndirimli)", "")
                     elif ("(Burslu)" in department_name):
                         scholarship = "%100"
-                        department_name = department_name.replace(" (%100 İndirimli)", "")
+                        department_name = department_name.replace(" (Burslu)", "")
                     elif ("(Ücretli)" in department_name):
                         scholarship = "%0"
-                        department_name = department_name.replace(" (Burslu)", "")
+                        department_name = department_name.replace(" (Ücretli)", "")
                     else:
                         scholarship = "N/A"
                     
