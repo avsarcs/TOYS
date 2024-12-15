@@ -66,10 +66,14 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
     const saveSchedule = async () => {
         // Convert matrix back to ScheduleData
         const updatedSchedule: ScheduleData = {} as ScheduleData;
-        (days as Array<keyof ScheduleData>).forEach((day, dayIndex) => {
+
+        // Iterate over days first, as schedule rows now represent days
+        (days as Array<keyof ScheduleData>).forEach((day, rowIndex) => {
             updatedSchedule[day] = {} as DailyPlan;
-            times.forEach((time, timeIndex) => {
-                updatedSchedule[day][time as keyof DailyPlan] = schedule[timeIndex][dayIndex] ? TimeSlotStatus.BUSY : TimeSlotStatus.FREE;
+        
+            // Iterate over times within each day (columns of the schedule)
+            times.forEach((time, colIndex) => {
+                updatedSchedule[day][time as keyof DailyPlan] = schedule[rowIndex][colIndex] ? TimeSlotStatus.BUSY : TimeSlotStatus.FREE;
             });
         });
 
@@ -151,7 +155,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                                     <td
                                         key={colIndex}
                                         
-                                        className={console.log(rowIndex) || schedule[rowIndex][colIndex] ? "busy" : "available"}
+                                        className={schedule[rowIndex][colIndex] ? "busy" : "available"}
                                         onClick={() => toggleCell(rowIndex, colIndex)}
                                     ></td>
                                 ))}

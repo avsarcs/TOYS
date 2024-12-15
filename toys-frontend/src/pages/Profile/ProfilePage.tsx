@@ -58,7 +58,7 @@ const ProfilePage: React.FC = () =>
                 {UserRoleText[userContext.user.role]} Profili
             </Title>
             <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Burada kişisel bilgilerinizi ve TOYS'a dair verilerinizi görüntüleyebilirsiniz.
+                Burada kişisel ve TOYS'a dair bilgilerinizi görüntüleyebilirsiniz.
             </Title>
             <Space h="xl"/>
             <Divider className="border-gray-400"/>
