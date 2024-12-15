@@ -15,6 +15,15 @@ export enum UserRole {
   DIRECTOR = "DIRECTOR"
 }
 
+export enum UserRoleText {
+  NONE = "HATALI",
+  TRAINEE = "Amatör Rehber",
+  GUIDE = "Rehber",
+  ADVISOR = "Danışman",
+  COORDINATOR = "Koordinatör",
+  DIRECTOR = "Direktör"
+}
+
 export enum Department {
   COMPUTER_ENGINEERING = "Computer Engineering",
   ELECTRICAL_ENGINEERING = "Electrical Engineering",
@@ -102,4 +111,19 @@ export enum FairStatus {
   APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
   APPROVED = "APPROVED",
   REJECTED = "REJECTED"
+}
+
+export enum DayOfTheWeek {
+  MONDAY = "Monday",
+  TUESDAY = "Tuesday",
+  WEDNESDAY = "Wednesday",
+  THURSDAY = "Thursday",
+  FRIDAY = "Friday",
+  SATURDAY = "Saturday",
+  SUNDAY = "Sunday"
+}
+
+export enum TimeSlotStatus {
+  FREE = "Free",
+  BUSY = "Busy"
 }

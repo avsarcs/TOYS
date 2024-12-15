@@ -1,4 +1,4 @@
-import { ApplicantRole, Department, EventType, TourStatus, TourType } from "./enum.ts";
+import { ApplicantRole, Department, EventType, TourStatus, TourType, UserRole, DayOfTheWeek, TimeSlotStatus } from "./enum.ts";
 
 export interface LoginData {
   bilkentID: string,
@@ -48,6 +48,53 @@ export interface TourData {
   actual_start_time: string,
   actual_end_time: string,
   classroom: string,
+}
+
+export interface ProfileData{
+  experience: string,
+  id: string,
+  created_at: string,
+  updated_at: string,
+  fullname: string,
+  phone: string,
+  highschool: HighschoolData,
+  schedule: ScheduleData,
+  iban: string,
+  bank: string,
+  major: string,
+  reviews: {
+    average: number,
+    count: number
+  },
+  role: UserRole
+  responsible_days: DayOfTheWeek[]
+  profile_picture: string,
+  previous_tour_count: number,
+  profile_description: string,
+  advisor_offer: boolean
+}
+
+export interface ScheduleData {
+  MONDAY: DailyPlan,
+  TUESDAY: DailyPlan,
+  WEDNESDAY: DailyPlan,
+  THURSDAY: DailyPlan,
+  FRIDAY: DailyPlan,
+  SATURDAY: DailyPlan,
+  SUNDAY: DailyPlan
+}
+
+export interface DailyPlan {
+  _830_930: TimeSlotStatus,
+  _930_1030: TimeSlotStatus,
+  _1030_1130: TimeSlotStatus,
+  _1130_1230: TimeSlotStatus,
+  _1230_1330: TimeSlotStatus,
+  _1330_1430: TimeSlotStatus,
+  _1430_1530: TimeSlotStatus,
+  _1530_1630: TimeSlotStatus,
+  _1630_1730: TimeSlotStatus,
+  _1730_1830: TimeSlotStatus,
 }
 
 export interface SimpleEventData {
