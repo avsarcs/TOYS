@@ -41,7 +41,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     setCategory(categories.length > 0 ? categories[0].value : DashboardCategory.NONE);
-  }, [userContext.authToken, categores]);
+  }, [userContext.authToken, categories]);
 
   useEffect(() => {
     setItem(null);
