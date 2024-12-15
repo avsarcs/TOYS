@@ -8,6 +8,21 @@ API endpoints:
             response:
                 ["İzmir", "Ankara", "İstanbul"] // City names are printed as-is. Thus, they should be translated to Turkish before being displayed.
         /universities
+            /all_simple // Returns all universities with their names and ids
+                method: get
+                parameters:
+                    auth_token
+                response: [
+                    {
+                        name: "ODTÜ",
+                        id: "1"
+                    },
+                    {
+                        name: "Koç",
+                        id: "2"
+                    }
+                ]
+
             /all // Returns all universities
                 method: get
                 parameters:
