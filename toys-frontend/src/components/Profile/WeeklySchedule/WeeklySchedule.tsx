@@ -4,10 +4,10 @@ import { ScrollArea, Title } from "@mantine/core";
 import { ProfileData, ScheduleData, DailyPlan} from "../../../types/data.ts";
 import { TimeSlotStatus } from "../../../types/enum.ts";
 import { UserContext } from "../../../context/UserContext.tsx";
+import { ProfileComponentProps } from "../../../types/designed.ts";
 
-const WeeklySchedule: React.FC = () => {
+const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
     const userContext = useContext(UserContext);
-    const profile = userContext.user.profile;
 
     // Human-readable times for display
     const readableTimes = [
@@ -38,9 +38,15 @@ const WeeklySchedule: React.FC = () => {
     const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
 
     // Convert ScheduleData to a matrix for rendering
-    const scheduleMatrix = days.map((day) => times.map((time) => profile.schedule[day][time] === TimeSlotStatus.BUSY));
+    const scheduleMatrix = days.map((day) =>
+        times.map((time) =>
+            props.profile.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
+        )
+    );
 
+    // Initialize state with a valid matrix
     const [schedule, setSchedule] = useState<boolean[][]>(scheduleMatrix);
+
     const [backupSchedule, setBackupSchedule] = useState<boolean[][]>([...schedule]);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -68,7 +74,7 @@ const WeeklySchedule: React.FC = () => {
         });
 
         const updatedProfile: ProfileData = {
-            ...profile,
+            ...props.profile,
             schedule: updatedSchedule,
         };
 
@@ -100,7 +106,7 @@ const WeeklySchedule: React.FC = () => {
         setSchedule([...backupSchedule]);
         setIsEditing(false);
     };
-
+    console.log(schedule);
     return (
         <div className="weekly-schedule">
             <div className="header">
@@ -138,13 +144,14 @@ const WeeklySchedule: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {readableTimes.map((time, rowIndex) => (
+                        {readableTimes.map((time, colIndex) => (
                             <tr key={time}>
                                 <td>{time}</td>
-                                {days.map((_, colIndex) => (
+                                {days.map((_, rowIndex) => (
                                     <td
                                         key={colIndex}
-                                        className={schedule[rowIndex][colIndex] ? "busy" : "available"}
+                                        
+                                        className={console.log(rowIndex) || schedule[rowIndex][colIndex] ? "busy" : "available"}
                                         onClick={() => toggleCell(rowIndex, colIndex)}
                                     ></td>
                                 ))}

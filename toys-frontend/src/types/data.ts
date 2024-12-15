@@ -94,7 +94,6 @@ export interface DailyPlan {
   _1430_1530: TimeSlotStatus,
   _1530_1630: TimeSlotStatus,
   _1630_1730: TimeSlotStatus,
-  _1730_1830: TimeSlotStatus,
 }
 
 export interface SimpleEventData {
