@@ -16,7 +16,7 @@ public class UserToursController {
 
     // TODO: this needs to be moved to the proper path, "user" tags need to be removed
     @GetMapping("/internal/tours")
-    public List<Object> getTours(@RequestParam String authToken) {
+    public List<Object> getTours(@RequestParam(name = "auth") String authToken) {
         return tourService.getTours(authToken);
     }
 
