@@ -9,13 +9,11 @@ import server.enums.ExperienceLevel;
 import server.enums.status.RequestStatus;
 import server.enums.types.RequestType;
 import server.enums.status.TourStatus;
-import server.enums.types.TourType;
 import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
-import server.models.DTO.DTO_GroupTour;
-import server.models.DTO.DTO_IndividualTour;
+import server.models.DTO.DTO_SimpleEvent;
 import server.models.people.details.ContactInfo;
 import server.models.time.ZTime;
 import server.models.people.GuideAssignmentRequest;
@@ -86,7 +84,7 @@ public class UserTourService {
         return true;
     }
 
-    public List<Object> getTours(String authToken) {
+    public List<DTO_SimpleEvent> getTours(String authToken) {
         if (!JWTService.testToken.equals(authToken)) {
             // validate token
             if(!JWTService.getSimpleton().isValid(authToken)) {
@@ -103,19 +101,12 @@ public class UserTourService {
         // extract user id from token
         String userId = JWTService.getSimpleton().decodeUserID(authToken);
         // get tours from database
-        List<Object> tours = databaseEngine.tours
+        List<DTO_SimpleEvent> tours = databaseEngine.tours
                 .fetchTours()
                 .values()
                 .stream()
                 .collect(ArrayList::new,
-                        (list, value) -> {
-                            if(value.getTour_type() == TourType.GROUP) {
-                                list.add(DTO_GroupTour.fromTourRegistry(value));
-                            }
-                            else if (value.getTour_type() == TourType.INDIVIDUAL) {
-                                list.add(DTO_IndividualTour.fromTourRegistry(value));
-                            }
-                        },
+                        (list, tour) -> list.add(DTO_SimpleEvent.fromEvent(tour)),
                         ArrayList::addAll);
         // return tours
         return tours;

@@ -590,7 +590,7 @@ API endpoints:
 		parameters:
 			authToken= jwt token
 		method: get
-		response: List of tours (List<TourModel>)
+		response: List of tours (List<SimpleEventModel>)
 		response_type: json
 
 		/status_update # NEEDS TEST

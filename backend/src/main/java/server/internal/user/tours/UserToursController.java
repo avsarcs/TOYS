@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import server.models.DTO.DTO_SimpleEvent;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class UserToursController {
 
     // TODO: this needs to be moved to the proper path, "user" tags need to be removed
     @GetMapping("/internal/tours")
-    public List<Object> getTours(@RequestParam(name = "auth") String authToken) {
+    public List<DTO_SimpleEvent> getTours(@RequestParam(name = "auth") String authToken) {
         return tourService.getTours(authToken);
     }
 
