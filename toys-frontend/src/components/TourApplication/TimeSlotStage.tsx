@@ -72,7 +72,7 @@ const TimeSlotStage: React.FC<GroupApplicationStageProps | IndividualApplication
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDate.getDate()).padStart(2, '0');
-    const timeString = `${year}-${month}-${day}T${timeSlot.start}`;
+    const timeString = `${year}-${month}-${day}T${timeSlot.start}+03:00`;
     return selectedTimes.includes(timeString);
   };
 
