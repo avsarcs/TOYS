@@ -44,7 +44,7 @@ const TimeSlotStage: React.FC<GroupApplicationStageProps | IndividualApplication
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDate.getDate()).padStart(2, '0');
-    const newTime = `${year}-${month}-${day}T${timeSlot.start}`;
+    const newTime = `${year}-${month}-${day}T${timeSlot.start}+03:00`;
 
     setSelectedTimes(prev => {
       const exists = prev.includes(newTime);
