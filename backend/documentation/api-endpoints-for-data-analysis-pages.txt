@@ -27,14 +27,14 @@ API endpoints:
                 method: get
                 parameters:
                     auth_token
-                    page_no=1 // which page to get
-                    search= "ODTÜ" // search query
-                    cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sort_by= "name" || "city" || "isRival" // which field to sort by
-                    order= "asc" || "desc" // order of sorting
+                    //removed: page_no=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
+                    //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
+                    //removed: sort_by= "name" || "city" || "isRival" // which field to sort by
+                    //removed: order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty? or you can add an "empty"
-                    total_page_count: 5,
+                    //removed: total_page_count: 5,
                     universities: [
                         {
                             name: "ODTÜ",
@@ -55,14 +55,14 @@ API endpoints:
                 method: get
                 parameters:
                     auth_token
-                    page_no=1 // which page to get
-                    search= "ODTÜ" // search query
-                    cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sort_by= "name" || "city" // which field to sort by
-                    order= "asc" || "desc" // order of sorting
+                    //removed: page_no=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
+                    //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
+                    //removed: sort_by= "name" || "city" // which field to sort by
+                    //removed: order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty?
-                    total_page_count: 5,
+                    //removed: total_page_count: 5,
                     universities: [
                         {
                             name: "ODTÜ",
@@ -128,14 +128,14 @@ API endpoints:
                 method: get
                 parameters:
                     auth_token
-                    pageNo=1 // which page to get
-                    search= "ODTÜ" // search query
-                    cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
-                    order= "asc" || "desc" // order of sorting
+                    //removed: pageNo=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
+                    //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
+                    //removed: sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
+                    //removed: order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty?
-                    totalPageCount: 5,
+                    //removed: totalPageCount: 5,
                     high_schools: [
                           {
                               name: "İzmir Fen Lisesi",
