@@ -1,6 +1,5 @@
 package server.internal.user.tours;
 
-import server.models.events.TourRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +16,7 @@ public class UserToursController {
 
     // TODO: this needs to be moved to the proper path, "user" tags need to be removed
     @GetMapping("/internal/tours")
-    public List<TourRegistry> getTours(@RequestParam String authToken) {
+    public List<Object> getTours(@RequestParam String authToken) {
         return tourService.getTours(authToken);
     }
 
