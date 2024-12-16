@@ -139,9 +139,11 @@ const RivalsTable: React.FC<RivalsTableProps> = ({data, search, cities}) => {
                             </Text>
                         </Th>
                         <Table.Th style={{padding: 0, textAlign: "center"}}>
-                            <Text size={"xl"}>
-                                Karşılaştır
-                            </Text>
+                            <Group justify="space-between">
+                                <Text fw={500} fz="sm">
+                                    {""}
+                                </Text>
+                            </Group>
                         </Table.Th>
                     </Table.Tr>
                 </Table.Tbody>
