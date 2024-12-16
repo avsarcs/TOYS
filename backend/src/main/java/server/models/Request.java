@@ -1,8 +1,10 @@
 package server.models;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import server.enums.RequestStatus;
-import server.enums.RequestType;
+import server.enums.status.RequestStatus;
+import server.enums.types.RequestType;
+import server.models.events.TourModificationRequest;
+import server.models.people.GuideAssignmentRequest;
 import server.models.people.details.ContactInfo;
 import server.models.time.ZTime;
 

@@ -47,8 +47,8 @@ if response.status_code == 200:
         uni = uni.to_dict()
 
         #This appends the new university dictionary as a new json file in the directory
-        with open(file_path, 'w') as json_file:
-            json.dump(uni, json_file, indent=4)
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(uni, json_file, indent=4, ensure_ascii=False)
 
     for uni_fields in extract_universities('Vakıf Üniversiteleri'):
         file_path = os.path.join(directory, uni_fields[1] + ".json")
@@ -59,8 +59,8 @@ if response.status_code == 200:
         uni = University(*uni_fields)
         uni = uni.to_dict()
 
-        with open(file_path, 'w') as json_file:
-            json.dump(uni, json_file, indent=4)
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json.dump(uni, json_file, indent=4, ensure_ascii=False)
 
 
 else:

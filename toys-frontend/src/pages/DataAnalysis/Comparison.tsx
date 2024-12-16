@@ -3,6 +3,7 @@ import {Space, Container, Text} from '@mantine/core';
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
+import {useLocation} from 'react-router-dom';
 
 // Container styling
 const defaultContainerStyle = {
@@ -38,8 +39,12 @@ const data = {
 };
 
 const Comparison: React.FC = () => {
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const otherUniversity = params.get('otherUniversity');
+
     const [selectedBilkentDepartment, setSelectedBilkentDepartment] = React.useState<string | null>(null);
-    const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<string | null>(null);
+    const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<string | null>(otherUniversity);
     const [selectedOtherDepartment, setSelectedOtherDepartment] = React.useState<string | null>(null);
 
     // useEffect hook to watch for changes in the state variables

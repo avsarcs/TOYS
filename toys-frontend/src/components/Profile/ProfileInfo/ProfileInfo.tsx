@@ -1,70 +1,100 @@
-import React, { useState } from "react";
 import { Button, Title } from "@mantine/core";
-import ApplicationModal from "./ApplicationModal"; // Import the generic component
 import "./ProfileInfo.css";
 
-const ProfileInfo: React.FC = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isApplicationDisabled, setIsApplicationDisabled] = useState(false); // Track if button is disabled
+import { UserRole, UserRoleText } from "../../../types/enum.ts";
+import { UserContext } from "../../../context/UserContext.tsx";
+import {useCallback, useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { ProfileComponentProps } from "../../../types/designed.ts";
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
-    const handleApplicationSubmit = (reason: string) => {
-        console.log("Application submitted with reason:", reason);
-        setIsApplicationDisabled(true); // Disable the "Apply to Be an Advisor" button
-    };
+const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
+    const userContext = useContext(UserContext);
+    const params = useParams();
+    const profileId = params.profileId;
+    const [error, setError] = useState<Error | undefined>(undefined);
+    const [profile, setProfile] = useState(userContext.user.profile);
+
+    const fireUser = useCallback(async () => {
+        if (!profileId) {
+            alert("Profile ID is not defined.");
+            return;
+        }
+
+        try {
+            const fireUrl = new URL(FIRE_URL);
+            fireUrl.searchParams.append("id", profileId);
+            fireUrl.searchParams.append("auth", userContext.authToken);
+
+            const res = await fetch(fireUrl, {
+                method: "GET",
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to fire the user.");
+            }
+
+            alert("User has been successfully removed from TOYS.");
+        } catch (err) {
+            if (err instanceof Error) {
+                alert(`Error: ${err.message}`);
+            } else {
+                alert("An unknown error occurred.");
+            }
+        }
+    }, [profileId, userContext.authToken]);
+
 
     return (
         <div className="profile-info">
             <Title order={3} className="text-blue-700 font-bold font-main">
-                User Details
+                Kullanıcı Bilgileri
             </Title>
             <div className="personal-info">
                 <Title order={5} className="text-blue-700 font-bold font-main">
-                    Personal Information
+                    Kişisel Bilgiler
                 </Title>
-                <p><strong>Name:</strong> Scarlett Johansson</p>
-                <p><strong>E-Mail:</strong> ege.celik@ug.bilkent.edu.tr</p>
-                <p><strong>ID:</strong> 2202321</p>
-                <p><strong>High School:</strong> ODTÜ GVO Lisesi</p>
-                <p><strong>Department:</strong> CS</p>
+                <p><strong>İsim:</strong> {profile.fullname} </p>
+                <p><strong>E-Mail:</strong> {profile.email} </p>
+                <p><strong>ID:</strong> {profile.id}</p>
+                {profile.role !== UserRole.DIRECTOR ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
+                {profile.role !== UserRole.DIRECTOR ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
             </div>
             <div className="toys-info">
                 <Title order={5} className="text-blue-700 font-bold font-main">
-                    TOYS Specific Information
+                    TOYS'a Dair Bilgiler
                 </Title>
-                <p><strong>Current Role:</strong> Advisor</p>
-                <p><strong>Tours Guided:</strong> 45</p>
-                <p><strong>Total Experience:</strong> 2 years</p>
+                <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
+                <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p>
+                <p><strong>Deneyim:</strong> {profile.experience} </p>
             </div>
-            <div className="button-group">
-                <Button
-                    component="a"
-                    href="/edit-profile"
-                    variant="filled"
-                    color="violet"
-                    style={{ marginRight: "10px" }}
-                >
-                    Edit Personal Information
-                </Button>
-                <Button
-                    onClick={openModal}
-                    variant="filled"
-                    color="violet"
-                    disabled={isApplicationDisabled}
-                >
-                    Apply to Be an Advisor
-                </Button>
-            </div>
+            <div className = "button-group">
+                {profileId === undefined ? <div className="button">
+                    <Button
+                        component="a"
+                        href="/edit-profile"
+                        variant="filled"
+                        color="violet"
+                        style={{ marginRight: "10px" }}
+                    >
+                        Kişisel Bilgileri Düzenle
+                    </Button>
+                </div> : null}
+                {(profile.role === UserRole.DIRECTOR || profile.role === UserRole.COORDINATOR) && profileId !== undefined ? <div className="button">
+                    <Button
+                        component="a"
+                        href="/edit-profile"
+                        variant="filled"
+                        color="violet"
+                        style={{ marginRight: "10px" }}
+                        onClick={fireUser}
+                    >
+                        Kullanıcıyı TOYS'dan Çıkart
 
-            {/* Application Modal */}
-            <ApplicationModal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                onSubmit={handleApplicationSubmit}
-                title="Explanation of Application"
-            />
+                    </Button>
+                </div> : null}
+            </div>
         </div>
     );
 };

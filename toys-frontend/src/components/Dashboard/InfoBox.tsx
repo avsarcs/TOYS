@@ -9,7 +9,7 @@ import { IconCircleCheck, IconCircleX, IconUsers } from "@tabler/icons-react";
 const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) => {
   const buttons = useMemo(() => {
     switch (props.category) {
-      case DashboardCategory.EVENT_INVITATIONS:
+      case DashboardCategory.EVENT_INVITATION:
         return (
           <>
             <Button size="lg" radius="md" fullWidth leftSection={<IconCircleCheck/>}
@@ -26,7 +26,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
             </Button>
           </>
         );
-      case DashboardCategory.EVENT_APPLICATIONS:
+      case DashboardCategory.PENDING_APPLICATION:
         return (
           <>
             <Button size="lg" radius="md" fullWidth leftSection={<IconCircleCheck/>}
@@ -43,7 +43,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
             </Button>
           </>
         );
-      case DashboardCategory.NO_GUIDE_ASSIGNED:
+      case DashboardCategory.GUIDELESS:
         return (
           <>
             <Button size="lg" radius="md" fullWidth leftSection={<IconUsers />}
@@ -56,7 +56,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
         );
       default: return <></>
     }
-  }, [props.item]);
+  }, [props.item, props.category]);
 
   return (
     <Stack justify="flex-start" align="center">

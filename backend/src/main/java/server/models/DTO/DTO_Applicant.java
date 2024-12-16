@@ -1,7 +1,7 @@
 package server.models.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import server.models.Applicant;
+import server.models.events.Applicant;
 
 public class DTO_Applicant {
     private String fullname;

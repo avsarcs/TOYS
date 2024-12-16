@@ -1,50 +1,60 @@
-import React from "react";
-import { Box, Divider, Flex, Group, Space, Stack, Title } from "@mantine/core";
+import React, {useCallback, useContext, useEffect, useState} from "react";
+import { Box, Divider, Flex, Group, Space, Stack, Title, Text } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import { HighschoolData, TourData } from "../../types/data.ts";
-import { ApplicantRole, TourStatus, TourType } from "../../types/enum.ts";
+import { TourData } from "../../types/data.ts";
 import StatusInformation from "../../components/TourInformation/StatusInformation.tsx";
 import GeneralInformation from "../../components/TourInformation/GeneralInformation.tsx";
 import ApplicantInformation from "../../components/TourInformation/ApplicantInformation.tsx";
 import GuideInformation from "../../components/TourInformation/GuideInformation.tsx";
 import TimeInformation from "../../components/TourInformation/TimeInformation.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
+import {isObjectEmpty} from "../../lib/utils.tsx";
 
-const mockdata : {
-  0: TourData
-} = {
-  0: {
-    type: TourType.INDIVIDUAL,
-    highschool_name: "Ankara Fen Lisesi",
-    guides: [ { id: "0", full_name: "Scarlett Johansson", highschool: {} as HighschoolData } ],
-    trainee_guides: [],
-    requested_times: ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
-    accepted_time: "2024-09-30T09:00:00Z",
-    visitor_count: 1,
-    status: TourStatus.APPROVED,
-    requested_majors: [],
-    notes: "",
-    applicant: {
-      full_name: "John Doe",
-      role: ApplicantRole.STUDENT,
-      email: "john.doe@gmail.com",
-      phone: "0 (555) 555 55 55",
-      notes: ""
-    },
-    actual_start_time: "",
-    actual_end_time: "",
-    classroom: "Mithat Çoruh Amfi"
-  }
-}
+const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
 
 const TourPage: React.FC = () => {
+  const userContext = useContext(UserContext);
+  const [error, setError] = useState<Error | undefined>(undefined);
   const params = useParams();
-  const key = Number(params["tourId"]) as keyof typeof mockdata;
 
-  if(params["tourId"] === undefined || mockdata[key] === undefined) {
-    throw Error("TourInformation not found.");
+  const [tour, setTour] = useState<TourData>({} as TourData);
+
+  if(!params.tourId) throw new Error("Tour ID is required");
+
+  const getTour = useCallback(async (tourId: string) => {
+    const tourUrl = new URL(TOUR_URL);
+    tourUrl.searchParams.append("tid", tourId);
+    tourUrl.searchParams.append("auth", userContext.authToken);
+
+    const res = await fetch(tourUrl, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error("Something went wrong");
+    }
+
+    const tourText = await res.text();
+    if(tourText.length === 0) {
+      throw new Error("Tour not found");
+    }
+
+    setTour(JSON.parse(tourText));
+  }, [userContext.authToken]);
+
+  useEffect(() => {
+    getTour(params.tourId as string).catch((reason) => {
+      setError(reason);
+    });
+
+    return () => {
+      setTour({} as TourData);
+    }
+  }, [params.tourId, getTour]);
+
+  if(error) {
+    throw error;
   }
-
-  const tour: TourData = mockdata[key];
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
@@ -60,21 +70,28 @@ const TourPage: React.FC = () => {
           </Box>
         </Group>
         <Divider className="border-gray-400"/>
-        <Space h="lg"/>
-        <StatusInformation tour={tour}/>
-        <Divider className="border-gray-300"/>
-        <Stack gap="0" className="bg-gray-50">
-          <GeneralInformation tour={tour}/>
-          <Divider className="border-gray-200"/>
-          <ApplicantInformation tour={tour}/>
-          <Divider className="border-gray-200"/>
-          <GuideInformation tour={tour}/>
-          <Divider className="border-gray-200"/>
-          <TimeInformation tour={tour}/>
-        </Stack>
+        {
+          isObjectEmpty(tour)
+            ? <Text p="lg">Detaylar alınıyor...</Text>
+            :
+            <>
+              <Space h="lg"/>
+              <StatusInformation tour={tour}/>
+              <Divider className="border-gray-300"/>
+                <Stack gap="0" className="bg-gray-50">
+                  <GeneralInformation tour={tour}/>
+                  <Divider className="border-gray-200"/>
+                  <ApplicantInformation tour={tour}/>
+                  <Divider className="border-gray-200"/>
+                  <GuideInformation tour={tour}/>
+                  <Divider className="border-gray-200"/>
+                  <TimeInformation tour={tour}/>
+                </Stack>
+            </>
+        }
       </Box>
     </Flex>
-  )
+  );
 }
 
 export default TourPage;

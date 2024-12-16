@@ -8,14 +8,13 @@ import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
-import server.enums.ApplicationStatus;
-import server.enums.RequestStatus;
+import server.enums.status.ApplicationStatus;
 import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.DTO.DTO_Fair;
-import server.models.FairRegistry;
+import server.models.events.FairRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,11 +78,17 @@ public class ManagementFairService {
         database.fairs.updateFair(fair, fairID);
 
         try {
+            Status mailStatus = Status.APPROVAL;
+            if (status == ApplicationStatus.REJECTED) {
+                mailStatus = Status.REJECTION;
+            } else if (status == ApplicationStatus.RECIEVED) {
+                mailStatus = Status.RECIEVED;
+            }
             mailService.sendMail(
                     fair.getApplicant().getContact_info().getEmail(),
                     Concerning.EVENT_APPLICANT,
                     About.FAIR_APPLICATION,
-                    Status.APPROVAL,
+                    mailStatus,
                     Map.of(
                             "event_id", fairID,
                             "event_name", fair.getFair_name(),

@@ -38,6 +38,12 @@ public class ZTime {
     }
 
     public static boolean overlap(ZTime start1, ZTime start2, ZTime end1, ZTime end2) {
+        if (start1.equals(end1)) {
+            end1.setDate(end1.getDate().plusHours(2));
+        }
+        if (start2.equals(end2)) {
+            end2.setDate(end2.getDate().plusHours(2));
+        }
         if (start2.getDate().isAfter(end1.getDate())) {
             return false;
         }

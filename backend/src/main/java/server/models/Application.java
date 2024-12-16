@@ -1,7 +1,7 @@
 package server.models;
 
-import server.enums.ApplicationStatus;
-import server.enums.ApplicationType;
+import server.enums.status.ApplicationStatus;
+import server.enums.types.ApplicationType;
 
 import java.util.Map;
 

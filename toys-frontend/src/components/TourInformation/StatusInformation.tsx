@@ -60,13 +60,17 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
     default: break;
   }
 
+  console.log(props.tour);
+
   return (
     <Group p="lg" bg="white" justify="space-between">
       <Stack gap="0">
         <Text size="xl" fw={900}>
           Tur Durumu: <Text fw={900} className={statusColorClass} span>{TourStatusText[props.tour.status]}</Text>
         </Text>
-        <Text pl="sm" mt="-xs" size="lg" fw={700} className="text-gray-600">{TourTypeText[props.tour.type]}</Text>
+        <Text pl="sm" mt="-xs" size="lg" fw={700} className="text-gray-600">
+          {TourTypeText[props.tour.type.toUpperCase() as keyof typeof TourTypeText]}
+        </Text>
       </Stack>
       {
         userContext?.user.role === UserRole.ADVISOR

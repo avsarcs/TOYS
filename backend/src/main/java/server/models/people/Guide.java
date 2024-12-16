@@ -1,13 +1,14 @@
 package server.models.people;
 
 import server.enums.*;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
+import server.enums.status.ApplicationStatus;
+import server.enums.status.UserStatus;
+import server.enums.types.ApplicationType;
 import server.models.DTO.DTO_Guide;
 import server.models.Experience;
-import server.models.GuideApplication;
 import server.models.people.details.*;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class Guide extends User {
@@ -28,7 +29,7 @@ public class Guide extends User {
                         .setAddress("1st Street, Hell")
                 )
                 .setMajor(Department.MANAGEMENT)
-                .setHighschool_id("Columbine High School")
+                .setHighschool_id("Default HS ID")
                 .setSemester(2)
                 .setProfile_description("Hobbyist exorcist, demonologist, and master of the dark arts. I'm also a chain smoker.")
                 .setProfile_picture("Profile pic b64")
@@ -38,8 +39,8 @@ public class Guide extends User {
         guide.setDepartment(Department.MANAGEMENT);
         guide.setExperience(Experience.getDefault());
 
-        guide.setRole(USER_ROLE.GUIDE);
-        guide.setHigh_school("Columbine High School");
+        guide.setRole(UserRole.GUIDE);
+        guide.setHigh_school("Default HS ID");
         guide.setAuthInfo(new AuthInfo().setPassword("batman"));
         guide.setStatus(UserStatus.ACTIVE);
         GuideApplication guideApplication = new GuideApplication();
@@ -64,7 +65,7 @@ public class Guide extends User {
 
         profile.setName(dto.getFullname());
         profile.getContact_info().setPhone(dto.getPhone());
-        profile.setHighschool_id(dto.getHigh_school().getId());
+        profile.setHighschool_id(dto.getHighschool().getId());
         profile.setMajor(dto.getMajor());
         profile.setProfile_picture(dto.getProfile_picture());
 

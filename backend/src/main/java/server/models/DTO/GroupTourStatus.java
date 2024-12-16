@@ -1,6 +1,6 @@
 package server.models.DTO;
 
-import server.enums.status.TOUR_STATUS;
+import server.enums.status.TourStatus;
 
 public enum GroupTourStatus {
     AWAITING_CONFIRMATION,
@@ -9,7 +9,7 @@ public enum GroupTourStatus {
     APPROVED,
     REJECTED;
 
-    public static GroupTourStatus fromTourStatus(TOUR_STATUS status) {
+    public static GroupTourStatus fromTourStatus(TourStatus status) {
         switch (status) {
             case AWAITING_CONFIRMATION:
                 return AWAITING_CONFIRMATION;

@@ -4,27 +4,29 @@ import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
-import server.enums.*;
-import server.enums.status.FAIR_STATUS;
-import server.enums.status.TOUR_STATUS;
+import server.enums.status.*;
+import server.enums.types.ApplicationType;
+import server.enums.types.RequestType;
 import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.*;
+import server.models.events.FairRegistry;
+import server.models.events.TourRegistry;
+import server.models.people.GuideApplication;
+import server.models.people.GuideAssignmentRequest;
 import server.models.people.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import server.models.people.details.AuthInfo;
 import server.models.people.details.ContactInfo;
 import server.models.time.ZTime;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class ManagementPeopleService {
@@ -121,7 +123,7 @@ public class ManagementPeopleService {
             // check if guide is assigned to said tour
             if (tour.getValue().getGuides().contains(firee)) {
                 // check if guide is assigned to be a guide for a tour
-                if (tour.getValue().getTourStatus() == TOUR_STATUS.CONFIRMED) {
+                if (tour.getValue().getTourStatus() == TourStatus.CONFIRMED) {
                     tour.getValue().getGuides().remove(firee);
                     databaseEngine.tours.updateTour(tour.getValue(), tour.getKey());
                 }
@@ -133,7 +135,7 @@ public class ManagementPeopleService {
         for (Map.Entry<String, FairRegistry> fair : fairs.entrySet()) {
             // check if guide is assigned to said fair
             if (fair.getValue().getGuides().contains(firee)) {
-                if (fair.getValue().getFair_status() == FAIR_STATUS.ACCEPTED) {
+                if (fair.getValue().getFair_status() == FairStatus.ACCEPTED) {
                     fair.getValue().getGuides().remove(firee);
                     databaseEngine.fairs.updateFair(fair.getValue(), fair.getKey());
                 }
