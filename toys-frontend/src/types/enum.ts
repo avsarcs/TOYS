@@ -1,3 +1,10 @@
+export enum UserFetchingStatus {
+  NONE = -1,
+  FETCHING,
+  DONE,
+  FAILED
+}
+
 export enum TourApplicantRole {
   STUDENT = "Student",
   COUNSELOR = "Counselor",

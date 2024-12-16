@@ -2,14 +2,14 @@ import React, {createContext, useCallback, useEffect, useMemo, useState} from 'r
 import {OnlyChildrenProps} from '../types/generic';
 import {User} from '../types/designed';
 import {useCookies} from "react-cookie";
-import {UserRole, DayOfTheWeek, TimeSlotStatus} from "../types/enum.ts";
-import { ScheduleData, HighschoolData} from '../types/data.ts'; 
-
+import {UserRole, TimeSlotStatus, UserFetchingStatus} from "../types/enum.ts";
 
 interface UserContextType {
   authToken: string;
   setAuthToken: (token: string) => void;
+  fetchStatus: UserFetchingStatus;
   user: User;
+  updateUser: () => Promise<boolean>
   isLoggedIn: boolean;
 }
 
@@ -132,28 +132,28 @@ export const UserContext = createContext<UserContextType>({
   authToken: "",
   setAuthToken: () => {},
   user: EMPTY_USER,
+  fetchStatus: UserFetchingStatus.NONE,
+  updateUser: () => Promise.resolve(new Promise<boolean>(() => false)),
   isLoggedIn: false
-  });
+});
 
 export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [cookies, setCookie] = useCookies(["auth"], {})
+  const [cookies, setCookie] = useCookies(["auth"], {});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [fetchStatus, setFetchStatus] = useState(UserFetchingStatus.NONE);
   const [user, setUser] = useState<User>(EMPTY_USER);
 
-  const setAuthToken = useCallback((auth: string) => {
-    setCookie("auth", auth);
-  }, [setCookie]);
-
-  const checkAuth = async (auth: string) => {
+  const checkAuth = useCallback(async () => {
     setUser(EMPTY_USER);
     setIsLoggedIn(false);
 
-    if (!auth || auth.length === 0) {
+    if (!cookies.auth || cookies.auth.length === 0) {
+      setFetchStatus(UserFetchingStatus.DONE);
       return;
     }
 
     const validURL = new URL(AUTH_VALID_URL);
-    validURL.searchParams.append("auth", auth);
+    validURL.searchParams.append("auth", cookies.auth);
     const validRes = await fetch(
       validURL,
       {
@@ -161,14 +161,22 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
       }
     );
 
+    if (!validRes.ok) {
+      setFetchStatus(UserFetchingStatus.FAILED);
+      return;
+    }
+
     const isValid = await validRes.json();
 
-    if (validRes.status !== 200 || isValid !== true) {
+    if (isValid !== true) {
+      setFetchStatus(UserFetchingStatus.DONE);
+      setCookie("auth", "");
+      setIsLoggedIn(false);
       return;
     }
 
     const profileURL = new URL(USER_PROFILE_URL);
-    profileURL.searchParams.append("auth", auth);
+    profileURL.searchParams.append("auth", cookies.auth);
     profileURL.searchParams.append("id", "");
     const profileRes = await fetch(
       profileURL,
@@ -177,29 +185,47 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
       }
     );
 
-    if (profileRes.status === 200) {
+    if (profileRes.ok) {
       const profile = await profileRes.json();
       setUser({
         id: profile.id,
         role: profile.role,
         profile: profile,
       });
+      setFetchStatus(UserFetchingStatus.DONE);
       setIsLoggedIn(true);
     }
-  }
+    else {
+      setFetchStatus(UserFetchingStatus.FAILED);
+    }
+  }, [cookies.auth, setCookie, setUser, setIsLoggedIn, setFetchStatus]);
 
-  useEffect(() => {
-    checkAuth(cookies.auth).catch(console.error);
-  }, [cookies.auth]);
+  const setAuthToken = useCallback((auth: string) => {
+    setFetchStatus(UserFetchingStatus.FETCHING);
+    setCookie("auth", auth);
+  }, [setCookie, setFetchStatus]);
+
+  const updateUser = useCallback(() => {
+    setFetchStatus(UserFetchingStatus.FETCHING);
+    return new Promise<boolean>(() => {
+      return checkAuth().then(() => user.id.length !== 0);
+    });
+  }, [checkAuth, user]);
 
   const userContextValue = useMemo(() => {
     return {
       authToken: cookies.auth,
       setAuthToken,
+      updateUser,
+      fetchStatus,
       user,
       isLoggedIn,
     }
-  }, [cookies.auth, setAuthToken, user, isLoggedIn])
+  }, [cookies.auth, setAuthToken, updateUser, fetchStatus, user, isLoggedIn]);
+
+  useEffect(() => {
+    checkAuth().catch(console.error);
+  }, [checkAuth]);
 
   return (
     <UserContext.Provider value={userContextValue}>

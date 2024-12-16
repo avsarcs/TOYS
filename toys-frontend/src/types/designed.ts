@@ -4,7 +4,7 @@ import {
   DashboardCategoryText,
   UserRole
 } from "./enum.ts";
-import { HighschoolData, SimpleEventData, TourData } from "./data.ts";
+import {HighschoolData, ProfileData, SimpleEventData, TourData} from "./data.ts";
 
 export interface User {
   id: string,
@@ -116,6 +116,14 @@ export interface DashboardInfoBoxProps {
 
 export interface TourSectionProps {
   tour: TourData
+}
+
+export interface TourListItemProps {
+  tour: SimpleEventData
+}
+
+export interface ProfileComponentProps {
+  profile: ProfileData
 }
 
 export interface MoneyForGuide {
