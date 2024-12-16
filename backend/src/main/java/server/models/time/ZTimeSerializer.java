@@ -11,7 +11,7 @@ public class ZTimeSerializer extends JsonSerializer<ZTime> {
     @Override
     public void serialize(ZTime zTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
         try {
-            jsonGenerator.writeString(zTime.getDate().toString());
+            jsonGenerator.writeString(zTime.getDate().toString().replaceAll("\\[.*\\]", ""));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,7 +1,7 @@
 package server.models.people;
 
-import server.enums.UserStatus;
-import server.enums.roles.USER_ROLE;
+import server.enums.status.UserStatus;
+import server.enums.roles.UserRole;
 import server.models.Application;
 import server.models.people.details.AuthInfo;
 import server.models.people.details.Profile;
@@ -9,7 +9,7 @@ import server.models.people.details.Profile;
 import java.util.Map;
 
 public class User {
-    private USER_ROLE role;
+    private UserRole role;
     protected String bilkent_id;
 
     private AuthInfo authInfo;
@@ -23,7 +23,7 @@ public class User {
 
     }
     protected User(Map<String,Object> map) {
-        this.role = USER_ROLE.valueOf((String) map.get("role"));
+        this.role = UserRole.valueOf((String) map.get("role"));
         this.authInfo = AuthInfo.fromMap((Map<String, Object>) map.get("authInfo"));
         this.application = Application.fromMap((Map<String, Object>) map.get("application"));
         this.profile = Profile.fromMap((Map<String, Object>) map.get("profile"));
@@ -32,7 +32,7 @@ public class User {
     }
     public static User fromMap(Map<String, Object> map) {
         return new User()
-            .setRole(USER_ROLE.valueOf((String) map.get("role")))
+            .setRole(UserRole.valueOf((String) map.get("role")))
             .setAuthInfo(AuthInfo.fromMap((Map<String, Object>) map.get("authInfo")))
             .setApplication(Application.fromMap((Map<String, Object>) map.get("application")))
             .setProfile(Profile.fromMap((Map<String, Object>) map.get("profile")))
@@ -40,7 +40,7 @@ public class User {
             .setStatus(UserStatus.valueOf((String) map.get("status")));
     }
 
-    public USER_ROLE getRole() {
+    public UserRole getRole() {
         return role;
     }
 
@@ -62,7 +62,7 @@ public class User {
         return this;
     }
 
-    public User setRole(USER_ROLE role) {
+    public User setRole(UserRole role) {
         this.role = role;
         return this;
     }

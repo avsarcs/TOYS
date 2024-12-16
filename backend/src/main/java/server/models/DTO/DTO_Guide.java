@@ -1,8 +1,9 @@
 package server.models.DTO;
 
 import server.enums.Department;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 import server.models.people.Guide;
+import server.models.people.details.Schedule;
 
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,10 @@ public class DTO_Guide {
     private String id;
     private String fullname;
     private String phone;
-    private DTO_Highschool high_school;
+    private DTO_Highschool highschool;
     private Department major;
-    private USER_ROLE role;
+    private UserRole role;
+    private Schedule schedule;
     private String profile_picture;
     private long previous_tour_count;
     private String profile_description;
@@ -26,7 +28,7 @@ public class DTO_Guide {
         dto.setId(guide.getBilkent_id());
         dto.setFullname(guide.getProfile().getName());
         dto.setPhone(guide.getProfile().getContact_info().getPhone());
-        dto.setHigh_school(new DTO_Highschool(guide.getHigh_school()));
+        dto.setHighschool(new DTO_Highschool(guide.getHigh_school()));
         dto.setMajor(guide.getDepartment());
         dto.setRole(guide.getRole());
         dto.setProfile_picture(guide.getProfile().getProfile_picture());
@@ -34,6 +36,7 @@ public class DTO_Guide {
         dto.setProfile_description(guide.getProfile().getProfile_description());
         dto.setAdvisor_application_status(false); // TODO wtf is this
         dto.setAttended_events(guide.getExperience().getPrevious_events());
+        dto.setSchedule(guide.getProfile().getSchedule());
         return dto;
     }
 
@@ -43,18 +46,28 @@ public class DTO_Guide {
         this.id = (String) map.get("id");
         this.fullname = (String) map.get("fullname");
         this.phone = (String) map.get("phone");
-        this.high_school = DTO_Highschool.fromMap((Map<String, Object>) map.get("high_school"));
+        this.highschool = DTO_Highschool.fromMap((Map<String, Object>) map.get("highschool"));
         this.major = Department.valueOf((String) map.get("major"));
-        this.role = USER_ROLE.valueOf((String) map.get("role"));
+        this.role = UserRole.valueOf((String) map.get("role"));
         this.profile_picture = (String) map.get("profile_picture");
         this.previous_tour_count = (long) map.get("previous_tour_count");
         this.profile_description = (String) map.get("profile_description");
         this.advisor_application_status = (boolean) map.get("advisor_application_status");
         this.attended_events = (List<String>) map.get("attended_events");
+        this.schedule = Schedule.fromMap((Map<String, Object>) map.get("schedule"));
     }
 
     public static DTO_Guide fromMap(Map<String,Object> map) {
         return new DTO_Guide(map);
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public DTO_Guide setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+        return this;
     }
 
     public String getId() {
@@ -84,12 +97,12 @@ public class DTO_Guide {
         return this;
     }
 
-    public DTO_Highschool getHigh_school() {
-        return high_school;
+    public DTO_Highschool getHighschool() {
+        return highschool;
     }
 
-    public DTO_Guide setHigh_school(DTO_Highschool high_school) {
-        this.high_school = high_school;
+    public DTO_Guide setHighschool(DTO_Highschool highschool) {
+        this.highschool = highschool;
         return this;
     }
 
@@ -102,11 +115,11 @@ public class DTO_Guide {
         return this;
     }
 
-    public USER_ROLE getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public DTO_Guide setRole(USER_ROLE role) {
+    public DTO_Guide setRole(UserRole role) {
         this.role = role;
         return this;
     }

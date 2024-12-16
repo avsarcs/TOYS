@@ -16,12 +16,13 @@ public class ManagementFairController {
     ManagementFairService internalManagementFairService;
 
     @GetMapping("/internal/management/fairs")
-    public List<DTO_Fair> getFairs(@RequestParam String auth) {
+    public List<DTO_Fair> getFairs(@RequestParam String auth)
+    {
         return internalManagementFairService.getFairs(auth);
     }
 
     @PostMapping("/internal/management/fairs/respond")
     public void respondToFair(@RequestParam String auth, @RequestParam String fairID, @RequestParam String response)  {
-
+        internalManagementFairService.respondToFairInvitation(auth, fairID, response);
     }
 }

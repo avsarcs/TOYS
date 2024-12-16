@@ -1,10 +1,10 @@
 package server.models.people;
 
-import server.enums.ApplicationStatus;
-import server.enums.ApplicationType;
+import server.enums.status.ApplicationStatus;
+import server.enums.types.ApplicationType;
 import server.enums.Department;
-import server.enums.UserStatus;
-import server.enums.roles.USER_ROLE;
+import server.enums.status.UserStatus;
+import server.enums.roles.UserRole;
 import server.models.Application;
 import server.models.Experience;
 import server.models.people.details.AuthInfo;
@@ -29,7 +29,7 @@ public class Advisor extends Guide {
         advisor.setResponsibleFor(DayOfWeek.MONDAY);
         advisor.setExperience(Experience.getDefault());
         advisor.setHigh_school("000000");
-        advisor.setRole(USER_ROLE.ADVISOR);
+        advisor.setRole(UserRole.ADVISOR);
         advisor.setStatus(UserStatus.ACTIVE);
         advisor.setAuthInfo(AuthInfo.getDefault());
         advisor.setApplication(new Application()

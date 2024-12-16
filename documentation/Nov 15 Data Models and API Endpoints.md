@@ -104,7 +104,7 @@
 {
   "fullname": "John Doe",
   "id": "12345678",
-  "highschool": HighSchoolModel
+  "highschool": HighschoolModel
   "email": "john.doe@example.com",
   "phone": "+1234567890",
   "major": "COMPUTER_SCIENCE",
@@ -132,13 +132,12 @@
 	"for": "TOUR" | "GUIDE",
 	"tour_id": "id of the reviewed tour",
 	"tour_date": "date of the reviewed tour in ISO 8601 format",
-	"guides": {
+	"guide": {
 		"id": "141242asfdf",
 		"name": "Mahmut"
-	}[],
+	},
 	"score": 8, // int
-	"body" (OPTIONAL): "free form text of the review",
-	"approved": bool
+	"body" (OPTIONAL): "free form text of the review"
 }
 ```
 
@@ -195,7 +194,11 @@
   "iban": "TR438525023948394",
   "bank": "QNB Finansbank",
   "major": "Computer Science",
-  "role": "GUIDE" | "TRAINEE" | "ADVISOR"
+  "reviews": {
+	"average": 4.28,
+	"count": 12
+  },
+  "role": "GUIDE" | "TRAINEE" | "ADVISOR",
   "responsible_days": DayOfTheWeek[]
   "profile_picture": "base 64 string of the profile picture",
   "previous_tour_count": 0,
@@ -209,7 +212,31 @@
 
 # Schedule Model
 ```
-??? Someone figure this out. If we import "busy" times from Google Calendar, I think that's the best solution.
+{
+	DayOfWeek: DailyPlan
+	... Monday through Sunday
+}
+```
+
+# Daily Plan Model
+```
+{
+	_830_930: TimeSlotStatus,
+    _930_1030: TimeSlotStatus,
+    _1030_1130: TimeSlotStatus,
+    _1130_1230: TimeSlotStatus,
+    _1230_1330: TimeSlotStatus,
+    _1330_1430: TimeSlotStatus,
+    _1430_1530: TimeSlotStatus,
+    _1530_1630: TimeSlotStatus,
+    _1630_1730: TimeSlotStatus,
+    _1730_1830: TimeSlotStatus,
+}
+```
+
+# Time Slot Status Enum
+```
+"FREE" | "BUSY" | "tour id guide needs to go at that time"
 ```
 
 # Simple Guide Model
@@ -240,6 +267,22 @@
 }
 ```
 
+# Fair Application Model
+```
+{
+	"applicant": {
+		"name": "Yavuz",
+		"surname": "XD",
+		"email": "yavuz.xd@something.com",
+		"phone": "5555555555",
+		"school": "Ankara Fen Lisesi",
+	},
+	"start_time": "2024-11-15T14:22:14Z",
+	"end_time": "2024-11-15T14:22:14Z",
+	"fair_name": "KARIYERKE"
+}
+```
+
 # Coordinator Model
 ```
 {
@@ -250,14 +293,17 @@
 
 # Dashboard Category
 ```
-  "OWN_EVENTS" | "EVENT_INVITATIONS" | "EVENT_APPLICATIONS" | "GUIDE_ASSIGNED" | "NO_GUIDE_ASSIGNED" | "TOUR_AWAITING_MODIFICATION" |
+  "OWN_EVENT" | "EVENT_INVITATION" | "PENDING_APPLICATIONS" | "GUIDE_ASSIGNED" | "GUIDELESS" | "PENDING_MODIFICATION" |
 ```
 
 # Advisor Offer Model
 `rejection_reason` field included only if `status=REJECTED`
 ```
 {
-	"offer_made_to": "user id",
+	"recipient": {
+		"id": "bilko id of the guide who received the offer",
+		"name": "Orhun Ege Çelik"
+	},
 	"status": ACCEPTED | REJECTED | PENDING,
 	"offer_date": "2024-11-15T14:22:14Z",
 	"response_date": "2024-11-18T14:22:14Z",
@@ -393,23 +439,13 @@ API endpoints:
 		response: TourToReviewModel
 		response_type: json
 	
-	/accept (Requires Auth as Coordinator)
+	/delete (Requires Auth as Coordinator)
 		parameters:
 			review_id=12354asd654
 			auth= auth_token
 		method: post
 		response: 200 or 400
 		response_type: status code
-	
-	/reject (Requires Auth as Coordinator)
-		parameters:
-			auth= auth?toıken
-			review_id=12354asd654,
-			still_consider_points=bool
-		method: post
-		response: 200 or 400
-		response_type: status code
-		description: Even though the body of a review might be inappropriate, the Coordinator may still find it fair that the SCORE of that review should still apply while the body of the review stays invisible. If `still_consider_points` is False, just delete the Review. If `still_consider_points` is True, then set the body of the Review to an empty string and status to REJECTED.
 
 	/of_tour (Requires Auth)
 		parameters:
@@ -483,6 +519,7 @@ API endpoints:
 			response: AdvisorOfferModel[]
 			response_type: json
 
+
 			/accept (Requires Auth as Guide who has pending Advisor Offer)
 				method: post
 				body: empty
@@ -533,12 +570,27 @@ API endpoints:
 					// bool value, True=accept
 				method: get
 				response: -
+		/dashboard
+			parameters:
+				authToken: auth_token
+				dashboard_category: NotificationCategory
+			method: get
+			response: SimpleEventModel[]
+			
+	/event
+		/tour
+			parameters:
+				auth= jwt token
+				tid=tour_id
+			method: get
+			response: TourModel
+			response_type: json
 
 	/tours # NEEDS TEST
 		parameters:
 			authToken= jwt token
 		method: get
-		response: List of tours (List<TourModel>)
+		response: List of tours (List<SimpleEventModel>)
 		response_type: json
 
 		/status_update # NEEDS TEST
@@ -571,13 +623,6 @@ API endpoints:
 				authToken: auth_token
 			method: post
 			response: -
-
-		/notifications
-			parameters:
-				authToken: auth_token
-				notification_category: NotificationCategory
-			method: get
-			response: SimpleEventModel[]
 
 	/management
 		/timesheet (Requires Auth as Coordinator)
@@ -640,6 +685,13 @@ API endpoints:
 			body: auth_token
 			response: Simple
 			response_type: json
+
+			/invite-advisor
+                parameters:
+                    auth: auth_token
+                    guide_id=id // who to invite
+                method: post
+                response: -
 
 			/applications
 				parameters:

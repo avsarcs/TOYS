@@ -1,7 +1,7 @@
 package server.models.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import server.models.TourApplication;
+import server.models.events.TourApplication;
 import server.models.time.ZTime;
 
 import java.time.Instant;

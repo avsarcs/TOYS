@@ -1,24 +1,24 @@
 package server.auth;
 
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class PermissionMap {
-    public static HashMap<USER_ROLE, List<Permission>> table = new HashMap<USER_ROLE, List<Permission>>();
+    public static HashMap<UserRole, List<Permission>> table = new HashMap<UserRole, List<Permission>>();
 
-    public static boolean hasPermission(USER_ROLE role, Permission permission) {
+    public static boolean hasPermission(UserRole role, Permission permission) {
         initializeEntries();
         boolean hasPermission = table.get(role).contains(permission);
-        if (role != USER_ROLE.GUIDE && !hasPermission) {
-            hasPermission = table.get(USER_ROLE.ADVISOR).contains(permission);
+        if (role != UserRole.GUIDE && !hasPermission) {
+            hasPermission = table.get(UserRole.ADVISOR).contains(permission);
 
-            if (role != USER_ROLE.ADVISOR && !hasPermission) {
-                hasPermission = table.get(USER_ROLE.COORDINATOR).contains(permission);
+            if (role != UserRole.ADVISOR && !hasPermission) {
+                hasPermission = table.get(UserRole.COORDINATOR).contains(permission);
 
-                if (role != USER_ROLE.COORDINATOR && !hasPermission) {
-                    hasPermission = table.get(USER_ROLE.DIRECTOR).contains(permission);
+                if (role != UserRole.COORDINATOR && !hasPermission) {
+                    hasPermission = table.get(UserRole.DIRECTOR).contains(permission);
                 }
             }
         }
@@ -27,7 +27,7 @@ public class PermissionMap {
 
     public static void initializeEntries() {
         if (table.isEmpty()) {
-            table.put(USER_ROLE.GUIDE, List.of(
+            table.put(UserRole.GUIDE, List.of(
                     Permission.VIEW_FAIR_INFO,
                     Permission.VIEW_TOUR_INFO,
                     Permission.VIEW_TOUR_REVIEW,
@@ -36,7 +36,7 @@ public class PermissionMap {
                     Permission.REPORT_TOUR_TIMES
             ));
 
-            table.put(USER_ROLE.ADVISOR, List.of(
+            table.put(UserRole.ADVISOR, List.of(
                     Permission.AR_TOUR_REQUESTS,
                     Permission.AR_TOUR_CHANGES,
                     Permission.REQUEST_TOUR_CHANGES,
@@ -44,15 +44,16 @@ public class PermissionMap {
                     Permission.MANAGE_GUIDE_EXPERIENCE
             ));
 
-            table.put(USER_ROLE.COORDINATOR, List.of(
+            table.put(UserRole.COORDINATOR, List.of(
                     Permission.AR_GUIDE_APPLICATIONS,
                     Permission.INVITE_GUIDE_TO_FAIR,
                     Permission.FIRE_GUIDE_OR_ADVISOR,
                     Permission.AR_FAIR_INVITATIONS,
-                    Permission.VIEW_WORK_DONE_BY_GUIDE
+                    Permission.VIEW_WORK_DONE_BY_GUIDE,
+                    Permission.AR_REVIEWS
             ));
 
-            table.put(USER_ROLE.DIRECTOR, List.of(
+            table.put(UserRole.DIRECTOR, List.of(
                     Permission.TOTAL_ANALYTICS_ACCESS
             ));
 

@@ -1,7 +1,7 @@
 package server.models;
 
 import server.enums.Rating;
-import server.enums.ReviewType;
+import server.enums.types.ReviewType;
 
 import java.util.Map;
 

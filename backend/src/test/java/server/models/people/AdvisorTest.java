@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import server.auth.AuthController;
 import server.auth.JWTService;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 import server.models.auth.LoginInfo;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AdvisorTest {
@@ -30,7 +28,7 @@ class AdvisorTest {
 
         String decodeUserID = jwtService.decodeUserID(token);
         assert(decodeUserID.equals(advisor.getBilkent_id()));
-        assert(jwtService.getUserRole(token) == USER_ROLE.ADVISOR);
+        assert(jwtService.getUserRole(token) == UserRole.ADVISOR);
     }
 
     @Test
