@@ -17,9 +17,9 @@ const defaultContainerStyle = {
 };
 
 //test data
-const defaultDays = {"Pazartesi": 1, "Salı": 1, "Çarşamba": 1, "Perşembe": 1, "Cuma": 1, "Cumartesi": 1, "Pazar":1};
-const defaultStatuses = {"Tamamlandı": 1, "Beklemede": 1, "İptal Edildi": 1};
-const defaultCities = {"Ankara": 1, "İstanbul": 1, "İzmir": 1};
+const defaultDays = {"Yükleniyor...": 1};
+const defaultStatuses = {"Yükleniyor...": 1};
+const defaultCities = {"Yükleniyor...": 1};
 
 const BilkentStudentDetails: React.FC = () => {
     const userContext = useContext(UserContext);
