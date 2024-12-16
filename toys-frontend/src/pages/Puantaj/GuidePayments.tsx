@@ -1,33 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import paymentsData from "../../mock_data/mock_guide_payments.json";
+import defaultPayment from "../../mock_data/mock_guide_payments.json";
+import { MoneyForGuide } from "../../types/designed";
+import { UserContext } from "../../context/UserContext";
+import { notifications } from "@mantine/notifications";
+import { set } from "react-datepicker/dist/date_utils";
+
 
 const GUIDES_PER_PAGE = 5;
 
-interface GuidePayment {
-    guide: {
-        id: number;
-        name: string;
-        iban: string;
-        bank: string;
-    };
-    unpaid_hours: number;
-    debt: number;
-    money_paid: number;
-}
+
 
 const GuidePayments: React.FC = () => {
     const navigate = useNavigate();
-    const [guidePayments, setGuidePayments] = useState<GuidePayment[]>([]);
+    const [paymentsData, setPaymentsData] = useState<MoneyForGuide[]>(defaultPayment);
     const [filter, setFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const userContext = useContext(UserContext);
 
     useEffect(() => {
-        setGuidePayments(paymentsData);
+        getInfo().catch((reason) => {
+            console.error(reason);
+        });
     }, []);
 
-    const filteredPayments = guidePayments.filter((payment) => {
+
+    const getInfo = useCallback( async() => {
+        const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+        const url = new URL(apiURL + "internal/management/timesheet/payment-state/guides");
+        try 
+        {
+            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("name", "");
+            const res = await fetch(url, {
+                method: "GET",
+            });
+
+            if (!res.ok) {
+                notifications.show({
+                    color: "red",
+                    title: "Hata",
+                    message: "Rehberler görüntülenemiyor."
+                });
+            }
+            else {
+                const resText = await res.text();
+                const resJson = JSON.parse(resText);
+                setPaymentsData(resJson);
+
+            }
+        }
+        catch (e) {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    },[userContext.authToken]);
+
+    const filteredPayments = paymentsData.filter((payment) => {
         if (filter === "all") return true;
         if (filter === "unpaid") return payment.debt > 0;
         if (filter === "paid") return payment.debt === 0;
@@ -42,12 +75,12 @@ const GuidePayments: React.FC = () => {
     
     const handleSearch = () => {
         if (searchTerm.trim() === "") {
-            setGuidePayments(paymentsData);
+            setPaymentsData(paymentsData);
         } else {
             const filtered = paymentsData.filter((payment) =>
                 payment.guide.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
-            setGuidePayments(filtered);
+            setPaymentsData(filtered);
         }
     };
 
@@ -59,27 +92,47 @@ const GuidePayments: React.FC = () => {
         }
     };
 
-    const handlePayDebt = (guideId: number) => {
-        setGuidePayments((prevPayments) =>
-            prevPayments.map((payment) =>
-                payment.guide.id === Number(guideId)
-                    ? { ...payment, debt: 0, unpaid_hours: 0, money_paid: payment.money_paid + payment.debt }
-                    : payment
-            )
-        );
+    const handlePayDebt = useCallback( async(guideId: number) => {
+        const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+        const url = new URL(apiURL + "internal/management/timesheet/pay/guide");
+        try 
+        {
+            url.searchParams.append("guide_id", guideId.toString());
+            url.searchParams.append("auth", userContext.authToken);
+            const res = await fetch(url, {
+                method: "POST",
+            });
 
-        // Update the JSON data
-        const updatedPayments = paymentsData.map((payment) =>
-            payment.guide.id === Number(guideId)
-                ? { ...payment, debt: 0, unpaid_hours: 0, money_paid: payment.money_paid + payment.debt }
-                : payment
-        );
+            if (res.ok) {
+                notifications.show({
+                    color: "blue",
+                    title: "Ödeme Başarılı!",
+                    message: "Ödeme başarıyla tamamlandı."
+                });
+                window.location.reload();
+            }
+            else
+            {
+                notifications.show({
+                    color: "red",
+                    title: "Ödeme Başarısız!",
+                    message: "Ödeme yapılamadı."
+                });
+            }
+        }
+        catch (e) {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    },[userContext.authToken]);
 
-        saveUpdatedPayments(updatedPayments);
-    };
 
-    const saveUpdatedPayments = (updatedPayments: GuidePayment[]) => {
-        // For the purpose of this example, we'll use localStorage to save the data
+
+
+    const saveUpdatedPayments = (updatedPayments: MoneyForGuide[]) => {
         localStorage.setItem('guidePayments', JSON.stringify(updatedPayments));
     };
 
@@ -161,6 +214,7 @@ const GuidePayments: React.FC = () => {
             Unpaid
         </button>
         <button
+            onClick={() => paymentsData.forEach(payment => handlePayDebt(payment.guide.id))}
             style={{
             padding: "10px 15px",
             border: "none",
@@ -173,6 +227,7 @@ const GuidePayments: React.FC = () => {
             Pay All Debts
         </button>
         <button
+            onClick={() => navigate('/change-hourly-rate')}
             style={{
             marginRight: "10px",
             padding: "10px 15px",

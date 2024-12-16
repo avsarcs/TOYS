@@ -1,32 +1,99 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import paymentsData from "../../mock_data/mock_tour_guide_payments.json";
+import defaultPayment from "../../mock_data/mock_tour_guide_payments.json";
+import { MoneyForTour, SimpleGuide } from "../../types/designed";
+import { UserContext } from "../../context/UserContext";
+import { notifications } from "@mantine/notifications";
 
 const RECORDS_PER_PAGE = 5;
 
-interface TourPayment {
-    guide_id: number;
-    guide_name: string
-    tour_id: number;
-    tour_date: string;
-    hourly_rate: number;
-    tour_highschool: string;
-    hours_worked: number;
-    money_debted: number;
-    money_paid: number;
-}
 
 const PaymentDetail: React.FC = () => {
     const navigate = useNavigate();
-    const [tourPayments, setTourPayments] = useState<TourPayment[]>([]);
+    const [tourPayments, setTourPayments] = useState<MoneyForTour[]>(defaultPayment);
+    const [guide, setGuide] = useState<SimpleGuide>();
     const [filter, setFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const { guideId } = useParams<{ guideId: string }>();
+    const userContext = useContext(UserContext);
 
     useEffect(() => {
-        const filteredData = paymentsData.filter(payment => payment.guide_id.toString() === guideId);
-        setTourPayments(filteredData);
+        getPayments().catch((reason) => {
+            console.error(reason);
+        });
     }, [guideId]);
+
+    const getName = useCallback(async () => {
+        const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+        const url = new URL(apiURL + "internal/user/profile/simple");
+        try
+        {
+            if (guideId) {
+                url.searchParams.append("id", guideId);
+            }
+            url.searchParams.append("auth", userContext.authToken);
+            const res = await fetch(url, {
+                method: "GET",
+            });
+            if (!res.ok) {
+                notifications.show({
+                    color: "red",
+                    title: "Hata",
+                    message: "İsim alınamıyor."
+                });
+            }
+            else {
+                const resText = await res.text();
+                const resJson = JSON.parse(resText);
+                setGuide(resJson);
+
+            }
+        }
+        catch (e)
+        {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    },[userContext.authToken]);
+
+    const getPayments = useCallback(async () => {
+        const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+        const url = new URL(apiURL + "internal/management/timesheet/payment-state/tour");
+        try
+        {
+            if (guideId) {
+                url.searchParams.append("guide_id", guideId);
+            }
+            url.searchParams.append("auth", userContext.authToken);
+            const res = await fetch(url, {
+                method: "GET",
+            });
+            if (!res.ok) {
+                notifications.show({
+                    color: "red",
+                    title: "Hata",
+                    message: "Turlar görüntülenemiyor."
+                });
+            }
+            else {
+                const resText = await res.text();
+                const resJson = JSON.parse(resText);
+                setTourPayments(resJson);
+
+            }
+        }
+        catch (e)
+        {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    },[userContext.authToken]);
 
     const filteredPayments = tourPayments.filter((payment) => {
         if (filter === "all") return true;
@@ -72,7 +139,7 @@ const PaymentDetail: React.FC = () => {
                     </button>
     <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Guide Payments</b></h1>
     <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
-        <b>Viewing payments for guide: </b>{tourPayments.length > 0 ? tourPayments[0].guide_name : "Unknown"}
+        <b>Viewing payments for guide: </b>{tourPayments.length > 0 ? guide?.name : "Unknown"}
     </h2>
     <div style={{ height: "20px" }}></div>
     
@@ -124,7 +191,7 @@ const PaymentDetail: React.FC = () => {
         ) : (
             paginatedPayments.map((payment) => (
                 <div
-                    key={payment.guide_id}
+                    key={guideId}
                     style={{
                         padding: "20px",
                         marginBottom: "10px",
