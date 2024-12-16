@@ -666,7 +666,6 @@ API endpoints:
 				/guide
 					parameters:
 						guide_id="bilko Id of the guide. Advisor is also guide"
-						how_much=43.5 // float, in TL
 					method: post
 					response: 200
 					response_type: status code
@@ -675,7 +674,6 @@ API endpoints:
 				/guide
 					parameters:
 						guide_id="bilko Id of the guide. Advisor is also guide"
-						how_much=43.5 // float, in TL
 					method: post
 					response: 200
 					response_type: status code
