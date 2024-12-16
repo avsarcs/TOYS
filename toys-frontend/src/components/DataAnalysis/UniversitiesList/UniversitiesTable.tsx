@@ -5,6 +5,7 @@ import RivalButton from "./RivalButton.tsx";
 
 interface RowData {
     university: string;
+    id: string;
     city: string;
     isRival: string;
 }
@@ -78,9 +79,10 @@ interface UniversitiesTableProps {
     data: RowData[];
     search: string;
     cities: string[];
+    changeIsRival(isRival: boolean, universityID: string): void;
 }
 
-const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, cities}) => {
+const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, cities, changeIsRival}) => {
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
@@ -110,12 +112,9 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
                 <RivalButton
                     isRival={row.isRival === "true"}
                     setIsRival={(isRival) => {
-                        const updatedData = sortedData.map((item) =>
-                            item.university === row.university ? { ...item, isRival: isRival ? "true" : "false" } : item
-                        );
-                        setSortedData(updatedData);
+                        changeIsRival(!isRival, row.id);
                     }}
-                    university={row.university}
+                    universityID={row.id}
                 />
             </Table.Td>
         </Table.Tr>
