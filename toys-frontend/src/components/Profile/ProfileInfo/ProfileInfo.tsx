@@ -10,11 +10,10 @@ import { ProfileComponentProps } from "../../../types/designed.ts";
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
 const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
+    const profile  = props.profile;
     const userContext = useContext(UserContext);
     const params = useParams();
     const profileId = params.profileId;
-    const [error, setError] = useState<Error | undefined>(undefined);
-    const [profile, setProfile] = useState(userContext.user.profile);
 
     const fireUser = useCallback(async () => {
         if (!profileId) {
