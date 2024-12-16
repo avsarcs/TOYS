@@ -18,8 +18,8 @@ public class UserRequestsController {
     RequestService requestService;
 
     @GetMapping("/internal/user/requests")
-    public List<Request> internalUserRequests(@RequestParam String authToken) {
-        return requestService.getRequests(authToken);
+    public List<Request> internalUserRequests(@RequestParam String auth) {
+        return requestService.getRequests(auth);
     }
 
     @PostMapping("/internal/user/requests/respond")

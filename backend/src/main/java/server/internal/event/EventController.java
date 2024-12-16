@@ -12,7 +12,7 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("/internal/event/tour")
-    public TourRegistry getTour(@RequestParam String auth, @RequestParam String tid) {
+    public Object getTour(@RequestParam String auth, @RequestParam String tid) {
         return eventService.getTour(auth, tid);
     }
 }

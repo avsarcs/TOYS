@@ -11,7 +11,7 @@ public class DTO_Guide {
     private String id;
     private String fullname;
     private String phone;
-    private DTO_Highschool high_school;
+    private DTO_Highschool highschool;
     private Department major;
     private UserRole role;
     private String profile_picture;
@@ -26,7 +26,7 @@ public class DTO_Guide {
         dto.setId(guide.getBilkent_id());
         dto.setFullname(guide.getProfile().getName());
         dto.setPhone(guide.getProfile().getContact_info().getPhone());
-        dto.setHigh_school(new DTO_Highschool(guide.getHigh_school()));
+        dto.setHighschool(new DTO_Highschool(guide.getHigh_school()));
         dto.setMajor(guide.getDepartment());
         dto.setRole(guide.getRole());
         dto.setProfile_picture(guide.getProfile().getProfile_picture());
@@ -43,7 +43,7 @@ public class DTO_Guide {
         this.id = (String) map.get("id");
         this.fullname = (String) map.get("fullname");
         this.phone = (String) map.get("phone");
-        this.high_school = DTO_Highschool.fromMap((Map<String, Object>) map.get("high_school"));
+        this.highschool = DTO_Highschool.fromMap((Map<String, Object>) map.get("highschool"));
         this.major = Department.valueOf((String) map.get("major"));
         this.role = UserRole.valueOf((String) map.get("role"));
         this.profile_picture = (String) map.get("profile_picture");
@@ -84,12 +84,12 @@ public class DTO_Guide {
         return this;
     }
 
-    public DTO_Highschool getHigh_school() {
-        return high_school;
+    public DTO_Highschool getHighschool() {
+        return highschool;
     }
 
-    public DTO_Guide setHigh_school(DTO_Highschool high_school) {
-        this.high_school = high_school;
+    public DTO_Guide setHighschool(DTO_Highschool highschool) {
+        this.highschool = highschool;
         return this;
     }
 

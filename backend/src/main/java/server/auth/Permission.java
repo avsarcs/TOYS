@@ -23,4 +23,5 @@ public enum Permission {
     TOTAL_ANALYTICS_ACCESS,
 
     AR_REVIEWS,
+    MANAGE_TIMESHEET,
 }

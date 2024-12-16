@@ -2,6 +2,7 @@ package server.models.events;
 
 import server.enums.roles.ApplicantRole;
 import server.models.DTO.DTO_Applicant;
+import server.models.DTO.DTO_Highschool;
 import server.models.people.details.ContactInfo;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ public class Applicant {
                 .setName("Default Name")
                 .setContact_info(ContactInfo.getDefault())
                 .setRole(ApplicantRole.STUDENT)
-                .setSchool("Default School")
+                .setSchool(DTO_Highschool.getDefault().getId())
                 .setNotes("Default Notes");
     }
 

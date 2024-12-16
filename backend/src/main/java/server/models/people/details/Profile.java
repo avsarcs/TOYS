@@ -3,6 +3,7 @@ package server.models.people.details;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import server.enums.Department;
 import server.models.DTO.DTO_GuideApplication;
+import server.models.DTO.DTO_Highschool;
 
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class Profile {
                 .setSchedule(Schedule.getDefault())
                 .setMajor(Department.MANAGEMENT)
                 .setSemester(1)
-                .setHighschool_id("123456");
+                .setHighschool_id(DTO_Highschool.getDefault().getId());
         return profile;
     }
 

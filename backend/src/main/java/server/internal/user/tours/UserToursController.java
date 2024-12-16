@@ -23,28 +23,27 @@ public class UserToursController {
 
     // this endpoint is used for stating the start and end of a tour
     @PostMapping("/internal/tours/status-update")
-    public void updateTourStatus(@RequestParam String tid, @RequestParam String status, @RequestParam String authToken) {
-        // TODO: Incomplete
-        tourService.updateTourStatus(authToken,tid, status);
+    public void updateTourStatus(@RequestParam String tid, @RequestParam String status, @RequestParam String auth) {
+        tourService.updateTourStatus(auth,tid, status);
     }
 
     @PostMapping("/internal/tours/enroll")
-    public void enrollInTour(@RequestParam String tid, @RequestParam String authToken) {
-        tourService.enrollInTour(authToken, tid);
+    public void enrollInTour(@RequestParam String tid, @RequestParam String auth) {
+        tourService.enrollInTour(auth, tid);
     }
 
     @PostMapping("/internal/tours/withdraw")
-    public void withdrawFromTour(@RequestParam String tid, @RequestParam String authToken) {
-        tourService.withdrawFromTour(authToken, tid);
+    public void withdrawFromTour(@RequestParam String tid, @RequestParam String auth) {
+        tourService.withdrawFromTour(auth, tid);
     }
 
     @PostMapping("/internal/tours/invite")
-    public void inviteToTour(@RequestParam String tid, @RequestParam String guid, @RequestParam String authToken) {
-        tourService.inviteToTour(authToken, tid, guid);
+    public void inviteToTour(@RequestParam String tid, @RequestParam String guid, @RequestParam String auth) {
+        tourService.inviteToTour(auth, tid, guid);
     }
 
     @PostMapping("/internal/tours/respond")
-    public void respondToTourInvite(@RequestParam String idt, @RequestParam String response, @RequestParam String authToken) {
-        tourService.respondToTourInvite(authToken, idt, response);
+    public void respondToTourInvite(@RequestParam String idt, @RequestParam String response, @RequestParam String auth) {
+        tourService.respondToTourInvite(auth, idt, response);
     }
 }
