@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Stack} from '@mantine/core';
 import DaysGraph from "../../components/TourStatistics/DaysGraph.tsx";
 import StatusGraph from "../../components/TourStatistics/StatusGraph.tsx";
 import CitiesGraph from "../../components/TourStatistics/CitiesGraph.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -16,11 +17,47 @@ const defaultContainerStyle = {
 };
 
 //test data
-const daysData = {"Pazartesi": 1000, "Salı": 800, "Çarşamba": 600, "Perşembe": 400, "Cuma": 200, "Cumartesi": 100, "Pazar": 50};
-const statusData = {"Tamamlandı": 1000, "Beklemede": 600, "İptal Edildi": 400};
-const citiesData = {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Konya": 25};
+const defaultDays = {"Pazartesi": 1, "Salı": 1, "Çarşamba": 1, "Perşembe": 1, "Cuma": 1, "Cumartesi": 1, "Pazar":1};
+const defaultStatuses = {"Tamamlandı": 1, "Beklemede": 1, "İptal Edildi": 1};
+const defaultCities = {"Ankara": 1, "İstanbul": 1, "İzmir": 1};
 
 const BilkentStudentDetails: React.FC = () => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
+    const [days, setDays] = React.useState(defaultDays);
+    const [statuses, setStatuses] = React.useState(defaultStatuses);
+    const [cities, setCities] = React.useState(defaultCities);
+
+    const getDaysAndStatusesAndCities = useCallback(async () => {
+        const url = new URL(TOUR_URL + "/internal/analytics/tours");
+        url.searchParams.append("auth", userContext.authToken);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No university found.");
+        }
+
+        const response = JSON.parse(resText);
+        setDays(response["days"]);
+        setStatuses(response["statuses"])
+        setCities(response["cities"]);
+    }, [userContext.authToken]);
+
+    React.useEffect(() => {
+        getDaysAndStatusesAndCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
             Tur İstatistikleri
@@ -35,7 +72,7 @@ const BilkentStudentDetails: React.FC = () => {
                     Turların Düzenlendiği Günler
                 </Text>
                 <Space h="xs"/>
-                <DaysGraph data={daysData} style={{margin: '20px', maxHeight: '400px'}}/>
+                <DaysGraph data={days} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
             <Space h="xl"/>
             <div>
@@ -43,7 +80,7 @@ const BilkentStudentDetails: React.FC = () => {
                     Turların Durumları
                 </Text>
                 <Space h="xs"/>
-                <StatusGraph data={statusData} style={{margin: '20px', maxHeight: '400px'}}/>
+                <StatusGraph data={statuses} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
             <Space h="xl"/>
             <div>
@@ -51,7 +88,7 @@ const BilkentStudentDetails: React.FC = () => {
                     Tur Gruplarının Geldiği Şehirler
                 </Text>
                 <Space h="xs"/>
-                <CitiesGraph data={citiesData} style={{margin: '20px', maxHeight: '400px'}}/>
+                <CitiesGraph data={cities} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
         </Stack>
         <Space h="xs" />
