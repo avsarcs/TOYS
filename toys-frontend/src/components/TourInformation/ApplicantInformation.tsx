@@ -8,9 +8,10 @@ const ApplicantInformation: React.FC<TourSectionProps> = (props: TourSectionProp
     <Box p="lg">
       <Text size="md" fw={700}>Katılımcı Sayısı: <Text span>{ props.tour.visitor_count }</Text></Text>
       <Group>
-        <Text size="md" fw={700}>Başvuran Bilgileri:</Text>
+        <Text size="md" fw={700}>Başvuran Bilgileri: &nbsp;
+          <Text span>{ props.tour.applicant.fullname }</Text>
+        </Text>
         <Popover trapFocus>
-          <Text span>John Doe</Text>
           <Popover.Target>
             <Button size=""><span className="iconify solar--eye-linear text-xl"/>&nbsp;İletişim Bilgileri</Button>
           </Popover.Target>

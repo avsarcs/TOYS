@@ -6,7 +6,7 @@ import Force404 from "./pages/404/Force404.tsx";
 import LoginPage from "./pages/Login/LoginPage.tsx";
 import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
-import GuideProfilePage from "./pages/Guide/GuideProfilePage.tsx";
+import ProfilePage from "./pages/Profile/ProfilePage.tsx";
 import { hasNavbar } from "./lib/utils.tsx";
 import HighSchoolsList from "./pages/DataAnalysis/HighSchoolsList.tsx";
 import GroupTourApplication from "./pages/GroupTourApplication/GroupTourApplication.tsx";
@@ -18,9 +18,10 @@ import AdvisorOffers from "./pages/CoordinatorPages/AdvisorOffers.tsx";
 import GuidePayments from "./pages/Puantaj/GuidePayments.tsx";
 import PaymentDetail from "./pages/Puantaj/PaymentDetail.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
-import EditGuideProfilePage from "./pages/Guide/EditGuideProfilePage.tsx";
+import EditProfilePage from "./pages/Profile/EditProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
+import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -58,9 +59,11 @@ function App() {
             <Route path="/advisor-offers" element={<AdvisorOffers/>} />
             <Route path="/guide-payments" element={<GuidePayments/>} />
             <Route path="/payment-detail/:guideId" element={<PaymentDetail/>} />
-            <Route path="/profile" element={<GuideProfilePage />}/>
-            <Route path="/edit-profile" element={<EditGuideProfilePage />}/>
+            <Route path="/profile/:profileId" element={<ProfilePage />}/>
+            <Route path="/profile" element={<ProfilePage />}/>
+            <Route path="/edit-profile" element={<EditProfilePage />}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
+            <Route path="/review/:review-id" element={<ReviewDetailsPage />}/>
             <Route path="/tourstatistics" element={<TourStatistics />}/>
           </Routes>
         </main>

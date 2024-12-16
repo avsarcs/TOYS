@@ -74,7 +74,7 @@ public class TourApplication extends Application {
         application.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getId()));
         application.setStatus(ApplicationStatus.RECIEVED);
         application.setInterested_in(dto.getMajors());
-        application.setNotes(dto.getNotes());
+        application.setNotes("No notes are provided for these applications.");
         application.setRequested_hours(dto.getRequested_times());
         return application;
     }

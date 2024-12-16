@@ -9,6 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 @SpringBootApplication
         //(scanBasePackages = {"auth", "server", "server/dbm", "server/apply", "server/respond", "server/internal", "server/mailService"})
 public class Main implements CommandLineRunner {
@@ -24,6 +27,7 @@ public class Main implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Running");
+        //db.pushString(Files.readString(Path.of("src/main/resources/initialData.json")));
         db.people.addUser(Guide.getDefault());
         db.people.addUser(Advisor.getDefault());
     }
