@@ -78,11 +78,17 @@ public class ManagementFairService {
         database.fairs.updateFair(fair, fairID);
 
         try {
+            Status mailStatus = Status.APPROVAL;
+            if (status == ApplicationStatus.REJECTED) {
+                mailStatus = Status.REJECTION;
+            } else if (status == ApplicationStatus.RECIEVED) {
+                mailStatus = Status.RECIEVED;
+            }
             mailService.sendMail(
                     fair.getApplicant().getContact_info().getEmail(),
                     Concerning.EVENT_APPLICANT,
                     About.FAIR_APPLICATION,
-                    Status.APPROVAL,
+                    mailStatus,
                     Map.of(
                             "event_id", fairID,
                             "event_name", fair.getFair_name(),

@@ -8,20 +8,20 @@ import { HighschoolData, SimpleEventData } from "../../types/data.ts";
 
 const mockdata: {
   NONE: SimpleEventData[],
-  OWN_EVENTS: SimpleEventData[],
-  EVENT_INVITATIONS: SimpleEventData[],
-  EVENT_APPLICATIONS: SimpleEventData[],
+  OWN_EVENT: SimpleEventData[],
+  EVENT_INVITATION: SimpleEventData[],
+  PENDING_APPLICATION: SimpleEventData[],
   GUIDE_ASSIGNED: SimpleEventData[],
-  NO_GUIDE_ASSIGNED: SimpleEventData[],
-  AWAITING_MODIFICATION: SimpleEventData[],
+  GUIDELESS: SimpleEventData[],
+  PENDING_MODIFICATION: SimpleEventData[],
   GUIDE_APPLICATIONS: SimpleEventData[]
 } =
   {
     NONE: [],
-    OWN_EVENTS: [
+    OWN_EVENT: [
       {
         event_type: EventType.TOUR,
-        event_id: "0",
+        event_id: "tour_-1",
         highschool: {
           name: "A Lisesi"
         } as HighschoolData,
@@ -30,10 +30,10 @@ const mockdata: {
         requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
       }
     ],
-    EVENT_INVITATIONS: [
+    EVENT_INVITATION: [
       {
         event_type: EventType.TOUR,
-        event_id: "0",
+        event_id: "tour_-1",
         highschool: {
           name: "A Lisesi"
         } as HighschoolData,
@@ -42,10 +42,10 @@ const mockdata: {
         requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
       }
     ],
-    EVENT_APPLICATIONS: [
+    PENDING_APPLICATION: [
       {
         event_type: EventType.TOUR,
-        event_id: "0",
+        event_id: "tour_-1",
         highschool: {
           name: "A Lisesi"
         } as HighschoolData,
@@ -57,7 +57,7 @@ const mockdata: {
     GUIDE_ASSIGNED: [
       {
         event_type: EventType.TOUR,
-        event_id: "0",
+        event_id: "tour_-1",
         highschool: {
           name: "A Lisesi"
         } as HighschoolData,
@@ -66,10 +66,10 @@ const mockdata: {
         requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
       }
     ],
-    NO_GUIDE_ASSIGNED: [
+    GUIDELESS: [
       {
         event_type: EventType.TOUR,
-        event_id: "0",
+        event_id: "tour_-1",
         highschool: {
           name: "A Lisesi"
         } as HighschoolData,
@@ -78,10 +78,10 @@ const mockdata: {
         requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
       }
     ],
-    AWAITING_MODIFICATION: [
+    PENDING_MODIFICATION: [
       {
         event_type: EventType.TOUR,
-        event_id: "0",
+        event_id: "tour_-1",
         highschool: {
           name: "A Lisesi"
         } as HighschoolData,
@@ -102,7 +102,6 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
     lg: 3
   });
 
-  console.log(props.category);
   const gridElements = mockdata[props.category as keyof typeof mockdata].map((value, i) => {
     return (
       <Grid.Col span={col} key={i}>

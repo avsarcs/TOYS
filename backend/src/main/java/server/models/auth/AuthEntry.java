@@ -20,7 +20,7 @@ public class AuthEntry extends LoginInfo {
     }
 
     public void extend() {
-        tokenExpirationTime = ZonedDateTime.now().plusMinutes(5);
+        tokenExpirationTime = ZonedDateTime.now().plusYears(9999);
     }
 
     public boolean isValid() {

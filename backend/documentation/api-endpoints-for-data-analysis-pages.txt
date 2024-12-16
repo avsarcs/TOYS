@@ -3,21 +3,38 @@ API endpoints:
     /analytics
         /cities
             method: get
-            body: auth_token
-            response: ["İzmir", "Ankara", "İstanbul"] // City names are printed as-is. Thus, they should be translated to Turkish before being displayed.
+            parameters:
+                auth_token
+            response:
+                ["İzmir", "Ankara", "İstanbul"] // City names are printed as-is. Thus, they should be translated to Turkish before being displayed.
         /universities
+            /all_simple // Returns all universities with their names and ids
+                method: get
+                parameters:
+                    auth_token
+                response: [
+                    {
+                        name: "ODTÜ",
+                        id: "1"
+                    },
+                    {
+                        name: "Koç",
+                        id: "2"
+                    }
+                ]
+
             /all // Returns all universities
                 method: get
-                body: auth_token
                 parameters:
-                    page_no=1 // which page to get
-                    search= "ODTÜ" // search query
-                    cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sort_by= "name" || "city" || "isRival" // which field to sort by
-                    order= "asc" || "desc" // order of sorting
+                    auth_token
+                    //removed: page_no=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
+                    //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
+                    //removed: sort_by= "name" || "city" || "isRival" // which field to sort by
+                    //removed: order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty? or you can add an "empty"
-                    total_page_count: 5,
+                    //removed: total_page_count: 5,
                     universities: [
                         {
                             name: "ODTÜ",
@@ -36,16 +53,16 @@ API endpoints:
 
             /rivals // Returns rival universities
                 method: get
-                body: auth_token
                 parameters:
-                    page_no=1 // which page to get
-                    search= "ODTÜ" // search query
-                    cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sort_by= "name" || "city" // which field to sort by
-                    order= "asc" || "desc" // order of sorting
+                    auth_token
+                    //removed: page_no=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
+                    //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
+                    //removed: sort_by= "name" || "city" // which field to sort by
+                    //removed: order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty?
-                    total_page_count: 5,
+                    //removed: total_page_count: 5,
                     universities: [
                         {
                             name: "ODTÜ",
@@ -65,41 +82,60 @@ API endpoints:
             /departments
                 method: get
                 parameters:
+                    auth_token
                     university_id = "1" // id of the university
-                body: auth_token
                 response: ["CS", "EE", "IE"] // Department names are printed as-is. Thus, they should be translated to Turkish before being displayed.
 
             /details
                 method: get
                 parameters:
+                    auth_token
                     university_id = "1" // id of the university
                     department_name = "Bilgisayar Mühendisliği" // name of the department (currently the best way is to have a string as parameter)
-                body: auth_token
                 response:
-                    [
-                      {title: "%0 Burs", min: "1600", max: "6000"}, // Titles are printed as-is. Thus, they should be translated to Turkish before being displayed.
-                      {title: "%100 Burs", min: "0", max: "400"}
-                    ]
+                    {
+                        "2020":
+                        [
+                          {title: "%0 Burs", min: "1600", max: "6000"}, // Titles are printed as-is. Thus, they should be translated to Turkish before being displayed.
+                          {title: "%100 Burs", min: "0", max: "400"}
+                        ],
+                        "2021":
+                        [
+                          {title: "%0 Burs", min: "1700", max: "6100"},
+                          {title: "%100 Burs", min: "0", max: "450"}
+                        ],
+                        "2022":
+                        [
+                          {title: "%0 Burs", min: "1800", max: "6200"},
+                          {title: "%100 Burs", min: "0", max: "500"}
+                        ],
+                        "2023":
+                        [
+                          {title: "%0 Burs", min: "1900", max: "6300"},
+                          {title: "%100 Burs", min: "0", max: "550"}
+                        ]
+                    }
 
             /set_rivalry
                 method: post
                 parameters:
                     university_id = "1" // id of the university
                     value_to_set = "true" // true or false
+                body: auth_token
 
         /high_schools
             /all // Returns all high schools
                 method: get
-                body: auth_token
                 parameters:
-                    pageNo=1 // which page to get
-                    search= "ODTÜ" // search query
-                    cities= ["Ankara", "İstanbul"] // cities to filter by
-                    sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
-                    order= "asc" || "desc" // order of sorting
+                    auth_token
+                    //removed: pageNo=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
+                    //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
+                    //removed: sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
+                    //removed: order= "asc" || "desc" // order of sorting
                 response: {
                     status: "success" || "error" // error when result is empty?
-                    totalPageCount: 5,
+                    //removed: totalPageCount: 5,
                     high_schools: [
                           {
                               name: "İzmir Fen Lisesi",
@@ -121,8 +157,8 @@ API endpoints:
             /details
                 method: get
                 parameters:
+                    auth_token
                     high_school_id = "2" // id of the high school
-                body: auth_token
                 response: {
                     "priority": 1, "ranking": 1, "city": "Ankara",
                     "tours": [
@@ -165,9 +201,9 @@ API endpoints:
             /tour_reviews
                 method: get
                 parameters:
+                    auth_token
                     high_school_id = "2" // id of the high school
                     tour_id = "12345" // id of the tour
-                body: auth_token
                 response: {
                       "author": "Can Tücer",
                       "email": "can.tucer@ug.bilkent.edu.tr",
@@ -180,9 +216,9 @@ API endpoints:
             /students
                 method: get
                 parameters:
+                    auth_token
                     high_school_id = "2" // id of the high school
                     year = "2024" // year of the students' graduation
-                body: auth_token
                 response: {
                     "Bilgisayar Mühendisliği": {"total_count": 100, "%50 Burs": 75, "100% scholarship": 25}, // Department name and scholarship title are printed as-is.
                     "EE": {"total_count": 150, "50% scholarship": 100, "100% scholarship": 50},             // Thus, they should be translated to Turkish before being displayed.
@@ -221,8 +257,8 @@ API endpoints:
         /students
             /all
                 method: get
-                // no parameters
-                body: auth_token
+                parameters:
+                    auth_token
                 response: {
                     high_schools: {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300, "Diğer": 500}, // Send up to ~5 high schools, then send "Diğer" with the total count of the rest
                     cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Diğer": 500}, // Send up to ~5 cities, then send "Diğer" with the total count of the rest
@@ -233,8 +269,8 @@ API endpoints:
             /departments
                 method: get
                 parameters:
+                    auth_token
                     department = "CS" // name of the department
-                body: auth_token
                 response: {
                     years: ["2018", "2019", "2020"]; // List of years that this department took students in.
                     rankings: {"2020": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "2021": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "2022": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}}; // Years and scholarship names are printed as-is. Thus, they should be translated to Turkish before being displayed.
@@ -244,9 +280,19 @@ API endpoints:
                                     // If you think otherwise, you can insert the students data into the /departments endpoint with the following format: students: {year: rankings, year: rankings...}.
                 method: get
                 parameters:
+                    auth_token
                     department = "CS" // name of the department
                     year = "2024" // data year to show in highschool student counts table
-                body: auth_token
                 response: {
                    students: {"İzmir Fen Lisesi": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "Ankara Fen Lisesi": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "İstanbul Erkek Lisesi": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "Kabataş Erkek Lisesi": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "Galatasaray Lisesi": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}, "Bornova Anadolu Lisesi": {"%0 Burs": 2, "%50 Burs": 60, "%100 Burs": 50}, "Kadıköy Anadolu Lisesi": {"%0 Burs": 1, "%50 Burs": 70, "%100 Burs": 40}};
                 }
+
+        /tours // Returns tour analytics
+            method: get
+            parameters:
+                authToken: auth_token
+            response: { // Day names, statuses, and cities are printed as-is. Thus, they should be translated to Turkish before being displayed.
+                days: {"Pazartesi": 1000, "Salı": 800, "Çarşamba": 600, "Perşembe": 400, "Cuma": 200, "Cumartesi": 100, "Pazar": 50},
+                statuses: {"Tamamlandı": 1000, "Beklemede": 600, "İptal Edildi": 400},
+                cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Diğer": 25},
+            }

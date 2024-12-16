@@ -15,6 +15,15 @@ export enum UserRole {
   DIRECTOR = "DIRECTOR"
 }
 
+export enum UserRoleText {
+  NONE = "HATALI",
+  TRAINEE = "Amatör Rehber",
+  GUIDE = "Rehber",
+  ADVISOR = "Danışman",
+  COORDINATOR = "Koordinatör",
+  DIRECTOR = "Direktör"
+}
+
 export enum Department {
   COMPUTER_ENGINEERING = "Computer Engineering",
   ELECTRICAL_ENGINEERING = "Electrical Engineering",
@@ -45,24 +54,24 @@ export enum EventTypeText {
 
 export enum DashboardCategory {
   NONE = "NONE",
-  OWN_EVENTS = "OWN_EVENTS",
-  EVENT_INVITATIONS = "EVENT_INVITATIONS",
-  EVENT_APPLICATIONS = "EVENT_APPLICATIONS",
+  OWN_EVENT = "OWN_EVENT",
+  EVENT_INVITATION = "EVENT_INVITATION",
+  PENDING_APPLICATION = "PENDING_APPLICATION",
   GUIDE_ASSIGNED = "GUIDE_ASSIGNED",
-  NO_GUIDE_ASSIGNED = "NO_GUIDE_ASSIGNED",
-  AWAITING_MODIFICATION = "AWAITING_MODIFICATION",
+  GUIDELESS = "GUIDELESS",
+  PENDING_MODIFICATION = "PENDING_MODIFICATION",
   GUIDE_APPLICATIONS = "GUIDE_APPLICATIONS",
   ADVISOR_APPLICATIONS = "ADVISOR_APPLICATIONS"
 }
 
 export enum DashboardCategoryText {
   NONE = "Boş :(",
-  OWN_EVENTS = "Atanmış Etkinlikler",
-  EVENT_INVITATIONS = "Rehberlik Etme Davetiyeleri",
-  EVENT_APPLICATIONS = "Etkinlik Başvuruları",
+  OWN_EVENT = "Atanmış Etkinlikler",
+  EVENT_INVITATION = "Rehberlik Etme Davetiyeleri",
+  PENDING_APPLICATION = "Etkinlik Başvuruları",
   GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
-  NO_GUIDE_ASSIGNED = "Rehber Atanmamış Etkinlikler",
-  AWAITING_MODIFICATION = "Değişim Bekleyen Turlar",
+  GUIDELESS = "Rehber Atanmamış Etkinlikler",
+  PENDING_MODIFICATION = "Değişim Bekleyen Turlar",
   GUIDE_APPLICATIONS = "Rehber Başvuruları",
 }
 
@@ -102,4 +111,19 @@ export enum FairStatus {
   APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
   APPROVED = "APPROVED",
   REJECTED = "REJECTED"
+}
+
+export enum DayOfTheWeek {
+  MONDAY = "Monday",
+  TUESDAY = "Tuesday",
+  WEDNESDAY = "Wednesday",
+  THURSDAY = "Thursday",
+  FRIDAY = "Friday",
+  SATURDAY = "Saturday",
+  SUNDAY = "Sunday"
+}
+
+export enum TimeSlotStatus {
+  FREE = "Free",
+  BUSY = "Busy"
 }

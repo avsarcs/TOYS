@@ -1,9 +1,9 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Button, Checkbox, NumberInput, PasswordInput, ScrollArea, Select, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, NumberInput, ScrollArea, Select, Textarea, TextInput } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { Department } from "../../types/enum.ts";
 import { RegisterFormProps } from "../../types/designed.ts";
-import { GuideApplicationData } from "../../types/data.ts";
+import { TraineeGuideApplicationData } from "../../types/data.ts";
 import { useForm } from "@mantine/form";
 import validate from "validate.js"
 import { isPossiblePhoneNumber } from "libphonenumber-js/max";
@@ -18,7 +18,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      bilkentId: NaN,
+      bilkentId: "",
       password: "",
       fullName: "",
       email: "",
@@ -30,8 +30,8 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
       whyApply: ""
       },
     validate: {
-      bilkentId: (value: number) => !isNaN(value) ? null: "Lütfen Bilkent ID'nizi giriniz.",
-      password: (value: string) => value.length > 0 ? null: "Lütfen bir şifre giriniz.",
+      bilkentId: (value: string) => value.toString().length > 0 ? null: "Lütfen Bilkent ID'nizi giriniz.",
+      /*password: (value: string) => value.length > 0 ? null: "Lütfen bir şifre giriniz.",*/
       fullName: (value: string) => value.length > 0 ? null: "Lütfen tam adınızı giriniz.",
       email: (value: string) => validate({ from: value }, { from: { email: true } }) === undefined ? null : "Geçersiz e-mail.",
       phoneNumber: (value: string) => isPossiblePhoneNumber(value, "TR") ? null: "Geçersiz telefon numarası.",
@@ -59,7 +59,19 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
 
     setRegistering(true);
 
-    const applicationData: GuideApplicationData = form.getValues();
+    const formData = form.getValues();
+    const applicationData: TraineeGuideApplicationData = {
+      fullname: formData.fullName,
+      id: formData.bilkentId,
+      highschool: { id: -1, name: "", location: "", priority: 0 },
+      email: formData.email,
+      phone: formData.phoneNumber,
+      major: formData.department,
+      current_semester: formData.semester,
+      next_semester_exchange: formData.hasExchange,
+      how_did_you_hear: formData.howDidYouHear,
+      why_apply: formData.whyApply
+    }
     try {
       const res = await fetch(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/guide", {
         method: "POST",
@@ -77,8 +89,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
         });
         setRegistering(false);
       }
-
-      if(res.ok) {
+      else if(res.ok) {
         notifications.show({
           color: "green",
           title: "Başvuru gönderildi!",
@@ -129,7 +140,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
             Başvuru işleminiz bitmiştir. Yanıt gelene kadar beklemenizi rica ediyoruz. İyi günler dileriz :)
         </p> :
         <>
-          <ScrollArea className="basis-80 border-8 border-blue-600">
+          <ScrollArea className="basis-80 border-8 border-blue-600" type="hover">
               <NumberInput label="Bilkent ID" withAsterisk placeholder="Bilkent ID" size="lg" radius="sm"
                             classNames={{
                               controls: "hidden",
@@ -141,7 +152,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
                             key = {form.key("bilkentId")}
                             {...form.getInputProps("bilkentId")}
               />
-              <PasswordInput label="Şifre" withAsterisk placeholder="Şifre" size="lg" radius="sm"
+              {/*<PasswordInput label="Şifre" withAsterisk placeholder="Şifre" size="lg" radius="sm"
                             classNames={{
                               root: "odd:bg-blue-600 even:bg-blue-700 pb-4",
                               wrapper: "p-2",
@@ -151,7 +162,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
                             }}
                             key = {form.key("password")}
                             {...form.getInputProps("password")}
-              />
+              />*/}
               <TextInput label="İsim Soyisim" withAsterisk placeholder="İsim Soyisim" size="lg" radius="sm"
                             classNames={{
                               root: "odd:bg-blue-600 even:bg-blue-700 pb-4",

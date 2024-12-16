@@ -29,7 +29,7 @@ public class Guide extends User {
                         .setAddress("1st Street, Hell")
                 )
                 .setMajor(Department.MANAGEMENT)
-                .setHighschool_id("Columbine High School")
+                .setHighschool_id("Default HS ID")
                 .setSemester(2)
                 .setProfile_description("Hobbyist exorcist, demonologist, and master of the dark arts. I'm also a chain smoker.")
                 .setProfile_picture("Profile pic b64")
@@ -40,7 +40,7 @@ public class Guide extends User {
         guide.setExperience(Experience.getDefault());
 
         guide.setRole(UserRole.GUIDE);
-        guide.setHigh_school("Columbine High School");
+        guide.setHigh_school("Default HS ID");
         guide.setAuthInfo(new AuthInfo().setPassword("batman"));
         guide.setStatus(UserStatus.ACTIVE);
         GuideApplication guideApplication = new GuideApplication();
@@ -65,7 +65,7 @@ public class Guide extends User {
 
         profile.setName(dto.getFullname());
         profile.getContact_info().setPhone(dto.getPhone());
-        profile.setHighschool_id(dto.getHigh_school().getId());
+        profile.setHighschool_id(dto.getHighschool().getId());
         profile.setMajor(dto.getMajor());
         profile.setProfile_picture(dto.getProfile_picture());
 

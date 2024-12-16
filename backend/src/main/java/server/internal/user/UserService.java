@@ -11,9 +11,13 @@ import server.enums.ExperienceLevel;
 import server.enums.roles.UserRole;
 import server.enums.status.FairStatus;
 import server.enums.status.TourStatus;
+import server.enums.types.ApplicationType;
+import server.enums.types.DashboardCategory;
 import server.models.DTO.DTO_AdvisorOffer;
+import server.models.DTO.DTO_SimpleEvent;
 import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.DTO_UserType;
+import server.models.events.FairApplication;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
 import server.models.people.Guide;
@@ -28,10 +32,43 @@ public class UserService {
 
 
     @Autowired
-    JWTService jwtService;
-
-    @Autowired
     Database database;
+
+    public List<DTO_SimpleEvent> getDashboardEvents(String auth, String category_s) {
+        if (!JWTService.getSimpleton().isValid(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
+        DashboardCategory category = DashboardCategory.EVENT_INVITATION;
+        try {
+            category = DashboardCategory.valueOf(category_s);
+        } catch (Exception E) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category!");
+        }
+        List<DTO_SimpleEvent> response = new ArrayList<>();
+        if (category == DashboardCategory.GUIDELESS) {
+            response.addAll(
+                    database.tours.fetchTours()
+                            .entrySet().stream().map(
+                                    e -> DTO_SimpleEvent.fromEvent(e.getValue()))
+                            .toList());
+            response.addAll(
+                    database.fairs.fetchFairs()
+                            .entrySet().stream().map(
+                                    e -> DTO_SimpleEvent.fromEvent(e.getValue()))
+                            .toList());
+        } else if (category == DashboardCategory.EVENT_INVITATION) {
+        }
+
+        return response;
+    }
+
+    private DTO_SimpleEvent mapFairInviteToSimpleEvent(FairApplication application) {
+        DTO_SimpleEvent event = new DTO_SimpleEvent();
+
+        return event;
+    }
 
     public List<DTO_AdvisorOffer> getAdvisorOffers(String auth, String guide_name, String type, String from_date_s, String to_date_s) {
         if (!JWTService.getSimpleton().isValid(auth)) {
@@ -54,7 +91,7 @@ public class UserService {
             return getSimpleGuides(auth, DTO_UserType.GUIDE);
         }
 
-        if (!jwtService.isValid(auth)) {
+        if (!JWTService.getSimpleton().isValid(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
@@ -94,7 +131,7 @@ public class UserService {
     public List<DTO_SimpleGuide> getSimpleGuides(String authToken, DTO_UserType type) {
         List<DTO_SimpleGuide> guides = new ArrayList<>();
         // validate jwt token
-        if (!jwtService.isValid(authToken)) {
+        if (!JWTService.getSimpleton().isValid(authToken)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
@@ -124,7 +161,7 @@ public class UserService {
     public List<DTO_SimpleGuide> getAvailableGuides(String authToken, DTO_UserType type, String timeString) {
         List<DTO_SimpleGuide> guides = new ArrayList<>();
         // validate jwt token
-        if (!jwtService.isValid(authToken)) {
+        if (!JWTService.getSimpleton().isValid(authToken)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 

@@ -2,15 +2,22 @@ package server.dbm;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.api.client.json.JsonObjectParser;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class Database {
@@ -44,6 +51,8 @@ public class Database {
     public DBSchoolService schools;
     public DBRequestService requests;
     public DBReviewService reviews;
+    public DBUniversityService universities;
+    public DBPaymentService payments;
 
     private Database() {
 
@@ -78,7 +87,22 @@ public class Database {
         schools = new DBSchoolService();
         requests = new DBRequestService();
         reviews = new DBReviewService();
+        universities = new DBUniversityService();
+        payments = new DBPaymentService();
+    }
 
+    public void pushString(String string) {
+        try {
+            //new Gson().fromJson(string, new TypeToken<HashMap<String, Object>>() {}.getType());
+            Object object = objectMapper.readValue(string, Map.class);
+            //firestoreDatabase.collection("edu").document("universities").set("universities", object);
+            firestoreDatabase.collection("edu").document("universities").set(Map.of("universities",object));
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private InputStream getCredentials(String credentialsFile) {

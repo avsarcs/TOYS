@@ -2,7 +2,7 @@ package server.models.people;
 
 import server.auth.AuthController;
 import server.auth.JWTService;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 import server.models.auth.LoginInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ class GuideTest {
 
         String decodeUserID = jwtService.decodeUserID(token);
         assert(decodeUserID.equals(guide.getBilkent_id()));
-        assert(jwtService.getUserRole(token) == USER_ROLE.GUIDE);
+        assert(jwtService.getUserRole(token) == UserRole.GUIDE);
     }
 
     @Test
