@@ -53,6 +53,7 @@ export interface TourData {
 export interface ProfileData{
   experience: string,
   id: string,
+  email: string,
   created_at: string,
   updated_at: string,
   fullname: string,

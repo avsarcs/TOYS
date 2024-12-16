@@ -22,6 +22,7 @@ const EMPTY_USER: User = {
   profile: {
       experience: "",
       id: "",
+      email: "",
       created_at: "",
       updated_at: "",
       fullname: "",

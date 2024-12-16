@@ -99,6 +99,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
 
             // Add query parameters
             url.searchParams.append("auth", userContext.authToken);
+            console.log(updatedProfile);
 
             const response = await fetch(url.toString(), {
                 method: "POST",
