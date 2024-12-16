@@ -1,10 +1,7 @@
 package server.models.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import server.dbm.Database;
-import server.enums.status.FAIR_STATUS;
-import server.models.FairRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import server.enums.status.FairStatus;
+import server.models.events.FairRegistry;
 
 import java.time.ZonedDateTime;
 
@@ -13,8 +10,9 @@ public class DTO_Fair {
     private ZonedDateTime start_time;
     private ZonedDateTime end_time;
     private String fair_name;
-    private FAIR_STATUS status;
+    private FairStatus status;
     private DTO_Highschool school;
+    private String fair_id;
 
     public static DTO_Fair fromFair(FairRegistry fair) {
         DTO_Fair dto = new DTO_Fair();
@@ -25,9 +23,19 @@ public class DTO_Fair {
         dto.setStatus(fair.getFair_status());
         dto.setFair_name(fair.getFair_name());
         dto.setSchool(new DTO_Highschool(fair.getApplicant().getSchool()));
-
+        dto.setFair_id(fair.getFair_id());
 
         return dto;
+    }
+
+
+    public String getFair_id() {
+        return fair_id;
+    }
+
+    public DTO_Fair setFair_id(String fair_id) {
+        this.fair_id = fair_id;
+        return this;
     }
 
     public DTO_Applicant getApplicant() {
@@ -66,11 +74,11 @@ public class DTO_Fair {
         return this;
     }
 
-    public FAIR_STATUS getStatus() {
+    public FairStatus getStatus() {
         return status;
     }
 
-    public DTO_Fair setStatus(FAIR_STATUS status) {
+    public DTO_Fair setStatus(FairStatus status) {
         this.status = status;
         return this;
     }

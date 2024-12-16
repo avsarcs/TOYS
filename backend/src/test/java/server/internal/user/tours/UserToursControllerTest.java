@@ -69,7 +69,8 @@ class UserToursControllerTest {
     }
 
     @Test
-    void inviteToTour() {
+    String inviteToTour() {
+        String rid = "";
         updateTour();
         userToursController.inviteToTour(tourID, Guide.getDefault().getBilkent_id(), JWTService.testToken);
         boolean contains = false;
@@ -86,10 +87,13 @@ class UserToursControllerTest {
                 ).map(
                         r -> (GuideAssignmentRequest) r
                 ).toList();
-        for (GuideAssignmentRequest request : requests) {
+        List<GuideAssignmentRequest> sortedR =  requests.stream().sorted((a, b) -> a.getRequested_at().getDate().compareTo(b.getRequested_at().getDate())).toList();
+        for (int i = sortedR.size()-1; i> 0;i--) {
+            GuideAssignmentRequest request = sortedR.get(i);
             try {
                 if (request.getEvent_id().equals(tourID) && request.getRequested_guide_id().equals(Guide.getDefault().getBilkent_id())) {
                     contains = true;
+                    rid = request.getRequest_id();
                     break;
                 }
             } catch (Exception e) {
@@ -97,25 +101,15 @@ class UserToursControllerTest {
             }
         }
         assert contains;
+        return rid;
     }
 
     @Test
     void respondToTourInvite() {
-        inviteToTour();
+        String rid = inviteToTour();
         List<GuideAssignmentRequest> requests = userToursController.tourService.databaseEngine.requests.getRequestsOfType(RequestType.ASSIGNMENT, null).stream().filter(r -> r instanceof GuideAssignmentRequest).map(r -> (GuideAssignmentRequest) r).toList();
-        String request_id = null;
-        for (GuideAssignmentRequest request : requests) {
-            try {
-                if (request.getEvent_id().equals(tourID) && request.getRequested_guide_id().equals(Guide.getDefault().getBilkent_id())) {
-                    request_id = request.getRequest_id();
-                    break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("Request ID is: " + request_id);
-        assert request_id != null;
-        userToursController.respondToTourInvite(request_id, RequestStatus.APPROVED.name(), JWTService.testToken);
+        System.out.println("Request ID is: " + rid);
+        assert !rid.isEmpty();
+        userToursController.respondToTourInvite(rid, RequestStatus.APPROVED.name(), JWTService.testToken);
     }
 }

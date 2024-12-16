@@ -4,12 +4,11 @@ import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.auth.JWTService;
 import server.dbm.Database;
-import server.enums.RequestStatus;
-import server.enums.RequestType;
+import server.enums.status.RequestStatus;
 import server.mailService.MailServiceGateway;
-import server.models.GuideAssignmentRequest;
+import server.models.people.GuideAssignmentRequest;
 import server.models.Request;
-import server.models.TourModificationRequest;
+import server.models.events.TourModificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -74,6 +73,7 @@ public class RequestService {
             if (request == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request not found");
             }
+            System.out.println("Request found: "+request.getRequest_id() + "::" + request.getStatus().name());
             // check if the request is already responded
             if (request.getStatus() != RequestStatus.PENDING) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request already responded");

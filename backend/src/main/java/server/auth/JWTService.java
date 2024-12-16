@@ -2,7 +2,7 @@ package server.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import server.enums.roles.USER_ROLE;
+import server.enums.roles.UserRole;
 import server.models.auth.AuthEntry;
 import server.models.auth.LoginInfo;
 import org.springframework.stereotype.Service;
@@ -58,12 +58,12 @@ public class JWTService {
         return result;
     }
 
-    public USER_ROLE getUserRole(String authToken) {
+    public UserRole getUserRole(String authToken) {
         if (authToken.equals(testToken)) {
-            return USER_ROLE.DIRECTOR;
+            return UserRole.DIRECTOR;
         }
         try {
-            return USER_ROLE.valueOf(JWT.decode(authToken).getClaim("role").asString());
+            return UserRole.valueOf(JWT.decode(authToken).getClaim("role").asString());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -95,7 +95,7 @@ public class JWTService {
         }
     }
 
-    public String generateToken(LoginInfo loginInfo, USER_ROLE role) {
+    public String generateToken(LoginInfo loginInfo, UserRole role) {
         String token = JWT.create()
                 .withClaim("username", loginInfo.getBilkentID())
                 .withClaim("password", loginInfo.getPassword())

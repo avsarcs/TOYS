@@ -10,6 +10,7 @@ class University:
         self.id = id
         self.url = url
         self.departments = []
+        self.city = None # Default to None
 
         # Fetch the university page
         response = get_request_with_retry(self.url)
@@ -22,7 +23,7 @@ class University:
             
             # Find all department links in the specified structure
             panels = soup.find_all('div', class_='panel panel-primary')
-            
+
             for panel in panels:
                 link_tag = panel.find('a')
                 if link_tag and 'href' in link_tag.attrs:
@@ -31,7 +32,27 @@ class University:
                     # Find the department name inside the <div> element
                     department_name_div = link_tag.find('div')
                     department_name = department_name_div.text.strip() if department_name_div else 'N/A'
-                    self.departments.append(Department(department_name, match.group(1)))
+                    if ("(%25 İndirimli)" in department_name):
+                        scholarship = "%25"
+                        department_name = department_name.replace(" (%25 İndirimli)", "")
+                    elif ("(%50 İndirimli)" in department_name):
+                        scholarship = "%50"
+                        department_name = department_name.replace(" (%50 İndirimli)", "")
+                    elif ("(%75 İndirimli)" in department_name):
+                        scholarship = "%75"
+                        department_name = department_name.replace(" (%75 İndirimli)", "")
+                    elif ("(Burslu)" in department_name):
+                        scholarship = "%100"
+                        department_name = department_name.replace(" (Burslu)", "")
+                    elif ("(Ücretli)" in department_name):
+                        scholarship = "%0"
+                        department_name = department_name.replace(" (Ücretli)", "")
+                    else:
+                        scholarship = "N/A"
+                    
+                    self.departments.append(Department(department_name, match.group(1), scholarship))
+
+            self.city = self.departments[0].getUniCity()        
             print("Created university object for", self.name)
         else:
             print(f"Failed to retrieve the university page for ID {self.id}. Status code: {response.status_code}")
@@ -41,24 +62,47 @@ class University:
             'name': self.name,
             'id': self.id,
             'url': self.url,
+            'city': self.city,
             'departments': [dept.to_dict() for dept in self.departments]
         }
     
 class Department:
-    def __init__(self, name, id):
+    def __init__(self, name, id, scholarship):
         self.name = name
         self.id = id
         self.years = []
-        for year in range(2019, datetime.now().year - 1):
+        self.scholarship = scholarship
+
+        # Fetch the available years for the department
+        for year in range(2019, datetime.now().year):
             response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/{year}/content/lisans-dynamic/1060.php?y={self.id}")
             if response != None and response.status_code == 200:
                 response.encoding = 'utf-8'
                 self.years.append(Year(year, self.id))
-        self.years.append(Year("", self.id)) # Add the current year as well, but the URL will not have a year parameter
+
+        self.years.append(Year("", self.id)) # Add the current year as well, but the URL will not have a year parameter 
+
+    def getUniCity(self):
+        response = get_request_with_retry(f"https://yokatlas.yok.gov.tr/lisans.php?y={self.id}")
+        if response is not None and response.status_code == 200:
+            response.encoding = 'utf-8'
+            soup = BeautifulSoup(response.text, 'html.parser')
+            header = soup.find('h3', {'class' :'panel-title pull-left'})
+            if header:
+                header_text = header.get_text(strip=True)
+                match = re.search(r"\(([^)]+)\)", header_text)
+                if match:
+                    uniCity = match.group(1).strip()
+        if uniCity is None:
+            print(f"City not found for Department ID: {self.id}")
+            print(f"response: {response.text}")
+        return uniCity
+
     def to_dict(self):
         return {
             'name': self.name,
             'id': self.id,
+            'scholarship': self.scholarship,
             'years': [year.to_dict() for year in self.years]
         }
         
@@ -99,6 +143,7 @@ class Year:
                     'new_graduates': new_graduates,
                     'previous_graduates': previous_graduates
                 })
+                
         else:
             print(f"Failed to retrieve the high school data for ID {self.id}. Status code: {response.status_code}. URL was {response.url}")
         

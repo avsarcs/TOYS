@@ -1,8 +1,9 @@
 package server.models.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import server.enums.Department;
-import server.models.TourApplication;
+import server.models.events.TourApplication;
 import server.models.time.ZTime;
 
 import java.time.Instant;
@@ -17,7 +18,6 @@ public class DTO_IndividualTourApplication {
         boolean equal = true;
         equal = equal && this.applicant.equals(other.applicant);
         equal = equal && this.highschool.equals(other.highschool);
-        equal = equal && this.notes.equals(other.notes);
         equal = equal && this.visitor_count == other.visitor_count;
         equal = equal && this.requested_times.size() == other.requested_times.size();
         for (int i = 0; i < this.requested_times.size(); i++) {
@@ -33,7 +33,6 @@ public class DTO_IndividualTourApplication {
         dto.setHighschool(new DTO_Highschool(application.getApplicant().getSchool()));
         dto.setVisitor_count(application.getExpected_souls());
 
-        dto.setNotes(application.getNotes());
         dto.setRequested_times(application.getRequested_hours());
         dto.setMajors(application.getInterested_in());
         return dto;
@@ -43,7 +42,6 @@ public class DTO_IndividualTourApplication {
         DTO_IndividualTourApplication dto = new DTO_IndividualTourApplication();
         dto.setApplicant(DTO_Applicant.getDefault());
         dto.setHighschool(DTO_Highschool.getDefault());
-        dto.setNotes("Default Notes");
         List<ZTime> times = new ArrayList<>();
         times.add(new ZTime(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"))));
         dto.setRequested_times(times);
@@ -57,8 +55,8 @@ public class DTO_IndividualTourApplication {
     private List<ZTime> requested_times;
     private long visitor_count;
     private DTO_Applicant applicant;
+    @JsonProperty("requested_majors")
     private List<Department> majors;
-    private String notes;
 
     public List<Department> getMajors() {
         return majors;
@@ -106,12 +104,4 @@ public class DTO_IndividualTourApplication {
         return this;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
-    public DTO_IndividualTourApplication setNotes(String notes) {
-        this.notes = notes;
-        return this;
-    }
 }

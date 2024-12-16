@@ -4,14 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import server.auth.JWTService;
-import server.enums.RequestStatus;
-import server.enums.RequestType;
-import server.models.GuideAssignmentRequest;
-import server.models.Request;
-import server.models.people.details.ContactInfo;
-import server.models.time.ZTime;
+import server.enums.status.RequestStatus;
+import server.models.people.GuideAssignmentRequest;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,9 +1,9 @@
 import React from "react";
 import {Space, Container, Text} from '@mantine/core';
-import Navbar from "../../components/DataAnalysis/Navbar.tsx";
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
+import {useLocation} from 'react-router-dom';
 
 // Container styling
 const defaultContainerStyle = {
@@ -39,8 +39,12 @@ const data = {
 };
 
 const Comparison: React.FC = () => {
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const otherUniversity = params.get('otherUniversity');
+
     const [selectedBilkentDepartment, setSelectedBilkentDepartment] = React.useState<string | null>(null);
-    const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<string | null>(null);
+    const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<string | null>(otherUniversity);
     const [selectedOtherDepartment, setSelectedOtherDepartment] = React.useState<string | null>(null);
 
     // useEffect hook to watch for changes in the state variables
@@ -108,8 +112,7 @@ const Comparison: React.FC = () => {
         </div>
     }
 
-    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full bg-blue-600 lg:bg-gradient-to-bl lg:from-50% lg:from-blue-600 lg:via-blue-500 lg:to-red-300"}>
-        <Navbar activeIndex={2}/>
+    return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
         <Space h="xl"/>
         {HeaderTextContainer}
         <hr style={{border: '1px solid black'}}/>

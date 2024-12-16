@@ -1,0 +1,101 @@
+.weekly-schedule {
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    text-align: center;
+}
+
+.weekly-schedule .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.settings-button,
+.save-button {
+    background-color: #6d4ebf;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.settings-button:hover,
+.save-button:hover {
+    background-color: #5c3ca6;
+}
+
+.edit-mode-message {
+    text-align: left; /* Centers the text horizontally */
+    font-size: 14px;
+    color: #2a4d9c;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.weekly-schedule table {
+    width: 100%;
+    min-width: 700px; /* Set a minimum width for the table to maintain structure */
+    table-layout: fixed; /* Fixed table layout for equal column widths */
+    border-collapse: separate; /* Use separate borders for a card-like effect */
+    border-spacing: 8px; /* Add space between cells */
+}
+
+.weekly-schedule th,
+.weekly-schedule td {
+    background-color: #f9f9f9;
+    width: 100px;
+    height: 60px;
+    border-radius: 8px; /* Rounded corners for cells */
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* Light shadow for cells */
+}
+
+.weekly-schedule th {
+    font-weight: bold;
+    color: #555;
+}
+
+.weekly-schedule td {
+    cursor: pointer; /* Indicate interactivity for editable cells */
+    transition: background-color 0.3s;
+}
+
+.weekly-schedule td.busy {
+    background-color: #ff6b6b; /* Bright red for busy cells */
+    color: white;
+}
+
+.weekly-schedule td.available {
+    background-color: #a3d5f5; /* Noticeable light blue for available cells */
+}
+
+.legend {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.legend .busy,
+.legend .available {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+    border-radius: 4px;
+}
+
+.legend .busy {
+    background-color: #ff6b6b;
+}
+
+.legend .available {
+    background-color: #a3d5f5;
+}

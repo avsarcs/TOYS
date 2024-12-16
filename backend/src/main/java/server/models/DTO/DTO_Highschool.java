@@ -1,10 +1,9 @@
 package server.models.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.inject.Inject;
-import org.springframework.beans.factory.annotation.Autowired;
 import server.dbm.Database;
-import server.models.schools.Highschool;
+import server.models.schools.HighschoolRecord;
+
+import java.util.Map;
 
 public class DTO_Highschool {
     private String id;
@@ -22,14 +21,22 @@ public class DTO_Highschool {
     }
     public DTO_Highschool() {}
 
+    protected DTO_Highschool(Map<String,Object> map) {
+        this.id = (String) map.get("id");
+        this.name = (String) map.get("name");
+    }
+
+    public static DTO_Highschool fromMap(Map<String,Object> map) {
+        return new DTO_Highschool(map);
+    }
     public boolean equals(DTO_Highschool other) {
         return this.id.equals(other.id) && this.name.equals(other.name);
     }
 
-    public static DTO_Highschool fromHS(Highschool hs) {
+    public static DTO_Highschool fromHS(HighschoolRecord hs) {
         DTO_Highschool dto = new DTO_Highschool();
         dto.setName(hs.getTitle());
-        dto.setId(Highschool.getID(dto.getName()));
+        dto.setId(HighschoolRecord.getID(dto.getName()));
         return dto;
     }
 

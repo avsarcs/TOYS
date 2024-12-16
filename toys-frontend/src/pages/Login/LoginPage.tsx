@@ -1,20 +1,18 @@
 import { Image } from "@mantine/core"
 import LoginForm from "../../components/Login/LoginForm";
-import { useEffect, useState } from "react";
+import {useContext, useState} from "react";
 import RegisterForm from "../../components/Login/RegisterForm.tsx";
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import {UserContext} from "../../context/UserContext.tsx";
 
 const LoginPage: React.FC = () => {
   const [registering, setRegistering] = useState(false);
-  const [cookies] = useCookies(["auth"], {});
+  const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if(cookies.auth && cookies.auth.length > 0) {
-      navigate("../dashboard");
-    }
-  }, [navigate, cookies.auth]);
+  if(userContext?.isLoggedIn) {
+    navigate("/dashboard");
+  }
 
   return (
     <div className={"w-full min-h-screen grid lg:grid-cols-2 grid-cols-1 lg:grid-rows-1 grid-rows-2"}>

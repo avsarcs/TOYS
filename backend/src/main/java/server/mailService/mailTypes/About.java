@@ -10,4 +10,6 @@ public enum About {
     GUIDE_ASSIGNMENT,
     GUIDE_WITHDRAW,
     ADVISOR_APPLICATION,
+
+    REVIEW,
 }

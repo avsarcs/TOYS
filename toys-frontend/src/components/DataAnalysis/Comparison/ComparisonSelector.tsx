@@ -17,7 +17,7 @@ const ComparisonSelector: React.FC<ComparisonSelectorProps> = ({universities, bi
     return <SimpleGrid cols={3}>
         <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Bilkent</Text>
         <div></div>
-        <div><UniversitySelector universities={universities} onUniversityChange={setSelectedOtherUniversity}/></div>
+        <div><UniversitySelector universities={universities} onUniversityChange={setSelectedOtherUniversity} currentUniversity={selectedOtherUniversity}/></div>
         <div><DepartmentSelector departments={bilkentDepartments} selectedUniversity={"Bilkent"} onDepartmentChange={setSelectedBilkentDepartment}/></div>
         <div></div>
         <div><DepartmentSelector departments={selectedOtherUniversity ? otherDepartments[selectedOtherUniversity] : []} selectedUniversity={selectedOtherUniversity} onDepartmentChange={setSelectedOtherDepartment}/></div>

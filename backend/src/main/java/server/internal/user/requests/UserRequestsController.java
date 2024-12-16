@@ -17,12 +17,12 @@ public class UserRequestsController {
     @Autowired
     RequestService requestService;
 
-    @GetMapping("/server/internal/user/requests")
-    public List<Request> internalUserRequests(@RequestParam String authToken) {
-        return requestService.getRequests(authToken);
+    @GetMapping("/internal/user/requests")
+    public List<Request> internalUserRequests(@RequestParam String auth) {
+        return requestService.getRequests(auth);
     }
 
-    @PostMapping("/server/internal/user/requests/respond")
+    @PostMapping("/internal/user/requests/respond")
     public void respondToRequest(@RequestParam String auth,@RequestParam String rid, @RequestParam String response) {
         requestService.respondToRequest(auth, rid, response);
     }
