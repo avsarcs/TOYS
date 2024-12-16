@@ -9,6 +9,16 @@ import { ProfileComponentProps } from "../../../types/designed.ts";
 const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
     const userContext = useContext(UserContext);
 
+    const dayTranslations: { [key in keyof ScheduleData]: string } = {
+        MONDAY: "Pazartesi",
+        TUESDAY: "Salı",
+        WEDNESDAY: "Çarşamba",
+        THURSDAY: "Perşembe",
+        FRIDAY: "Cuma",
+        SATURDAY: "Cumartesi",
+        SUNDAY: "Pazar",
+    };
+    
     // Human-readable times for display
     const readableTimes = [
         "8:30 - 9:30",
@@ -86,7 +96,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
 
             // Add query parameters
-            url.searchParams.append("authToken", userContext.authToken);
+            url.searchParams.append("auth", userContext.authToken);
 
             const response = await fetch(url.toString(), {
                 method: "POST",
@@ -94,7 +104,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    updatedProfile,
+                    updatedProfile
                 }),
             });
 
@@ -147,7 +157,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                         <tr>
                             <th></th>
                             {days.map((day) => (
-                                <th key={day}>{day}</th>
+                                <th key={day}>{dayTranslations[day as keyof ScheduleData]}</th>
                             ))}
                         </tr>
                     </thead>

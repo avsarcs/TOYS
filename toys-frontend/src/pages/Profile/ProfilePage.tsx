@@ -15,9 +15,15 @@ const ProfilePage: React.FC = () =>
     const [error, setError] = useState<Error | undefined>(undefined);
     const [profile, setProfile] = useState(userContext.user.profile);
 
+    useEffect(() => {
+        if(profileId === undefined || profileId === userContext.user.profile.id){
+            setProfile(userContext.user.profile);
+        }
+    }, [userContext.user]);
+
     const getProfile = useCallback(async (profileId: string) => {
         const profileUrl = new URL(PROFILE_URL);
-        profileUrl.searchParams.append("profileId", profileId);
+        profileUrl.searchParams.append("id", profileId);
         profileUrl.searchParams.append("auth", userContext.authToken);
 
         const res = await fetch(profileUrl, {
