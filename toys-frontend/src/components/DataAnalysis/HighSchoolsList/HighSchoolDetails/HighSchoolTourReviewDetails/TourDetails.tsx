@@ -4,12 +4,12 @@ import {IconCalendar, IconBrandSafari, IconUser, IconMail} from "@tabler/icons-r
 
 interface TourDetailsProps {
     tourDate: string
-    guideName: string
+    guideNames: string[]
     authorName: string
     authorEmail: string
 }
 
-const TourDetails: React.FC<TourDetailsProps> = ({tourDate, guideName, authorName, authorEmail}) => {
+const TourDetails: React.FC<TourDetailsProps> = ({tourDate, guideNames, authorName, authorEmail}) => {
     return <SimpleGrid cols={2} style={{ justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <IconCalendar/>
@@ -23,7 +23,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({tourDate, guideName, authorNam
             <Text style={{
                 fontSize: 'x-large',
                 marginLeft: '8px'
-            }}>{guideName}</Text>
+            }}>{guideNames.join(', ')}</Text>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <IconUser/>

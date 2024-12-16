@@ -9,6 +9,7 @@ interface RowData {
     city: string;
     ranking: string;
     priority: string;
+    id: string;
 }
 
 interface ThProps {
@@ -90,7 +91,7 @@ interface HighSchoolsTableProps {
     data: RowData[];
     search: string;
     cities: string[];
-    openDetails: (highSchool: string) => void;
+    openDetails: (highSchoolName: string, higSchoolID: string) => void;
     addHighSchool: () => void;
 }
 
@@ -123,7 +124,7 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.ranking}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.priority}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
-                <DetailsButton openDetails={openDetails} highSchool={row.highSchool}/>
+                <DetailsButton openDetails={openDetails} highSchoolName={row.highSchool} highSchoolID={row.id}/>
             </Table.Td>
         </Table.Tr>
     ));

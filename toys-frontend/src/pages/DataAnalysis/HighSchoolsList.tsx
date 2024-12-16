@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
 import HighSchoolAdd from "./HighSchoolAdd.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -17,140 +18,85 @@ const defaultContainerStyle = {
 };
 
 //test data
-const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
-const data = [
+const defaultCities: string[] = ["Yükleniyor..."];
+const defaultHighSchools = [
     {
-        highSchool: "İzmir Fen Lisesi",
-        city: "İzmir",
+        highSchool: "Yükleniyor...",
+        city: "Yükleniyor...",
         ranking: "1",
-        priority: "1"
-    },
-    {
-        highSchool: "Ankara Fen Lisesi",
-        city: "Ankara",
-        ranking: "2",
-        priority: "1"
-    },
-    {
-        highSchool: "İstanbul Erkek Lisesi",
-        city: "İstanbul",
-        ranking: "3",
-        priority: "1"
-    },
-    {
-        highSchool: "Kabataş Erkek Lisesi",
-        city: "İstanbul",
-        ranking: "4",
-        priority: "1"
-    },
-    {
-        highSchool: "Galatasaray Lisesi",
-        city: "İstanbul",
-        ranking: "5",
-        priority: "1"
-    },
-    {
-        highSchool: "Bornova Anadolu Lisesi",
-        city: "İzmir",
-        ranking: "6",
-        priority: "1"
-    },
-    {
-        highSchool: "Kadıköy Anadolu Lisesi",
-        city: "İstanbul",
-        ranking: "7",
-        priority: "1"
-    },
-    {
-        highSchool: "Atatürk Anadolu Lisesi",
-        city: "Ankara",
-        ranking: "8",
-        priority: "1"
-    },
-    {
-        highSchool: "Çapa Fen Lisesi",
-        city: "İstanbul",
-        ranking: "9",
-        priority: "1"
-    },
-    {
-        highSchool: "İzmir Atatürk Lisesi",
-        city: "İzmir",
-        ranking: "10",
-        priority: "1"
-    },
-    {
-        highSchool: "Bursa Fen Lisesi",
-        city: "Bursa",
-        ranking: "11",
-        priority: "1"
-    },
-    {
-        highSchool: "Eskişehir Anadolu Lisesi",
-        city: "Eskişehir",
-        ranking: "12",
-        priority: "1"
-    },
-    {
-        highSchool: "Adana Fen Lisesi",
-        city: "Adana",
-        ranking: "13",
-        priority: "1"
-    },
-    {
-        highSchool: "Antalya Anadolu Lisesi",
-        city: "Antalya",
-        ranking: "14",
-        priority: "1"
-    },
-    {
-        highSchool: "Erzurum Fen Lisesi",
-        city: "Erzurum",
-        ranking: "15",
-        priority: "1"
-    },
-    {
-        highSchool: "Konya Anadolu Lisesi",
-        city: "Konya",
-        ranking: "16",
-        priority: "1"
-    },
-    {
-        highSchool: "Denizli Fen Lisesi",
-        city: "Denizli",
-        ranking: "17",
-        priority: "1"
-    },
-    {
-        highSchool: "Kayseri Fen Lisesi",
-        city: "Kayseri",
-        ranking: "18",
-        priority: "1"
-    },
-    {
-        highSchool: "Kütahya Anadolu Lisesi",
-        city: "Kütahya",
-        ranking: "19",
-        priority: "1"
-    },
-    {
-        highSchool: "Malatya Fen Lisesi",
-        city: "Malatya",
-        ranking: "20",
-        priority: "1"
+        priority: "1",
+        id: "1"
     }
-
 ];
 
 const HighSchoolsList: React.FC = () => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
-    const [selectedHighSchool, setSelectedHighSchool] = React.useState<any>(null);
+    const [selectedHighSchoolName, setSelectedHighSchoolName] = React.useState<any>("");
+    const [selectedHighSchoolID, setSelectedHighSchoolID] = React.useState<any>("");
     const [detailsModalOpened, setDetailsModalOpened] = React.useState(false);
     const [addModalOpened, setAddModalOpened] = React.useState(false);
+    const [cities, setCities] = React.useState(defaultCities);
+    const [highSchools, setHighSchools] = React.useState(defaultHighSchools);
 
-    function openDetails(highSchool: any): void {
-        setSelectedHighSchool(highSchool);
+    const getCities = useCallback(async () => {
+        const url = new URL(TOUR_URL + "/internal/analytics/cities");
+        url.searchParams.append("auth", userContext.authToken);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No city found.");
+        }
+
+        setCities(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    const getHighSchools = useCallback(async () => {
+        const url = new URL(TOUR_URL + "/internal/analytics/high_schools/all");
+        url.searchParams.append("auth", userContext.authToken);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No high school found.");
+        }
+
+        setHighSchools((JSON.parse(resText))["high_schools"]);
+    }, [userContext.authToken]);
+
+    React.useEffect(() => {
+        getCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+
+    React.useEffect(() => {
+        getHighSchools().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+
+    function openDetails(highSchoolName: string, highSchoolID: string): void {
+        setSelectedHighSchoolName(highSchoolName);
+        setSelectedHighSchoolID(highSchoolID);
         setDetailsModalOpened(true);
     }
 
@@ -172,7 +118,7 @@ const HighSchoolsList: React.FC = () => {
 
     const HighSchoolsTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <HighSchoolsTable data={data} search={selectedSearch} cities={selectedCities} openDetails={openDetails} addHighSchool={addHighSchool}/>
+        <HighSchoolsTable data={highSchools} search={selectedSearch} cities={selectedCities} openDetails={openDetails} addHighSchool={addHighSchool}/>
         <Space h="xs" />
     </Container>
 
@@ -187,12 +133,13 @@ const HighSchoolsList: React.FC = () => {
         <Space h="xl"/>
         {HighSchoolsTableContainer}
         <Space h="xl"/>
-        <Space h="xl"/>
-        {selectedHighSchool && (
+        <Space h="xl" />
+        {selectedHighSchoolID && (
             <HighSchoolDetails
                 opened={detailsModalOpened}
                 onClose={() => setDetailsModalOpened(false)}
-                highSchool={selectedHighSchool}
+                highSchoolName={selectedHighSchoolName}
+                highSchoolID={selectedHighSchoolID}
             />
         )}
         {

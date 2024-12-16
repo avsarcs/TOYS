@@ -1,8 +1,10 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/InputSelector.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
+import {notifications} from "@mantine/notifications";
 
 // Container styling
 const defaultContainerStyle = {
@@ -21,13 +23,17 @@ const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolEditProps {
     opened: boolean;
+    highSchoolID: string;
     currentName: string;
     currentCity: string;
     currentPriority: string;
     onClose: () => void;
 }
 
-const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, currentName, currentCity, currentPriority}) => {
+const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, onClose, currentName, currentCity, currentPriority}) => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(currentPriority);
@@ -40,23 +46,79 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
         }
     }, [opened, currentName, currentCity, currentPriority]);
 
-    const handleEditButtonClick = () => {
-        console.log(selectedName)
-        console.log(selectedCity)
-        console.log(selectedPriority)
+    const handleEditButtonClick = useCallback(async () => {
         if (!selectedName || !selectedCity || !selectedPriority) {
-            alert("Lütfen tüm detayları doldurun.");
+            notifications.show({
+                color: "red",
+                title: "Tüm bilgiler verilmedi!",
+                message: "Liseyi düzenleyebilmek için lütfen tüm bilgileri doldurun."
+            });
             return;
         }
         if (selectedName === currentName && selectedCity === currentCity && selectedPriority === currentPriority) {
-            alert("Lütfen düzenlemek için bir değişiklik yapın.");
+            notifications.show({
+                color: "red",
+                title: "Değişiklik yapılmadı!",
+                message: "Liseyi düzenleyebilmek için lütfen bir değişiklik yapın."
+            });
+            return;
+        }
+        if (!selectedName || !selectedCity || !selectedPriority) {
+            notifications.show({
+                color: "red",
+                title: "Tüm bilgiler verilmedi!",
+                message: "Lise ekleyebilmek için lütfen tüm bilgileri doldurun."
+            });
             return;
         }
 
-        // TODO: Edit the high school in the database
+        try {
+            const url = new URL(TOUR_URL + "/internal/analytics/high_schools/add");
+            url.searchParams.append("high_school_id", highSchoolID);
+            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("name", selectedName);
+            url.searchParams.append("priority", selectedPriority);
+            url.searchParams.append("city", selectedCity);
 
-        window.location.reload();
-    };
+            const res = await fetch(url, {
+                method: "POST",
+            });
+
+            if(res.ok) {
+                const token = await res.text();
+
+                if(token.length > 0) {
+                    notifications.show({
+                        color: "green",
+                        title: "Lise eklendi!",
+                        message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
+                    });
+                    window.location.reload();
+                }
+                else {
+                    notifications.show({
+                        color: "red",
+                        title: "Hay aksi!",
+                        message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+                    });
+                }
+            }
+            else {
+                notifications.show({
+                    color: "red",
+                    title: "Hay aksi!",
+                    message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+                });
+            }
+        }
+        catch (e) {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    }, [highSchoolID, selectedName, selectedCity, selectedPriority, userContext.authToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>

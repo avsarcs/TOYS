@@ -3,7 +3,7 @@ import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination,
 import {IconSelector, IconChevronDown, IconChevronUp, IconStarFilled, IconStarHalfFilled, IconStar} from '@tabler/icons-react';
 import ReviewButton from "./ReviewButton.tsx";
 
-function renderStars(rating: number | null, date: string, openDetails: (date: string) => void) {
+function renderStars(rating: number | null, date: string, openDetails: (ID: string) => void) {
     if(rating === null) {
         return <Text>Yok</Text>;
     }
@@ -124,7 +124,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
             <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.date}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.date, openDetails)}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.reviewID, openDetails)}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
         </Table.Tr>
     ));

@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolStudentDetails/BackButton.tsx";
 import DepartmentGraph from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolStudentDetails/DepartmentGraph.tsx";
 import StudentTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolStudentDetails/StudentTable.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -16,7 +17,7 @@ const defaultContainerStyle = {
 };
 
 //test data
-const data = {
+const defaultData = {
     "CS": {"total_count": 100, "50% scholarship": 75, "100% scholarship": 25},
     "EE": {"total_count": 150, "50% scholarship": 100, "100% scholarship": 50},
     "ME": {"total_count": 120, "50% scholarship": 80, "100% scholarship": 40},
@@ -30,17 +31,50 @@ const data = {
 };
 
 interface HighSchoolStudentDetailsProps {
-    year: number
-    name: string
+    year: number;
+    highSchoolName: string;
+    highSchoolID: string;
     opened: boolean;
     onClose: () => void;
 }
 
-const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year, name, opened, onClose}) => {
+const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year, highSchoolName, highSchoolID, opened, onClose}) => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
+    const [data, setData] = React.useState(defaultData);
+
+    const getData = useCallback(async (high_school_id: string, year: number) => {
+        const url = new URL(TOUR_URL + "/internal/analytics/high_schools/students");
+        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("high_school_id", high_school_id);
+        url.searchParams.append("year", year.toString());
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No high school found.");
+        }
+
+        setData(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    React.useEffect(() => {
+        getData(highSchoolID, year).catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
-            {year} Mezun Bilgisi: {name}
+            {year} Mezun Bilgisi: {highSchoolName}
         </Text>
     </Container>
 

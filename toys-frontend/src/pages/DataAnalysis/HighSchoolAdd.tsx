@@ -1,8 +1,10 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolAdd/InputSelector.tsx";
 import AddButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolAdd/AddButton.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
+import {notifications} from "@mantine/notifications";
 
 // Container styling
 const defaultContainerStyle = {
@@ -25,20 +27,69 @@ interface HighSchoolAddProps {
 }
 
 const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
     const [selectedName, setSelectedName] = React.useState<string | null>(null);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(null);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
 
-    const handleAddButtonClick = () => {
+    const handleAddButtonClick = useCallback(async () => {
         if (!selectedName || !selectedCity || !selectedPriority) {
-            alert("Lütfen tüm detayları doldurun.");
+            notifications.show({
+                color: "red",
+                title: "Tüm bilgiler verilmedi!",
+                message: "Lise ekleyebilmek için lütfen tüm bilgileri doldurun."
+            });
             return;
         }
 
-        // TODO: Add the high school to the database
+        try {
+            const url = new URL(TOUR_URL + "/internal/analytics/high_schools/add");
+            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("name", selectedName);
+            url.searchParams.append("priority", selectedPriority);
+            url.searchParams.append("city", selectedCity);
 
-        window.location.reload();
-    };
+            const res = await fetch(url, {
+                method: "POST",
+            });
+
+            if(res.ok) {
+                const token = await res.text();
+
+                if(token.length > 0) {
+                    notifications.show({
+                        color: "green",
+                        title: "Lise eklendi!",
+                        message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
+                    });
+                    window.location.reload();
+                }
+                else {
+                    notifications.show({
+                        color: "red",
+                        title: "Hay aksi!",
+                        message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+                    });
+                }
+            }
+            else {
+                notifications.show({
+                    color: "red",
+                    title: "Hay aksi!",
+                    message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+                });
+            }
+        }
+        catch (e) {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    }, [selectedName, selectedCity, selectedPriority, userContext.authToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
