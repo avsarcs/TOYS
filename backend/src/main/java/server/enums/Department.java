@@ -1,0 +1,21 @@
+package server.enums;
+
+public enum Department {
+    // TODO: add the ACTUAL departments
+    COMPUTER_ENGINEERING,
+    ELECTRICAL_ENGINEERING,
+    MECHANICAL_ENGINEERING,
+    CIVIL_ENGINEERING,
+    CHEMICAL_ENGINEERING,
+    PETROLEUM_ENGINEERING,
+    ARCHITECTURE,
+    BUSINESS,
+    LAW,
+    MEDICINE,
+    PHARMACY,
+    DENTISTRY,
+    NURSING,
+    ARTS,
+    EDUCATION,
+    MANAGEMENT,
+}
