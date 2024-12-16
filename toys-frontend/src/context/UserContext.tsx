@@ -32,7 +32,7 @@ const EMPTY_USER: User = {
         location: "",
         priority: undefined
       },
-      schedule: {
+      schedule: { schedule: {
         MONDAY: {
           _830_930: TimeSlotStatus.FREE,
           _930_1030: TimeSlotStatus.FREE,
@@ -110,6 +110,7 @@ const EMPTY_USER: User = {
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
         }
+      }
       },
       iban: "",
       bank: "",

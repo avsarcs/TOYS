@@ -58,7 +58,7 @@ export interface ProfileData{
   fullname: string,
   phone: string,
   highschool: HighschoolData,
-  schedule: ScheduleData,
+  schedule: ScheduleStub,
   iban: string,
   bank: string,
   major: string,
@@ -74,6 +74,9 @@ export interface ProfileData{
   advisor_offer: boolean
 }
 
+export interface ScheduleStub {
+  schedule: ScheduleData
+}
 export interface ScheduleData {
   MONDAY: DailyPlan,
   TUESDAY: DailyPlan,

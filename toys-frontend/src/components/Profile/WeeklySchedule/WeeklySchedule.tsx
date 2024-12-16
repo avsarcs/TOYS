@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import "./WeeklySchedule.css";
 import { ScrollArea, Title } from "@mantine/core";
-import { ProfileData, ScheduleData, DailyPlan} from "../../../types/data.ts";
+import { ProfileData, ScheduleData, DailyPlan, ScheduleStub} from "../../../types/data.ts";
 import { TimeSlotStatus } from "../../../types/enum.ts";
 import { UserContext } from "../../../context/UserContext.tsx";
 import { ProfileComponentProps } from "../../../types/designed.ts";
@@ -50,7 +50,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
     // Convert ScheduleData to a matrix for rendering
     const scheduleMatrix = days.map((day) =>
         times.map((time) =>
-            props.profile.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
+            props.profile.schedule.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
         )
     );
 
@@ -86,10 +86,12 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                 updatedSchedule[day][time as keyof DailyPlan] = schedule[rowIndex][colIndex] ? TimeSlotStatus.BUSY : TimeSlotStatus.FREE;
             });
         });
-
+        const updatedScheduleStub: ScheduleStub = {
+            schedule: updatedSchedule,
+        };
         const updatedProfile: ProfileData = {
             ...props.profile,
-            schedule: updatedSchedule,
+            schedule: updatedScheduleStub,
         };
 
         try {

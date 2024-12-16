@@ -14,7 +14,8 @@ const UpdateProfile: React.FC = () => {
     const [formData, setFormData] = useState({
         name: userContext.user.profile.fullname,
         email: userContext.user.profile.email,
-        id: userContext.user.profile.id,
+        phone: userContext.user.profile.phone,
+        description: userContext.user.profile.profile_description,
         highSchool: userContext.user.profile.highschool.name,
     });
 
@@ -122,7 +123,7 @@ const UpdateProfile: React.FC = () => {
 
             {/* Profile Fields */}
             <EditProfileField
-                label="Name"
+                label="İsim"
                 value={formData.name}
                 onChange={(value) => handleInputChange("name", value)}
                 editable
@@ -131,6 +132,18 @@ const UpdateProfile: React.FC = () => {
                 label="E-mail"
                 value={formData.email}
                 onChange={(value) => handleInputChange("email", value)}
+                editable
+            />
+            <EditProfileField
+                label="Telefon"
+                value={formData.phone}
+                onChange={(value) => handleInputChange("phone", value)}
+                editable            
+            />
+            <EditProfileField
+                label="Açıklama"
+                value={formData.description}
+                onChange={(value) => handleInputChange("description", value)}
                 editable
             />
             <DropdownBox

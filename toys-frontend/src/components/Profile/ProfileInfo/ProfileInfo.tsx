@@ -58,6 +58,8 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>İsim:</strong> {profile.fullname} </p>
                 <p><strong>E-Mail:</strong> {profile.email} </p>
                 <p><strong>ID:</strong> {profile.id}</p>
+                <p><strong>Telefon:</strong>{profile.phone}</p>
+                <p><strong>Açıklama:</strong> {profile.profile_description}</p>
                 {profile.role !== UserRole.DIRECTOR ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
                 {profile.role !== UserRole.DIRECTOR ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
             </div>
