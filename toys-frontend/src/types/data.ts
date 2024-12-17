@@ -113,6 +113,12 @@ export interface SimpleEventData {
   requested_times: string[],
 }
 
+export interface SimpleGuideData {
+  id: string,
+  name: string,
+  major: string,
+  experience: string,
+}
 interface Recipient {
   id: string;
   name: string;

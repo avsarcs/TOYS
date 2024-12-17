@@ -637,14 +637,14 @@ API endpoints:
 		/enroll # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour to enroll for
-				authToken: auth_token
+				auth: auth_token
 			method: post
 			response: -
 
 		/withdraw
 			parameters:
 				tid=tour_id // which tour to withdraw from
-				authToken: auth_token
+				auth: auth_token
 			method: post
 			response: -	
 
@@ -652,10 +652,18 @@ API endpoints:
 			parameters:
 				tid=tour_id // which tour to invite to
 				guid=guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
-				authToken: auth_token
+				auth: auth_token
 			method: post
 			response: -
 
+ !!!! ADDED REMOVING GUIDES
+		/remove # NEEDS TEST
+			parameters:
+				tid=tour_id // which tour to remove to
+				guid=guide_id[] // MULTIPLE GUIDES CAN BE REMOVED AT ONCE
+				auth: auth_token
+			method: post
+			response: -
 	/management
 		/timesheet (Requires Auth as Coordinator)
 			/hourly_rate
