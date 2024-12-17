@@ -651,7 +651,7 @@ API endpoints:
 		/invite # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour to invite to
-				guid=guide_id // who to invite
+				guid=guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
 				authToken: auth_token
 			method: post
 			response: -

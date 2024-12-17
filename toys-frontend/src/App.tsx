@@ -22,6 +22,7 @@ import EditProfilePage from "./pages/Profile/EditProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
+import AdvisorRequestModification from "./pages/AdvisorRequestModification/AdvisorRequestModification.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
