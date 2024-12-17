@@ -89,6 +89,7 @@
 {
     "event_type": "TOUR" | "FAIR"
 	"event_id": "id",
+	"event_status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 	"highschool": HighSchoolModel
 	// accepted_time field empty/null for tours AWAITING_MODIFICATION
 	"accepted_time": "2024-11-15T14:22:14Z",
