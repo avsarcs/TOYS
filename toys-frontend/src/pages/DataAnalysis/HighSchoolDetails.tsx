@@ -26,7 +26,7 @@ const defaultData = {
     "priority": 1, "ranking": 1, "city": "Yükleniyor...",
     "tours": [
         {
-            "date": "00/00/0000",
+            "date": "1970-01-01T00:00:00Z",
             "attendance": 1,
             "type": "Yükleniyor...",
             "reviewRating": null,

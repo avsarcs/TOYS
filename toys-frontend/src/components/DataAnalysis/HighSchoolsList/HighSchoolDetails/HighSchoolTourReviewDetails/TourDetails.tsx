@@ -16,7 +16,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({tourDate, guideNames, authorNa
             <Text style={{
                 fontSize: 'x-large',
                 marginLeft: '8px'
-            }}>{tourDate}</Text>
+            }}>{new Date(tourDate).toLocaleDateString('en-GB')}</Text>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <IconBrandSafari/>

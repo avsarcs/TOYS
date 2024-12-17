@@ -71,10 +71,7 @@ function sortData(
             if (sortBy === 'attendance' || sortBy === 'reviewRating') {
                 return Number(b[sortBy]) - Number(a[sortBy]);
             } else if (sortBy === 'date') {
-                const [dayB, monthB, yearB] = b.date.split('/').map(Number);
-                const [dayA, monthA, yearA] = a.date.split('/').map(Number);
-
-                return new Date(yearB, monthB - 1, dayB).getTime() - new Date(yearA, monthA - 1, dayA).getTime();
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
             } else {
                 return b[sortBy].localeCompare(a[sortBy]);
             }
@@ -83,9 +80,7 @@ function sortData(
         if (sortBy === 'attendance' || sortBy === 'reviewRating') {
             return Number(a[sortBy]) - Number(b[sortBy]);
         } else if (sortBy === 'date') {
-            const [dayA, monthA, yearA] = a.date.split('/').map(Number);
-            const [dayB, monthB, yearB] = b.date.split('/').map(Number);
-            return new Date(yearA, monthA - 1, dayA).getTime() - new Date(yearB, monthB - 1, dayB).getTime();
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
         } else {
             return a[sortBy].localeCompare(b[sortBy]);
         }
@@ -121,7 +116,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
 
     const rows = paginatedData.map((row) => (
         <Table.Tr key={row.date}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.date}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{new Date(row.date).toLocaleDateString('en-GB')}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.reviewID, openDetails)}</Table.Td>

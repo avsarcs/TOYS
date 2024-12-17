@@ -20,7 +20,7 @@ const defaultContainerStyle = {
 const defaultData = {
     "author": "Yükleniyor...",
     "email": "Yükleniyor...",
-    "date": "00/00/0000",
+    "date": "1970-01-01T00:00:00Z",
     "guides": ["Yükleniyor..."],
     "review": "Yükleniyor...",
     "reviewRating": 0
