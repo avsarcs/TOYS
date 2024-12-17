@@ -471,14 +471,29 @@ API endpoints:
 	    parameters:
 	        tid=tour_id // which tour is this for
 	        response=accept/deny // what is the response
+			accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
+			auth=auth_token
+			// accepted_time is only for when response=accept
 	        // bool value, True=accept
 	    method: post
-	    body: auth_token // auth token
+		response: 200 or 400
+		response_type: status code
+
+		/request_changes # Advisor will request changes for the tour from this endpoint
+			parameters:
+				tid=tour_id // which tour is this for
+				auth=auth_token
+			method: post
+			body: groupTourApplicationModel | individualTourApplicationModel
+			response: 200 or 400
+			response_type: status code
 
 	    /changes # NEEDS TEST
             parameters:
                 idt=identifier_token // to keep track of the request
                 response=accept/deny // accept or reject changes
+				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
+				// accepted_time is only for when response=accept
                 // bool value, True=accept
             method: post
             body: -
@@ -590,7 +605,7 @@ API endpoints:
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
-				status=status // which status to update to (ONGOING, FINISHED, CANCELLED)
+				status=status // which status to update to (ACCEPTED, REJECTED, TOYS_WANTS_CHANGE, APPLICANT_WANTS_CHANGE, AWAITING_CONFIRMATION)
 				authToken: auth_token
 			method: post
 			response: -
