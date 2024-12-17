@@ -21,6 +21,7 @@ const defaultUniversities = [
     {
         university: "Yükleniyor...",
         city: "Yükleniyor...",
+        id: "1",
     }
 ];
 
