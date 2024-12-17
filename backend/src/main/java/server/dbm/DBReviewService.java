@@ -1,8 +1,11 @@
 package server.dbm;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import server.enums.roles.Reviewee;
@@ -10,6 +13,8 @@ import server.models.review.DTO_GuideReview;
 import server.models.review.DTO_ReviewCreate;
 import server.models.review.ReviewRecord;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,7 +76,14 @@ public class DBReviewService {
     public void updateReviewRecords(Map<String, ReviewRecord> updatedVersion) {
         try {
             DocumentReference reference = firestore.collection("reviews").document("records");
-            reference.update("records", updatedVersion);
+            // Not sure about this line
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("records", updatedVersion),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            //reference.update("records", updatedVersion);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to update review records in database.");
@@ -89,6 +101,11 @@ public class DBReviewService {
                 uuid = UUID.randomUUID().toString();
             }
             data.put(uuid, review);
+            reference.set(
+                    mapper.convertValue(
+                        Collections.singletonMap("reviews", data),
+                        new TypeReference<HashMap<String, Object>>() {}
+                    ));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to add review from database.");

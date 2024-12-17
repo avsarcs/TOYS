@@ -13,6 +13,7 @@ import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
+import server.models.DTO.DTO_SimpleEvent;
 import server.models.people.details.ContactInfo;
 import server.models.time.ZTime;
 import server.models.people.GuideAssignmentRequest;
@@ -27,6 +28,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 @Service
 public class UserTourService {
@@ -82,7 +84,7 @@ public class UserTourService {
         return true;
     }
 
-    public List<TourRegistry> getTours(String authToken) {
+    public List<DTO_SimpleEvent> getTours(String authToken) {
         if (!JWTService.testToken.equals(authToken)) {
             // validate token
             if(!JWTService.getSimpleton().isValid(authToken)) {
@@ -99,7 +101,13 @@ public class UserTourService {
         // extract user id from token
         String userId = JWTService.getSimpleton().decodeUserID(authToken);
         // get tours from database
-        List<TourRegistry> tours = databaseEngine.tours.fetchTours().values().stream().toList();
+        List<DTO_SimpleEvent> tours = databaseEngine.tours
+                .fetchTours()
+                .values()
+                .stream()
+                .collect(ArrayList::new,
+                        (list, tour) -> list.add(DTO_SimpleEvent.fromEvent(tour)),
+                        ArrayList::addAll);
         // return tours
         return tours;
     }

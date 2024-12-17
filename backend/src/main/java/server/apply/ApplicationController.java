@@ -11,6 +11,7 @@ import server.models.events.TourApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
+@CrossOrigin
 public class ApplicationController {
     @Autowired
     ApplicationService applicationService;
@@ -51,6 +52,7 @@ public class ApplicationController {
 
     @PostMapping("/apply/tour/request_changes")
     public void requestChanges(@RequestBody Request changeRequest) {
+        // TODO: This should be delegated to the ApplicationService
         requestService.addRequest(changeRequest);
     }
 

@@ -57,7 +57,7 @@ public class DTO_IndividualTour {
             }
         }
         dto.setGuides(guides);
-        dto.setType(tourRegistry.getType().name().toLowerCase());
+        dto.setType(tourRegistry.getTour_type().name().toLowerCase());
         dto.setRequested_times(tourRegistry.getRequested_hours());
         dto.setAccepted_time(tourRegistry.getAccepted_time());
         dto.setVisitor_count(tourRegistry.getExpected_souls());

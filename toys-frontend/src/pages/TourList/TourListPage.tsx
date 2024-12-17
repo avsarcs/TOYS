@@ -1,30 +1,31 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {
   Box,
   Text,
   Divider,
-  Flex,
   Group,
   Space,
   Stack,
   Title,
   Checkbox,
   Chip,
-  Button, Container, Paper, Pagination, useMatches, ScrollArea, Center
+  Button, Container, Pagination, useMatches, ScrollArea, Autocomplete
 } from "@mantine/core";
 import {DateInput} from "@mantine/dates";
 import {UserContext} from "../../context/UserContext.tsx";
-import {Link} from "react-router-dom";
+import {IconSearch} from "@tabler/icons-react";
+import ListItem from "../../components/TourList/ListItem.tsx";
 
-const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/isvalid");
+const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
 
 const TourListPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
 
   const [tours, setTours] = useState([]);
+  const [schoolName, setSchoolName] = useState("");
 
-  const getTours = async () => {
+  const getTours = useCallback(async () => {
     const toursUrl = new URL(TOURS_URL);
     toursUrl.searchParams.append("auth", userContext.authToken);
 
@@ -33,20 +34,26 @@ const TourListPage: React.FC = () => {
         method: "GET"
       });
 
-    setTours(await res.json());
-  }
+    if(res.ok) {
+      setTours(await res.json());
+    }
+  }, [userContext.authToken]);
 
   useEffect(() => {
     getTours().catch(console.error);
 
     return () => { setTours([]); }
-  }, [userContext.authToken]);
+  }, [getTours]);
 
   const listHeight = useMatches({
     base: "",
     sm: "",
     md: "50vh",
   });
+
+  const listItems = useMemo(() =>
+      tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
+    [tours]);
 
   return (
     <>
@@ -64,7 +71,20 @@ const TourListPage: React.FC = () => {
             Filtre
           </Title>
         </Box>
-        <Group pt="lg" ml="lg" pb="lg" p="xl" className="bg-gray-100">
+        <Group grow  ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
+          <Text size="md" fw={700} className="flex-grow-0">
+            Okul:
+          </Text>
+          <Autocomplete
+            leftSection={<IconSearch />}
+            placeholder="Okul ismi..."
+            limit={7}
+            value={schoolName}
+            data={[""]}
+            onChange={setSchoolName}/>
+          <Button className="flex-grow-0" onClick={() => { setStatusFilter([]); }}>Ara</Button>
+        </Group>
+        <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
           <Text size="md" fw={700}>
             Durum:
           </Text>
@@ -79,9 +99,9 @@ const TourListPage: React.FC = () => {
               <Chip size="lg" color="blue" variant="outline" value="7">İptal Edildi</Chip>
             </Group>
           </Chip.Group>
-          <Button size="md" onClick={() => { setStatusFilter([]); }}>Temizle</Button>
+          <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
         </Group>
-        <Group pt="lg" ml="lg" pb="lg" p="xl" className="bg-gray-200" grow preventGrowOverflow={false} wrap="wrap">
+        <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100" grow preventGrowOverflow={false} wrap="wrap">
           <Group>
             <Text size="md" fw={700}>
               Başvuru Tarihi:
@@ -107,33 +127,12 @@ const TourListPage: React.FC = () => {
       <Container p="0" fluid bg="white">
         <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
           <Stack gap="xs" className="overflow-x-clip" mah="20%">
-            <Paper withBorder shadow="xs" radius="0" className="bg-gray-100" component={Link} to={"/tour/0"}>
-              <Box p="0" className="transition-transform hover:translate-x-1.5 hover:cursor-pointer">
-                <Flex direction="row">
-                  <Box className="flex-grow flex-shrink basis-1/2 bg-gray-100" p="lg">A Lisesi</Box>
-                  <Center className="flex-grow flex-shrink basis-1/4 bg-gray-50" p="lg">31 Kişi</Center>
-                  <Center className="flex-grow flex-shrink basis-1/4 bg-gray-100" p="lg">
-                    <Text fw={900} c="green">Kabul Edildi</Text>
-                  </Center>
-                </Flex>
-              </Box>
-            </Paper>
-            <Paper withBorder shadow="xs" radius="0" className="bg-gray-100" component={Link} to={"/tour/0"}>
-              <Box p="0" className="transition-transform hover:translate-x-1.5 hover:cursor-pointer">
-                <Flex direction="row">
-                  <Box className="flex-grow flex-shrink basis-1/2 bg-gray-100" p="lg">A Lisesi</Box>
-                  <Center className="flex-grow flex-shrink basis-1/4 bg-gray-50" p="lg">31 Kişi</Center>
-                  <Center className="flex-grow flex-shrink basis-1/4 bg-gray-100" p="lg">
-                    <Text fw={900} c="red">Reddedildi</Text>
-                  </Center>
-                </Flex>
-              </Box>
-            </Paper>
+            {listItems}
             <Space h="xs" />
           </Stack>
         </ScrollArea.Autosize>
         <Divider />
-        <Pagination p="md" size="lg" total={31}></Pagination>
+        <Pagination p="md" size="md" total={31}></Pagination>
       </Container>
     </>
   )

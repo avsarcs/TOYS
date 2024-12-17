@@ -64,7 +64,7 @@ public class UserProfileService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
         }
 
-        if (id != null) {
+        if (!id.isEmpty()) {
             // check if user match with the auth token
             // If not, return 442
             if (!JWTService.getSimpleton().matchUsername(authToken, id)) {

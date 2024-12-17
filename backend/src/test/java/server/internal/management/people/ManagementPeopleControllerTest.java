@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import server.auth.JWTService;
-import server.enums.ApplicationStatus;
+import server.enums.status.ApplicationStatus;
 import server.models.Application;
-import server.models.GuideApplication;
+import server.models.people.GuideApplication;
 import server.models.people.Guide;
 
 import java.util.List;
