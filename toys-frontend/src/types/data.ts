@@ -58,7 +58,7 @@ export interface ProfileData{
   updated_at: string,
   fullname: string,
   phone: string,
-  highschool: HighschoolData,
+  highschool: HighschoolDataForProfile,
   schedule: ScheduleStub,
   iban: string,
   bank: string,
@@ -74,7 +74,10 @@ export interface ProfileData{
   profile_description: string,
   advisor_offer: boolean
 }
-
+export interface HighschoolDataForProfile {
+  id: string,
+  name: string
+}
 export interface ScheduleStub {
   schedule: ScheduleData
 }
@@ -98,6 +101,7 @@ export interface DailyPlan {
   _1430_1530: TimeSlotStatus,
   _1530_1630: TimeSlotStatus,
   _1630_1730: TimeSlotStatus,
+  _1730_1830: TimeSlotStatus
 }
 
 export interface SimpleEventData {

@@ -30,8 +30,6 @@ const EMPTY_USER: User = {
       highschool: {
         id: "",
         name: "",
-        location: "",
-        priority: undefined
       },
       schedule: { schedule: {
         MONDAY: {
@@ -44,6 +42,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         },
         TUESDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -55,6 +54,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         },
         WEDNESDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -66,6 +66,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         },
         THURSDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -77,6 +78,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         },
         FRIDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -88,6 +90,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         },
         SATURDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -99,6 +102,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         },
         SUNDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -110,6 +114,7 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
+          _1730_1830: TimeSlotStatus.FREE
         }
       }
       },

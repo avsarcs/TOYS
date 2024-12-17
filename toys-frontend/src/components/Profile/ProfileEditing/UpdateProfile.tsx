@@ -106,7 +106,7 @@ const UpdateProfile: React.FC = () => {
 
             const response = await fetch(url.toString(), {
                 method: "POST",
-                body: formDataToSend,
+                body: JSON.stringify({...formDataToSend})
             });
 
             if (!response.ok) {

@@ -30,6 +30,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         "14:30 - 15:30",
         "15:30 - 16:30",
         "16:30 - 17:30",
+        "17:30 - 18:30",
     ];
 
     // Keys for accessing schedule data
@@ -43,6 +44,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         "_1430_1530",
         "_1530_1630",
         "_1630_1730",
+        "_1730_1830",
     ];
 
     const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
@@ -107,7 +109,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    updatedProfile
+                    ...updatedProfile
                 }),
             });
 
@@ -170,7 +172,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                                 <td>{time}</td>
                                 {days.map((_, rowIndex) => (
                                     <td
-                                        key={colIndex}
+                                        key={colIndex*10 + rowIndex}
                                         
                                         className={schedule[rowIndex][colIndex] ? "busy" : "available"}
                                         onClick={() => toggleCell(rowIndex, colIndex)}

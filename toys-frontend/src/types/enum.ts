@@ -131,6 +131,6 @@ export enum DayOfTheWeek {
 }
 
 export enum TimeSlotStatus {
-  FREE = "Free",
-  BUSY = "Busy"
+  FREE = "FREE",
+  BUSY = "BUSY"
 }
