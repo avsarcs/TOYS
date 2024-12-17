@@ -1,9 +1,11 @@
-import React from "react";
-import {Space, Container, Text} from '@mantine/core';
+import React, {useCallback, useContext} from "react";
+import {Container, Space, Text} from '@mantine/core';
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
 import {useLocation} from 'react-router-dom';
+import {UserContext} from "../../context/UserContext.tsx";
+import {notifications} from '@mantine/notifications';
 
 // Container styling
 const defaultContainerStyle = {
@@ -17,45 +19,226 @@ const defaultContainerStyle = {
 };
 
 //test data
-const universities: string[] = ["Koç", "ODTÜ", "İYTE"];
-const departments = {"Bilkent": ["CS", "EE", "IE"], "Koç": ["CS", "Psychology", "IE"], "ODTÜ": ["CS", "EE", "IE"], "İYTE": ["CENG", "EE", "Architecture"]};
-const years: string[] = ["2018", "2019", "2020"];
-const data = {
-    "2020": [
-        { title: "%0 Burs", school1Name: "Bilkent", school1Min: "1600", school1Max: "6000", school2Name: "ODTÜ", school2Min: "-", school2Max: "-" },
-        { title: "%50 Burs", school1Name: "Bilkent", school1Min: "400", school1Max: "1600", school2Name: "ODTÜ", school2Min: "-", school2Max: "-" },
-        { title: "%100 Burs", school1Name: "Bilkent", school1Min: "1", school1Max: "400", school2Name: "ODTÜ", school2Min: "1", school2Max: "1000" }
+const defaultUniversities: {name: string, id: string}[] = [
+    { name: "Yükleniyor...", id: "1" },
+];
+const defaultBilkentDepartments = ["Yükleniyor..."];
+const defaultOtherDepartments = ["Yükleniyor..."];
+const defaultYears: string[] = ["Yükleniyor..."];
+const defaultBilkentData = {
+    "Yükleniyor...": [
+        {title: "Yükleniyor...", min: "0", max: "1"},
+        {title: "Yükleniyor....", min: "2", max: "3"},
     ],
-    "2019": [
-        { title: "%0 Burs", school1Name: "Bilkent", school1Min: "1600", school1Max: "6000", school2Name: "ODTÜ", school2Min: "-", school2Max: "-" },
-        { title: "%50 Burs", school1Name: "Bilkent", school1Min: "400", school1Max: "1600", school2Name: "ODTÜ", school2Min: "-", school2Max: "-" },
-        { title: "%100 Burs", school1Name: "Bilkent", school1Min: "1", school1Max: "400", school2Name: "ODTÜ", school2Min: "1", school2Max: "1000" }
-    ],
-    "2018": [
-        { title: "%0 Burs", school1Name: "Bilkent", school1Min: "1600", school1Max: "6000", school2Name: "ODTÜ", school2Min: "-", school2Max: "-" },
-        { title: "%50 Burs", school1Name: "Bilkent", school1Min: "40000", school1Max: "1600", school2Name: "ODTÜ", school2Min: "-", school2Max: "-" },
-        { title: "%100 Burs", school1Name: "Bilkent", school1Min: "1", school1Max: "400", school2Name: "ODTÜ", school2Min: "1", school2Max: "1000" }
+}
+const defaultOtherData = {
+    "Yükleniyor...": [
+        {title: "Yükleniyor...", min: "4", max: "5"},
+        {title: "Yükleniyor....", min: "6", max: "7"},
     ]
-};
+}
 
 const Comparison: React.FC = () => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const otherUniversity = params.get('otherUniversity');
+    const otherUniversityID = params.get('otherUniversity');
 
+    const [universities, setUniversities] = React.useState<{ name: string, id: string }[]>(defaultUniversities);
+    const otherUniversity = universities.find(u => u.id === otherUniversityID) || null;
+
+    const [bilkentDepartments, setBilkentDepartments] = React.useState<string[]>(defaultBilkentDepartments);
+    const [otherDepartments, setOtherDepartments] = React.useState<string[]>(defaultOtherDepartments);
+    const [years, setYears] = React.useState<string[]>(defaultYears);
+    const [bilkentData, setBilkentData] = React.useState<{ [key: string]: { title: string, min: string, max: string }[] }>(defaultBilkentData);
+    const [otherData, setOtherData] = React.useState<{ [key: string]: { title: string, min: string, max: string }[] }>(defaultOtherData);
+    const [data, setData] = React.useState<{ [key: string]: { title: string, school1Name: string, school1Min: string, school1Max: string, school2Name: string, school2Min: string, school2Max: string }[] }>({});
     const [selectedBilkentDepartment, setSelectedBilkentDepartment] = React.useState<string | null>(null);
-    const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<string | null>(otherUniversity);
+    const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<{ name: string, id: string } | null>(otherUniversity);
     const [selectedOtherDepartment, setSelectedOtherDepartment] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        if(otherUniversityID && !otherUniversity) {
+            notifications.show({
+                color: "red",
+                title: "Üniversite bulunamadı.",
+                message: "Belirtilen üniversite bulunamadı. Lütfen tekrar seçim yapın.",
+            });
+        }
+    }, [otherUniversityID]);
+
+    const getUniversities = useCallback(async () => {
+        const url = new URL(TOUR_URL + "/internal/analytics/universities/all_simple");
+        url.searchParams.append("auth", userContext.authToken);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No university found.");
+        }
+
+        setUniversities(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    const getBilkentDepartments = useCallback(async () => {
+        const url = new URL(TOUR_URL + "/internal/analytics/universities/departments");
+        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("university_id", "bilkent");
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setBilkentDepartments(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    const getOtherUniversityDepartments = useCallback(async (university_id: string) => {
+        const url = new URL(TOUR_URL + "/internal/analytics/departments");
+        url.searchParams.append("auth_token", userContext.authToken);
+        url.searchParams.append("university_id", university_id);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setOtherDepartments(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    const getBilkentData = useCallback(async (department_name: string, university_id: string) => {
+        const url = new URL(TOUR_URL + "/internal/analytics/details");
+        url.searchParams.append("auth_token", userContext.authToken);
+        url.searchParams.append("university_id", university_id);
+        url.searchParams.append("department_name", department_name);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setBilkentData(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    const getOtherData = useCallback(async (department_name: string, university_id: string) => {
+        const url = new URL(TOUR_URL + "/internal/analytics/details");
+        url.searchParams.append("auth_token", userContext.authToken);
+        url.searchParams.append("university_id", university_id);
+        url.searchParams.append("department_name", department_name);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setOtherData(JSON.parse(resText));
+    }, [userContext.authToken]);
 
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
-        requestNewData();
-    }, [selectedBilkentDepartment, selectedOtherUniversity, selectedOtherDepartment]);
+        getUniversities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+    React.useEffect(() => {
+        getBilkentDepartments().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+    React.useEffect(() => {
+        if (selectedOtherUniversity) {
+            getOtherUniversityDepartments(selectedOtherUniversity.id).catch((reason) => {
+                console.error(reason);
+            });
+        }
+    }, [selectedOtherUniversity]);
+    React.useEffect(() => {
+        if (selectedBilkentDepartment) {
+            getBilkentData(selectedBilkentDepartment, "1").catch((reason) => {
+                console.error(reason);
+            });
+        }
+    }, [selectedBilkentDepartment]);
+    React.useEffect(() => {
+        if (selectedOtherDepartment && selectedOtherUniversity) {
+            getOtherData(selectedOtherDepartment, selectedOtherUniversity.id).catch((reason) => {
+                console.error(reason);
+            });
+        }
+    }, [selectedOtherDepartment]);
+    React.useEffect(() => {
+        const commonYears = Object.keys(bilkentData).filter(year => Object.keys(otherData).includes(year));
+        setYears(commonYears);
 
-    // Function to run when any state variable changes
-    const requestNewData = () => {
-        // Handle data change
-    };
+        const combinedData: { [key: string]: { title: string, school1Name: string, school1Min: string, school1Max: string, school2Name: string, school2Min: string, school2Max: string }[] } = {};
+        const school1Name = "Bilkent";
+        const school2Name = selectedOtherUniversity ? selectedOtherUniversity["name"] : "-";
+        const titles = [...new Set([...Object.values(bilkentData).flat().map(item => item.title), ...Object.values(otherData).flat().map(item => item.title)])];
+
+        commonYears.forEach(year => {
+            combinedData[year] = [];
+
+            titles.forEach(title => {
+                const school1Min = bilkentData[year].find(item => item.title === title)?.min || "-";
+                const school1Max = bilkentData[year].find(item => item.title === title)?.max || "-";
+                const school2Min = otherData[year].find(item => item.title === title)?.min || "-";
+                const school2Max = otherData[year].find(item => item.title === title)?.max || "-";
+
+                combinedData[year].push({
+                    title,
+                    school1Name,
+                    school1Min,
+                    school1Max,
+                    school2Name,
+                    school2Min,
+                    school2Max
+                });
+            });
+        });
+
+        setData(combinedData);
+    }, [bilkentData, otherData]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
@@ -67,8 +250,8 @@ const Comparison: React.FC = () => {
         <Space h="xs" />
         <ComparisonSelector
             universities={universities}
-            bilkentDepartments={departments["Bilkent"]}
-            otherDepartments={departments}
+            bilkentDepartments={bilkentDepartments}
+            otherDepartments={otherDepartments}
             setSelectedBilkentDepartment={setSelectedBilkentDepartment}
             setSelectedOtherUniversity={setSelectedOtherUniversity}
             setSelectedOtherDepartment={setSelectedOtherDepartment}
