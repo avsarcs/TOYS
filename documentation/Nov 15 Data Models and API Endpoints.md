@@ -452,11 +452,7 @@ API endpoints:
 			tour_id=2590545wdge
 			auth = auth_token
 		method: get
-		response: {
-			"average": 5.67,
-			"count": 25
-			"reviews": ReviewModel[]
-		}
+		response: ReviewModel
 		description: Only return reviews with status ACCEPTED and non-empty bodies.
 		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
