@@ -417,6 +417,20 @@ API endpoints:
 				passkey: passkey
 			body: groupTourApplicationModel | individualTourApplicationModel
 			response: -
+
+		/respond_changes # The 
+			method: post
+			parameters:
+				tour-id: tourID
+				passkey: passkey
+				response=accept/deny // accept or reject changes
+				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
+				// You MUST check that accepted_time is within the offered times of the Advisor.
+				// accepted_time is only for when response=accept
+                // bool value, True=accept
+			response: 200 or 400
+			response_type: status code
+
 	/fair #
 		method: post
 		body: fairApplicationModel
@@ -484,15 +498,18 @@ API endpoints:
 				tid=tour_id // which tour is this for
 				auth=auth_token
 			method: post
-			body: groupTourApplicationModel | individualTourApplicationModel
+			body: {
+				"requested_times": []
+			}
 			response: 200 or 400
 			response_type: status code
 
-	    /changes # NEEDS TEST
+	    /changes # Advisor responds to the Applicant's change request from this endpoint
             parameters:
                 idt=identifier_token // to keep track of the request
                 response=accept/deny // accept or reject changes
 				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
+				// You MUST check that accepted_time is within the offered times of the Applicant.
 				// accepted_time is only for when response=accept
                 // bool value, True=accept
             method: post
