@@ -5,6 +5,7 @@ import ComparisonButton from "./ComparisonButton.tsx";
 
 interface RowData {
     university: string;
+    id: string;
     city: string;
 }
 
@@ -107,7 +108,7 @@ const RivalsTable: React.FC<RivalsTableProps> = ({data, search, cities}) => {
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.city}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
                 <ComparisonButton
-                    university={row.university}
+                    universityID={row.id}
                 />
             </Table.Td>
         </Table.Tr>
@@ -139,9 +140,11 @@ const RivalsTable: React.FC<RivalsTableProps> = ({data, search, cities}) => {
                             </Text>
                         </Th>
                         <Table.Th style={{padding: 0, textAlign: "center"}}>
-                            <Text size={"xl"}>
-                                Karşılaştır
-                            </Text>
+                            <Group justify="space-between">
+                                <Text fw={500} fz="sm">
+                                    {""}
+                                </Text>
+                            </Group>
                         </Table.Th>
                     </Table.Tr>
                 </Table.Tbody>
