@@ -518,6 +518,11 @@ API endpoints:
             response: -
 
 /internal (Requires Auth)
+	/majors
+		method: get
+		response: string array of the Major enums
+		response_type:json
+		
 	/user
 		/guides
 			parameters:

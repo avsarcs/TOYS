@@ -7,6 +7,8 @@ import { IndividualApplication } from '../../types/designed';
 import isEmail from 'validator/lib/isEmail'
 import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
+import { useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -14,17 +16,23 @@ import IndividualInfoStage from '../../components/TourApplication/IndividualInfo
 import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import MajorSelectionStage from '../../components/TourApplication/MajorSelectionStage';
 import IndividualNotesStage from '../../components/TourApplication/IndividualNotesStage';
+const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
 
 
 const IndividualTourApplication: React.FC = () => {
 
+    const userContext = useContext(UserContext);
+
     const [applicationInfo, setApplicationInfo] = useState<IndividualApplication>({
-        "highschool_name": "",
+        "highschool": {
+            "id": "id of the highschool", "name": "Ankara Fen", "location": "Ankara", "priority": 1
+        },
         "requested_times": [],
         "requested_majors": ["", "", ""],
         "visitor_count": -1,
         "applicant": {
             "fullname": "",
+            "role": "student",
             "email": "",
             "phone": "",
             "notes": ""
@@ -85,7 +93,7 @@ const IndividualTourApplication: React.FC = () => {
         const firstStageFields = ["fullname", "email", "phone"]
         for (const field of firstStageFields) {
             // @ts-expect-error key coming from applicationInfo, there will be no conflict
-            if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool_name)) {
+            if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool.name)) {
 
                 stagePass = false
                 setWarnings((warnings) => ({
@@ -167,24 +175,40 @@ const IndividualTourApplication: React.FC = () => {
     const validateStage4 = () => {
         if (applicationInfo.visitor_count < 1) {
             setWarnings((warnings) => ({
-              ...warnings,
-              "no_student_count": true
+                ...warnings,
+                "no_student_count": true
             }))
             return false
-          }
-          else {
+        }
+        else {
             setWarnings((warnings) => ({
-              ...warnings,
-              "no_student_count": false
+                ...warnings,
+                "no_student_count": false
             }))
             return true
-          }
+        }
     }
 
     const navigate = useNavigate()
-    // Placeholder function
-    const attemptSubmitForm = () => {
-        // Do whatever the fuck you need to submit applicationInfo to the backend.
+
+    const attemptSubmitForm = async () => {
+        // Do whatever you need to submit applicationInfo to the backend.
+        if (validateStage3()) {
+
+            const applicationUrl = new URL(TOUR_APPLICATION_URL)
+            
+            const res = await fetch(applicationUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(applicationInfo)
+            })
+      
+            if (res.status == 200)
+              navigate("/application-success")
+          }
+
         if (validateStage4())
             navigate("/application-success")
     }

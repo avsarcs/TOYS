@@ -31,7 +31,7 @@ export interface IndividualApplication {
 }
 
 export interface GroupApplication {
-  highschool_name: string,
+  highschool: HighschoolData,
   requested_times: string[],
   visitor_count: number,
   applicant: {

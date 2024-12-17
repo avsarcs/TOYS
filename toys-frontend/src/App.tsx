@@ -55,10 +55,10 @@ function App() {
             <Route path="/universitieslist" element={<RequiresLogin children={<UniversitiesList />}/>}/>
             <Route path="/rivalslist" element={<RequiresLogin children={<RivalsList />}/>} />
             <Route path="/highschoolslist" element={<RequiresLogin children={<HighSchoolsList />}/>} />
-            <Route path="bilkentstudentdetails" element={<RequiresLogin children={<BilkentStudentDetails />}/>} />
-            <Route path="/group-tour-application" element={<RequiresLogin children={<GroupTourApplication />}/>} />
-            <Route path="/individual-tour-application" element={<RequiresLogin children={<IndividualTourApplication />}/>} />
-            <Route path="/application-success" element={<RequiresLogin children={<ApplicationSuccess />}/>}/>
+            <Route path="/bilkentstudentdetails" element={<RequiresLogin children={<BilkentStudentDetails />}/>} />
+            <Route path="/group-tour-application" element={<GroupTourApplication />} />
+            <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
+            <Route path="/application-success" element={<ApplicationSuccess />}/>
             <Route path="/toys-applications" element={<RequiresLogin children={<ToysApplications />}/>} />
             <Route path="/trainee-application-details/:application_id" element={<RequiresLogin children={<TraineeApplicationDetails />}/>}/>
             <Route path="/advisor-offers" element={<RequiresLogin children={<AdvisorOffers />}/>} />
