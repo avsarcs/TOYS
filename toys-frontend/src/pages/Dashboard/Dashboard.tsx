@@ -28,11 +28,6 @@ const Dashboard: React.FC = () => {
           {value: DashboardCategory.GUIDE_ASSIGNED, label: DashboardCategoryText.GUIDE_ASSIGNED},
           {value: DashboardCategory.PENDING_MODIFICATION, label: DashboardCategoryText.PENDING_MODIFICATION}
         ]
-      case UserRole.COORDINATOR:
-      case UserRole.DIRECTOR:
-        return ([
-          {value: DashboardCategory.GUIDE_APPLICATIONS, label: DashboardCategoryText.GUIDE_APPLICATIONS}
-        ]);
       default:
         return []
     }

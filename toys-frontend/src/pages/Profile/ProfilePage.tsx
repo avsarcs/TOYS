@@ -3,7 +3,7 @@ import ProfileInfo from "../../components/Profile/ProfileInfo/ProfileInfo.tsx";
 import WeeklySchedule from "../../components/Profile/WeeklySchedule/WeeklySchedule.tsx";
 import {Box, Divider, Flex, Space, Title} from "@mantine/core";
 import {UserContext} from "../../context/UserContext.tsx";
-import {UserRoleText} from "../../types/enum.ts";
+import {UserRoleText, UserRole} from "../../types/enum.ts";
 import { useParams } from "react-router-dom";
 const PROFILE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile");
 
@@ -79,7 +79,7 @@ const ProfilePage: React.FC = () =>
 
             >
                 <ProfileInfo profile={profile}/>
-                <WeeklySchedule profile={profile}/>
+                {(userContext.user.role === UserRole.GUIDE || userContext.user.role === UserRole.ADVISOR) ? <WeeklySchedule profile={profile}/> : null}
             </Flex>
         </Box>
     </div>);

@@ -59,16 +59,16 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>ID:</strong> {profile.id}</p>
                 <p><strong>Telefon:</strong>{profile.phone}</p>
                 <p><strong>Açıklama:</strong> {profile.profile_description}</p>
-                {profile.role !== UserRole.DIRECTOR ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
-                {profile.role !== UserRole.DIRECTOR ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR)  ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
             </div>
             <div className="toys-info">
                 <Title order={5} className="text-blue-700 font-bold font-main">
                     TOYS'a Dair Bilgiler
                 </Title>
                 <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
-                <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p>
-                <p><strong>Deneyim:</strong> {profile.experience} </p>
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p> : null}
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
             </div>
             <div className = "button-group">
                 {profileId === undefined ? <div className="button">
