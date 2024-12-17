@@ -410,14 +410,12 @@ API endpoints:
 		method: get
 		response: type of application
 
-        /individual #
-            method: post
-            body: groupTourApplicationModel | individualTourApplicationModel
-            response: -
-
 		/request_changes #NEEDS TEST
 			method: post
-			body: tourChangeRequestModelReviewTourDetail
+			parameters:
+				tour-id: tourID
+				passkey: passkey
+			body: groupTourApplicationModel | individualTourApplicationModel
 			response: -
 	/fair #
 		method: post
