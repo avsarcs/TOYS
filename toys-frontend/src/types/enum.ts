@@ -32,21 +32,35 @@ export enum UserRoleText {
 }
 
 export enum Department {
-  COMPUTER_ENGINEERING = "Computer Engineering",
-  ELECTRICAL_ENGINEERING = "Electrical Engineering",
-  MECHANICAL_ENGINEERING = "Mechanical Engineering",
-  CIVIL_ENGINEERING = "Civil Engineering",
-  CHEMICAL_ENGINEERING = "Chemical Engineering",
-  PETROLEUM_ENGINEERING = "Petro Engineering",
-  ARCHITECTURE = "Architecture",
-  BUSINESS = "Business",
-  LAW = "Law",
-  MEDICINE = "Medicine",
-  PHARMACY = "Pharmacy",
-  DENTISTRY = "Dentistry",
-  NURSING = "Nursing",
-  ARTS = "Arts",
-  EDUCATION = "Education",
+  ARCHITECTURE = "Mimarlık",
+  COMMUNICATION_AND_DESIGN = "İletişim ve Tasarım",
+  FINE_ARTS = "Güzel Sanatlar",
+  GRAPHIC_DESIGN = "Grafik Tasarım",
+  INTERIOR_ARCHITECTURE_AND_ENVIRONMENTAL_DESIGN = "İç Mimarlık ve Çevre Tasarımı",
+  URBAN_DESIGN_AND_LANDSCAPE_ARCHITECTURE = "Kentsel Tasarım ve Peyzaj Mimarisi",
+  MANAGEMENT = "İşletme",
+  ECONOMICS = "Ekonomi",
+  INTERNATIONAL_RELATIONS = "Uluslararası İlişkiler",
+  POLITICAL_SCIENCE_AND_PUBLIC_ADMINISTRATION = "Siyaset Bilimi ve Kamu Yönetimi",
+  PSYCHOLOGY = "Psikoloji",
+  COMPUTER_ENGINEERING = "Bilgisayar Mühendisliği",
+  ELECTRICAL_AND_ELECTRONICS_ENGINEERING = "Elektrik ve Elektronik Mühendisliği",
+  INDUSTRIAL_ENGINEERING = "Endüstri Mühendisliği",
+  MECHANICAL_ENGINEERING = "Makine Mühendisliği",
+  AMERICAN_CULTURE_AND_LITERATURE = "Amerikan Kültürü ve Edebiyatı",
+  ARCHAEOLOGY = "Arkeoloji",
+  ENGLISH_LANGUAGE_AND_LITERATURE = "İngiliz Dili ve Edebiyatı",
+  PHILOSOPHY = "Felsefe",
+  CHEMISTRY = "Kimya",
+  MATHEMATICS = "Matematik",
+  MOLECULAR_BIOLOGY_AND_GENETICS = "Moleküler Biyoloji ve Genetik",
+  PHYSICS = "Fizik",
+  MUSIC = "Müzik",
+  INFORMATION_SYSTEMS_AND_TECHNOLOGIES = "Bilişim Sistemleri ve Teknolojileri",
+  TOURISM_AND_HOTEL_MANAGEMENT = "Turizm ve Otel İşletmeciliği",
+  HISTORY = "Tarih",
+  TRANSLATION_AND_INTERPRETATION = "Mütercim-Tercümanlık",
+  TURKISH_LITERATURE = "Türk Edebiyatı"
 }
 
 export enum EventType {
@@ -67,8 +81,6 @@ export enum DashboardCategory {
   GUIDE_ASSIGNED = "GUIDE_ASSIGNED",
   GUIDELESS = "GUIDELESS",
   PENDING_MODIFICATION = "PENDING_MODIFICATION",
-  GUIDE_APPLICATIONS = "GUIDE_APPLICATIONS",
-  ADVISOR_APPLICATIONS = "ADVISOR_APPLICATIONS"
 }
 
 export enum DashboardCategoryText {
@@ -79,7 +91,6 @@ export enum DashboardCategoryText {
   GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
   GUIDELESS = "Rehber Atanmamış Etkinlikler",
   PENDING_MODIFICATION = "Değişim Bekleyen Turlar",
-  GUIDE_APPLICATIONS = "Rehber Başvuruları",
 }
 
 export enum ApplicantRole {
@@ -98,26 +109,33 @@ export enum TourTypeText {
 }
 
 export enum TourStatus {
-  AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION",
-  APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
-  TOYS_WANTS_CHANGE = "TOYS_WANTS_CHANGE",
-  APPROVED = "APPROVED",
-  REJECTED = "REJECTED"
+  RECEIVED = "RECEIVED",
+  PENDING_MODIFICATION = "PENDING_MODIFICATION",
+  CONFIRMED = "CONFIRMED",
+  REJECTED = "REJECTED",
+  CANCELLED = "CANCELLED",
+  ONGOING = "ONGOING",
+  FINISHED = "FINISHED"
 }
 
 export enum TourStatusText {
-  AWAITING_CONFIRMATION = "Kabul Bekliyor",
-  APPLICANT_WANTS_CHANGE = "Başvuran Değişiklik İstiyor",
-  TOYS_WANTS_CHANGE = "Tanıtım Ofisi Değişiklik İstiyor",
-  APPROVED = "Kabul Edildi",
-  REJECTED = "Reddedildi"
+  RECEIVED = "Kabul Bekliyor",
+  PENDING_MODIFICATION = "Değişiklik Bekliyor",
+  CONFIRMED = "Kabul Edildi",
+  REJECTED = "Reddedildi",
+  CANCELLED = "İptal Edildi",
+  ONGOING = "Devam Ediyor",
+  FINISHED = "Tamamlandı"
 }
 
 export enum FairStatus {
-  AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION",
-  APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
-  APPROVED = "APPROVED",
-  REJECTED = "REJECTED"
+  RECEIVED = "RECEIVED",
+  PENDING_MODIFICATION = "PENDING_MODIFICATION",
+  CONFIRMED = "CONFIRMED",
+  REJECTED = "REJECTED",
+  CANCELLED = "CANCELLED",
+  ONGOING = "ONGOING",
+  FINISHED = "FINISHED"
 }
 
 export enum DayOfTheWeek {

@@ -22,7 +22,6 @@ import EditProfilePage from "./pages/Profile/EditProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
-import AdvisorRequestModification from "./pages/AdvisorRequestModification/AdvisorRequestModification.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -51,7 +50,7 @@ function App() {
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<RequiresLogin children={<Comparison />}/>} />
             <Route path="/dashboard" element={<RequiresLogin children={<Dashboard />}/>} />
-            <Route path="/tour/:tourId" element={<TourPage />}/>
+            <Route path="/tour/:tourId" element={<RequiresLogin children={<TourPage />}/>} />
             <Route path="/tours" element={<RequiresLogin children={<TourListPage />}/>}/>
             <Route path="/universitieslist" element={<RequiresLogin children={<UniversitiesList />}/>}/>
             <Route path="/rivalslist" element={<RequiresLogin children={<RivalsList />}/>} />

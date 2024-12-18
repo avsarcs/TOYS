@@ -3,8 +3,8 @@ import "./ProfileInfo.css";
 
 import { UserRole, UserRoleText } from "../../../types/enum.ts";
 import { UserContext } from "../../../context/UserContext.tsx";
-import {useCallback, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useCallback, useContext } from "react";
+import {Link, useParams} from "react-router-dom";
 import { ProfileComponentProps } from "../../../types/designed.ts";
 
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
@@ -73,8 +73,8 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
             <div className = "button-group">
                 {profileId === undefined ? <div className="button">
                     <Button
-                        component="a"
-                        href="/edit-profile"
+                        component={Link}
+                        to="/edit-profile"
                         variant="filled"
                         color="violet"
                         style={{ marginRight: "10px" }}
@@ -84,8 +84,8 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 </div> : null}
                 {(profile.role === UserRole.DIRECTOR || profile.role === UserRole.COORDINATOR) && profileId !== undefined ? <div className="button">
                     <Button
-                        component="a"
-                        href="/edit-profile"
+                        component={Link}
+                        to="/edit-profile"
                         variant="filled"
                         color="violet"
                         style={{ marginRight: "10px" }}

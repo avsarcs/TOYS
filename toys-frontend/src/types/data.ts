@@ -6,9 +6,9 @@ export interface LoginData {
 }
 
 export interface TraineeGuideApplicationData {
-  fullname: string,
   id: string,
-  highschool: HighschoolData
+  fullname: string,
+  highschool: HighschoolData,
   email: string,
   phone: string,
   major: string,
@@ -31,6 +31,7 @@ export interface HighschoolData {
   name: string,
   location: string,
   priority: number,
+  ranking: number
 }
 
 export interface TourData {
@@ -107,6 +108,7 @@ export interface DailyPlan {
 export interface SimpleEventData {
   event_type: EventType,
   event_id: string,
+  event_status: TourStatus,
   highschool: HighschoolData,
   visitor_count: number,
   accepted_time: string,

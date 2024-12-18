@@ -2,6 +2,7 @@ import {Box, Center, Flex, Paper, Text} from "@mantine/core";
 import {TourListItemProps} from "../../types/designed.ts";
 import {Link} from "react-router-dom";
 import React from "react";
+import {TourStatusText} from "../../types/enum.ts";
 
 const ListItem: React.FC<TourListItemProps> = (props: TourListItemProps) => {
   return (
@@ -11,7 +12,7 @@ const ListItem: React.FC<TourListItemProps> = (props: TourListItemProps) => {
           <Box className="flex-grow flex-shrink basis-1/2 bg-gray-100" p="lg">{props.tour.highschool.name}</Box>
           <Center className="flex-grow flex-shrink basis-1/4 bg-gray-50" p="lg">{props.tour.visitor_count} Kişi</Center>
           <Center className="flex-grow flex-shrink basis-1/4 bg-gray-100" p="lg">
-            <Text fw={900} c="green">{}</Text>
+            <Text fw={900}>{TourStatusText[props.tour.event_status]}</Text>
           </Center>
         </Flex>
       </Box>

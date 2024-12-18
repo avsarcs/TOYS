@@ -13,7 +13,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
       case UserRole.GUIDE:
       case UserRole.ADVISOR:
         switch(props.tour.status) {
-          case TourStatus.AWAITING_CONFIRMATION:
+          case TourStatus.RECEIVED:
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
@@ -21,7 +21,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
                 <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
               </>
             );
-          case TourStatus.TOYS_WANTS_CHANGE:
+          case TourStatus.PENDING_MODIFICATION:
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
@@ -32,7 +32,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         }
       case UserRole.NONE:
         switch (props.tour.status) {
-          case TourStatus.TOYS_WANTS_CHANGE:
+          case TourStatus.PENDING_MODIFICATION:
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
@@ -41,26 +41,21 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
             );
         }
     }
-  }, [props.tour.status, userContext?.user.role])
+  }, [props.tour.status, userContext.user.role])
 
-  let statusColorClass = "text-black";
+  const statusColorClass = useMemo(() => {
+    switch (props.tour.status) {
+      case TourStatus.CONFIRMED:
+        return "text-green-500";
+      case TourStatus.REJECTED:
+        return "text-red-500";
+      case TourStatus.PENDING_MODIFICATION:
+      case TourStatus.RECEIVED:
+        return "text-yellow-600";
 
-  switch (props.tour.status) {
-    case TourStatus.APPROVED:
-      statusColorClass = "text-green-500";
-      break;
-    case TourStatus.REJECTED:
-      statusColorClass = "text-red-500";
-      break;
-    case TourStatus.APPLICANT_WANTS_CHANGE:
-    case TourStatus.TOYS_WANTS_CHANGE:
-    case TourStatus.AWAITING_CONFIRMATION:
-      statusColorClass = "text-yellow-600";
-      break;
-    default: break;
-  }
-
-  console.log(props.tour);
+      default: return "text-black";
+    }
+  }, [props.tour.status]);
 
   return (
     <Group p="lg" bg="white" justify="space-between">
@@ -73,7 +68,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         </Text>
       </Stack>
       {
-        userContext?.user.role === UserRole.ADVISOR
+        userContext.user.role === UserRole.ADVISOR
           ?
         <Group>
           { buttons }

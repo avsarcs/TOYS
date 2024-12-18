@@ -90,6 +90,7 @@
 ```
 {
     "event_type": "TOUR" | "FAIR"
+	"event_subtype": "TOUR",
 	"event_id": "id",
 	"event_status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 	"highschool": HighSchoolModel
@@ -97,7 +98,7 @@
 	"accepted_time": "2024-11-15T14:22:14Z",
 	"requested_time": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
-	"guide": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
+	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
 ```
 
@@ -123,7 +124,8 @@
 	"id": "id of the highschool",
 	"name": "Ankara Fen",
 	"location": "Ankara",
-	"priority": 1 (min. 1, max. 4)
+	"priority": 1 (min. 1, max. 4),
+	"ranking": 1
 }
 
 # Review Model
