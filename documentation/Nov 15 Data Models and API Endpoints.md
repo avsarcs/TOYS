@@ -1,6 +1,7 @@
 # Group Tour Model
 ```
 {
+	"tour_id": "tour id",
 	"highschool": HighSchoolModel,
 	"guides": [ { "id": "guide id", "full_name":"guide_name", "highschool": HighSchoolModel } ],
 	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": HighSchoolModel } ],
@@ -61,6 +62,7 @@
 
 ```
 {
+	"tour_id": "tour id",
 	"highschool": HighSchoolModel
 	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool": { "name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1 } } ],
 	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": { "name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1 } } ],
