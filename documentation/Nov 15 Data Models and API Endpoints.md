@@ -9,7 +9,7 @@
 	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
 	"accepted_time": "2024-09-30T09:00:00Z+03:00",
 	"visitor_count": 66,
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -71,7 +71,7 @@
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"accepted_time": "2024-09-30T09:00:00Z",
 	"visitor_count": 4,
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -268,7 +268,7 @@
 	"start_time": "2024-11-15T14:22:14Z",
 	"end_time": "2024-11-15T14:22:14Z",
 	"fair_name": "KARIYERKE",
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 }
 ```
 

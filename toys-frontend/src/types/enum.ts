@@ -1,4 +1,4 @@
-export enum UserFetchingStatus {
+export enum FetchingStatus {
   NONE = -1,
   FETCHING,
   DONE,
@@ -130,7 +130,6 @@ export enum TourStatusText {
 
 export enum FairStatus {
   RECEIVED = "RECEIVED",
-  PENDING_MODIFICATION = "PENDING_MODIFICATION",
   CONFIRMED = "CONFIRMED",
   REJECTED = "REJECTED",
   CANCELLED = "CANCELLED",

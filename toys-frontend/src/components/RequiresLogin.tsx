@@ -2,7 +2,7 @@ import {OnlyChildrenProps} from "../types/generic.ts";
 import {UserContext} from "../context/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {Text} from "@mantine/core"
-import {UserFetchingStatus} from "../types/enum.ts";
+import {FetchingStatus} from "../types/enum.ts";
 import {useNavigate} from "react-router-dom";
 
 const RequiresLogin: React.FC<OnlyChildrenProps> = (props: OnlyChildrenProps) => {
@@ -12,7 +12,7 @@ const RequiresLogin: React.FC<OnlyChildrenProps> = (props: OnlyChildrenProps) =>
 
   useEffect(() => {
     switch (userContext.fetchStatus) {
-      case UserFetchingStatus.DONE:
+      case FetchingStatus.DONE:
         if(userContext.isLoggedIn) {
           setRendering(true);
         }
@@ -29,7 +29,7 @@ const RequiresLogin: React.FC<OnlyChildrenProps> = (props: OnlyChildrenProps) =>
     ? (
       <>
         {
-          userContext.fetchStatus === UserFetchingStatus.DONE
+          userContext.fetchStatus === FetchingStatus.DONE
             ? props.children
             : <Text>Something went wrong. Refresh the page or contact a site administrator.</Text>
         }

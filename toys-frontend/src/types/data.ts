@@ -108,6 +108,7 @@ export interface DailyPlan {
 
 export interface SimpleEventData {
   event_type: EventType,
+  event_subtype: TourType,
   event_id: string,
   event_status: TourStatus,
   highschool: HighschoolData,

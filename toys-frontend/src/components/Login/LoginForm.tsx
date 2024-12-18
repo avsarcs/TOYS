@@ -56,7 +56,7 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
             title: "Giriş başarılı!",
             message: "Başarıyle giriş yapıldı. Ana sayfaya yönlendiriliyorsunuz."
           });
-          userContext?.setAuthToken(token);
+          userContext.setAuthToken(token);
           navigate("/dashboard");
           setLoggingIn(false);
         }

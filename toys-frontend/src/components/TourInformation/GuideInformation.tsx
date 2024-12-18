@@ -14,7 +14,7 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
 
   const totalGuidesNeeded = Math.ceil(props.tour.visitor_count / VISITOR_PER_GUIDE);
   const missingGuides = totalGuidesNeeded - props.tour.guides.length;
-  const userAssignedToTour = props.tour.guides.some((value) => value.id === userContext?.user.id);
+  const userAssignedToTour = props.tour.guides.some((value) => value.id === userContext.user.id);
 
   const guideListText =
     props.tour.guides.length > 0
