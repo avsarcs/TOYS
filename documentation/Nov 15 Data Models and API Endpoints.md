@@ -4,9 +4,9 @@
 	"highschool": HighSchoolModel,
 	"guides": [ { "id": "guide id", "full_name":"guide_name", "highschool": HighSchoolModel } ],
 	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": HighSchoolModel } ],
-	"type": "group", // frontend will do conditional rendering based on this property
-	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
-	"accepted_time": "2024-09-30T09:00:00Z",
+	"type": "group", // or "individual" frontend will do conditional rendering based on this property
+	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
+	"accepted_time": "2024-09-30T09:00:00Z+03:00",
 	"visitor_count": 66,
 	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
@@ -17,8 +17,8 @@
 		"phone": "ThePhoneOfTheApplicant1",
 		"notes": "Notes added by the applicant."
 	},
-	"actual_start_time": "2024-11-15T14:22:14Z",
-	"actual_end_time": "2024-11-15T14:22:14Z",
+	"actual_start_time": "2024-11-15T14:22:14Z+03:00",
+	"actual_end_time": "2024-11-15T14:22:14Z+03:00",
 	"classroom": "Mithat Çoruh"
 }
 ```

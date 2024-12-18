@@ -3,6 +3,7 @@ import { GroupApplicationStageProps } from '../../types/designed';
 import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
 import isEmpty from 'validator/lib/isEmpty';
 import { TextInput } from '@mantine/core';
+import { Select } from '@mantine/core';
 
 const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
 
@@ -110,26 +111,22 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         </div>
 
         <div className="mb-4">
-          <TextInput
-            type="text"
+          <Select
             label="Rolünüz"
-            withAsterisk
-            id="role"
-            name="role"
-            placeholder="Rolünüz; rehber öğretmen, müdür yardımcısı, öğretmen vs."
-            error={warnings["empty_fields"] ? "Bu alanı boş bırakamazsınız." : false}
-            maxLength={200}
-            value={applicationInfo.applicant["role"]}
-            onChange={(e) => {
+            placeholder="Öğrenci"
+            data={["Öğrenci", "Görevli, Öğretmen vs."]}
+            onChange={(_value, option) => {
+
+              const englishValue = _value == "Öğrenci" ? "student" : _value == "Görevli, Öğretmen vs." ? "teacher" : ""
+
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
                 applicant: {
                   ...appInfo.applicant,
-                  role: e.target.value,
+                  role: englishValue,
                 },
               }))
             }}
-            required
           />
         </div>
       </form>
