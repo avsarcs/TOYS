@@ -98,8 +98,13 @@ export const Navbar: React.FC = () => {
           {opened && <Code fw={700}>TOYS</Code>}
           <Burger size="md" opened={opened} onClick={toggle} />
         </Group>
+        <div className={classes.divider} />
       </div>
-
+      <div className={classes.header} style={{ marginTop: '20px' }}>
+        {opened && <UserButton />}
+        <div className={classes.divider} style={{ marginTop: '10px' }} />
+      </div>
+     
       <ScrollArea className={classes.links}>
         <div className={classes.linksInner}>
           {opened &&
@@ -149,7 +154,7 @@ export const Navbar: React.FC = () => {
         </div>
       </ScrollArea>
 
-      <div className={classes.footer}>{opened && <UserButton />}</div>
+      
     </nav>
   );
 };
