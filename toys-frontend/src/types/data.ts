@@ -35,6 +35,7 @@ export interface HighschoolData {
 }
 
 export interface TourData {
+  tour_id: string,
   type: TourType,
   highschool: HighschoolData,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
