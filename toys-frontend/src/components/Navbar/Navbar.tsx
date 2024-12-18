@@ -95,12 +95,17 @@ export const Navbar: React.FC = () => {
     <nav className={`${opened ? `${classes.navbar} ${classes.open}` : classes.navbar}`}>
       <div className={classes.header}>
         <Group justify="space-between">
-          {opened && <Code fw={700}>TOYS</Code>}
+          {opened && (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img src="/bilkent-tr-amblem.png" alt="Logo" style={{ marginRight: '10px', height: '40px' }} />
+              <Code fw={700} style={{ fontSize: '24px' }}>TOYS</Code>
+            </div>
+          )}
           <Burger size="md" opened={opened} onClick={toggle} />
         </Group>
         <div className={classes.divider} />
       </div>
-      <div className={classes.header} style={{ marginTop: '20px' }}>
+      <div className={classes.header} style={{ marginTop: '0', paddingTop: '20px', backgroundColor: '#e0f7ff' }}>
         {opened && <UserButton />}
         <div className={classes.divider} style={{ marginTop: '10px' }} />
       </div>

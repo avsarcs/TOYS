@@ -82,7 +82,6 @@
 .subLink {
   display: block;
   font-size: 1rem; /* Increase text size */
-  font-weight: bold; /* Make text bold */
   color: #003366; /* Dark blue color */
   text-decoration: none; /* Remove underline */
   margin-left: 32px; /* Indent sub-links */
