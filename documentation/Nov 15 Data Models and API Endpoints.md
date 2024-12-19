@@ -456,6 +456,13 @@ API endpoints:
 			}
 
 /review
+!!!! NEW
+parameters:
+	review_id=id of the review
+method: get
+response: ReviewModel
+response_type:json
+
 	/tour
 		parameters:
 			reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE

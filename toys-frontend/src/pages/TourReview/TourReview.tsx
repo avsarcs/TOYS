@@ -87,6 +87,7 @@ const TourReviewPage: React.FC = () => {
                 }
 
                 const tourToReviewData: TourToReviewModel = await response.json();
+                
                 setTourData(tourToReviewData);
                 
                 // Initialize guide reviews
@@ -96,7 +97,7 @@ const TourReviewPage: React.FC = () => {
                     comment: ''
                 })));
             } catch (err) {
-                setError('Failed to load tour details. Please try again later.');
+                setError('Tur İnceleme Sayfası Yüklenemedi. Lütfen Yakın Zamanda Tekrar Deneyin.');
             } finally {
                 setIsLoading(false);
             }

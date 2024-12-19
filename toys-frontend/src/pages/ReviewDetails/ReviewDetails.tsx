@@ -1,34 +1,65 @@
-import React from 'react';
-import { Card, Text, Group, Stack, Button, Title, Paper } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, Text, Group, Stack, Button, Title, Paper, Loader, Alert } from '@mantine/core';
+import { IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
+import { UserContext } from '../../context/UserContext';
+
+const REVIEW_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review");
+const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
 
 const ReviewDetailsPage = () => {
-  const mockReview = {
-    for: "TOUR",
-    tour_date: "2024-10-15T11:00:00Z",
-    score: 8,
-    body: "Bu tur deneyimi mükemmeldi. Rehber çok bilgili ve tüm oturum boyunca ilgi çekiciydi.",
-    guide: { name: "John Smith" }
-  };
+  const { review_id } = useParams();
+  const navigate = useNavigate();
+  const userContext = useContext(UserContext);
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [review, setReview] = useState<any>(null);
+  const [tourData, setTourData] = useState<any>(null);
 
-  // Mock tour data
-  const tourData = {
-    highschool: {
-      name: "Ankara Fen Lisesi"
-    },
-    guides: [
-      {
-        id: "guide_123",
-        full_name: "Scarlett Johansson",
+  useEffect(() => {
+    const fetchReviewAndTour = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Fetch review details
+        const reviewUrl = new URL(REVIEW_URL);
+        reviewUrl.searchParams.append('review_id', review_id || '');
+        reviewUrl.searchParams.append('auth', userContext.authToken);
+
+        const reviewRes = await fetch(reviewUrl);
+        if (!reviewRes.ok) {
+          throw new Error('Failed to fetch review details');
+        }
+        const reviewData = await reviewRes.json();
+        setReview(reviewData);
+
+        // Fetch tour details
+        const tourUrl = new URL(TOUR_URL);
+        tourUrl.searchParams.append('auth', userContext.authToken);
+        tourUrl.searchParams.append('tid', reviewData.tour_id);
+
+        const tourRes = await fetch(tourUrl);
+        if (!tourRes.ok) {
+          throw new Error('Failed to fetch tour details');
+        }
+        const tourDetails = await tourRes.json();
+        setTourData(tourDetails);
+
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setIsLoading(false);
       }
-    ],
-    accepted_time: "2024-10-15T11:00:00Z",
-    visitor_count: 50,
-    classroom: "Mithat Çoruh",
-    status: "COMPLETED"
-  };
+    };
 
-  const formatDate = (dateStr) => {
+    if (review_id && userContext.authToken) {
+      fetchReviewAndTour();
+    }
+  }, [review_id, userContext.authToken]);
+
+  const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleString('tr-TR', {
       year: 'numeric',
       month: 'long',
@@ -38,83 +69,121 @@ const ReviewDetailsPage = () => {
     });
   };
 
-  const getStatusText = (status) => {
-    const statusMap = {
-      'COMPLETED': 'Tamamlandı',
-      'PENDING': 'Beklemede',
-      'CANCELLED': 'İptal Edildi'
+  const getStatusText = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'RECEIVED': 'Alındı',
+      'TOYS_WANTS_CHANGE': 'TOYS Değişiklik İstiyor',
+      'APPLICANT_WANTS_CHANGE': 'Başvuran Değişiklik İstiyor',
+      'CONFIRMED': 'Onaylandı',
+      'REJECTED': 'Reddedildi',
+      'CANCELLED': 'İptal Edildi',
+      'ONGOING': 'Devam Ediyor',
+      'FINISHED': 'Tamamlandı'
     };
     return statusMap[status] || status;
   };
 
+  const getStatusColor = (status: string) => {
+    const colorMap: Record<string, string> = {
+      'RECEIVED': 'blue',
+      'TOYS_WANTS_CHANGE': 'yellow',
+      'APPLICANT_WANTS_CHANGE': 'yellow',
+      'CONFIRMED': 'green',
+      'REJECTED': 'red',
+      'CANCELLED': 'red',
+      'ONGOING': 'blue',
+      'FINISHED': 'green'
+    };
+    return colorMap[status] || 'gray';
+  };
+
+  if (isLoading) {
+    return (
+      <Stack justify="center" align="center" h="100vh">
+        <Loader size="lg" />
+      </Stack>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert icon={<IconAlertCircle size={16} />} title="Hata" color="red" variant="filled">
+        {error}
+      </Alert>
+    );
+  }
+
+  if (!review || !tourData) {
+    return (
+      <Alert icon={<IconAlertCircle size={16} />} title="Hata" color="yellow" variant="filled">
+        İnceleme veya tur bilgileri bulunamadı.
+      </Alert>
+    );
+  }
+
   return (
     <Stack gap="xl" maw={1000} mx="auto" p="md">
-      {/* Back Button */}
       <Group>
         <Button
           leftSection={<IconArrowLeft size={16} />}
           variant="subtle"
           color="violet"
+          onClick={() => navigate(-1)}
         >
           Geri
         </Button>
       </Group>
 
-      {/* Review Section */}
       <Paper shadow="sm" radius="md" p="lg" withBorder>
         <Stack gap="md">
           <Stack gap="xs">
             <Title order={2}>İnceleme</Title>
             <Text size="sm" c="gray.7">
-              {mockReview.for === "TOUR"
-                ? `${formatDate(mockReview.tour_date)} tarihli tur üzerine`
-                : `${mockReview.guide.name} üzerine`}
+              {review.for === "TOUR"
+                ? `${formatDate(review.tour_date)} tarihli tur üzerine`
+                : `${review.guide?.name || 'Rehber'} üzerine`}
             </Text>
           </Stack>
-
           <Group>
             <Text size="xl" fw={700} c="violet">
-              {mockReview.score}
+              {review.score}
             </Text>
             <Text size="sm" c="gray.7">/ 10 puan</Text>
           </Group>
-
-          <Text>{mockReview.body}</Text>
+          {review.body && <Text>{review.body}</Text>}
         </Stack>
       </Paper>
 
-      {/* Tour Details Section */}
       <Card withBorder shadow="sm" radius="md" p="lg">
         <Stack gap="lg">
           <Title order={3}>Tur Bilgileri</Title>
-
           <Stack gap="lg">
             <Group grow>
-              <DetailItem label="Lise" value={tourData.highschool.name} />
-              <DetailItem 
-                label="Durum" 
+              <DetailItem label="Lise" value={tourData.highschool?.name} />
+              <DetailItem
+                label="Durum"
                 value={getStatusText(tourData.status)}
-                valueProps={{ 
-                  c: tourData.status === 'COMPLETED' ? 'green' : 'blue',
-                  fw: 500 
+                valueProps={{
+                  c: getStatusColor(tourData.status),
+                  fw: 500
                 }}
               />
             </Group>
             <Group grow>
-              <DetailItem 
-                label="Tarih ve Saat" 
-                value={formatDate(tourData.accepted_time)} 
+              <DetailItem
+                label="Tarih ve Saat"
+                value={formatDate(tourData.accepted_time)}
               />
               <DetailItem label="Sınıf" value={tourData.classroom} />
             </Group>
             <Group grow>
-              <DetailItem 
-                label="Katılımcı Sayısı" 
-                value={tourData.visitor_count} 
+              <DetailItem
+                label="Katılımcı Sayısı"
+                value={tourData.visitor_count}
               />
-              <DetailItem 
-                label="Rehber" 
-                value={tourData.guides.map(guide => guide.full_name).join(', ')} 
+              <DetailItem
+                label="Rehber"
+                value={tourData.guides?.map(guide => guide.full_name).join(', ')}
               />
             </Group>
           </Stack>
@@ -124,7 +193,15 @@ const ReviewDetailsPage = () => {
   );
 };
 
-const DetailItem = ({ label, value, valueProps = {} }) => (
+const DetailItem = ({ 
+  label, 
+  value, 
+  valueProps = {} 
+}: { 
+  label: string; 
+  value: string | number; 
+  valueProps?: Record<string, any>; 
+}) => (
   <Stack gap={4}>
     <Text size="sm" c="gray.7" fw={500}>
       {label}
