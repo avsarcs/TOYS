@@ -1,46 +1,54 @@
 import React from 'react';
 import { Paper, Group, Stack, Text, Button } from '@mantine/core';
-import { TourModel, EventStatus } from '../../types/designed';
+import { TourData } from '../../types/data';
 
 interface ListItemProps {
-  tour: TourModel;
+  tour: TourData;
 }
 
-const getStatusColor = (status: EventStatus): string => {
+const getStatusColor = (status: string): string => {
   switch (status) {
-    case 'APPROVED':
+    case 'CONFIRMED':
       return 'text-green-500';
     case 'REJECTED':
       return 'text-red-500';
-    case 'AWAITING_CONFIRMATION':
+    case 'RECEIVED':
       return 'text-orange-500';
-    case 'APPLICANT_WANTS_CHANGE':
+    case 'PENDING_MODIFICATION':
       return 'text-blue-500';
-    case 'TOYS_WANTS_CHANGE':
-      return 'text-blue-500';
+    case 'ONGOING':
+      return 'text-purple-500';
+    case 'FINISHED':
+      return 'text-gray-500';
+    case 'CANCELLED':
+      return 'text-red-400';
     default:
       return 'text-gray-500';
   }
 };
 
-const getStatusText = (status: EventStatus): string => {
+const getStatusText = (status: string): string => {
   switch (status) {
-    case 'AWAITING_CONFIRMATION':
+    case 'RECEIVED':
       return 'Onay Bekliyor';
-    case 'APPLICANT_WANTS_CHANGE':
-      return 'Başvuran Değişiklik İstiyor';
-    case 'TOYS_WANTS_CHANGE':
-      return 'TOYS Değişiklik İstiyor';
-    case 'APPROVED':
+    case 'PENDING_MODIFICATION':
+      return 'Değişiklik Bekliyor';
+    case 'CONFIRMED':
       return 'Onaylandı';
     case 'REJECTED':
       return 'Reddedildi';
+    case 'CANCELLED':
+      return 'İptal Edildi';
+    case 'ONGOING':
+      return 'Devam Ediyor';
+    case 'FINISHED':
+      return 'Tamamlandı';
     default:
       return status;
   }
 };
 
-const getActionButton = (status: EventStatus) => {
+const getActionButton = (status: string) => {
   switch (status) {
     case 'REJECTED':
       return (
@@ -52,6 +60,9 @@ const getActionButton = (status: EventStatus) => {
           Reddi Geri Al
         </Button>
       );
+    case 'FINISHED':
+    case 'CANCELLED':
+      return null;
     default:
       return (
         <Button
@@ -86,15 +97,15 @@ const ListItem: React.FC<ListItemProps> = ({ tour }) => {
             En Yakın İstenilen Zaman: {getEarliestDate(tour.requested_times)}
           </Text>
         </Stack>
-        
+       
         <Group gap="xl" align="center">
           <Text fw={500}>{tour.visitor_count} Öğrenci</Text>
-          
-          <Text className={`${getStatusColor(tour.event_status)} font-medium`}>
-            {getStatusText(tour.event_status)}
+         
+          <Text className={`${getStatusColor(tour.status)} font-medium`}>
+            {getStatusText(tour.status)}
           </Text>
-          
-          {getActionButton(tour.event_status)}
+         
+          {getActionButton(tour.status)}
         </Group>
       </Group>
     </Paper>
