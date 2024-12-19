@@ -281,6 +281,7 @@
 		"email": "yavuz.xd@something.com",
 		"phone": "5555555555",
 		"school": "Ankara Fen Lisesi",
+		"notes": "Notes by the applicant",
 	},
 	"start_time": "2024-11-15T14:22:14Z",
 	"end_time": "2024-11-15T14:22:14Z",
