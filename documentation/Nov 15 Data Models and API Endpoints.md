@@ -404,13 +404,13 @@ API endpoints:
 		body: groupTourApplicationModel | individualTourApplicationModel
 		response: -
 
-		/isfree
+		/isfree 
 		parameters:
 			start=start_time
 			end=end_time
 		method: get
 
-		/gettype
+		/gettype #
 		parameters:
 			uuid=uuid of the application
 		method: get
@@ -424,6 +424,8 @@ API endpoints:
 			body: groupTourApplicationModel | individualTourApplicationModel
 			response: -
 
+		/// DEPRECATED
+		/// USE respond/tour/modification for modificaiton change responses
 		/respond_changes # The 
 			method: post
 			parameters:
@@ -437,7 +439,7 @@ API endpoints:
 		method: post
 		body: fairApplicationModel
 		response: -
-	/cancel
+	/cancel #
 		method: post
 		parameters:
 			auth: jwt_token //if applicant is cancelling, they provide passkey
