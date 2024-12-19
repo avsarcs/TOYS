@@ -43,9 +43,28 @@ export interface GroupApplication {
   }
 }
 
+export interface FairApplicationModel {
+  applicant: {
+		name: string;
+		surname: string;
+		email: string;
+		phone: string;
+		school: HighschoolData;
+	};
+	start_time: string;
+  end_time: string;
+  fair_name: string;
+}
+
 export interface GroupApplicationStageProps {
   applicationInfo: GroupApplication;
   setApplicationInfo: Dispatch<SetStateAction<GroupApplication>>;
+  warnings: Record<any, any>;
+}
+
+export interface FairApplicationProps {
+  applicationInfo: FairApplicationModel;
+  setApplicationInfo: Dispatch<SetStateAction<FairApplicationModel>>;
   warnings: Record<any, any>;
 }
 
