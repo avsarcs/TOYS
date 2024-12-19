@@ -432,11 +432,19 @@ API endpoints:
 					// if tour application is accepted, there should be accepted_time
 					// if the application is rejected, give an empty string
 			response: -
-
 	/fair #
 		method: post
 		body: fairApplicationModel
 		response: -
+	/cancel
+		method: post
+		parameters:
+			auth: jwt_token //if applicant is cancelling, they provide passkey
+			event_id: string
+		body:
+			{
+				reason: string
+			}
 
 /review
 	/tour
@@ -633,6 +641,17 @@ API endpoints:
 			method: get
 			response: TourModel
 			response_type: json
+			
+			/modifications
+				method: get
+				parameters:
+					auth=jwt_token
+					tour_id=tour_id
+				response:
+				[{
+					"id": "mod id",
+					"mod": group/ind tourApplicationModel
+				}]
 
 	/tours # NEEDS TEST
 		parameters:
@@ -644,7 +663,7 @@ API endpoints:
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
-				status=status // which status to update to (ACCEPTED, REJECTED, TOYS_WANTS_CHANGE, APPLICANT_WANTS_CHANGE, AWAITING_CONFIRMATION)
+				status=status // which status to update to ("RECEIVED", "PENDING_MODIFICATION", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
 				authToken: auth_token
 			method: post
 			response: -
@@ -789,7 +808,7 @@ API endpoints:
 		/fairs
 			method: get
 			parameters:
-				status (OPTIONAL): "AWAITING_CONFIRMATION" | "COMPLETED" | "ACCEPTED" | "REJECTED" | "CANCELLED"
+				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 				guide_not_assigned (OPTIONAL): bool
 				enrolled_in_fair (OPTIONAL): 
 			body: auth_token
