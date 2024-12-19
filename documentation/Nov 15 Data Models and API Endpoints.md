@@ -453,6 +453,16 @@ API endpoints:
 				reason: string
 			}
 
+!!!! NEW
+/modification-request
+	parameters:
+		auth=passkey // applicant is using this
+		tour_id= id of the tour
+	method: get
+	response: [ISO8601 Datetime string] length: min. 1, max. 3
+	description: This is for the APPLICANT to use. Returns the "requested_times" field of the
+	tour with the given id.
+
 /review
 	/tour
 		parameters:
@@ -512,8 +522,8 @@ API endpoints:
 			application_id: "id of the application"
 			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-			!!!! CHANGED 
-			/modification
+!!!! CHANGED 
+			/answer-modification
 			method: post
 			parameters:
 				auth: auth_token // passkey if an applicant is using this
@@ -523,7 +533,7 @@ API endpoints:
 			response_type: status code
 			description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
 
-			!!!! NEW
+!!!! NEW
 			/request-modification
 			method: post
 			parameters:
