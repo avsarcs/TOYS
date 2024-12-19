@@ -496,13 +496,13 @@ API endpoints:
 
 /respond
 	/application
-		/guide
+		/guide #
 		method: post
 		parameters:
 			auth: auth_token
 			applicant_id: "bilkent id of the applicant"
 			response: true/false (accept / reject relatively)
-		/tour
+		/tour #
 		method: post
 		parameters:
 			auth: auth_token
@@ -515,7 +515,7 @@ API endpoints:
 				auth: auth token ( or passkey for guides)
 				request_id: id of the modification request
 				response: true/false (accept / reject relatively)
-		/fair
+		/fair #
 		method: post
 		parameters:
 			auth: auth_token
