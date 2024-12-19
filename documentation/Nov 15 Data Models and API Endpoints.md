@@ -453,16 +453,6 @@ API endpoints:
 				reason: string
 			}
 
-!!!! NEW
-/modification-request
-	parameters:
-		auth=passkey // applicant is using this
-		tour_id= id of the tour
-	method: get
-	response: [ISO8601 Datetime string] length: min. 1, max. 3
-	description: This is for the APPLICANT to use. Returns the "requested_times" field of the
-	tour with the given id.
-
 /review
 	/tour
 		parameters:
