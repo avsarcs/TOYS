@@ -7,9 +7,9 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import server.models.payment.DTO_HourlyRate;
-import server.models.payment.DTO_MoneyForGuide;
-import server.models.payment.DTO_MoneyForTour;
+import server.models.payment.HourlyRate;
+import server.models.DTO.DTO_MoneyForGuide;
+import server.models.DTO.DTO_MoneyForTour;
 
 import java.util.*;
 
@@ -21,7 +21,7 @@ public class DBPaymentService {
         this.firestore = Database.getFirestoreDatabase();
         this.mapper = Database.getObjectMapper();
     }
-    public void addHourlyRate(DTO_HourlyRate rate) {
+    public void addHourlyRate(HourlyRate rate) {
         DocumentReference ref =  firestore.collection("payment").document("timesheet");
 
         try {
@@ -38,13 +38,13 @@ public class DBPaymentService {
         }
     }
 
-    public void setHourlyRates(List<DTO_HourlyRate> rates) {
+    public void setHourlyRates(List<HourlyRate> rates) {
         DocumentReference ref =  firestore.collection("payment").document("timesheet");
 
         try {
             DocumentSnapshot snapshot = ref.get().get();
             ref.set(mapper.convertValue(
-                    Collections.singletonMap("records", rates),
+                    Collections.singletonMap("rates", rates),
                     new TypeReference<HashMap<String, Object>>() {}
             ));
         } catch (Exception e) {
@@ -55,13 +55,13 @@ public class DBPaymentService {
 
 
 
-    public List<DTO_HourlyRate> getRates() {
-        List<DTO_HourlyRate> rates = new ArrayList<>();
+    public List<HourlyRate> getRates() {
+        List<HourlyRate> rates = new ArrayList<>();
         DocumentReference ref =  firestore.collection("payment").document("timesheet");
         try {
             DocumentSnapshot snapshot = ref.get().get();
             ((List<Object>) ((Map<String, Object>) snapshot.getData()).get("rates")).forEach(
-                    rate -> rates.add(DTO_HourlyRate.fromMap((Map<String, Object>) rate))
+                    rate -> rates.add(HourlyRate.fromMap((Map<String, Object>) rate))
             );
         } catch (Exception e) {
             e.printStackTrace();
