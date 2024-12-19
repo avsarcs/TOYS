@@ -21,7 +21,7 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
         }
         else {
           if(fetchedOnce || !props.checkOnce) {
-            navigate("/login?redirect=" + (props.redirect ? path : ""), { replace: true });
+            navigate("/login?redirect=" + (props.redirect ? path.pathname : ""), { replace: true });
           }
         }
         break;
