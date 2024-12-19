@@ -420,8 +420,8 @@ API endpoints:
 		/request_changes #NEEDS TEST
 			method: post
 			parameters:
-				tour-id: tourID
-				passkey: passkey
+				tour_id: tourID
+				auth: passkey | auth token 
 			body: groupTourApplicationModel | individualTourApplicationModel
 			response: -
 
