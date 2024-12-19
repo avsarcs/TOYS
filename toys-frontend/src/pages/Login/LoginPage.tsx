@@ -2,16 +2,17 @@ import { Image } from "@mantine/core"
 import LoginForm from "../../components/Login/LoginForm";
 import {useContext, useState} from "react";
 import RegisterForm from "../../components/Login/RegisterForm.tsx";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
 
 const LoginPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [registering, setRegistering] = useState(false);
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
   if(userContext.isLoggedIn) {
-    navigate("/dashboard");
+    navigate(searchParams.get("redirect") ?? "/dashboard");
   }
 
   return (
