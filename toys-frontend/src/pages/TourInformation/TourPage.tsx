@@ -56,6 +56,8 @@ const TourPage: React.FC = () => {
     throw error;
   }
 
+  const refreshTour = () => { getTour(params.tourId as string).catch(console.error); }
+
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
       <Box className="flex-grow-0 flex-shrink-0">
@@ -76,16 +78,16 @@ const TourPage: React.FC = () => {
             :
             <>
               <Space h="lg"/>
-              <StatusInformation tour={tour}/>
+              <StatusInformation tour={tour} refreshTour={refreshTour}/>
               <Divider className="border-gray-300"/>
                 <Stack gap="0" className="bg-gray-50">
-                  <GeneralInformation tour={tour}/>
+                  <GeneralInformation tour={tour} refreshTour={refreshTour}/>
                   <Divider className="border-gray-200"/>
-                  <ApplicantInformation tour={tour}/>
+                  <ApplicantInformation tour={tour} refreshTour={refreshTour}/>
                   <Divider className="border-gray-200"/>
-                  <GuideInformation tour={tour}/>
+                  <GuideInformation tour={tour} refreshTour={refreshTour}/>
                   <Divider className="border-gray-200"/>
-                  <TimeInformation tour={tour}/>
+                  <TimeInformation tour={tour} refreshTour={refreshTour}/>
                 </Stack>
             </>
         }

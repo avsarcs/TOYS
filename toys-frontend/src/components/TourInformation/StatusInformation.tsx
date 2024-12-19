@@ -1,9 +1,11 @@
-import React, { useContext, useMemo } from "react";
-import { Button, Group, Stack, Text } from "@mantine/core";
-import { IconCircleCheck, IconCircleX, IconPencil } from "@tabler/icons-react";
-import { TourSectionProps } from "../../types/designed.ts";
-import { TourStatus, TourStatusText, TourTypeText, UserRole } from "../../types/enum.ts";
-import { UserContext } from "../../context/UserContext.tsx";
+import React, {useContext, useMemo} from "react";
+import {Button, Group, Stack, Text} from "@mantine/core";
+import {IconCircleCheck, IconCircleX, IconPencil} from "@tabler/icons-react";
+import {TourSectionProps} from "../../types/designed.ts";
+import {TourStatus, TourStatusText, TourTypeText, UserRole} from "../../types/enum.ts";
+import {UserContext} from "../../context/UserContext.tsx";
+import TourCancelButton from "./TourCancelButton.tsx";
+import TourRejectButton from "./TourRejectButton.tsx";
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>{
   const userContext = useContext(UserContext);
@@ -17,7 +19,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-                <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+                <TourRejectButton {...props} />
                 <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
               </>
             );
@@ -27,6 +29,10 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
                 <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
               </>
+            );
+          case TourStatus.CONFIRMED:
+            return (
+              <TourCancelButton {...props} />
             );
           default: return null;
         }
@@ -41,7 +47,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
             );
         }
     }
-  }, [props.tour.status, userContext.user.role])
+  }, [props, userContext.user.role])
 
   const statusColorClass = useMemo(() => {
     switch (props.tour.status) {

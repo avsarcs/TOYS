@@ -3,7 +3,7 @@ import { TourSectionProps } from "../../types/designed.ts";
 import { Box, Button, Group, Space, Text } from "@mantine/core";
 import { IconUserPlus, IconUsers } from "@tabler/icons-react";
 import { UserContext } from "../../context/UserContext.tsx";
-import { UserRole } from "../../types/enum.ts";
+import {TourStatus, UserRole} from "../../types/enum.ts";
 import ManageGuidesWindow from "./ManageGuidesWindow.tsx";
 
 const VISITOR_PER_GUIDE = 60;
@@ -46,7 +46,7 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
           </Button>
         </Box>
         <Box>
-          {userContext.user.role === UserRole.ADVISOR && (
+          {userContext.user.role === UserRole.ADVISOR && props.tour.status === TourStatus.CONFIRMED && (
             <Button
               size="md"
               leftSection={<IconUsers />}

@@ -5,12 +5,11 @@ import {
   UserRole
 } from "./enum.ts";
 import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
-import { SimpleGuideData } from "./data.ts";
 
 export interface User {
   id: string,
   role: UserRole,
-  profile: any
+  profile: ProfileData
 }
 
 export interface NavbarProps {
@@ -116,8 +115,15 @@ export interface DashboardInfoBoxProps {
 }
 
 export interface TourSectionProps {
-  tour: TourData
+  tour: TourData,
+  refreshTour: () => void
 }
+
+export interface TourButtonProps {
+  tour: TourData,
+  refreshTour: () => void
+}
+
 export interface ManageGuidesWindowProps {
   opened: boolean; // Controls modal visibility
   onClose: () => void; // Closes the modal
