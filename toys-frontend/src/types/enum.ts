@@ -119,7 +119,7 @@ export enum TourStatus {
 }
 
 export enum TourStatusText {
-  RECEIVED = "Kabul Bekliyor",
+  RECEIVED = "Onay Bekliyor",
   PENDING_MODIFICATION = "Değişiklik Bekliyor",
   CONFIRMED = "Kabul Edildi",
   REJECTED = "Reddedildi",

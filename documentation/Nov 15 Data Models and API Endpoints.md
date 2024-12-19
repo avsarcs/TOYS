@@ -9,7 +9,8 @@
 	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
 	"accepted_time": "2024-09-30T09:00:00Z+03:00",
 	"visitor_count": 66,
-	"status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+	// changed
+	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -71,7 +72,8 @@
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"accepted_time": "2024-09-30T09:00:00Z",
 	"visitor_count": 4,
-	"status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+	// changed
+	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -92,7 +94,8 @@
     "event_type": "TOUR" | "FAIR"
 	"event_subtype": "TOUR",
 	"event_id": "id",
-	"event_status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+	// changed
+	"event_status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED" // changed
 	"highschool": HighSchoolModel
 	// accepted_time field empty/null for tours AWAITING_MODIFICATION
 	"accepted_time": "2024-11-15T14:22:14Z",
@@ -669,7 +672,8 @@ API endpoints:
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
-				status=status // which status to update to ("RECEIVED", "PENDING_MODIFICATION", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
+				// changed
+				status=status // which status to update to ("RECEIVED", "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
 				authToken: auth_token
 			method: post
 			response: -
