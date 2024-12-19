@@ -99,7 +99,9 @@
 	"highschool": HighSchoolModel
 	// accepted_time field empty/null for tours AWAITING_MODIFICATION
 	"accepted_time": "2024-11-15T14:22:14Z",
-	"requested_time": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
+
+!!!! CHANGED
+	"requested_times": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
 	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
