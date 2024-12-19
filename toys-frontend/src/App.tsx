@@ -32,7 +32,7 @@ import TourListPage from "./pages/TourList/TourListPage.tsx";
 import RequiresLogin from "./components/RequiresLogin.tsx";
 import {useContext} from "react";
 import {UserContext} from "./context/UserContext.tsx";
-import {UserFetchingStatus} from "./types/enum.ts";
+import {FetchingStatus} from "./types/enum.ts";
 
 function App() {
   dayjs.locale("tr");
@@ -42,7 +42,7 @@ function App() {
   return (
     <>
       <div className="app-container">
-        {hasNavbar(location) && userContext.fetchStatus === UserFetchingStatus.DONE && <Navbar />}
+        {hasNavbar(location) && userContext.fetchStatus === FetchingStatus.DONE && <Navbar />}
         <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />

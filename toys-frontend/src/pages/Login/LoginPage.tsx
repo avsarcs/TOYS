@@ -10,7 +10,7 @@ const LoginPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
-  if(userContext?.isLoggedIn) {
+  if(userContext.isLoggedIn) {
     navigate("/dashboard");
   }
 

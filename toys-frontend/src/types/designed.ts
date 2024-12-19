@@ -5,6 +5,7 @@ import {
   UserRole
 } from "./enum.ts";
 import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import { SimpleGuideData } from "./data.ts";
 
 export interface User {
   id: string,
@@ -117,7 +118,12 @@ export interface DashboardInfoBoxProps {
 export interface TourSectionProps {
   tour: TourData
 }
-
+export interface ManageGuidesWindowProps {
+  opened: boolean; // Controls modal visibility
+  onClose: () => void; // Closes the modal
+  tour: TourData; // ISO 8601 time
+  totalGuidesNeeded: number; // Total number of guides needed for the tour
+}
 export interface TourListItemProps {
   tour: SimpleEventData
 }

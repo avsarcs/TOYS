@@ -9,7 +9,7 @@
 	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
 	"accepted_time": "2024-09-30T09:00:00Z+03:00",
 	"visitor_count": 66,
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -71,7 +71,7 @@
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"accepted_time": "2024-09-30T09:00:00Z",
 	"visitor_count": 4,
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "RECEIVED" | "PENDING_MODIFICATION" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -268,7 +268,7 @@
 	"start_time": "2024-11-15T14:22:14Z",
 	"end_time": "2024-11-15T14:22:14Z",
 	"fair_name": "KARIYERKE",
-	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "APPROVED" | "REJECTED"
+	"status": "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 }
 ```
 
@@ -332,15 +332,16 @@
 }
 ```
 
-# Money for Tour Model
+# Money for Event Model
+// THIS HAS BEEN CHANGED BE CAREFUL
 Coordinator will ask for this model providing a guide ID.
 The `hours_worked` and such refer to the guide with ID provided as a parameter
 ```
 {
-	"tour_id": 41234343241sfd,
-	"tour_date": date the tour happened,
+	"event_id": 41234343241sfd,
+	"event_date": date the tour happened,
 	"hourly_rate": 2.5 // float, in TL. This returns the hourly rate AT the date tour happened.
-	"tour_highschool": "Ankara Fen",
+	"event_highschool": "Ankara Fen",
 	"hours_worked": 3.2 // float, can NOT be lower than zero. zero will be interpreted as "Guide didn't enter Tour Start and End times yet."
 	"money_debted": 2.0 // float, in TL.
 	"money_paid": 1.8 // float, in TL. You see, MoneyForGuide model keeps track of the total `money_paid` to that Guide. What you do is that you assume that money was used to pay every tour STARTING FROM THE OLDEST one.
@@ -404,13 +405,13 @@ API endpoints:
 		body: groupTourApplicationModel | individualTourApplicationModel
 		response: -
 
-		/isfree
+		/isfree 
 		parameters:
 			start=start_time
 			end=end_time
 		method: get
 
-		/gettype
+		/gettype #
 		parameters:
 			uuid=uuid of the application
 		method: get
@@ -424,23 +425,30 @@ API endpoints:
 			body: groupTourApplicationModel | individualTourApplicationModel
 			response: -
 
+		/// DEPRECATED
+		/// USE respond/tour/modification for modificaiton change responses
 		/respond_changes # The 
 			method: post
 			parameters:
 				tour-id: tourID
 				passkey: passkey
-				response=accept/deny // accept or reject changes
 				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-				// You MUST check that accepted_time is within the offered times of the Advisor.
-				// accepted_time is only for when response=accept
-                // bool value, True=accept
-			response: 200 or 400
-			response_type: status code
-
+					// if tour application is accepted, there should be accepted_time
+					// if the application is rejected, give an empty string
+			response: -
 	/fair #
 		method: post
 		body: fairApplicationModel
 		response: -
+	/cancel #
+		method: post
+		parameters:
+			auth: jwt_token //if applicant is cancelling, they provide passkey
+			event_id: string
+		body:
+			{
+				reason: string
+			}
 
 /review
 	/tour
@@ -487,42 +495,58 @@ API endpoints:
 		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
 /respond
-	/tours #
-	    parameters:
-	        tid=tour_id // which tour is this for
-	        response=accept/deny // what is the response
-			accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-			auth=auth_token
-			// accepted_time is only for when response=accept
-	        // bool value, True=accept
-	    method: post
-		response: 200 or 400
-		response_type: status code
+	/application
+		/guide
+		method: post
+		parameters:
+			auth: auth_token
+			applicant_id: "bilkent id of the applicant"
+			response: true/false (accept / reject relatively)
+		/tour
+		method: post
+		parameters:
+			auth: auth_token
+			application_id: "id of the application"
+			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-		/request_changes # Advisor will request changes for the tour from this endpoint
-			parameters:
-				tid=tour_id // which tour is this for
-				auth=auth_token
+			/modification
 			method: post
-			body: {
-				"requested_times": []
-			}
-			response: 200 or 400
-			response_type: status code
+			parameters:
+				auth: auth token ( or passkey for guides)
+				request_id: id of the modification request
+				response: true/false (accept / reject relatively)
+		/fair
+		method: post
+		parameters:
+			auth: auth_token
+			application_id: "id of the applicaiton"
+			response: true/false (accept / reject)
 
-	    /changes # Advisor responds to the Applicant's change request from this endpoint
-            parameters:
-                idt=identifier_token // to keep track of the request
-                response=accept/deny // accept or reject changes
-				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-				// You MUST check that accepted_time is within the offered times of the Applicant.
-				// accepted_time is only for when response=accept
-                // bool value, True=accept
-            method: post
-            body: -
-            response: -
+	/guide
+		/fair-invite
+		method: post
+		parameters:
+			auth: auth_token
+			request_id: "id of the assignment request"
+			response: true/false (accept/reject)
+
+		/tour-invite
+		method: post
+		parameters:
+			auth: auth_token
+			request_id: "id of the assignment request"
+			response: true/false (accept/reject)
+
+		/promotion
+		method: post
+		parameters:
+			auth: auth_token
+			request_id: "id of the assignment request"
+			response: true/false (accept/reject)
+
 
 /internal (Requires Auth)
+	@Deprecated! Frontend and Backend share a set of constant enums, please use them	
 	/majors
 		method: get
 		response: string array of the Major enums
@@ -531,13 +555,14 @@ API endpoints:
 	/user
 		/guides
 			parameters:
+				auth: auth token
 				name (OPTIONAL) = "Orhun Eg" // optional name search string
 				type (OPTIONAL)  = "TRAINEE" | "GUIDE" | "ADVISOR" // optional parameter to filter by type 
 			method: get
 			response: SimpleGuideModel[]
 			response_type: json
 			
-		/available_guides
+		/available-guides
 			parameters:
 				time=time in ISO 8601 format
 				type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
@@ -545,7 +570,7 @@ API endpoints:
 			response: SimpleGuideModel[]
 			response_type: json
 
-		/advisor_offer (Requires Auth as Coordinator)
+		/advisor-offer (Requires Auth as Coordinator)
 			parameters:
 				name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
 				type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
@@ -622,6 +647,17 @@ API endpoints:
 			method: get
 			response: TourModel
 			response_type: json
+			
+			/modifications
+				method: get
+				parameters:
+					auth=jwt_token
+					tour_id=tour_id
+				response:
+				[{
+					"id": "mod id",
+					"mod": group/ind tourApplicationModel
+				}]
 
 	/tours # NEEDS TEST
 		parameters:
@@ -633,7 +669,7 @@ API endpoints:
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
-				status=status // which status to update to (ACCEPTED, REJECTED, TOYS_WANTS_CHANGE, APPLICANT_WANTS_CHANGE, AWAITING_CONFIRMATION)
+				status=status // which status to update to ("RECEIVED", "PENDING_MODIFICATION", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
 				authToken: auth_token
 			method: post
 			response: -
@@ -700,11 +736,11 @@ API endpoints:
 					response: MoneyForGuideModel
 					response_type: json
 
-				/tour
+				/event
 					parameters:
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
-					response: MoneyForTourModel[]
+					response: MoneyForEventModel[]
 					response_type: json
 
 			/pay
@@ -778,7 +814,7 @@ API endpoints:
 		/fairs
 			method: get
 			parameters:
-				status (OPTIONAL): "AWAITING_CONFIRMATION" | "COMPLETED" | "ACCEPTED" | "REJECTED" | "CANCELLED"
+				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 				guide_not_assigned (OPTIONAL): bool
 				enrolled_in_fair (OPTIONAL): 
 			body: auth_token

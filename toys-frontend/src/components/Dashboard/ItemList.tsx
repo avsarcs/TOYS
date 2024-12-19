@@ -1,97 +1,14 @@
-import { Divider, Grid, ScrollArea, Stack, useMatches } from "@mantine/core";
-import { DashboardItemListProps, DashboardItemProps } from "../../types/designed.ts";
-import { EventType } from "../../types/enum.ts";
-import React from "react";
+import {Divider, Grid, ScrollArea, Stack, useMatches} from "@mantine/core";
+import {DashboardItemListProps, DashboardItemProps} from "../../types/designed.ts";
+import {DashboardCategory} from "../../types/enum.ts";
+import React, {useContext, useEffect, useState} from "react";
 import CategoryControl from "./CategoryControl.tsx";
 import Item from "./Item.tsx";
-import { HighschoolData, SimpleEventData } from "../../types/data.ts";
+import {SimpleEventData} from "../../types/data.ts";
+import {UserContext} from "../../context/UserContext.tsx";
+import {notifications} from "@mantine/notifications";
 
-const mockdata: {
-  NONE: SimpleEventData[],
-  OWN_EVENT: SimpleEventData[],
-  EVENT_INVITATION: SimpleEventData[],
-  PENDING_APPLICATION: SimpleEventData[],
-  GUIDE_ASSIGNED: SimpleEventData[],
-  GUIDELESS: SimpleEventData[],
-  PENDING_MODIFICATION: SimpleEventData[],
-  GUIDE_APPLICATIONS: SimpleEventData[]
-} =
-  {
-    NONE: [],
-    OWN_EVENT: [
-      {
-        event_type: EventType.TOUR,
-        event_id: "tour_-1",
-        highschool: {
-          name: "A Lisesi"
-        } as HighschoolData,
-        visitor_count: 31,
-        accepted_time: "2024-11-28T02:07:43Z",
-        requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
-      }
-    ],
-    EVENT_INVITATION: [
-      {
-        event_type: EventType.TOUR,
-        event_id: "tour_-1",
-        highschool: {
-          name: "A Lisesi"
-        } as HighschoolData,
-        visitor_count: 31,
-        accepted_time: "2024-11-28T02:07:43Z",
-        requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
-      }
-    ],
-    PENDING_APPLICATION: [
-      {
-        event_type: EventType.TOUR,
-        event_id: "tour_-1",
-        highschool: {
-          name: "A Lisesi"
-        } as HighschoolData,
-        visitor_count: 31,
-        accepted_time: "",
-        requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
-      }
-    ],
-    GUIDE_ASSIGNED: [
-      {
-        event_type: EventType.TOUR,
-        event_id: "tour_-1",
-        highschool: {
-          name: "A Lisesi"
-        } as HighschoolData,
-        visitor_count: 31,
-        accepted_time: "2024-11-28T02:07:43Z",
-        requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
-      }
-    ],
-    GUIDELESS: [
-      {
-        event_type: EventType.TOUR,
-        event_id: "tour_-1",
-        highschool: {
-          name: "A Lisesi"
-        } as HighschoolData,
-        visitor_count: 31,
-        accepted_time: "2024-11-28T02:07:43Z",
-        requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
-      }
-    ],
-    PENDING_MODIFICATION: [
-      {
-        event_type: EventType.TOUR,
-        event_id: "tour_-1",
-        highschool: {
-          name: "A Lisesi"
-        } as HighschoolData,
-        visitor_count: 31,
-        accepted_time: "2024-11-28T02:07:43Z",
-        requested_times: ["2024-11-29T02:07:43Z", "2024-11-30T02:07:43Z", "2024-12-01T02:07:43Z"],
-      }
-    ],
-    GUIDE_APPLICATIONS: []
-  }
+const DASHBOARD_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard";
 
 const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardItemProps> } = (props: DashboardItemListProps) => {
   const col = useMatches({
@@ -99,10 +16,42 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
     xs: 6,
     sm: 12,
     md: 6,
-    lg: 3
+    lg: 6
   });
 
-  const gridElements = mockdata[props.category as keyof typeof mockdata].map((value, i) => {
+  const userContext = useContext(UserContext);
+  const [items, setItems] = useState<SimpleEventData[]>([]);
+
+  const fetchDashboardItems = async () => {
+    if(props.category === DashboardCategory.NONE) {
+      return;
+    }
+
+    const dashboardUrl = new URL(DASHBOARD_URL);
+    dashboardUrl.searchParams.append("auth", userContext.authToken);
+    dashboardUrl.searchParams.append("category", props.category);
+
+    const dashboardRes = await fetch(dashboardUrl, {
+      method: "GET"
+    });
+
+    if(!dashboardRes.ok) {
+      notifications.show({
+        color: "red",
+        title: "Hay aksi!",
+        message: "Bir şeyler yanlış gitti. Kategoriyi değiştirip tekrar deneyin, sayfayı yenileyin veya site yöneticisine haber verin."
+      });
+    }
+    else {
+      setItems(await dashboardRes.json());
+    }
+  }
+
+  useEffect(() => {
+    fetchDashboardItems().catch(console.error);
+  }, [props.category]);
+
+  const gridElements = items.map((value, i) => {
     return (
       <Grid.Col span={col} key={i}>
         <ItemList.Item item={value} setItem={props.setItem}/>

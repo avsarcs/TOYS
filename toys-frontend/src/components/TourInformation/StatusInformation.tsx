@@ -9,7 +9,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
   const userContext = useContext(UserContext);
 
   const buttons = useMemo(() => {
-    switch(userContext?.user.role) {
+    switch(userContext.user.role) {
       case UserRole.GUIDE:
       case UserRole.ADVISOR:
         switch(props.tour.status) {

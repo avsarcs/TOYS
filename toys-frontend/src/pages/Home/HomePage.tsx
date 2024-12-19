@@ -1,16 +1,13 @@
 import { Image } from "@mantine/core"
-import LoginForm from "../../components/Login/LoginForm";
-import {useContext, useState} from "react";
-import RegisterForm from "../../components/Login/RegisterForm.tsx";
+import {useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
 
 const HomePage: React.FC = () => {
-  const [registering, setRegistering] = useState(false);
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
-  if(userContext?.isLoggedIn) {
+  if(userContext.isLoggedIn) {
     navigate("/dashboard");
   }
 
