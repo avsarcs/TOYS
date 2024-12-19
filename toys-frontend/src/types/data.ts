@@ -70,7 +70,7 @@ export interface ProfileData{
     count: number
   },
   role: UserRole
-  responsible_days: DayOfTheWeek[]
+  responsible_for: DayOfTheWeek[]
   profile_picture: string,
   previous_tour_count: number,
   profile_description: string,

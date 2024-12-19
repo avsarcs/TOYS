@@ -1,23 +1,33 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Avatar, FileButton, Loader } from "@mantine/core";
+import { Button, Avatar, FileButton, Loader, MultiSelect, Select } from "@mantine/core";
 import EditProfileField from "./EditProfileField";
-import DropdownBox from "./DropdownBox";
 import { UserContext } from "../../../context/UserContext";
-import { HighschoolData } from "../../../types/data";
+import { HighschoolData, HighschoolDataForProfile } from "../../../types/data";
 
 const UpdateProfile: React.FC = () => {
     const userContext = useContext(UserContext);
     const [profilePicture, setProfilePicture] = useState<string | File | null>(null);
     const [highSchoolOptions, setHighSchoolOptions] = useState<HighschoolData[]>([]);
-    const [selectedHighSchool, setSelectedHighSchool] = useState<HighschoolData | null>(null);
+    const [selectedHighSchool, setSelectedHighSchool] = useState<HighschoolDataForProfile | null>(null);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
         description: "",
+        responsible_for: [] as string[], // Add responsible_days field
+        profile_picture: "",
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const convertFileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    };
 
     // Fetch high schools and profile
     useEffect(() => {
@@ -33,6 +43,8 @@ const UpdateProfile: React.FC = () => {
                     email: profileData.email,
                     phone: profileData.phone || "",
                     description: profileData.profile_description || "",
+                    responsible_for: profileData.responsible_for || [], // Set responsible_days
+                    profile_picture: profileData.profile_picture || "",
                 });
 
                 setSelectedHighSchool(profileData.highschool); // Set the high school
@@ -63,7 +75,7 @@ const UpdateProfile: React.FC = () => {
         fetchProfileAndHighSchools();
     }, [userContext.authToken]);
 
-    const handleInputChange = (field: string, value: string) => {
+    const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prevData) => ({
             ...prevData,
             [field]: value,
@@ -85,34 +97,38 @@ const UpdateProfile: React.FC = () => {
             return;
         }
 
+        let profilePictureBase64 = formData.profile_picture;
+        if (profilePicture && profilePicture instanceof File) {
+            profilePictureBase64 = await convertFileToBase64(profilePicture);
+        }
+        
         const updatedProfile = {
             ...userContext.user.profile,
+            profile_picture: profilePictureBase64|| "", // Add profile picture
             fullname: formData.name,
             email: formData.email,
             phone: formData.phone,
             profile_description: formData.description,
             highschool: selectedHighSchool, // Use the full high school data
+            responsible_for: formData.responsible_for, // Add responsible_days
         };
 
         try {
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
+            url.searchParams.append("id", userContext.user.id);
             url.searchParams.append("auth", userContext.authToken);
-
-            const formDataToSend = new FormData();
-            formDataToSend.append("profileModel", JSON.stringify(updatedProfile));
-            if (profilePicture && profilePicture instanceof File) {
-                formDataToSend.append("profilePicture", profilePicture);
-            }
-
+            
             const response = await fetch(url.toString(), {
                 method: "POST",
-                body: JSON.stringify({...formDataToSend})
+                body: JSON.stringify(updatedProfile),
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
-
             if (!response.ok) {
                 throw new Error("Failed to save profile.");
             }
-
+            userContext.updateUser(); // Update the user context
             console.log("Profile updated successfully.");
         } catch (err) {
             console.error(err);
@@ -183,11 +199,24 @@ const UpdateProfile: React.FC = () => {
                 onChange={(value) => handleInputChange("description", value)}
                 editable
             />
-            <DropdownBox
+            <Select
                 label="Lise"
                 value={selectedHighSchool?.name || ""}
-                onChange={handleHighSchoolChange}
-                options={highSchoolOptions.map((school) => school.name)}
+                onChange={(value) => handleHighSchoolChange(value || "")}
+                data={highSchoolOptions.map((school) => school.name)}
+                searchable
+                placeholder="Select high school"
+                className="mb-4"
+            />
+
+            {/* Responsible Days */}
+            <MultiSelect
+                label="Sorumlu Günler"
+                data={["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]}
+                value={formData.responsible_for}
+                onChange={(value) => handleInputChange("responsible_for", value)}
+                placeholder="Select days"
+                className="mb-4"
             />
 
             {/* Save Button */}

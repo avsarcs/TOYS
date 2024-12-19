@@ -29,7 +29,7 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
 
     const dashboardUrl = new URL(DASHBOARD_URL);
     dashboardUrl.searchParams.append("auth", userContext.authToken);
-    dashboardUrl.searchParams.append("category", props.category);
+    dashboardUrl.searchParams.append("dashboard_category", props.category);
 
     const dashboardRes = await fetch(dashboardUrl, {
       method: "GET"
