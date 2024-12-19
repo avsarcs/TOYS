@@ -542,6 +542,7 @@ API endpoints:
 
 
 /internal (Requires Auth)
+	@Deprecated! Frontend and Backend share a set of constant enums, please use them	
 	/majors
 		method: get
 		response: string array of the Major enums
@@ -550,13 +551,14 @@ API endpoints:
 	/user
 		/guides
 			parameters:
+				auth: auth token
 				name (OPTIONAL) = "Orhun Eg" // optional name search string
 				type (OPTIONAL)  = "TRAINEE" | "GUIDE" | "ADVISOR" // optional parameter to filter by type 
 			method: get
 			response: SimpleGuideModel[]
 			response_type: json
 			
-		/available_guides
+		/available-guides
 			parameters:
 				time=time in ISO 8601 format
 				type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
@@ -564,7 +566,7 @@ API endpoints:
 			response: SimpleGuideModel[]
 			response_type: json
 
-		/advisor_offer (Requires Auth as Coordinator)
+		/advisor-offer (Requires Auth as Coordinator)
 			parameters:
 				name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
 				type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
