@@ -331,15 +331,16 @@
 }
 ```
 
-# Money for Tour Model
+# Money for Event Model
+// THIS HAS BEEN CHANGED BE CAREFUL
 Coordinator will ask for this model providing a guide ID.
 The `hours_worked` and such refer to the guide with ID provided as a parameter
 ```
 {
-	"tour_id": 41234343241sfd,
-	"tour_date": date the tour happened,
+	"event_id": 41234343241sfd,
+	"event_date": date the tour happened,
 	"hourly_rate": 2.5 // float, in TL. This returns the hourly rate AT the date tour happened.
-	"tour_highschool": "Ankara Fen",
+	"event_highschool": "Ankara Fen",
 	"hours_worked": 3.2 // float, can NOT be lower than zero. zero will be interpreted as "Guide didn't enter Tour Start and End times yet."
 	"money_debted": 2.0 // float, in TL.
 	"money_paid": 1.8 // float, in TL. You see, MoneyForGuide model keeps track of the total `money_paid` to that Guide. What you do is that you assume that money was used to pay every tour STARTING FROM THE OLDEST one.
@@ -736,7 +737,7 @@ API endpoints:
 					parameters:
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
-					response: MoneyForTourModel[]
+					response: MoneyForEventModel[]
 					response_type: json
 
 			/pay
