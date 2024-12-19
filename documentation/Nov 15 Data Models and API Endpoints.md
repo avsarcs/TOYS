@@ -724,6 +724,7 @@ API endpoints:
 			/payment_state
 				/guides
 					parameters:
+						auth: authToken
 						name (OPTIONAL)="Orhun Eg" // optional filter by name string
 					method: get
 					response: MoneyForGuideModel[]
@@ -731,6 +732,7 @@ API endpoints:
 
 				/guide
 					parameters:
+						auth: authToken
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
 					response: MoneyForGuideModel
@@ -738,6 +740,7 @@ API endpoints:
 
 				/event
 					parameters:
+						auth: authToken
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
 					response: MoneyForEventModel[]
@@ -746,11 +749,12 @@ API endpoints:
 			/pay
 				/guide
 					parameters:
+						auth: authToken
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: post
 					response: 200
 					response_type: status code
-			
+			/// DEPRECATED
 			/unpay // to fix mistakes
 				/guide
 					parameters:
