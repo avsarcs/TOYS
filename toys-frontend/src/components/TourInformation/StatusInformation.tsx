@@ -2,12 +2,25 @@ import React, {useContext, useMemo} from "react";
 import {Button, Group, Stack, Text} from "@mantine/core";
 import {IconCircleCheck, IconCircleX, IconPencil} from "@tabler/icons-react";
 import {TourSectionProps} from "../../types/designed.ts";
-import {TourStatus, TourStatusText, TourTypeText, UserRole} from "../../types/enum.ts";
+import {UserRole} from "../../types/enum.ts";
 import {UserContext} from "../../context/UserContext.tsx";
 import TourCancelButton from "./TourCancelButton.tsx";
 import TourRejectButton from "./TourRejectButton.tsx";
+import { TourTypeText } from "../../types/enum.ts";
 
-const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>{
+// Define the new tour status text mapping
+const TourStatusText = {
+  RECEIVED: "Onay Bekliyor",
+  TOYS_WANTS_CHANGE: "TOYS Değişiklik İstiyor",
+  APPLICANT_WANTS_CHANGE: "Başvuran Değişiklik İstiyor",
+  CONFIRMED: "Onaylandı",
+  REJECTED: "Reddedildi",
+  CANCELLED: "İptal Edildi",
+  ONGOING: "Devam Ediyor",
+  FINISHED: "Bitti"
+} as const;
+
+const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
   const userContext = useContext(UserContext);
 
   const buttons = useMemo(() => {
@@ -15,7 +28,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
       case UserRole.GUIDE:
       case UserRole.ADVISOR:
         switch(props.tour.status) {
-          case TourStatus.RECEIVED:
+          case "RECEIVED":
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
@@ -23,14 +36,15 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
                 <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
               </>
             );
-          case TourStatus.PENDING_MODIFICATION:
+          case "TOYS_WANTS_CHANGE":
+          case "APPLICANT_WANTS_CHANGE":
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-                <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+                <Button size="md" leftSection={<IconCircleX/>}>Reddet</Button>
               </>
             );
-          case TourStatus.CONFIRMED:
+          case "CONFIRMED":
             return (
               <TourCancelButton {...props} />
             );
@@ -38,28 +52,36 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         }
       case UserRole.NONE:
         switch (props.tour.status) {
-          case TourStatus.PENDING_MODIFICATION:
+          case "TOYS_WANTS_CHANGE":
+          case "APPLICANT_WANTS_CHANGE":
             return (
               <>
                 <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-                <Button size="md" leftSection={<IconCircleX/>}>İptal Et</Button>
+                <Button size="md" leftSection={<IconCircleX/>}>Reddet</Button>
               </>
             );
+          default: return null;
         }
+      default: return null;
     }
-  }, [props, userContext.user.role])
+  }, [props, userContext.user.role]);
 
   const statusColorClass = useMemo(() => {
     switch (props.tour.status) {
-      case TourStatus.CONFIRMED:
+      case "CONFIRMED":
+      case "FINISHED":
         return "text-green-500";
-      case TourStatus.REJECTED:
+      case "REJECTED":
+      case "CANCELLED":
         return "text-red-500";
-      case TourStatus.PENDING_MODIFICATION:
-      case TourStatus.RECEIVED:
+      case "ONGOING":
+        return "text-blue-500";
+      case "RECEIVED":
+      case "TOYS_WANTS_CHANGE":
+      case "APPLICANT_WANTS_CHANGE":
         return "text-yellow-600";
-
-      default: return "text-black";
+      default: 
+        return "text-black";
     }
   }, [props.tour.status]);
 
@@ -75,14 +97,11 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
       </Stack>
       {
         userContext.user.role === UserRole.ADVISOR
-          ?
-        <Group>
-          { buttons }
-        </Group>
+          ? <Group>{ buttons }</Group>
           : null
       }
     </Group>
-  )
+  );
 }
 
 export default StatusInformation;
