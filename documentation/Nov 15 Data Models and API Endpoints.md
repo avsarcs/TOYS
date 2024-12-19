@@ -516,12 +516,23 @@ API endpoints:
 			/modification
 			method: post
 			parameters:
-				auth: auth_token // passkey if a guide is using this
+				auth: auth_token // passkey if an applicant is using this
 				tour_id: id of the tour
 				accepted_time: "" (ISO8601 accepted time, empty string means rejection)
 			response: 200 or 400
 			response_type: status code
 			description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
+
+			!!!! NEW
+			/request-modification
+			method: post
+			parameters:
+				auth: auth_token // passkey if an applicant is using this
+				tour_id: id of the tour
+				requested_times: ISO8601 Time string array, length min. 1, max. 3
+			response: 200 or 400
+			response_type: status code
+			description: Both an Applicant or an Advisor can use this endpoint.
 
 		/fair #
 		method: post
