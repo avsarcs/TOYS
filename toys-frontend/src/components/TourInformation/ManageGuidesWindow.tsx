@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Modal, Loader, Text, ScrollArea, Button, Group, Divider } from "@mantine/core";
+import { Modal, Loader, Text, ScrollArea, Button, Group, Divider, Progress } from "@mantine/core";
 import { UserContext } from "../../context/UserContext";
 import { SimpleGuideData } from "../../types/data.ts";
 import { ManageGuidesWindowProps } from "../../types/designed.ts";
@@ -35,11 +35,9 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
 
       if (type === "GUIDE") {
         setGuides(data);
-        // Pre-select existing guides
         setSelectedGuides(tour.guides.map((guide) => ({ id: guide.id, name: guide.full_name } as SimpleGuideData)));
       } else {
         setTrainees(data);
-        // Pre-select existing trainee guides
         setSelectedTrainees(
           tour.trainee_guides.map((trainee) => ({ id: trainee.id, name: trainee.full_name } as SimpleGuideData))
         );
@@ -60,11 +58,14 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
 
   // Toggle guide selection
   const toggleGuideSelection = (guide: SimpleGuideData) => {
-    setSelectedGuides((prev) =>
-      prev.some((g) => g.id === guide.id)
-        ? prev.filter((g) => g.id !== guide.id) // Deselect guide
-        : [...prev, guide] // Select guide
-    );
+    setSelectedGuides((prev) => {
+      if (prev.some((g) => g.id === guide.id)) {
+        return prev.filter((g) => g.id !== guide.id); // Deselect guide
+      } else if (prev.length < totalGuidesNeeded) {
+        return [...prev, guide]; // Select guide
+      }
+      return prev; // Do not allow more than totalGuidesNeeded
+    });
   };
 
   // Toggle trainee selection
@@ -83,22 +84,22 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       const urlRemove = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours/remove");
       const urlInvite = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours/invite");
 
-      const guideIdsToRemove = [...tour.guides.map((g) => g.id), ...tour.trainee_guides.map((t) => t.id)];
-      const guideIdsToInvite = [...selectedGuides.map((g) => g.id), ...selectedTrainees.map((t) => t.id)];
+      const guideIdsToRemove = [...tour.guides.map((g) => g.id), ...tour.trainee_guides.map((t) => t.id)].join(",");
+      const guideIdsToInvite = [...selectedGuides.map((g) => g.id), ...selectedTrainees.map((t) => t.id)].join(",");
 
       // Remove previous guides and trainees
-      await fetch(urlRemove.toString(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tid: tour.tour_id, guid: guideIdsToRemove, auth: userContext.authToken }),
-      });
+      urlRemove.searchParams.append("tid", tour.tour_id);
+      urlRemove.searchParams.append("guides", guideIdsToRemove);
+      urlRemove.searchParams.append("auth", userContext.authToken);
+
+      await fetch(urlRemove.toString(), { method: "POST" });
 
       // Add new guides and trainees
-      await fetch(urlInvite.toString(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tid: tour.tour_id, guid: guideIdsToInvite, auth: userContext.authToken }),
-      });
+      urlInvite.searchParams.append("tid", tour.tour_id);
+      urlInvite.searchParams.append("guides", guideIdsToInvite);
+      urlInvite.searchParams.append("auth", userContext.authToken);
+
+      await fetch(urlInvite.toString(), { method: "POST" });
 
       onClose();
     } catch (error) {
@@ -108,33 +109,16 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
     }
   };
 
+  console.log("ManageGuidesWindow", { guides, trainees, selectedGuides, selectedTrainees });
+  console.log("tour_id", tour.tour_id);
   return (
-    <Modal opened={opened} onClose={onClose} title="Available Guides" centered size="md">
-      <Group mb="sm">
-        <Button
-          size="xs"
-          variant="outline"
-          disabled={activeStage === "GUIDE"}
-          onClick={() => {
-            fetchGuides("GUIDE");
-            setActiveStage("GUIDE");
-          }}
-        >
-          Back to Guides
-        </Button>
-        {activeStage === "GUIDE" && (
-          <Button
-            size="xs"
-            onClick={() => {
-              fetchGuides("TRAINEE");
-              setActiveStage("TRAINEE");
-            }}
-          >
-            Next: Trainee Guides
-          </Button>
-        )}
-      </Group>
-      <Divider mb="sm" />
+    <Modal opened={opened} onClose={onClose} title="Rehberleri Yönet" centered size="md">
+      <Progress value={activeStage === "GUIDE" ? 50 : 100} size="sm" mb="lg" />
+      <Text mb="md">
+        {activeStage === "GUIDE"
+          ? `1. Aşama: Bu tur için ${totalGuidesNeeded} tane rehber seçin.`
+          : "2. Aşama: Bu tur için amatör rehberleri seçin."}
+      </Text>
 
       {loading ? (
         <Loader color="violet" />
@@ -151,6 +135,10 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
                   justify="start"
                   onClick={() => toggleGuideSelection(guide)}
                   mb="xs"
+                  disabled={
+                    selectedGuides.length >= totalGuidesNeeded &&
+                    !selectedGuides.some((g) => g.id === guide.id)
+                  }
                 >
                   <Group justify="space-between" w="100%">
                     <Text fw={500}>
@@ -175,19 +163,25 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       )}
 
       <Divider my="sm" />
-      {selectedGuides.length < totalGuidesNeeded && (
-        <Text color="red" mb="sm">
-          Please select {totalGuidesNeeded - selectedGuides.length} more guide(s) to continue.
-        </Text>
+
+      {activeStage === "GUIDE" ? (
+        <Button
+          fullWidth
+          onClick={() => setActiveStage("TRAINEE")}
+          color="violet"
+          disabled={selectedGuides.length < totalGuidesNeeded}
+        >
+          Sonraki Aşama
+        </Button>
+      ) : (
+        <Button
+          fullWidth
+          onClick={handleSave}
+          color="violet"
+        >
+          Kaydet
+        </Button>
       )}
-      <Button
-        fullWidth
-        onClick={handleSave}
-        color="violet"
-        disabled={selectedGuides.length < totalGuidesNeeded}
-      >
-        Save
-      </Button>
     </Modal>
   );
 };

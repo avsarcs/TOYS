@@ -63,8 +63,6 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
         opened={manageGuidesOpen}
         onClose={() => setManageGuidesOpen(false)}
         tour = {props.tour}
-        onGuideSelect={(guide) => console.log("Selected Guide:", guide)}
-        onTraineeSelect={(trainee) => console.log("Selected Trainee Guide:", trainee)}
         totalGuidesNeeded={totalGuidesNeeded}
       />
     </>

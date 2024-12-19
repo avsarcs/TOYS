@@ -122,8 +122,6 @@ export interface ManageGuidesWindowProps {
   opened: boolean; // Controls modal visibility
   onClose: () => void; // Closes the modal
   tour: TourData; // ISO 8601 time
-  onGuideSelect?: (guide: SimpleGuideData) => void; // Callback for guide selection
-  onTraineeSelect?: (guide: SimpleGuideData) => void; // Callback for trainee guide selection
   totalGuidesNeeded: number; // Total number of guides needed for the tour
 }
 export interface TourListItemProps {
