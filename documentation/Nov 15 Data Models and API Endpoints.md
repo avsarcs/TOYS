@@ -483,40 +483,55 @@ API endpoints:
 		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
 /respond
-	/tours #
-	    parameters:
-	        tid=tour_id // which tour is this for
-	        response=accept/deny // what is the response
-			accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-			auth=auth_token
-			// accepted_time is only for when response=accept
-	        // bool value, True=accept
-	    method: post
-		response: 200 or 400
-		response_type: status code
+	/application
+		/guide
+		method: post
+		parameters:
+			auth: auth_token
+			applicant_id: "bilkent id of the applicant"
+			response: true/false (accept / reject relatively)
+		/tour
+		method: post
+		parameters:
+			auth: auth_token
+			application_id: "id of the application"
+			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-		/request_changes # Advisor will request changes for the tour from this endpoint
-			parameters:
-				tid=tour_id // which tour is this for
-				auth=auth_token
+			/modification
 			method: post
-			body: {
-				"requested_times": []
-			}
-			response: 200 or 400
-			response_type: status code
+			parameters:
+				auth: auth token ( or passkey for guides)
+				request_id: id of the modification request
+				response: true/false (accept / reject relatively)
+		/fair
+		method: post
+		parameters:
+			auth: auth_token
+			application_id: "id of the applicaiton"
+			response: true/false (accept / reject)
 
-	    /changes # Advisor responds to the Applicant's change request from this endpoint
-            parameters:
-                idt=identifier_token // to keep track of the request
-                response=accept/deny // accept or reject changes
-				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-				// You MUST check that accepted_time is within the offered times of the Applicant.
-				// accepted_time is only for when response=accept
-                // bool value, True=accept
-            method: post
-            body: -
-            response: -
+	/guide
+		/fair-invite
+		method: post
+		parameters:
+			auth: auth_token
+			request_id: "id of the assignment request"
+			response: true/false (accept/reject)
+
+		/tour-invite
+		method: post
+		parameters:
+			auth: auth_token
+			request_id: "id of the assignment request"
+			response: true/false (accept/reject)
+
+		/promotion
+		method: post
+		parameters:
+			auth: auth_token
+			request_id: "id of the assignment request"
+			response: true/false (accept/reject)
+
 
 /internal (Requires Auth)
 	/majors
