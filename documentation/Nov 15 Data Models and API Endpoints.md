@@ -733,7 +733,7 @@ API endpoints:
 					response: MoneyForGuideModel
 					response_type: json
 
-				/tour
+				/event
 					parameters:
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
