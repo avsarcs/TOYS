@@ -659,13 +659,17 @@ API endpoints:
 			response: SimpleEventModel[]
 			
 	/event
+
+!!!! CHANGED
 		/tour
 			parameters:
-				auth= jwt token
+				auth= jwt token // passkey if Applicant is making the response
 				tid=tour_id
 			method: get
 			response: TourModel
 			response_type: json
+			
+
 			// When a guide starts a tour, they use this endpoint
 			/start-tour
 				method: post
