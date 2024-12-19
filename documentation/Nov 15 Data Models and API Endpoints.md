@@ -662,10 +662,18 @@ API endpoints:
 			
 	/event
 
-!!!! CHANGED
+!!!! NEW
+		/simple-tour
+			parameters:
+				auth=jwt token // passkey if Applicant is making this request
+				tid=tour_id
+			method: get
+			response: SimpleEventModel
+			response_type:json
+
 		/tour
 			parameters:
-				auth= jwt token // passkey if Applicant is making the response
+				auth= jwt token
 				tid=tour_id
 			method: get
 			response: TourModel
