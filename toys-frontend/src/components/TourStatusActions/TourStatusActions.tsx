@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
-import { Group, Button, Alert, Modal, Radio, Stack, Text } from '@mantine/core';
+import { Group, Button, Alert, Modal, Radio, Stack, Text, Box } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { DatePicker } from '@mantine/dates';
 import {
   IconInfoCircle,
   IconCheck,
@@ -16,16 +17,32 @@ import 'dayjs/locale/tr';
 
 dayjs.locale('tr');
 
+interface TimeSlot {
+  start: string;
+  end: string;
+}
+
+const TIME_SLOTS: TimeSlot[] = [
+  { start: '09:00', end: '11:00' },
+  { start: '10:00', end: '12:00' },
+  { start: '13:00', end: '15:00' },
+  { start: '14:00', end: '16:00' },
+  { start: '15:00', end: '17:00' },
+];
+
 // @ts-expect-error no they are not of any type
 const TourStatusActions = ({ tour, onRefresh }) => {
   const { user, authToken } = useContext(UserContext);
   const [opened, { open, close }] = useDisclosure(false);
   const [viewTimesOpened, { open: openViewTimes, close: closeViewTimes }] = useDisclosure(false);
+  const [modificationOpened, { open: openModification, close: closeModification }] = useDisclosure(false);
   const [selectedTime, setSelectedTime] = useState<string>('');
-
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedModificationTimes, setSelectedModificationTimes] = useState<string[]>([]);
+ 
   const canManageTour = user.role === UserRole.ADVISOR ||
-    user.role === UserRole.COORDINATOR ||
-    user.role === UserRole.DIRECTOR;
+                        user.role === UserRole.COORDINATOR ||
+                        user.role === UserRole.DIRECTOR;
 
   if (!canManageTour) {
     return null;
@@ -47,6 +64,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
 
     if (res.ok) {
       close();
+      closeViewTimes(); // Close the view times modal if open
       onRefresh();
     }
   };
@@ -56,28 +74,64 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     respondUrl.searchParams.append("auth", authToken);
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", "");
-
+   
     const res = await fetch(respondUrl, {
       method: "POST",
     });
-
+   
     if (res.ok) {
       closeViewTimes(); // Close the view times modal if open
       onRefresh();
     }
   };
 
-  const handleRequestChange = async () => {
-    const statusUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours/status_update");
-    statusUrl.searchParams.append("tid", tour.tour_id);
-    statusUrl.searchParams.append("status", "TOYS_WANTS_CHANGE");
-    statusUrl.searchParams.append("auth", authToken);
+  const handleTimeSlotClick = (timeSlot: TimeSlot) => {
+    if (!selectedDate) return;
 
-    const res = await fetch(statusUrl, {
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const newTime = `${year}-${month}-${day}T${timeSlot.start}:00+03:00`;
+
+    setSelectedModificationTimes(prev => {
+      const exists = prev.includes(newTime);
+      if (exists) {
+        return prev.filter(time => time !== newTime);
+      }
+      if (prev.length >= 3) {
+        return prev;
+      }
+      return [...prev, newTime];
+    });
+  };
+
+  const isTimeSlotSelected = (timeSlot: TimeSlot): boolean => {
+    if (!selectedDate) return false;
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const timeString = `${year}-${month}-${day}T${timeSlot.start}:00+03:00`;
+    return selectedModificationTimes.includes(timeString);
+  };
+
+  const handleRequestChange = async () => {
+    openModification();
+  };
+
+  const handleSubmitModification = async () => {
+    const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour/request-modification");
+    modUrl.searchParams.append("auth", authToken);
+    modUrl.searchParams.append("tour_id", tour.tour_id);
+    modUrl.searchParams.append("requested_times", JSON.stringify(selectedModificationTimes));
+
+    const res = await fetch(modUrl, {
       method: "POST",
     });
 
     if (res.ok) {
+      closeModification();
+      setSelectedModificationTimes([]);
+      setSelectedDate(null);
       onRefresh();
     }
   };
@@ -87,11 +141,11 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     respondUrl.searchParams.append("auth", authToken);
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", "");
-
+   
     const res = await fetch(respondUrl, {
       method: "POST",
     });
-
+   
     if (res.ok) {
       onRefresh();
     }
@@ -101,7 +155,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     const date = dayjs(timeString);
     const startTime = date.format('HH:mm');
     const endTime = date.add(2, 'hour').format('HH:mm');
-
+    
     return `${date.format('D MMMM YYYY')}, ${startTime} - ${endTime}`;
   };
 
@@ -118,9 +172,9 @@ const TourStatusActions = ({ tour, onRefresh }) => {
   );
 
   const timeSelectionModal = (
-    <Modal
-      opened={opened}
-      onClose={close}
+    <Modal 
+      opened={opened} 
+      onClose={close} 
       title="Tur Zamanı Seçimi"
       size="md"
       centered
@@ -137,10 +191,10 @@ const TourStatusActions = ({ tour, onRefresh }) => {
         >
           <Stack gap="md">
             {[
-              "2024-12-19T14:00:00+03:00",
-              "2024-12-20T09:00:00+03:00",
-              "2024-12-21T13:00:00+03:00"
-            ].map((time: string) => (
+            "2024-12-19T14:00:00+03:00",
+            "2024-12-20T09:00:00+03:00",
+            "2024-12-21T13:00:00+03:00"
+          ].map((time: string) => (
               <Radio
                 key={time}
                 value={time}
@@ -152,8 +206,8 @@ const TourStatusActions = ({ tour, onRefresh }) => {
         </Radio.Group>
         <Group justify="flex-end" mt="xl">
           <Button variant="light" onClick={close}>Vazgeç</Button>
-          <Button
-            color="green"
+          <Button 
+            color="green" 
             onClick={handleConfirmWithTime}
             disabled={!selectedTime}
             leftSection={<IconCheck size={16} />}
@@ -166,10 +220,10 @@ const TourStatusActions = ({ tour, onRefresh }) => {
   );
 
   const viewProposedTimesModal = (
-    <Modal
-      opened={viewTimesOpened}
-      onClose={closeViewTimes}
-      title="Teklif Edilen Zamanlar"
+    <Modal 
+      opened={viewTimesOpened} 
+      onClose={closeViewTimes} 
+      title="Teklif Edilen Zamanlar" 
       size="md"
       centered
     >
@@ -185,10 +239,10 @@ const TourStatusActions = ({ tour, onRefresh }) => {
         >
           <Stack gap="md">
             {[
-              "2024-12-19T14:00:00+03:00",
-              "2024-12-20T09:00:00+03:00",
-              "2024-12-21T13:00:00+03:00"
-            ].map((time: string) => (
+            "2024-12-19T14:00:00+03:00",
+            "2024-12-20T09:00:00+03:00",
+            "2024-12-21T13:00:00+03:00"
+          ].map((time: string) => (
               <Radio
                 key={time}
                 value={time}
@@ -200,15 +254,15 @@ const TourStatusActions = ({ tour, onRefresh }) => {
         </Radio.Group>
         <Group justify="flex-end" mt="xl">
           <Button variant="light" onClick={closeViewTimes}>Vazgeç</Button>
-          <Button
-            color="red"
+          <Button 
+            color="red" 
             onClick={handleReject}
             leftSection={<IconX size={16} />}
           >
             Turu Reddet
           </Button>
-          <Button
-            color="green"
+          <Button 
+            color="green" 
             onClick={handleConfirmWithTime}
             disabled={!selectedTime}
             leftSection={<IconCheck size={16} />}
@@ -220,13 +274,87 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     </Modal>
   );
 
-  // switch (tour.status) {
-  const zattiriZortTestingVar : string = "APPLICANT_WANTS_CHANGE"
-  switch (zattiriZortTestingVar) {
+  const modificationModal = (
+    <Modal
+      opened={modificationOpened}
+      onClose={closeModification}
+      title="Zaman Değişikliği İsteği"
+      size="lg"
+      centered
+    >
+      <Stack>
+        <Text size="sm" c="dimmed">
+          Lütfen alternatif zaman aralıklarını seçiniz (en az 1, en fazla 3):
+        </Text>
+
+        <Group align="flex-start" gap="xl">
+          <Box>
+            <Text c="blue" fw={500} mb="xs">Önce Tarih Seçin</Text>
+            <DatePicker
+              locale="tr"
+              value={selectedDate}
+              onChange={setSelectedDate}
+              minDate={new Date()}
+            />
+          </Box>
+
+          <Box>
+            <Text c="blue" fw={500} mb="xs">Sonra Zaman Aralığı Seçin</Text>
+            <Stack gap="sm">
+              {TIME_SLOTS.map((slot) => (
+                <Button
+                  key={`${slot.start}-${slot.end}`}
+                  variant={isTimeSlotSelected(slot) ? "filled" : "light"}
+                  onClick={() => handleTimeSlotClick(slot)}
+                  disabled={!selectedDate}
+                  style={{ width: 200 }}
+                >
+                  {slot.start} - {slot.end}
+                </Button>
+              ))}
+            </Stack>
+          </Box>
+        </Group>
+
+        {selectedModificationTimes.length > 0 && (
+          <Box>
+            <Text fw={500} mb="xs">Seçili Zaman Aralıkları:</Text>
+            {selectedModificationTimes.map((time, index) => (
+              <div key={index} className='flex mb-2'>
+                <Text className='mr-2'>{formatTimeDisplay(time)}</Text>
+                <Button 
+                  size='compact-sm' 
+                  color='red' 
+                  onClick={() => setSelectedModificationTimes(prev => prev.filter(t => t !== time))}
+                >
+                  İptal
+                </Button>
+              </div>
+            ))}
+          </Box>
+        )}
+
+        <Group justify="flex-end" mt="xl">
+          <Button variant="light" onClick={closeModification}>Vazgeç</Button>
+          <Button
+            color="blue"
+            onClick={handleSubmitModification}
+            disabled={selectedModificationTimes.length === 0}
+            leftSection={<IconClockEdit size={16} />}
+          >
+            Zamanlarda Değişiklik İste
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
+
+  switch (tour.status) {
     case "RECEIVED":
       return (
         <>
           {timeSelectionModal}
+          {modificationModal}
           <Group gap="sm" p="md">
             <Button color="green" onClick={handleConfirm} leftSection={<IconCheck size={16} />}>
               Turu Onayla
@@ -240,15 +368,15 @@ const TourStatusActions = ({ tour, onRefresh }) => {
           </Group>
         </>
       );
-
+   
     case "APPLICANT_WANTS_CHANGE":
       return (
         <>
           {viewProposedTimesModal}
           <Group p="md">
-            <Button
-              color="blue"
-              onClick={openViewTimes}
+            <Button 
+              color="blue" 
+              onClick={openViewTimes} 
               leftSection={<IconCalendarTime size={16} />}
             >
               Teklif Edilen Zamanları Gör
@@ -256,7 +384,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
           </Group>
         </>
       );
-
+   
     case "CONFIRMED":
       return (
         <Group p="md">
@@ -265,11 +393,11 @@ const TourStatusActions = ({ tour, onRefresh }) => {
           </Button>
         </Group>
       );
-
+   
     case "REJECTED":
     case "CANCELLED":
       return reapplyMessage;
-
+   
     case "TOYS_WANTS_CHANGE":
     default:
       return null;
