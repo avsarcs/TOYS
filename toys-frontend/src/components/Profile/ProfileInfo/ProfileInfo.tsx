@@ -54,11 +54,11 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <Title order={5} className="text-blue-700 font-bold font-main">
                     Kişisel Bilgiler
                 </Title>
-                <p><strong>İsim:</strong> {profile.fullname} </p>
-                <p><strong>E-Mail:</strong> {profile.email} </p>
-                <p><strong>ID:</strong> {profile.id}</p>
-                <p><strong>Telefon:</strong>{profile.phone}</p>
-                <p><strong>Açıklama:</strong> {profile.profile_description}</p>
+                <p><strong>İsim: </strong> {profile.fullname} </p>
+                <p><strong>E-Mail: </strong> {profile.email} </p>
+                <p><strong>ID: </strong> {profile.id}</p>
+                <p><strong>Telefon: </strong>{profile.phone}</p>
+                <p><strong>Açıklama: </strong> {profile.profile_description}</p>
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR)  ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
             </div>
@@ -69,6 +69,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p> : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
+                {(profile.role === UserRole.ADVISOR) ? <p><strong>Sorumlu Olunan Gün: </strong> {profile.responsible_for} </p> : null}
             </div>
             <div className = "button-group">
                 {profileId === undefined ? <div className="button">

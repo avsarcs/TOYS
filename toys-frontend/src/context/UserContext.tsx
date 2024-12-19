@@ -122,13 +122,13 @@ const EMPTY_USER: User = {
       bank: "",
       major: "",
       reviews: {
-        average: undefined,
-        count: undefined
+        average: 0,
+        count: 0
       },
       role: UserRole.NONE,
-      responsible_days: [],
+      responsible_for: [],
       profile_picture: "",
-      previous_tour_count: undefined,
+      previous_tour_count: 0,
       profile_description: "",
       advisor_offer: false
   }

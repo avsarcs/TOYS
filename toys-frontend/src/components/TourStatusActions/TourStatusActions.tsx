@@ -349,6 +349,8 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     </Modal>
   );
 
+  // requested_times is requested_time in the backend until its fixed so this has the possibility to explode.
+  // notified the backend about this.
   switch (tour.status) {
     case "RECEIVED":
       return (

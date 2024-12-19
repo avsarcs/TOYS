@@ -22,6 +22,7 @@ import EditProfilePage from "./pages/Profile/EditProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
+import ApplicantRespond from "./pages/ApplicantRespond/ApplicantRespond.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -70,6 +71,7 @@ function App() {
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
             <Route path="/review/:review-id" element={<CheckLogin redirect children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<CheckLogin redirect children={<TourStatistics />}/>}/>
+            <Route path="/applicant-respond" element={<ApplicantRespond />} />
           </Routes>
         </main>
       </div>

@@ -99,7 +99,9 @@
 	"highschool": HighSchoolModel
 	// accepted_time field empty/null for tours AWAITING_MODIFICATION
 	"accepted_time": "2024-11-15T14:22:14Z",
-	"requested_time": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
+
+!!!! CHANGED
+	"requested_times": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
 	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
@@ -512,8 +514,8 @@ API endpoints:
 			application_id: "id of the application"
 			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-			!!!! CHANGED 
-			/modification
+!!!! CHANGED 
+			/answer-modification
 			method: post
 			parameters:
 				auth: auth_token // passkey if an applicant is using this
@@ -523,7 +525,7 @@ API endpoints:
 			response_type: status code
 			description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
 
-			!!!! NEW
+!!!! NEW
 			/request-modification
 			method: post
 			parameters:
@@ -659,6 +661,16 @@ API endpoints:
 			response: SimpleEventModel[]
 			
 	/event
+
+!!!! NEW
+		/simple-tour
+			parameters:
+				auth=jwt token // passkey if Applicant is making this request
+				tid=tour_id
+			method: get
+			response: SimpleEventModel
+			response_type:json
+
 		/tour
 			parameters:
 				auth= jwt token
@@ -666,6 +678,8 @@ API endpoints:
 			method: get
 			response: TourModel
 			response_type: json
+			
+
 			// When a guide starts a tour, they use this endpoint
 			/start-tour
 				method: post
