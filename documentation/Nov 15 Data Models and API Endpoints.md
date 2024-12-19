@@ -428,13 +428,10 @@ API endpoints:
 			parameters:
 				tour-id: tourID
 				passkey: passkey
-				response=accept/deny // accept or reject changes
 				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-				// You MUST check that accepted_time is within the offered times of the Advisor.
-				// accepted_time is only for when response=accept
-                // bool value, True=accept
-			response: 200 or 400
-			response_type: status code
+					// if tour application is accepted, there should be accepted_time
+					// if the application is rejected, give an empty string
+			response: -
 
 	/fair #
 		method: post
