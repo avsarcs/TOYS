@@ -650,6 +650,20 @@ API endpoints:
 			method: get
 			response: TourModel
 			response_type: json
+			// When a guide starts a tour, they use this endpoint
+			/start-tour
+				method: post
+				parameters:
+					auth: jwt token
+					tour_id: id of the tour to start
+					start_time: iso8601 time of tour start // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
+
+			/end-tour
+				method: post
+				parameters:
+					auth: jwt token
+					tour_id: id of the tour to stop
+					end_time: iso8601 time of tour end // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
 			
 			/modifications
 				method: get
