@@ -110,7 +110,8 @@ export enum TourTypeText {
 
 export enum TourStatus {
   RECEIVED = "RECEIVED",
-  PENDING_MODIFICATION = "PENDING_MODIFICATION",
+  TOYS_WANTS_CHANGE = "TOYS_WANTS_CHANGE",
+  APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
   CONFIRMED = "CONFIRMED",
   REJECTED = "REJECTED",
   CANCELLED = "CANCELLED",
@@ -120,7 +121,8 @@ export enum TourStatus {
 
 export enum TourStatusText {
   RECEIVED = "Onay Bekliyor",
-  PENDING_MODIFICATION = "Değişiklik Bekliyor",
+  TOYS_WANTS_CHANGE = "Değişiklik Talebi Gönderildi",
+  APPLICANT_WANTS_CHANGE = "Başvuran Değişiklik Yaptı",
   CONFIRMED = "Kabul Edildi",
   REJECTED = "Reddedildi",
   CANCELLED = "İptal Edildi",

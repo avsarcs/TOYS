@@ -668,12 +668,14 @@ API endpoints:
 		method: get
 		response: List of tours (List<SimpleEventModel>)
 		response_type: json
+		// REQUEST: Returned tours should be ordered with "ONGOING" first, then "APPLICANT_WANTS_CHANGE", then "RECEIVED",
+		// then "CONFIRMED", then "TOYS_WANTS_CHANGE", then the rest
 
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
 				// changed
-				status=status // which status to update to ("RECEIVED", "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
+				status=status // which status to update to ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
 				authToken: auth_token
 			method: post
 			response: -

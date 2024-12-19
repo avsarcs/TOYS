@@ -90,13 +90,14 @@ const TourListPage: React.FC = () => {
           </Text>
           <Chip.Group multiple value={statusFilter} onChange={(filter: string[]) => { setStatusFilter(filter)} }>
             <Group>
-              <Chip size="lg" color="blue" variant="outline" value="1">Onay Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="2">Değişim Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="3">Kabul Edildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="4">Reddedildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="5">Başladı</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="6">Bitti</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="7">İptal Edildi</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="FINISHED">Bitti</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
