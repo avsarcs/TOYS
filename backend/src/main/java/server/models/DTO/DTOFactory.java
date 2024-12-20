@@ -152,6 +152,8 @@ public class DTOFactory {
         dto.put("classroom", tour.getClassroom());
         dto.put("tour_id", tour.getTour_id());
 
+        dto = eventStatus_directionalize(dto);
+
         return dto;
     }
 
@@ -487,6 +489,7 @@ public class DTOFactory {
         dto.put("name", guide.getProfile().getName());
         dto.put("major", guide.getDepartment());
         dto.put("experience", guide.getExperience().getPrevious_events().size() + " events");
+        dto.put("role", guide.getRole().name());
 
         return dto;
     }
@@ -619,14 +622,18 @@ public class DTOFactory {
         dto.put("event_id", tour.getTour_id());
         dto.put("event_date", tour.getStarted_at());
         double rate = 0;
+        AtomicDouble atomicRate = new AtomicDouble(0);
         try {
-            rate = database.payments.getRates().stream()
+            database.payments.getRates().stream()
                             .filter(hr -> hr.contains(tour.getStarted_at().getDate()))
-                            .findFirst().get().getRate();
+                            .findFirst().ifPresent(
+                                    r -> atomicRate.set(r.getRate())
+                    );
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("There was an error when parsing the rate for a MoneyForTour DTO");
         }
+        rate = atomicRate.doubleValue();
         dto.put("hourly_rate", rate);
         Duration difference = Duration.between(tour.getStarted_at().getDate(), tour.getEnded_at().getDate());
         double hoursWorked = difference.toMinutes()/60.0;

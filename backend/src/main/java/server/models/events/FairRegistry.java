@@ -29,7 +29,7 @@ public class FairRegistry extends FairApplication {
     protected FairRegistry(Map<String,Object> map) {
         super(map);
         this.guides = (List<String>) map.get("guides");
-        this.fair_status = FairStatus.valueOf((String) map.get("status"));
+        this.fair_status = FairStatus.valueOf((String) map.get("fair_status"));
         this.notes = (String) map.get("notes");
         this.reviews = (List<String>) map.get("reviews");
         this.fair_id = (String) map.get("fair_id");
