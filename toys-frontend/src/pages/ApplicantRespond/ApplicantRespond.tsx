@@ -29,36 +29,59 @@ const ApplicantRespond: React.FC = () => {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-    const [tourData, setTourData] = useState<SimpleEventData | null>(null);
 
+    
+    const sampleTourData = {
+        event_type: "TOUR",
+        event_subtype: "TOUR",
+        event_id: "123",
+        event_status: "TOYS_WANTS_CHANGE",
+        highschool: {
+            id: "1",
+            name: "Ankara Fen Lisesi",
+            location: "Ankara",
+            priority: 1,
+            ranking: 1
+        },
+        accepted_time: null,
+        requested_times: [
+            "2024-12-19T14:00:00+03:00",
+            "2024-12-20T10:00:00+03:00",
+            "2024-12-21T15:00:00+03:00"
+        ],
+        visitor_count: 25
+    };
+
+
+    const [tourData, setTourData] = useState<SimpleEventData | null>(sampleTourData);
     // Fetch tour data
     useEffect(() => {
-        const fetchTour = async () => {
-            try {
-                const url = new URL(SIMPLE_TOUR_URL);
-                url.searchParams.append('auth', passkey || '');
-                url.searchParams.append('tid', ''); // Empty string as required
+        // const fetchTour = async () => {
+        //     try {
+        //         const url = new URL(SIMPLE_TOUR_URL);
+        //         url.searchParams.append('auth', passkey || '');
+        //         url.searchParams.append('tid', ''); // Empty string as required
 
-                const response = await fetch(url, {
-                    method: 'GET'
-                });
+        //         const response = await fetch(url, {
+        //             method: 'GET'
+        //         });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tour data');
-                }
+        //         if (!response.ok) {
+        //             throw new Error('Failed to fetch tour data');
+        //         }
 
-                const data = await response.json();
-                setTourData(data);
+        //         const data = await response.json();
+        //         setTourData(data);
                 
-            } catch (err) {
-                console.error('Error fetching tour:', err);
-                setFetchError('Tur bilgileri yüklenirken bir hata oluştu.');
-            }
-        };
+        //     } catch (err) {
+        //         console.error('Error fetching tour:', err);
+        //         setFetchError('Tur bilgileri yüklenirken bir hata oluştu.');
+        //     }
+        // };
 
-        if (passkey) {
-            fetchTour();
-        }
+        // if (passkey) {
+        //     fetchTour();
+        // }
     }, [passkey]);
 
     const formatDate = (dateStr: string) => {
@@ -183,10 +206,11 @@ const ApplicantRespond: React.FC = () => {
                             className="text-sm leading-relaxed"
                         >
                             <Stack gap="xs">
-                                <Text>• Tur başvurunuzu yaparken belirttiğiniz vakitler, Tanıtım Ofisi'nin programıyla uyuşmuyor. Tanıtım Ofisi'nin programına uyan vakitler aşağıda belirtilmiştir.</Text>
-                                <Text>• Tanıtım Ofisi'nin teklif ettiği bu vakitlerden birinde tur yapmayı onaylayabilirsiniz.</Text>
-                                <Text>• Veya, Tanıtım Ofisi tarafından teklif edilen hiçbir zaman programınıza uymuyorsa, teklifi reddedip başka bir zaman yeniden bir tur başvurusu yapabilirsiniz.</Text>
-                            </Stack>
+                                <Text>• Tur başvurunuz Tanıtım Ofisi tarafından değerlendirilmiştir.</Text>
+                                <Text>• Tanıtım Ofisi'ne uygun ziyaretçi sayısı ve vakitler aşağıda belirtilmiştir.</Text>
+                                <Text>• Belirtilen vakitlerden size uygun olanını seçiniz.</Text>
+                                <Text>• Vakit veya ziyaretçi sayısı size uygun değilse reddedip, başka bir zaman yeniden tur başvurusunda bulunabilirsiniz.</Text>
+</Stack>
                         </Alert>
 
                         <Card withBorder shadow="sm" radius="md" className="bg-blue-50">
