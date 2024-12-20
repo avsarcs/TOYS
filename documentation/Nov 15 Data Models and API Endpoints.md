@@ -412,17 +412,6 @@ API endpoints:
 		body: groupTourApplicationModel | individualTourApplicationModel
 		response: -
 
-		/request-modification
-			method: post
-			parameters:
-				auth: auth_token // passkey if an applicant is using this
-				tour_id: id of the tour
-				requested_times: ISO8601 Time string array, length min. 1, max. 3
-				visitor_count: int, requested visitor count
-			response: 200 or 400
-			response_type: status code
-			description: Both an Applicant or an Advisor can use this endpoint.
-
 		/isfree 
 			parameters:
 				start=start_time

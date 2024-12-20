@@ -190,7 +190,7 @@ const ApplicantRespond: React.FC = () => {
             <Container size="lg" py="xl">
                 <Paper shadow="sm" p="xl" withBorder>
                     <Stack gap="xl">
-                        <Title order={2} className="text-slate-600 mb-2">TURUNUZ İÇİN ZAMAN SEÇMENİZ GEREKİYOR</Title>
+                        <Title order={2} className="text-slate-600 mb-2">TURUNUZ İÇİN İSTENİLEN DEĞİŞİKLİKLERİ GÖZDEN GEÇİRMENİZ GEREKİYOR</Title>
                         <Alert
                             color="blue"
                             variant="light"
@@ -204,7 +204,7 @@ const ApplicantRespond: React.FC = () => {
                         </Alert>
 
                         <Stack gap="md">
-                            <Title order={3}>Önerilen Zamanlar</Title>
+                            <Title order={3}>Teklif Edilen Zamanlar</Title>
                             <RadioGroup value={selectedTime} onChange={setSelectedTime}>
                                 <Stack gap="lg">
                                     {tourData.requested_times.map((time) => (

@@ -119,7 +119,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
   };
 
   const handleSubmitModification = async () => {
-    const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour/request-modification");
+    const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request-modification");
     modUrl.searchParams.append("auth", authToken);
     modUrl.searchParams.append("tour_id", tour.tour_id);
     modUrl.searchParams.append("requested_times", JSON.stringify(selectedModificationTimes));

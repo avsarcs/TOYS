@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Text,
@@ -15,24 +15,25 @@ import {
   ScrollArea, 
   Autocomplete
 } from "@mantine/core";
-import {DateInput} from "@mantine/dates";
-import {UserContext} from "../../context/UserContext.tsx";
-import {IconSearch} from "@tabler/icons-react";
+import { DateInput } from "@mantine/dates";
+import { UserContext } from "../../context/UserContext.tsx";
+import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
+import { SimpleEventData } from "../../types/data";
 
 const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
 
 const TourListPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [tours, setTours] = useState([]);
-  const [schoolName, setSchoolName] = useState("");
+  const [tours, setTours] = useState<SimpleEventData[]>([]);
+  const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
   const [guideMissing, setGuideMissing] = useState(false);
   const [traineeMissing, setTraineeMissing] = useState(false);
 
-  const getTours = useCallback(async () => {
+  const getTours = async () => {
     const toursUrl = new URL(TOURS_URL);
     
     // Always append required auth token
@@ -40,7 +41,7 @@ const TourListPage: React.FC = () => {
     
     // Always append optional parameters, even if empty
     toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
-    toursUrl.searchParams.append("school_name", schoolName || '');
+    toursUrl.searchParams.append("school_name", searchSchoolName || '');
     
     // Handle dates
     toursUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
@@ -57,12 +58,13 @@ const TourListPage: React.FC = () => {
     if(res.ok) {
       setTours(await res.json());
     }
-  }, [userContext.authToken, statusFilter, schoolName, fromDate, toDate, guideMissing, traineeMissing]);
+  };
 
   useEffect(() => {
+    // Initial load of tours
     getTours().catch(console.error);
     return () => { setTours([]); }
-  }, [getTours]);
+  }, []); // Empty dependency array as we only want this to run once on mount
 
   const listHeight = useMatches({
     base: "",
@@ -74,8 +76,16 @@ const TourListPage: React.FC = () => {
     tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
   [tours]);
 
-  const handleSearch = () => {
-    getTours().catch(console.error);
+  const handleSearch = async () => {
+    await getTours().catch(console.error);
+  };
+
+  const handleFromDateChange = (date: Date | null) => {
+    setFromDate(date);
+    // If new fromDate makes current toDate invalid, clear toDate
+    if (date && toDate && toDate < date) {
+      setToDate(null);
+    }
   };
 
   const handleToDateChange = (date: Date | null) => {
@@ -109,9 +119,9 @@ const TourListPage: React.FC = () => {
             leftSection={<IconSearch />}
             placeholder="Okul ismi..."
             limit={7}
-            value={schoolName}
+            value={searchSchoolName}
             data={[""]}
-            onChange={setSchoolName}/>
+            onChange={setSearchSchoolName}/>
           <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
@@ -141,7 +151,7 @@ const TourListPage: React.FC = () => {
               <DateInput 
                 clearable
                 value={fromDate}
-                onChange={setFromDate}
+                onChange={handleFromDateChange}
               />
               <Text>-</Text>
               <DateInput 
