@@ -714,9 +714,16 @@ response_type:json
 					"mod": group/ind tourApplicationModel
 				}]
 
+	!!!! CHANGED
 	/tours # NEEDS TEST
 		parameters:
 			authToken= jwt token
+			status=string[] // OPTIONAL tour status filtering string ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
+			from_date=ISO 8601 string // OPTIONAL
+			to_date=ISO 8601 string // OPTIONAL
+			filter_guide_missing=True/False // if False, include both guide missing and not missing.
+			filter_trainee_missing=True/False // if False, include both guide missing and not missing
+			// from_date & to_date can be sent isolated or both. to_date will not be earlier than from_date	
 		method: get
 		response: List of tours (List<SimpleEventModel>)
 		response_type: json
