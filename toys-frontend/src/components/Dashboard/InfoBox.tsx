@@ -62,10 +62,10 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
     switch(props.item.event_type) {
       case EventType.TOUR:
         if(props.item.event_subtype === TourType.INDIVIDUAL) {
-          return "group_tour_icon.svg";
+          return "individual_tour_icon.svg";
         }
         else if (props.item.event_subtype === TourType.GROUP) {
-          return "individual_tour_icon.svg";
+          return "group_tour_icon.svg";
         }
         else {
           return "";
