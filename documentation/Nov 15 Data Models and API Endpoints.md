@@ -9,7 +9,7 @@
 	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
 	"accepted_time": "2024-09-30T09:00:00Z+03:00",
 	"visitor_count": 66,
-	// changed # Fixed Dec 20 - 2306
+	// changed # Done @ Dec 20 - 2306
 	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
@@ -72,7 +72,7 @@
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"accepted_time": "2024-09-30T09:00:00Z",
 	"visitor_count": 4,
-	// changed
+	// changed # Done @ Dec 20 - 2306
 	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
@@ -94,13 +94,13 @@
     "event_type": "TOUR" | "FAIR"
 	"event_subtype": "TOUR",
 	"event_id": "id",
-	// changed
-	"event_status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED" // changed
+	// changed # Done @ Dec 20 - 2306
+	"event_status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED" // changed # Done @ Dec 20 - 2306
 	"highschool": HighSchoolModel
-	// accepted_time field empty/null for tours AWAITING_MODIFICATION
+	// accepted_time field empty/null for tours *_WANTS_CHANGE
 	"accepted_time": "2024-11-15T14:22:14Z",
 
-!!!! CHANGED
+!!!! CHANGED # Done @ Dec 20 - 2306
 	"requested_times": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
 	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
