@@ -42,7 +42,8 @@ public class PermissionMap {
                     Permission.AR_TOUR_CHANGES,
                     Permission.REQUEST_TOUR_CHANGES,
                     Permission.ASSIGN_OTHER_GUIDE,
-                    Permission.MANAGE_GUIDE_EXPERIENCE
+                    Permission.MANAGE_GUIDE_EXPERIENCE,
+                    Permission.EDIT_TOUR_SS_TIME
             ));
 
             table.put(UserRole.COORDINATOR, List.of(

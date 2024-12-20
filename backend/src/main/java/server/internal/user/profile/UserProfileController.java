@@ -22,7 +22,7 @@ public class UserProfileController {
     }
 
     @GetMapping("/internal/user/profile/simple")
-    public List<DTO_SimpleGuide> getSimpleGuides(@RequestParam String auth, @RequestParam DTO_UserType type) {
+    public List<Map<String, Object>> getSimpleGuides(@RequestParam String auth, @RequestParam DTO_UserType type) {
         return userProfileService.getSimpleGuides(auth, type);
     }
 

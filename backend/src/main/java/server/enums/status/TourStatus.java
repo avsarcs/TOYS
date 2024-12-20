@@ -1,9 +1,8 @@
 package server.enums.status;
 
 public enum TourStatus {
-    CONFLICT,
-    AWAITING_CONFIRMATION,
-    AWAITING_CHANGES,
+    RECEIVED,
+    PENDING_MODIFICATION,
     CONFIRMED,
     REJECTED,
     CANCELLED,

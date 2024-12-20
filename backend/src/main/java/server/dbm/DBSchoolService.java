@@ -1,8 +1,11 @@
 package server.dbm;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import server.models.DTO.DTO_Highschool;
@@ -23,6 +26,32 @@ public class DBSchoolService {
         this.mapper = Database.getObjectMapper();
     }
 
+    public void addHighschool(Highschool highschool) {
+        try {
+            DocumentReference reference = firestore.collection("edu").document("highschools");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("highschools");
+
+            data.put(
+                    highschool.getId(),
+                    highschool
+            );
+
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("highschools", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+
+            System.out.println("Highschool added to database." + result.get().getUpdateTime());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to add highschool to the database.");
+        }
+    }
+
     public  List<Highschool> getHighschools() {
         List<Highschool> schools = new ArrayList<>();
         try {
@@ -30,9 +59,12 @@ public class DBSchoolService {
 
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("highschools");
 
-            schools.addAll(((List<Object>) data.get("highschools")).stream().map(
-                    obj -> Highschool.fromMap((Map<String, Object>) obj)
-            ).toList());
+            schools.addAll(
+                    data.entrySet().stream().map(
+                            entry -> Highschool.fromMap((Map<String, Object>) entry.getValue())
+                    ).toList()
+            );
+
 
         } catch (Exception e) {
             e.printStackTrace();

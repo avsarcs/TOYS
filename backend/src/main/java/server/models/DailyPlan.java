@@ -15,8 +15,11 @@ public class DailyPlan {
 
     protected DailyPlan(Map<String, Object> map) {
         this.dailyPlan = new HashMap<>();
+        for (String key : map.keySet()) {
+            System.out.println("KEY: " + key);
+        }
         for (DayTimeSlots slot : DayTimeSlots.values()) {
-            dailyPlan.put(slot, TimeSlotStatus.valueOf((String) map.get(slot.toString())));
+            dailyPlan.put(slot, TimeSlotStatus.valueOf((String) ((Map<String, Object>)map.get("dailyPlan")).get(slot.name())));
         }
     }
     public static DailyPlan getDefault() {
