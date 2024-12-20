@@ -23,6 +23,7 @@ import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
 import FairApplication from "./pages/FairApplication/FairApplication.tsx";
+import ChangeHourlyRate from "./pages/Puantaj/ChangeHourlyRate.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -72,6 +73,7 @@ function App() {
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
             <Route path="/review/:review-id" element={<RequiresLogin children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<RequiresLogin children={<TourStatistics />}/>}/>
+            <Route path="/change-hourly-rate" element={<RequiresLogin children={<ChangeHourlyRate />}/>}/>
           </Routes>
         </main>
       </div>

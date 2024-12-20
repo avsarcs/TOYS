@@ -145,12 +145,12 @@ const GuidePayments: React.FC = () => {
 
     return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-    <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Guide Payments</b></h1>
+    <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Ödemeler</b></h1>
     <div style={{ height: "20px" }}></div>
     <div style={{ marginBottom: "20px", textAlign: "center", background: "#fff", borderRadius: "10px", padding: "20px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
         <input
             type="text"
-            placeholder="Search by Name..."
+            placeholder="İsim aratın"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -172,7 +172,7 @@ const GuidePayments: React.FC = () => {
                 border: "none",
             }}
         >
-            Search
+            Ara
         </button>
     </div>
     
@@ -189,7 +189,7 @@ const GuidePayments: React.FC = () => {
             borderRadius: "20px",
             }}
         >
-            All
+            Tüm Ödemeler
         </button>
         <button
             onClick={() => setFilter("paid")}
@@ -203,7 +203,7 @@ const GuidePayments: React.FC = () => {
             borderRadius: "20px",
             }}
         >
-            Paid
+            Yapılmış Ödemeler
         </button>
         <button
             onClick={() => setFilter("unpaid")}
@@ -217,7 +217,7 @@ const GuidePayments: React.FC = () => {
             borderRadius: "20px",
             }}
         >
-            Unpaid
+            Yapılmamış Ödemeler 
         </button>
         <button
             onClick={() => paymentsData.forEach(payment => handlePayDebt(payment.guide.id))}
@@ -231,7 +231,7 @@ const GuidePayments: React.FC = () => {
             borderRadius: "20px",
             }}
         >
-            Pay All Debts
+            Tüm Borçları Öde
         </button>
         <button
             onClick={() => navigate('/change-hourly-rate')}
@@ -246,13 +246,13 @@ const GuidePayments: React.FC = () => {
             float: "right",
             }}
         >
-            Change Hourly Rate
+            Saatlik Ücreti Güncelle
         </button>
     </div>
 
     <div style={{ marginTop: "20px" }}>
         {paginatedPayments.length === 0 ? (
-            <p style={{ textAlign: "center", color: "red" }}>No record found.</p>
+            <p style={{ textAlign: "center", color: "red" }}>Kayıt bulunamadı.</p>
         ) : (
             paginatedPayments.map((payment) => (
                 <div
@@ -266,7 +266,7 @@ const GuidePayments: React.FC = () => {
                         backgroundColor: "#f1f1f1", 
                         borderRadius: "20px",
                         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        maxWidth: "1500px",
+                        maxWidth: "1850px",
                         margin: "10px auto",
                     }}
                 >
@@ -293,7 +293,7 @@ const GuidePayments: React.FC = () => {
                             fontSize: "1.2em",
                         }}
                     >
-                        Payment Details
+                        Ödeme Detayları
                     </button>
                     {payment.debt > 0 && (
                         <button
@@ -309,7 +309,7 @@ const GuidePayments: React.FC = () => {
                                 fontSize: "1.2em",
                             }}
                         >
-                            Pay Total Debt
+                            Borç Öde
                         </button>
                     )}
                 </div>
@@ -340,7 +340,7 @@ const GuidePayments: React.FC = () => {
                 background: currentPage === 1 ? "#f1f1f1" : "#fff",
             }}
         >
-            Previous
+            Önceki Sayfa
         </button>
         <span>
             Page {currentPage} of {totalPages}
@@ -357,7 +357,7 @@ const GuidePayments: React.FC = () => {
                 background: currentPage === totalPages ? "#f1f1f1" : "#fff",
             }}
         >
-            Next
+            Sonraki Sayfa
         </button>
     </div>
 </div> );

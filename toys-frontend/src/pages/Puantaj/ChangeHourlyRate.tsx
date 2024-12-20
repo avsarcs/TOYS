@@ -86,14 +86,14 @@ const ChangeHourlyRate:React.FC = () => {
                 />
             </div>
             <Button
-                className="update-button w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md py-2 mb-4"
+                className="update-button w-full bg-blue-200 hover:bg-blue-300 text-blue-800 rounded-full py-2 mb-4"
                 onClick={handleUpdateHourlyRate}
             >
                 Update Hourly Rate
             </Button>
             {error && <Alert variant="light" color="red" title="Error" icon={<IconAlertCircle />} className='my-4'>{error}</Alert>}
             <Button
-                className="back-button w-full bg-gray-600 hover:bg-gray-700 text-white rounded-md py-2"
+                className="back-button w-full bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full py-2"
                 onClick={() => navigate("/guide-payments")}
             >
                 Back to Guide Payments
