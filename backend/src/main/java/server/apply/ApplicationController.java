@@ -58,7 +58,6 @@ public class ApplicationController {
 
     @PostMapping("/apply/tour/request_changes")
     public void requestChanges(@RequestBody Map<String, Object> changes, @RequestParam("tour_id") String tour_id, @RequestParam String auth) {
-        // TODO: This should be delegated to the ApplicationService
         applicationService.requestChanges(changes, tour_id, auth);
     }
 

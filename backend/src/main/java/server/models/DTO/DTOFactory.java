@@ -7,6 +7,7 @@ import server.dbm.Database;
 import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
+import server.enums.roles.UserRole;
 import server.enums.status.ApplicationStatus;
 import server.enums.status.RequestStatus;
 import server.enums.status.TourStatus;
@@ -565,9 +566,46 @@ public class DTOFactory {
                 "bank", "N/A"
 
         ));
-        dto.put("debt", user.getFiscalState().getOwed());
+
+        dto.put("debt", user.getFiscalState().getOwed() - user.getFiscalState().getPaid());
         dto.put("money_paid", user.getFiscalState().getPaid());
+
+        // TODO : Unrequired field, probably
         dto.put("unpaid_hours", "");
+
+        if (user.getRole().equals(UserRole.GUIDE) || user.getRole().equals(UserRole.ADVISOR)) {
+            try {
+                Guide guide = database.people.fetchGuides(user.getBilkent_id()).get(0);
+                AtomicDouble unpaidHours = new AtomicDouble(0);
+
+                Map<String, FairRegistry> fairs = database.fairs.fetchFairs();
+                Map<String, TourRegistry> tours = database.tours.fetchTours();
+
+                guide.getExperience().getPrevious_events().stream().forEach(
+                        event_id -> {
+                            Map<String, Object> temp = new HashMap<>();
+                            if (fairs.containsKey(event_id)) {
+                                FairRegistry fair = fairs.get(event_id);
+                                temp = moneyForEvent(fair, user.getFiscalState());
+                            } else if (tours.containsKey(event_id)) {
+                                TourRegistry tour = tours.get(event_id);
+                                temp = moneyForEvent(tour, user.getFiscalState());
+                            } else {
+                                System.out.println("Event with id " + event_id + " not found when getting unpaid hours for a guide");
+                            }
+
+                            if (!temp.isEmpty()) {
+                                System.out.println("added: " + ((double) temp.get("money_debted") - (double) temp.get("money_paid")) / (double) temp.get("hourly_rate"));
+                                unpaidHours.addAndGet(((double) temp.get("money_debted") - (double) temp.get("money_paid")) / (double) temp.get("hourly_rate"));
+                            }
+                        }
+                );
+                dto.put("unpaid_hours", unpaidHours.doubleValue());
+            } catch (Exception E) {
+                System.out.println("Small problem when calculating unpaid hours for a guide");
+            }
+        }
+
 
         return dto;
     }

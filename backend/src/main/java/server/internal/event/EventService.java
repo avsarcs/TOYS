@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import server.auth.AuthService;
-import server.auth.JWTService;
-import server.auth.Permission;
-import server.auth.PermissionMap;
+import server.auth.*;
 import server.dbm.Database;
 import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
@@ -52,6 +49,25 @@ public class EventService {
 
     @Autowired
     MailServiceGateway mail;
+
+    public Map<String, Object> getSimpleTour(String auth, String tid) {
+        if (!authService.checkWithPasskey(auth, tid, Permission.VIEW_TOUR_INFO)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view tour info!");
+        }
+
+        if (tid.isEmpty()) {
+            tid = database.auth.getPasskeys().entrySet().stream().filter(e -> e.getValue().getKey().equals(auth)).findFirst().orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Passkey not found!")
+            ).getKey();
+        }
+        TourRegistry tour = database.tours.fetchTour(tid);
+
+        if (tour == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found, but it should have been because passkey is correct.");
+        }
+
+        return dto.simpleEvent(tour);
+    }
 
     public Object getTour(String auth, String tid) {
         if (!authService.checkWithPasskey(auth, tid, Permission.VIEW_TOUR_INFO)) {
