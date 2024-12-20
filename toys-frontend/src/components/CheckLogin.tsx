@@ -27,7 +27,7 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
         break;
       default: break;
     }
-  }, [navigate, props, userContext.fetchStatus, userContext.isLoggedIn])
+  }, [navigate, path.pathname, props, userContext.fetchStatus, userContext.isLoggedIn])
 
   return (
     rendering
@@ -40,7 +40,7 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
         }
       </>
     )
-    : <Box w={"100%"} h={"100%"} pos="relative">
+    : <Box w={"100%"} h={"100vh"} pos="absolute">
         <LoadingOverlay
           visible zIndex={10}
           overlayProps={{ blur: 1, color: "#444", opacity: 0.8 }}/>

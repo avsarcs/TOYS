@@ -1,4 +1,4 @@
-import {Divider, Grid, ScrollArea, Stack, useMatches} from "@mantine/core";
+import {Divider, Grid, LoadingOverlay, ScrollArea, Stack, useMatches} from "@mantine/core";
 import {DashboardItemListProps, DashboardItemProps} from "../../types/designed.ts";
 import {DashboardCategory} from "../../types/enum.ts";
 import React, {useContext, useEffect, useState} from "react";
@@ -20,6 +20,7 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
   });
 
   const userContext = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
   const [items, setItems] = useState<SimpleEventData[]>([]);
 
   const fetchDashboardItems = async () => {
@@ -27,6 +28,7 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
       return;
     }
 
+    setLoading(true);
     const dashboardUrl = new URL(DASHBOARD_URL);
     dashboardUrl.searchParams.append("auth", userContext.authToken);
     dashboardUrl.searchParams.append("dashboard_category", props.category);
@@ -45,6 +47,7 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
     else {
       setItems(await dashboardRes.json());
     }
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -60,10 +63,13 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
   });
 
   return (
-    <Stack className="h-full">
+    <Stack className="h-full" pos="relative">
       <CategoryControl categories={props.categories} setCategory={props.setCategory}/>
       <Divider />
-      <ScrollArea scrollbars="y" mah="60%">
+      <ScrollArea scrollbars="y" mah="60%" h={loading ? "60%" : ""}>
+        <LoadingOverlay className="rounded-md"
+                        visible={loading} zIndex={10}
+                        overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
         <Grid p="sm">
           {
             gridElements

@@ -31,19 +31,15 @@ import RivalsList from "./pages/DataAnalysis/RivalsList.tsx";
 import TourStatistics from "./pages/TourStatistics/TourStatistics.tsx";
 import TourListPage from "./pages/TourList/TourListPage.tsx";
 import CheckLogin from "./components/CheckLogin.tsx";
-import {useContext} from "react";
-import {UserContext} from "./context/UserContext.tsx";
-import {FetchingStatus} from "./types/enum.ts";
 
 function App() {
   dayjs.locale("tr");
   const location = useLocation().pathname;
-  const userContext = useContext(UserContext);
 
   return (
     <>
       <div className="app-container">
-        {hasNavbar(location) && userContext.fetchStatus === FetchingStatus.DONE && <Navbar />}
+        {hasNavbar(location) && <CheckLogin checkOnce redirect children={<Navbar />}/>}
         <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -65,9 +61,9 @@ function App() {
             <Route path="/advisor-offers" element={<CheckLogin redirect children={<AdvisorOffers />}/>} />
             <Route path="/guide-payments" element={<CheckLogin redirect children={<GuidePayments />}/>} />
             <Route path="/payment-detail/:guideId" element={<CheckLogin redirect children={<PaymentDetail />}/>} />
-            <Route path="/profile/:profileId" element={<CheckLogin redirect checkOnce children={<ProfilePage />}/>}/>
-            <Route path="/profile" element={<CheckLogin redirect checkOnce children={<ProfilePage />}/>}/>
-            <Route path="/edit-profile" element={<CheckLogin redirect children={<EditProfilePage />}/>}/>
+            <Route path="/profile/:profileId" element={<CheckLogin redirect children={<ProfilePage />}/>}/>
+            <Route path="/profile" element={<CheckLogin redirect children={<ProfilePage />}/>}/>
+            <Route path="/edit-profile" element={<CheckLogin redirect checkOnce children={<EditProfilePage />}/>}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
             <Route path="/review/:review-id" element={<CheckLogin redirect children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<CheckLogin redirect children={<TourStatistics />}/>}/>
