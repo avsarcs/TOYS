@@ -4,7 +4,6 @@ import server.enums.status.ApplicationStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.enums.status.TourStatus;
-import server.models.DTO.events.DTO_GroupTour;
 import server.models.DTO.DTO_IndividualTour;
 import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.GroupTourStatus;

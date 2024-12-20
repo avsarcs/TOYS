@@ -8,9 +8,6 @@ import com.google.cloud.firestore.Firestore;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import server.models.payment.HourlyRate;
-import server.models.DTO.DTO_MoneyForGuide;
-import server.models.DTO.DTO_MoneyForTour;
-
 import java.util.*;
 
 public class DBPaymentService {
@@ -71,56 +68,7 @@ public class DBPaymentService {
         return rates;
     }
 
-    public Map<String, DTO_MoneyForGuide> getGuidePaymentStates(String id) {
-        Map<String, DTO_MoneyForGuide> data = new HashMap<>();
-        DocumentReference ref =  firestore.collection("payment").document("guides");
 
-        try {
-            DocumentSnapshot snapshot = ref.get().get();
 
-            if (!id.isBlank()) {
-                if (!snapshot.getData().containsKey(id)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guide not found!");
-                }
-                data.put(id, DTO_MoneyForGuide.fromMap((Map<String, Object>) snapshot.getData().get(id)));
-            } else {
-                snapshot.getData().entrySet().stream().forEach(
-                        e -> data.put(e.getKey(), DTO_MoneyForGuide.fromMap((Map<String, Object>) e.getValue()))
-                );
-            }
-
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to get guide payment states from database.");
-        }
-        return data;
-    }
-
-    public Map<String, DTO_MoneyForTour> getTourPaymentStates(String id) {
-        Map<String, DTO_MoneyForTour> data = new HashMap<>();
-        DocumentReference ref =  firestore.collection("payment").document("tours");
-
-        try {
-            DocumentSnapshot snapshot = ref.get().get();
-
-            if (!id.isBlank()) {
-                if (!snapshot.getData().containsKey(id)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour not found!");
-                }
-                data.put(id, DTO_MoneyForTour.fromMap((Map<String, Object>) snapshot.getData().get(id)));
-            } else {
-                snapshot.getData().entrySet().stream().forEach(
-                        e -> data.put(e.getKey(), DTO_MoneyForTour.fromMap((Map<String, Object>) e.getValue()))
-                );
-            }
-
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to get tour payment states from database.");
-        }
-        return data;
-    }
 
 }

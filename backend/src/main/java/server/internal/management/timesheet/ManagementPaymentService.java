@@ -12,7 +12,6 @@ import server.auth.Permission;
 import server.dbm.Database;
 import server.enums.roles.UserRole;
 import server.models.DTO.DTOFactory;
-import server.models.DTO.DTO_MoneyForTour;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
 import server.models.payment.Payment;

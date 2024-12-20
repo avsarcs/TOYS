@@ -199,18 +199,12 @@ public class UserTourService {
                         tour -> {
 
                             if (!status.isEmpty()) {
-                                List<TourStatus> requestedStatus = status.stream().map(
-                                        s -> {
-                                            try {
-                                                return TourStatus.valueOf(s);
-                                            } catch (Exception E) {
-                                                System.out.println("Invalid tour status enum when getting tours /internal/tours");
-                                                return null;
-                                            }
-                                        }
-                                ).toList();
-
-                                return requestedStatus.contains(tour.getTourStatus());
+                                try {
+                                    return status.stream().anyMatch(s -> s.equals(dto.simpleEvent(tour).get("event_status")));
+                                } catch (Exception E) {
+                                    // internal/tours status filtering
+                                    return false;
+                                }
                             }
                             return true;
                         }
