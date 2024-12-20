@@ -401,6 +401,7 @@ API endpoints:
 		response_type: string
 
 /apply
+
 	/guide #
 		method: post
 		body: guideApplicationModel
@@ -411,17 +412,28 @@ API endpoints:
 		body: groupTourApplicationModel | individualTourApplicationModel
 		response: -
 
+		/request-modification
+			method: post
+			parameters:
+				auth: auth_token // passkey if an applicant is using this
+				tour_id: id of the tour
+				requested_times: ISO8601 Time string array, length min. 1, max. 3
+				visitor_count: int, requested visitor count
+			response: 200 or 400
+			response_type: status code
+			description: Both an Applicant or an Advisor can use this endpoint.
+
 		/isfree 
-		parameters:
-			start=start_time
-			end=end_time
-		method: get
+			parameters:
+				start=start_time
+				end=end_time
+			method: get
 
 		/gettype #
-		parameters:
-			uuid=uuid of the application
-		method: get
-		response: type of application
+			parameters:
+				uuid=uuid of the application
+			method: get
+			response: type of application
 
 		/request_changes #NEEDS TEST
 			method: post
@@ -523,7 +535,7 @@ response_type:json
 			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
 !!!! CHANGED 
-			/answer-modification
+			/modification
 			method: post
 			parameters:
 				auth: auth_token // passkey if an applicant is using this
@@ -532,17 +544,6 @@ response_type:json
 			response: 200 or 400
 			response_type: status code
 			description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
-
-!!!! NEW
-			/request-modification
-			method: post
-			parameters:
-				auth: auth_token // passkey if an applicant is using this
-				tour_id: id of the tour
-				requested_times: ISO8601 Time string array, length min. 1, max. 3
-			response: 200 or 400
-			response_type: status code
-			description: Both an Applicant or an Advisor can use this endpoint.
 
 		/fair #
 		method: post
