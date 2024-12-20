@@ -100,6 +100,23 @@ public class DBRequestService {
         return requests;
     }
 
+    public List<TourModificationRequest> getTourModificationRequests() {
+        List<TourModificationRequest> requests = new ArrayList<>();
+        try {
+            DocumentReference reference = firestore.collection("requests").document("tour_modification");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tour_modification");
+
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                requests.add(TourModificationRequest.fromMap((Map<String, Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to fetch directors from database.");
+        }
+        return requests;
+    }
+
     public List<GuideAssignmentRequest> getGuideAssignmentRequests() {
         List<GuideAssignmentRequest> requests = new ArrayList<>();
         try {
@@ -117,6 +134,7 @@ public class DBRequestService {
         return requests;
     }
 
+    @Deprecated
     public List<Request> getRequestsOfType(RequestType type, String request_id) {
         List<Request> requests = new ArrayList<Request>();
         try {

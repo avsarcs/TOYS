@@ -8,6 +8,8 @@ import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
 import server.enums.status.ApplicationStatus;
+import server.enums.status.RequestStatus;
+import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.models.events.*;
@@ -237,6 +239,8 @@ public class DTOFactory {
         dto.put("event_status", tour.getTourStatus().name());
         dto.put("event_subtype", tour.getTour_type().name());
 
+
+        dto = eventStatus_directionalize(dto);
         return dto;
     }
 
@@ -252,6 +256,8 @@ public class DTOFactory {
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
         dto.put("event_subtype", application.getApplicant());
+
+        dto = eventStatus_directionalize(dto);
 
         return dto;
     }
@@ -289,6 +295,8 @@ public class DTOFactory {
         dto.put("event_status", request.getModifications().getStatus().name());
         dto.put("event_subtype", request.getModifications().getApplicant());
 
+        dto = eventStatus_directionalize(dto);
+
         return dto;
     }
 
@@ -305,9 +313,26 @@ public class DTOFactory {
         dto.put("event_status", application.getStatus().name());
         dto.put("event_subtype", application.getApplicant());
 
+        dto = eventStatus_directionalize(dto);
+
         return dto;
     }
 
+
+    private Map<String, Object> eventStatus_directionalize(Map<String, Object> event) {
+        TourStatus status = TourStatus.valueOf((String) event.get("event_status"));
+        if (status == TourStatus.PENDING_MODIFICATION) {
+            database.requests.getTourModificationRequests().stream().filter(
+                    r -> r.getTour_id().equals(event.get("event_id"))
+            ).filter(
+                    r -> r.getStatus().equals(RequestStatus.PENDING)
+            ).findFirst().ifPresent(
+                    r -> event.put("event_status", r.getRequested_by().getBilkent_id().isBlank() ?
+                            "APPLICANT_WANTS_CHANGE" : "TOYS_WANTS_CHANGE")
+            );
+        }
+        return event;
+    }
 
     public Map<String, Object> simpleEvent(FairRegistry tour) {
         Map<String, Object> dto = new HashMap<>();
@@ -322,6 +347,8 @@ public class DTOFactory {
         dto.put("event_status", tour.getFair_status().name());
 
         dto.put("event_subtype", "");
+
+        dto = eventStatus_directionalize(dto);
 
         return dto;
     }
