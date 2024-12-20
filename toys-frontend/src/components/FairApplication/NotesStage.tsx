@@ -2,20 +2,25 @@ import React from 'react';
 import { 
   Paper,
   Title,
-  TextInput,
   Textarea,
   Stack,
   Container
 } from '@mantine/core';
 
-import { FairApplicationProps } from '../../types/designed';
+// Import the model and types
+import { FairApplicationModel } from '../../types/designed';
+import { Dispatch, SetStateAction } from 'react';
 
-export const NotesStage: React.FC<FairApplicationProps> = ({
-    applicationInfo,
-    setApplicationInfo,
-    warnings
+// Define the props for the component
+interface NotesStageProps {
+  applicationInfo: FairApplicationModel;
+  setApplicationInfo: Dispatch<SetStateAction<FairApplicationModel>>;
+}
+
+export const NotesStage: React.FC<NotesStageProps> = ({
+  applicationInfo,
+  setApplicationInfo,
 }) => {
-
   return (
     <Container size="sm">
       <Paper p="md">
@@ -31,15 +36,12 @@ export const NotesStage: React.FC<FairApplicationProps> = ({
               label="Fuarınızın adı nedir?"
               description="(Örneğin 'Üniversiteleri Tanıyın!' vs.)"
               placeholder="..."
-              value={applicationInfo.applicant.notes}
+              value={applicationInfo.fair_name}
               onChange={(e) => setApplicationInfo((application) => ({
                 ...application,
-                applicant: {
-                  ...application.applicant,
-                  notes: e.target.value
-                }
+                fair_name: e.target.value,
               }))}
-              minRows={4}
+              minRows={1}
             />
 
             <Textarea
@@ -51,8 +53,8 @@ export const NotesStage: React.FC<FairApplicationProps> = ({
                 ...application,
                 applicant: {
                   ...application.applicant,
-                  notes: e.target.value
-                }
+                  notes: e.target.value,
+                },
               }))}
               minRows={4}
             />
