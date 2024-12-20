@@ -10,6 +10,24 @@ import {notifications} from "@mantine/notifications";
 
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
+const translateDays = (days: string[]): string => {
+    const dayTranslations: { [key: string]: string } = {
+        MONDAY: 'Pazartesi',
+        TUESDAY: 'Salı',
+        WEDNESDAY: 'Çarşamba',
+        THURSDAY: 'Perşembe',
+        FRIDAY: 'Cuma',
+        SATURDAY: 'Cumartesi',
+        SUNDAY: 'Pazar'
+    };
+
+    const dayOrder: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+
+    const sortedDays = days.sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
+
+    return sortedDays.map(day => dayTranslations[day] || day).join(', ');
+};
+
 const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
     const profile  = props.profile;
     const userContext = useContext(UserContext);
@@ -70,7 +88,9 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p> : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
-                {(profile.role === UserRole.ADVISOR) ? <p><strong>Sorumlu Olunan Gün: </strong> {profile.responsible_days} </p> : null}
+                {(profile.role === UserRole.ADVISOR) ? (
+                    <p><strong>Sorumlu Olunan Gün: </strong> {translateDays(profile.responsible_days)} </p>
+                    ) : null}           
             </div>
             <div className = "button-group">
                 {profileId === undefined ? <div className="button">
