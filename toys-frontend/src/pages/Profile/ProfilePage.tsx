@@ -61,7 +61,7 @@ const ProfilePage: React.FC = () =>
     <div className="profile-page">
         <Box className="content" p="xl" pt="">
             <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-                {UserRoleText[userContext.user.role]} Profili
+                {UserRoleText[profile.role]} Profili
             </Title>
             <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
                 Burada kişisel ve TOYS'a dair bilgilerinizi görüntüleyebilirsiniz.
@@ -79,7 +79,7 @@ const ProfilePage: React.FC = () =>
 
             >
                 <ProfileInfo profile={profile}/>
-                {(userContext.user.role === UserRole.GUIDE || userContext.user.role === UserRole.ADVISOR) ? <WeeklySchedule profile={profile}/> : null}
+                {(profile.role === UserRole.GUIDE || profile.role === UserRole.ADVISOR) ? <WeeklySchedule profile={profile}/> : null}
             </Flex>
         </Box>
     </div>);

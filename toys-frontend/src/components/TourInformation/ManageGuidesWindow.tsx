@@ -83,8 +83,14 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
     try {
       const urlRemove = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours/remove");
       const urlInvite = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours/invite");
-
-      const guideIdsToRemove = [...tour.guides.map((g) => g.id), ...tour.trainee_guides.map((t) => t.id)].join(",");
+      console.log(tour);
+      const guideIdsToRemove = [...tour.guides
+          .map((g) => g.id)
+          .filter((g) => !selectedGuides.some((s) => s.id === g)),
+        ...tour.trainee_guides
+            .map((g) => g.id)
+            .filter((g) => !selectedGuides.some((s) => s.id === g)),].join(",");
+      console.log("GUIDE IDS: ", guideIdsToRemove);
       const guideIdsToInvite = [...selectedGuides.map((g) => g.id), ...selectedTrainees.map((t) => t.id)].join(",");
 
       // Remove previous guides and trainees

@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Button, Avatar, FileButton, Loader, MultiSelect, Select } from "@mantine/core";
+import React, {useContext, useEffect, useState} from "react";
+import {Avatar, Button, FileButton, Loader, MultiSelect, Select} from "@mantine/core";
 import EditProfileField from "./EditProfileField";
-import { UserContext } from "../../../context/UserContext";
-import { HighschoolData, HighschoolDataForProfile } from "../../../types/data";
+import {UserContext} from "../../../context/UserContext";
+import {HighschoolData, HighschoolDataForProfile} from "../../../types/data";
+import {UserRole} from "../../../types/enum.ts";
 
 const UpdateProfile: React.FC = () => {
     const userContext = useContext(UserContext);
@@ -14,7 +15,7 @@ const UpdateProfile: React.FC = () => {
         email: "",
         phone: "",
         description: "",
-        responsible_for: [] as string[], // Add responsible_days field
+        responsible_days: [] as string[], // Add responsible_days field
         profile_picture: "",
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +44,7 @@ const UpdateProfile: React.FC = () => {
                     email: profileData.email,
                     phone: profileData.phone || "",
                     description: profileData.profile_description || "",
-                    responsible_for: profileData.responsible_for || [], // Set responsible_days
+                    responsible_days: profileData.responsible_days || [], // Set responsible_days
                     profile_picture: profileData.profile_picture || "",
                 });
 
@@ -110,7 +111,7 @@ const UpdateProfile: React.FC = () => {
             phone: formData.phone,
             profile_description: formData.description,
             highschool: selectedHighSchool, // Use the full high school data
-            responsible_for: formData.responsible_for, // Add responsible_days
+            responsible_days: formData.responsible_days, // Add responsible_days
         };
 
         try {
@@ -210,14 +211,14 @@ const UpdateProfile: React.FC = () => {
             />
 
             {/* Responsible Days */}
-            <MultiSelect
+            {userContext.user.role === UserRole.ADVISOR ? <MultiSelect
                 label="Sorumlu Günler"
                 data={["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]}
-                value={formData.responsible_for}
-                onChange={(value) => handleInputChange("responsible_for", value)}
+                value={formData.responsible_days}
+                onChange={(value) => handleInputChange("responsible_days", value)}
                 placeholder="Select days"
                 className="mb-4"
-            />
+            /> : null}
 
             {/* Save Button */}
             <Button

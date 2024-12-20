@@ -69,7 +69,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p> : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
-                {(profile.role === UserRole.ADVISOR) ? <p><strong>Sorumlu Olunan Gün: </strong> {profile.responsible_for} </p> : null}
+                {(profile.role === UserRole.ADVISOR) ? <p><strong>Sorumlu Olunan Gün: </strong> {profile.responsible_days} </p> : null}
             </div>
             <div className = "button-group">
                 {profileId === undefined ? <div className="button">

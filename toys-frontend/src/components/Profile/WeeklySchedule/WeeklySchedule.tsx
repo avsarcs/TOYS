@@ -145,11 +145,14 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                             Kaydet
                         </button>
                     </>
-                ) : (
-                    <button onClick={startEditing} className="settings-button">
-                        Haftalık Programı Düzenle
-                    </button>
-                )}
+                ) :
+                        userContext.user.id === props.profile.id
+                            ?
+                            <button onClick={startEditing} className="settings-button">
+                                Haftalık Programı Düzenle
+                            </button>
+                            : null
+                }
             </div>
 
             {isEditing && (
@@ -173,9 +176,18 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                                 {days.map((_, rowIndex) => (
                                     <td
                                         key={colIndex*10 + rowIndex}
-                                        
-                                        className={schedule[rowIndex][colIndex] ? "busy" : "available"}
-                                        onClick={() => toggleCell(rowIndex, colIndex)}
+                                        className={
+                                        //this is stupid and bad
+                                        // but so is chatgpt
+                                            (schedule[rowIndex][colIndex] ? "busy" : "available") +
+                                            (isEditing ? "" : " !cursor-default")
+                                        }
+                                        onClick={
+                                            isEditing
+                                                ?
+                                                () => toggleCell(rowIndex, colIndex)
+                                                : undefined
+                                    }
                                     ></td>
                                 ))}
                             </tr>

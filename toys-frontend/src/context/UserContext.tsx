@@ -126,7 +126,7 @@ const EMPTY_USER: User = {
         count: 0
       },
       role: UserRole.NONE,
-      responsible_for: [],
+      responsible_days: [],
       profile_picture: "",
       previous_tour_count: 0,
       profile_description: "",
