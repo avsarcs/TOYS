@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./WeeklySchedule.css";
 import { ScrollArea, Title } from "@mantine/core";
 import { ProfileData, ScheduleData, DailyPlan, ScheduleStub} from "../../../types/data.ts";
@@ -49,13 +49,20 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
     ];
 
     const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-
-    // Convert ScheduleData to a matrix for rendering
-    const scheduleMatrix = days.map((day) =>
+    let scheduleMatrix = days.map((day) =>
         times.map((time) =>
             props.profile.schedule.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
         )
     );
+    useEffect(() => {
+        // Convert ScheduleData to a matrix for rendering
+        scheduleMatrix = days.map((day) =>
+            times.map((time) =>
+                props.profile.schedule.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
+            )
+        );
+        setSchedule(scheduleMatrix);
+    }, [props.profile.schedule.schedule]);
 
     // Initialize state with a valid matrix
     const [schedule, setSchedule] = useState<boolean[][]>(scheduleMatrix);
@@ -130,7 +137,6 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         setSchedule([...backupSchedule]);
         setIsEditing(false);
     };
-    console.log(schedule);
     return (
         <div className="weekly-schedule">
             <div className="header">

@@ -63,7 +63,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
         }
     }, [profileId, userContext.authToken]);
 
-
+    
     return (
         <div className="profile-info">
             <Title order={3} className="text-blue-700 font-bold font-main">
@@ -104,10 +104,8 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                         Kişisel Bilgileri Düzenle
                     </Button>
                 </div> : null}
-                {(profile.role === UserRole.DIRECTOR || profile.role === UserRole.COORDINATOR) && profileId !== undefined ? <div className="button">
+                {(userContext.user.profile.role === UserRole.DIRECTOR || userContext.user.profile.role === UserRole.COORDINATOR) && profileId !== undefined ? <div className="button">
                     <Button
-                        component={Link}
-                        to="/edit-profile"
                         variant="filled"
                         color="violet"
                         style={{ marginRight: "10px" }}
