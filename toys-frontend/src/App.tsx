@@ -23,6 +23,7 @@ import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
 import ApplicantRespond from "./pages/ApplicantRespond/ApplicantRespond.tsx";
+import ApplicantRequest from "./pages/ApplicantRequest/ApplicantRequest.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -70,6 +71,7 @@ function App() {
             <Route path="/tourstatistics" element={<CheckLogin redirect children={<TourStatistics />}/>}/>
             <Route path="/manage-personnel" element={<CheckLogin redirect children={<ManagePersonnel />}/>}/>
             <Route path="/applicant-respond" element={<ApplicantRespond />} />
+            <Route path="/applicant-request" element={<ApplicantRequest />}/>
           </Routes>
         </main>
       </div>
