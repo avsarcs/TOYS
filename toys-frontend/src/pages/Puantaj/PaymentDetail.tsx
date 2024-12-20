@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import defaultPayment from "../../mock_data/mock_tour_guide_payments.json";
-import { MoneyForTour, SimpleGuide } from "../../types/designed";
+import { MoneyForEvent, SimpleGuide } from "../../types/designed";
 import { UserContext } from "../../context/UserContext";
 import { notifications } from "@mantine/notifications";
 
@@ -10,8 +10,7 @@ const RECORDS_PER_PAGE = 5;
 
 const PaymentDetail: React.FC = () => {
     const navigate = useNavigate();
-    const [tourPayments, setTourPayments] = useState<MoneyForTour[]>(defaultPayment);
-    const [guide, setGuide] = useState<SimpleGuide>();
+    const [tourPayments, setTourPayments] = useState<MoneyForEvent[]>(defaultPayment);
     const [filter, setFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const { guideId } = useParams<{ guideId: string }>();
@@ -23,45 +22,10 @@ const PaymentDetail: React.FC = () => {
         });
     }, [guideId]);
 
-    const getName = useCallback(async () => {
-        const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
-        const url = new URL(apiURL + "internal/user/profile/simple");
-        try
-        {
-            if (guideId) {
-                url.searchParams.append("id", guideId);
-            }
-            url.searchParams.append("auth", userContext.authToken);
-            const res = await fetch(url, {
-                method: "GET",
-            });
-            if (!res.ok) {
-                notifications.show({
-                    color: "red",
-                    title: "Hata",
-                    message: "İsim alınamıyor."
-                });
-            }
-            else {
-                const resText = await res.text();
-                const resJson = JSON.parse(resText);
-                setGuide(resJson);
-
-            }
-        }
-        catch (e)
-        {
-            notifications.show({
-                color: "red",
-                title: "Hay aksi!",
-                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
-            });
-        }
-    },[userContext.authToken]);
 
     const getPayments = useCallback(async () => {
         const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
-        const url = new URL(apiURL + "internal/management/timesheet/payment-state/tour");
+        const url = new URL(apiURL + "internal/management/timesheet/payment-state/event");
         try
         {
             if (guideId) {
@@ -84,6 +48,7 @@ const PaymentDetail: React.FC = () => {
                 setTourPayments(resJson);
 
             }
+            
         }
         catch (e)
         {
@@ -139,7 +104,14 @@ const PaymentDetail: React.FC = () => {
                     </button>
     <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Guide Payments</b></h1>
     <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
-        <b>Viewing payments for guide: </b>{tourPayments.length > 0 ? guide?.name : "Unknown"}
+    <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
+    <p><b>Viewing payments for guide: </b>
+        {tourPayments.length > 0 && typeof tourPayments[0].guide_name === "string"
+            ? tourPayments[0].guide_name
+            : "Unknown"}
+    </p>
+</h2>
+
     </h2>
     <div style={{ height: "20px" }}></div>
     
@@ -191,30 +163,28 @@ const PaymentDetail: React.FC = () => {
         ) : (
             paginatedPayments.map((payment) => (
                 <div
-                    key={guideId}
-                    style={{
-                        padding: "20px",
-                        marginBottom: "10px",
-                        border: "1px solid #ccc",
-
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "lightblue", 
-                        borderRadius: "8px", 
-
-                    }}
+                  key={payment.event_id} // Use a unique key
+                  style={{
+                    padding: "20px",
+                    marginBottom: "10px",
+                    border: "1px solid #ccc",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundColor: "lightblue", 
+                    borderRadius: "8px", 
+                  }}
                 >
-                    <div>
-                        <p><b>Tour Highschool: </b>{payment.tour_highschool}</p>
-                        <p><b>Tour ID: </b>{payment.tour_id}</p>
-                        <p><b>Tour Date: </b>{payment.tour_date}</p>
-                        <p><b>Hourly Rate: </b>{payment.hourly_rate}</p>
-                        <p><b>Hours Worked: </b>{payment.hours_worked}</p>
-                        <p><b>Money Debted: </b>{payment.money_debted}</p>
-                    </div>
-                    
-                </div>
+                  <div>
+                    <p><b>Event Type: </b>{payment.event_type}</p>
+                    <p><b>Event Highschool: </b>{payment.event_highschool.name}</p>
+                    <p><b>Event ID: </b>{payment.event_id}</p>
+                    <p><b>Event Date: </b>{payment.event_date}</p>
+                    <p><b>Hourly Rate: </b>{payment.hourly_rate}</p>
+                    <p><b>Hours Worked: </b>{payment.hours_worked}</p>
+                    <p><b>Money Debted: </b>{payment.money_debted}</p>
+                  </div>
+                </div>           
             ))
         )}
     </div>

@@ -160,14 +160,16 @@ export interface MoneyForGuide {
   money_paid: number;
 }
 
-export interface MoneyForTour {
-  tour_id: number;
-  tour_date: string;
+export interface MoneyForEvent {
+  event_id: number;
+  event_date: string;
   hourly_rate: number;
-  tour_highschool: string;
+  event_highschool: HighschoolData;
   hours_worked: number;
   money_debted: number;
   money_paid: number;
+  guide_name: string;
+  event_type: string;
 }
 
 export interface SimpleGuide {
