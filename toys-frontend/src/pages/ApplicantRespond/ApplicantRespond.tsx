@@ -11,6 +11,7 @@ import {
     Radio,
     RadioGroup,
     Alert,
+    Modal,
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 
@@ -24,6 +25,8 @@ const ApplicantRespond: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     // Hardcoded sample data - used for display while backend is down
     const tourData = {
@@ -116,9 +119,8 @@ const ApplicantRespond: React.FC = () => {
                 throw new Error('Failed to accept tour');
             }
 
-            // Navigate to success page or show success message
-            // When backend is up, uncomment this
-            // navigate('/success');
+            setSuccessMessage(`${formatDate(selectedTime)} zamanını başarıyla onayladınız`);
+            setShowSuccessModal(true);
             
         } catch (err) {
             console.error('Error accepting tour:', err);
@@ -150,9 +152,8 @@ const ApplicantRespond: React.FC = () => {
                 throw new Error('Failed to reject tour');
             }
 
-            // Navigate to rejection confirmation page
-            // When backend is up, uncomment this
-            // navigate('/rejected');
+            setSuccessMessage('Teklif edilen vakitleri reddettiniz. Yakın bir vakitte yeniden tur başvurusu yapmayı deneyebilirsiniz.');
+            setShowSuccessModal(true);
             
         } catch (err) {
             console.error('Error rejecting tour:', err);
@@ -173,83 +174,97 @@ const ApplicantRespond: React.FC = () => {
     }
 
     return (
-        <Container size="lg" py="xl">
-            <Paper shadow="sm" p="xl" withBorder>
-                <Stack gap="xl">
-                    <Title order={2} className="text-slate-600 mb-2">TURUNUZ İÇİN ZAMAN SEÇMENİZ GEREKİYOR</Title>
-                    <Alert
-                        color="blue"
-                        variant="light"
-                        className="text-sm leading-relaxed"
-                    >
-                        <Stack gap="xs">
-                            <Text>• Tur başvurunuzu yaparken belirttiğiniz vakitler, Tanıtım Ofisi'nin programıyla uyuşmuyor. Tanıtım Ofisi'nin programına uyan vakitler aşağıda belirtilmiştir.</Text>
-                            <Text>• Tanıtım Ofisi'nin teklif ettiği bu vakitlerden birinde tur yapmayı onaylayabilirsiniz.</Text>
-                            <Text>• Veya, Tanıtım Ofisi tarafından teklif edilen hiçbir zaman programınıza uymuyorsa, teklifi reddedip başka bir zaman yeniden bir tur başvurusu yapabilirsiniz.</Text>
-                        </Stack>
-                    </Alert>
-
-                    <Stack gap="md">
-                        <Title order={3}>Önerilen Zamanlar</Title>
-                        <RadioGroup value={selectedTime} onChange={setSelectedTime}>
-                            <Stack gap="lg">
-                                {tourData.requested_times.map((time) => (
-                                    <Radio
-                                        key={time}
-                                        value={time}
-                                        label={formatDate(time)}
-                                        className="text-lg"
-                                    />
-                                ))}
-                            </Stack>
-                        </RadioGroup>
-                    </Stack>
-
-                    {error && (
-                        <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
-                            {error}
-                        </Alert>
-                    )}
-
-                    <Group justify="apart">
-                        <Button
-                            color="red"
-                            onClick={handleReject}
-                            loading={loading}
-                        >
-                            Reddet
-                        </Button>
-                        <Button
-                            color="green"
-                            onClick={handleAccept}
-                            loading={loading}
-                            disabled={!selectedTime}
-                        >
-                            Seçili Zamanı Onayla
-                        </Button>
-                    </Group>
-
-                    <Title order={2} className="text-blue-700">Tur Detayları</Title>
-
-                    <Stack gap="md">
-                        <Group>
-                            <Text fw={700}>Okul:</Text>
-                            <Text>{tourData.highschool.name}</Text>
-                        </Group>
-
-                        <Group>
-                            <Text fw={700}>Konum:</Text>
-                            <Text>{tourData.highschool.location}</Text>
-                        </Group>
-
-                        <Group>
-                            <Text fw={700}>Ziyaretçi Sayısı:</Text>
-                            <Text>{tourData.visitor_count}</Text>
-                        </Group>
-                    </Stack>
+        <>
+            <Modal
+                opened={showSuccessModal}
+                onClose={() => {}}
+                withCloseButton={false}
+                centered
+                size="lg"
+            >
+                <Stack gap="xl" py="md">
+                    <Text size="lg" fw={500}>{successMessage}</Text>
                 </Stack>
-            </Paper>
-        </Container>
+            </Modal>
+
+            <Container size="lg" py="xl">
+                <Paper shadow="sm" p="xl" withBorder>
+                    <Stack gap="xl">
+                        <Title order={2} className="text-slate-600 mb-2">TURUNUZ İÇİN ZAMAN SEÇMENİZ GEREKİYOR</Title>
+                        <Alert
+                            color="blue"
+                            variant="light"
+                            className="text-sm leading-relaxed"
+                        >
+                            <Stack gap="xs">
+                                <Text>• Tur başvurunuzu yaparken belirttiğiniz vakitler, Tanıtım Ofisi'nin programıyla uyuşmuyor. Tanıtım Ofisi'nin programına uyan vakitler aşağıda belirtilmiştir.</Text>
+                                <Text>• Tanıtım Ofisi'nin teklif ettiği bu vakitlerden birinde tur yapmayı onaylayabilirsiniz.</Text>
+                                <Text>• Veya, Tanıtım Ofisi tarafından teklif edilen hiçbir zaman programınıza uymuyorsa, teklifi reddedip başka bir zaman yeniden bir tur başvurusu yapabilirsiniz.</Text>
+                            </Stack>
+                        </Alert>
+
+                        <Stack gap="md">
+                            <Title order={3}>Önerilen Zamanlar</Title>
+                            <RadioGroup value={selectedTime} onChange={setSelectedTime}>
+                                <Stack gap="lg">
+                                    {tourData.requested_times.map((time) => (
+                                        <Radio
+                                            key={time}
+                                            value={time}
+                                            label={formatDate(time)}
+                                            className="text-lg"
+                                        />
+                                    ))}
+                                </Stack>
+                            </RadioGroup>
+                        </Stack>
+
+                        {error && (
+                            <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
+                                {error}
+                            </Alert>
+                        )}
+
+                        <Group justify="apart">
+                            <Button
+                                color="red"
+                                onClick={handleReject}
+                                loading={loading}
+                            >
+                                Reddet
+                            </Button>
+                            <Button
+                                color="green"
+                                onClick={handleAccept}
+                                loading={loading}
+                                disabled={!selectedTime}
+                            >
+                                Seçili Zamanı Onayla
+                            </Button>
+                        </Group>
+
+                        <Title order={2} className="text-blue-700">Tur Detayları</Title>
+
+                        <Stack gap="md">
+                            <Group>
+                                <Text fw={700}>Okul:</Text>
+                                <Text>{tourData.highschool.name}</Text>
+                            </Group>
+
+                            <Group>
+                                <Text fw={700}>Konum:</Text>
+                                <Text>{tourData.highschool.location}</Text>
+                            </Group>
+
+                            <Group>
+                                <Text fw={700}>Ziyaretçi Sayısı:</Text>
+                                <Text>{tourData.visitor_count}</Text>
+                            </Group>
+                        </Stack>
+                    </Stack>
+                </Paper>
+            </Container>
+        </>
     );
 };
 
