@@ -4,6 +4,7 @@ import EditProfileField from "./EditProfileField";
 import {UserContext} from "../../../context/UserContext";
 import {HighschoolData, HighschoolDataForProfile} from "../../../types/data";
 import {UserRole} from "../../../types/enum.ts";
+import {notifications} from "@mantine/notifications";
 
 const UpdateProfile: React.FC = () => {
     const userContext = useContext(UserContext);
@@ -61,7 +62,7 @@ const UpdateProfile: React.FC = () => {
 
                 const highSchoolResponse = await fetch(highSchoolUrl);
                 if (!highSchoolResponse.ok) {
-                    throw new Error("Failed to fetch high schools.");
+                    notifications.show({ title: "Error", message: "Failed to fetch high schools.", color: "red" });
                 }
                 const highSchoolData: HighschoolData[] = await highSchoolResponse.json();
                 setHighSchoolOptions(highSchoolData);
@@ -127,7 +128,7 @@ const UpdateProfile: React.FC = () => {
                 },
             });
             if (!response.ok) {
-                throw new Error("Failed to save profile.");
+                notifications.show({ title: "Error", message: "Failed to update profile.", color: "red" });
             }
             userContext.updateUser(); // Update the user context
             console.log("Profile updated successfully.");

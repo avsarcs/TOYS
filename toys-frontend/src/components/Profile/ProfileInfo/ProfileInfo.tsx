@@ -6,6 +6,7 @@ import { UserContext } from "../../../context/UserContext.tsx";
 import {useCallback, useContext } from "react";
 import {Link, useParams} from "react-router-dom";
 import { ProfileComponentProps } from "../../../types/designed.ts";
+import {notifications} from "@mantine/notifications";
 
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
@@ -31,7 +32,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
             });
 
             if (!res.ok) {
-                throw new Error("Failed to fire the user.");
+                notifications.show({title: "Error", message: "Failed to remove user from TOYS.", color: "red"});
             }
 
             alert("User has been successfully removed from TOYS.");

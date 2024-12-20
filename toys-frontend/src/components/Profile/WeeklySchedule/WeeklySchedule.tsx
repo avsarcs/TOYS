@@ -5,6 +5,7 @@ import { ProfileData, ScheduleData, DailyPlan, ScheduleStub} from "../../../type
 import { TimeSlotStatus } from "../../../types/enum.ts";
 import { UserContext } from "../../../context/UserContext.tsx";
 import { ProfileComponentProps } from "../../../types/designed.ts";
+import {notifications} from "@mantine/notifications";
 
 const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
     const userContext = useContext(UserContext);
@@ -114,7 +115,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save the schedule.");
+                notifications.show({ title: "Error", message: "Failed to update schedule.", color: "red" });
             }
 
             console.log("Schedule saved successfully.");

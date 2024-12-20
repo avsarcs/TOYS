@@ -3,6 +3,7 @@ import { Modal, Loader, Text, ScrollArea, Button, Group, Divider, Progress } fro
 import { UserContext } from "../../context/UserContext";
 import { SimpleGuideData } from "../../types/data.ts";
 import { ManageGuidesWindowProps } from "../../types/designed.ts";
+import {notifications} from "@mantine/notifications";
 
 const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
   opened,
@@ -29,7 +30,8 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       url.searchParams.append("auth", userContext.authToken);
 
       const response = await fetch(url, { method: "GET" });
-      if (!response.ok) throw new Error("Failed to fetch guides.");
+      if (!response.ok)
+        notifications.show({ title: "Error", message: "Failed to fetch available guides.", color: "red" });
 
       const data: SimpleGuideData[] = await response.json();
 
@@ -129,7 +131,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       {loading ? (
         <Loader color="violet" />
       ) : error ? (
-        <Text color="red">{error}</Text>
+        <Text c="red">{error}</Text>
       ) : (
         <ScrollArea h={400}>
           {activeStage === "GUIDE"
