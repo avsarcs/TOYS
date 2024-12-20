@@ -249,12 +249,14 @@
 "FREE" | "BUSY" | "tour id guide needs to go at that time"
 ```
 
+!!!! CHANGED - added "role" field
 # Simple Guide Model
 ```
 {
 	"id": 22231331, // bilkent id
 	"name": "Balik Baliksatan",
 	"major": "CS",
+	"role": "ADVISOR" | "TRAINEE" | "GUIDE"
 	"experience": "3 events"
 }
 ```
