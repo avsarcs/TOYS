@@ -207,7 +207,7 @@ const UpdateProfile: React.FC = () => {
                 onChange={(value) => handleHighSchoolChange(value || "")}
                 data={highSchoolOptions.map((school) => school.name)}
                 searchable
-                placeholder="Select high school"
+                placeholder="Lise seçin"
                 className="mb-4"
             />
 
@@ -217,7 +217,7 @@ const UpdateProfile: React.FC = () => {
                 data={["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]}
                 value={formData.responsible_days}
                 onChange={(value) => handleInputChange("responsible_days", value)}
-                placeholder="Select days"
+                placeholder="Sorumlu günler seçin"
                 className="mb-4"
             /> : null}
 
