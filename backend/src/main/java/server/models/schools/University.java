@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class University {
+    public boolean is_rival;
     public String university_type;
     public String name;
     public String id;
@@ -71,7 +72,24 @@ public class University {
     public void setDepartments(List<UniversityDepartment> departments) {
         this.departments = departments;
     }
-
+    public UniversityTableData getTable_data() {
+        return table_data;
+    }
+    public void setTable_data(UniversityTableData table_data) {
+        this.table_data = table_data;
+    }
+    public Map<String, CityData> getCity_data() {
+        return city_data;
+    }
+    public void setCity_data(Map<String, CityData> city_data) {
+        this.city_data = city_data;
+    }
+    public boolean getIs_rival() {
+        return is_rival;
+    }
+    public void setIs_rival(boolean is_rival) {
+        this.is_rival = is_rival;
+    }
     public String getUrl() {
         return url;
     }

@@ -29,6 +29,8 @@ import server.models.review.EventReview;
 import server.models.review.Review;
 import server.models.review.ReviewRecord;
 import server.models.schools.Highschool;
+import server.models.schools.University;
+import server.models.schools.UniversityDepartment;
 import server.models.time.ZTime;
 
 import java.time.Duration;
@@ -73,6 +75,39 @@ public class DTOFactory {
         } else {
             return highschool(highschool);
         }
+    }
+
+    public Map<String, Object> university(University university) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("name", university.getName());
+        dto.put("city", university.getCity());
+        dto.put("is_rival", university.getIs_rival());
+        dto.put("id", university.getId());
+
+        return dto;
+    }
+     
+    public Map<String, Object> simpleUniversity(University university) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("name", university.getName());
+        dto.put("id", university.getId());
+
+        return dto;
+    }
+
+    public String department(UniversityDepartment department) {
+        String dto = department.getName();
+        return dto;
+    }
+
+    public Map<String, Object> details(UniversityDepartment department) {
+        Map<String, Object> dto = new HashMap<>();
+
+        for
+
+        return dto;
     }
 
     public Map<String, Object> tourGuide(String guideID) {

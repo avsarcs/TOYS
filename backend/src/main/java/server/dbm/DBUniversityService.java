@@ -72,7 +72,7 @@ public class DBUniversityService {
         return universities;
     }
 
-    public University fetchUniversity(String uid) {
+    public University getUniversity(String uid) {
         try {
             DocumentReference reference = firestore.collection("universities").document("universities");
 
@@ -88,5 +88,26 @@ public class DBUniversityService {
             System.out.println("Failed to fetch university from database.");
         }
         return null;
+    }
+    public void updateUniversityRivalry(String uid, boolean isRival) {
+        try {
+            DocumentReference reference = firestore.collection("universities").document("universities");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
+
+            if (!data.containsKey(uid)) {
+                throw new RuntimeException("University with id " + uid + " not found.");
+            }
+
+            Map<String, Object> updatedData = new HashMap<>();
+            updatedData.put("is_rival", isRival);
+
+            reference.update("universities." + uid + ".is_rival", isRival).get();
+            System.out.println("University rivalry status updated successfully.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to update university rivalry status.");
+        }
     }
 }
