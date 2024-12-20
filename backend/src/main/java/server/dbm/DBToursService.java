@@ -6,12 +6,14 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
+import server.auth.Passkey;
+import server.enums.status.ApplicationStatus;
+import server.enums.status.TourStatus;
 import server.models.events.TourRegistry;
 import org.springframework.stereotype.Service;
+import server.models.time.ZTime;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DBToursService {
@@ -23,6 +25,9 @@ public class DBToursService {
         this.firestore = Database.getFirestoreDatabase();
         this.mapper = Database.getObjectMapper();
     }
+
+
+
     public TourRegistry fetchTour (String tid) {
 
         try {

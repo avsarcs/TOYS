@@ -1,14 +1,12 @@
 package server.apply;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import server.models.DTO.DTO_GroupTourApplication;
-import server.models.DTO.DTO_GuideApplication;
-import server.models.DTO.DTO_IndividualTourApplication;
-import server.models.events.FairApplication;
-import server.models.people.GuideApplication;
-import server.models.Request;
-import server.models.events.TourApplication;
+import org.springframework.web.server.ResponseStatusException;
+import server.models.DTO.DTOFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -16,6 +14,8 @@ public class ApplicationController {
     @Autowired
     ApplicationService applicationService;
 
+    @Autowired
+    DTOFactory dto;
 
     @Autowired
     RequestService requestService;
@@ -31,29 +31,39 @@ public class ApplicationController {
     }
 
     @PostMapping("/apply/guide")
-    public void applyGuide(@RequestBody DTO_GuideApplication guideApplication) {
-        applicationService.applyToBeGuide(GuideApplication.fromDTO(guideApplication));
+    public void applyGuide(@RequestBody Map<String, Object> guideApplication) {
+        applicationService.applyToBeGuide(dto.traineeGuideApplication(guideApplication));
     }
 
     @PostMapping("/apply/tour")
-    public void applyTour(@RequestBody DTO_GroupTourApplication tourApplication) {
-        applicationService.applyForATour(TourApplication.fromDTO(tourApplication));
+    public void applyTour(@RequestBody Map<String, Object> tourApplication) {
+
+        if (!tourApplication.containsKey("requested_majors")) {
+            applicationService.applyForATour(dto.groupTourApplication(tourApplication));
+        } else {
+            applicationService.applyForATour(dto.individualTourApplication(tourApplication));
+        }
     }
 
+    @Deprecated
     @PostMapping("/apply/tour/individual")
-    public void applyTourIndividual(@RequestBody DTO_IndividualTourApplication individualTourApplication) {
-        applicationService.applyForATour(TourApplication.fromDTO(individualTourApplication));
+    public void applyTourIndividual(@RequestBody Map<String, Object> individualTourApplication) {
+        throw new ResponseStatusException(HttpStatus.GONE, "This endpoint is no longer available, use /apply/tour instead");
     }
 
     @PostMapping("/apply/fair")
-    public void applyFair(@RequestBody FairApplication fairApplication) {
-        applicationService.applyForAFair(fairApplication);
+    public void applyFair(@RequestBody Map<String,Object> fairApplication) {
+        applicationService.applyForAFair(dto.fairApplication(fairApplication));
     }
 
     @PostMapping("/apply/tour/request_changes")
-    public void requestChanges(@RequestBody Request changeRequest) {
+    public void requestChanges(@RequestBody Map<String, Object> changes, @RequestParam("tour_id") String tour_id, @RequestParam String auth) {
         // TODO: This should be delegated to the ApplicationService
-        requestService.addRequest(changeRequest);
+        applicationService.requestChanges(changes, tour_id, auth);
     }
 
+    @PostMapping("/apply/tour/cancel")
+    public void cancelEvent(@RequestParam String auth, @RequestParam String event_id, @RequestBody Map<String, Object> reasoning) {
+        applicationService.cancelEvent(auth, event_id, reasoning);
+    }
 }

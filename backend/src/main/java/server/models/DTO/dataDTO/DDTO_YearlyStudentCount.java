@@ -3,11 +3,11 @@ package server.models.DTO.dataDTO;
 import java.util.Map;
 
 public class DDTO_YearlyStudentCount {
-    private long year;
+    private String year;
     private long count;
 
     public DDTO_YearlyStudentCount(Map<String, Object> map) {
-        this.year = (long) map.get("year");
+        this.year = (String) map.get("year");
         this.count = (long) map.get("count");
     }
 
@@ -17,11 +17,11 @@ public class DDTO_YearlyStudentCount {
         return new DDTO_YearlyStudentCount(map);
     }
 
-    public long getYear() {
+    public String getYear() {
         return year;
     }
 
-    public DDTO_YearlyStudentCount setYear(long year) {
+    public DDTO_YearlyStudentCount setYear(String year) {
         this.year = year;
         return this;
     }

@@ -21,6 +21,7 @@ public class DBPaymentService {
         this.firestore = Database.getFirestoreDatabase();
         this.mapper = Database.getObjectMapper();
     }
+
     public void addHourlyRate(HourlyRate rate) {
         DocumentReference ref =  firestore.collection("payment").document("timesheet");
 
