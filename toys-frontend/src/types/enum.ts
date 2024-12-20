@@ -85,7 +85,7 @@ export enum DashboardCategory {
 
 export enum DashboardCategoryText {
   NONE = "Boş :(",
-  OWN_EVENT = "Atanmış Etkinlikler",
+  OWN_EVENT = "Rehberlik Edeceğiniz Etkinlikler",
   EVENT_INVITATION = "Rehberlik Etme Davetiyeleri",
   PENDING_APPLICATION = "Etkinlik Başvuruları",
   GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
