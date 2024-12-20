@@ -120,6 +120,7 @@ export interface SimpleEventData {
 export interface SimpleGuideData {
   id: string,
   name: string,
+  role: string,
   major: string,
   experience: string,
 }
