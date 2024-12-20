@@ -9,7 +9,7 @@
 	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
 	"accepted_time": "2024-09-30T09:00:00Z+03:00",
 	"visitor_count": 66,
-	// changed
+	// changed # Fixed Dec 20 - 2306
 	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
