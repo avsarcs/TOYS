@@ -22,6 +22,7 @@ export const FairApplication: React.FC = () => {
             fullname: "",
             email: "",
             phone: "",
+            role: "",
             school: {
                 id: "",
                 name: "",

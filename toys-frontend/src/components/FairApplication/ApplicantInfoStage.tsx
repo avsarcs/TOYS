@@ -1,14 +1,66 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FairApplicationProps } from '../../types/designed';
 import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
 import isEmpty from 'validator/lib/isEmpty';
 import { TextInput } from '@mantine/core';
+import { notifications } from '@mantine/notifications'; 
 
 const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
   const [schoolName, setSchoolName] = useState<string | null>(applicationInfo.applicant.school.name || null);
 
-  const schools = ["Hüseyin Avni Ulaş Anadolu Lisesi", "Bilkent Erzurum Laboratuvar Lisesi", "Arı Okulları", "Zart Zurt Okulları"];
+  const [schools, setSchools] = useState<string[]>([]); // State to store high schools
+  
+  const getSchools = useCallback(async () => {
+    const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS); // Replace with your backend API base address
+    const url = new URL(apiURL + "internal/analytics/high-schools/all");
+  
+    try {
+      url.searchParams.append("auth", ""); // Auth parameter set to null
+  
+      const res = await fetch(url, {
+        method: "GET",
+      });
+  
+      if (!res.ok) {
+        notifications.show({
+          color: "red",
+          title: "Error",
+          message: "Unable to fetch high schools.",
+        });
+      } else {
+        const resText = await res.text();
+        const resJson = JSON.parse(resText); // This is an array of high schools
+  
+        console.log("API Response:", resJson); // Debugging the response
+  
+        // Directly map the array to extract school names
+        const schoolNames = resJson.map((school: { name: string }) => school.name);
+  
+        if (schoolNames.length === 0) {
+          notifications.show({
+            color: "yellow",
+            title: "No Schools Found",
+            message: "No high schools are available at the moment.",
+          });
+        }
+  
+        setSchools(schoolNames); // Update the schools state with just the names
+      }
+    } catch (e) {
+      console.error("Error fetching schools:", e);
+      notifications.show({
+        color: "red",
+        title: "Oops!",
+        message: "Something went wrong. Please contact the site administrator.",
+      });
+    }
+  }, []);
+  
+  
 
+  useEffect(() => {
+    getSchools();
+  }, [getSchools]);
   // Sync `schoolName` with `applicationInfo` on initial render
   useEffect(() => {
     if (applicationInfo.applicant.school.name) {
