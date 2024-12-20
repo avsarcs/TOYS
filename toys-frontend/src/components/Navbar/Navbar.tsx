@@ -15,7 +15,8 @@ import {
   IconUserUp,
   IconBrandSafari,
   IconCreditCard,
-  IconLayoutDashboard
+  IconLayoutDashboard,
+  IconMessage
 
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
@@ -45,17 +46,18 @@ export const Navbar: React.FC = () => {
   };
 
   const links: LinkType[] = [
-    { label: 'Profil', icon: IconUser, link: '/profile' },
-    { label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout },
-    { label: 'Tüm Turlar', icon: IconMap, link: '/tours' },
+    
   ];
 
   if (user.role === UserRole.DIRECTOR) {
+    links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
+    links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Tüm Fuarlar', icon: IconBuildingCircus, link: '#' });
     links.push({ label: 'Rehber Başvuruları', icon: IconBrandSafari, link: '/toys-applications' });
     links.push({ label: 'Danışman Teklifleri', icon: IconUserUp, link: '/advisor-offers' });
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });
-    links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '#' });
+    links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '/manage-personnel' });
     links.push({
       label: 'Veri Analizi',
       icon: IconPresentationAnalytics,
@@ -68,23 +70,43 @@ export const Navbar: React.FC = () => {
         { label: 'Tur İstatistikleri', link: '/tourstatistics' },
       ],
     });
+    links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
   }
   else if (user.role === UserRole.COORDINATOR) {
+    links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
+    links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Tüm Fuarlar', icon: IconBuildingCircus, link: '#' });
     links.push({ label: 'Rehber Başvuruları', icon: IconBrandSafari, link: '/toys-applications' });
     links.push({ label: 'Danışman Teklifleri', icon: IconUserUp, link: '/advisor-offers' });
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });
-    links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '#' });
+    links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '/manage-personnel' });
+    links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
   }
   else if (user.role === UserRole.ADVISOR) {
+    links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
+    links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
     links.push({ label: 'Rehberler', icon: IconUsers, link: '#' });
+    links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
   }
   else if (user.role === UserRole.GUIDE) {
+    links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
+    links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
+    links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
   }
   else if (user.role === UserRole.TRAINEE) {
+    links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
+    links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
+    links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+  }
+  else {
+    links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
   }
 
   const toggleSubMenu = (label: string) => {
@@ -105,10 +127,12 @@ export const Navbar: React.FC = () => {
         </Group>
         <div className={classes.divider} />
       </div>
-      <div className={classes.header} style={{ marginTop: '0', paddingTop: '20px', backgroundColor: '#e0f7ff' }}>
-        {opened && <UserButton />}
-        <div className={classes.divider} style={{ marginTop: '10px' }} />
-      </div>
+      {user.role !== UserRole.NONE && (
+        <div className={classes.header} style={{ marginTop: '0', paddingTop: '20px', backgroundColor: '#e0f7ff' }}>
+          {opened && <UserButton />}
+          <div className={classes.divider} style={{ marginTop: '10px' }} />
+        </div>
+      )}
      
       <ScrollArea className={classes.links}>
         <div className={classes.linksInner}>
