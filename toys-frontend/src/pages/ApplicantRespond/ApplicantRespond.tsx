@@ -12,14 +12,16 @@ import {
     RadioGroup,
     Alert,
     Modal,
+    Card
 } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconUsers } from '@tabler/icons-react';
+import { SimpleEventData } from '../../types/data';
 
 const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/simple-tour");
-const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/answer-modification");
+const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour/modification");
 
 const ApplicantRespond: React.FC = () => {
-    const { tourId, passkey } = useParams();
+    const { passkey } = useParams();
     const navigate = useNavigate();
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [loading, setLoading] = useState(false);
@@ -27,28 +29,7 @@ const ApplicantRespond: React.FC = () => {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-
-    // Hardcoded sample data - used for display while backend is down
-    const tourData = {
-        event_type: "TOUR",
-        event_subtype: "TOUR",
-        event_id: "123",
-        event_status: "TOYS_WANTS_CHANGE",
-        highschool: {
-            id: "1",
-            name: "Ankara Fen Lisesi",
-            location: "Ankara",
-            priority: 1,
-            ranking: 1
-        },
-        accepted_time: null,
-        requested_times: [
-            "2024-12-19T14:00:00+03:00",
-            "2024-12-20T10:00:00+03:00",
-            "2024-12-21T15:00:00+03:00"
-        ],
-        visitor_count: 25
-    };
+    const [tourData, setTourData] = useState<SimpleEventData | null>(null);
 
     // Fetch tour data
     useEffect(() => {
@@ -56,7 +37,7 @@ const ApplicantRespond: React.FC = () => {
             try {
                 const url = new URL(SIMPLE_TOUR_URL);
                 url.searchParams.append('auth', passkey || '');
-                url.searchParams.append('tid', tourId || '');
+                url.searchParams.append('tid', ''); // Empty string as required
 
                 const response = await fetch(url, {
                     method: 'GET'
@@ -66,9 +47,8 @@ const ApplicantRespond: React.FC = () => {
                     throw new Error('Failed to fetch tour data');
                 }
 
-                // When backend is up, uncomment this to use actual data
-                // const data = await response.json();
-                // setTourData(data);
+                const data = await response.json();
+                setTourData(data);
                 
             } catch (err) {
                 console.error('Error fetching tour:', err);
@@ -76,12 +56,11 @@ const ApplicantRespond: React.FC = () => {
             }
         };
 
-        if (tourId && passkey) {
+        if (passkey) {
             fetchTour();
         }
-    }, [tourId, passkey]);
+    }, [passkey]);
 
-    // Format date for display
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
         return date.toLocaleString('tr-TR', {
@@ -110,7 +89,7 @@ const ApplicantRespond: React.FC = () => {
                 },
                 body: new URLSearchParams({
                     'auth': passkey || '',
-                    'tour_id': tourId || '',
+                    'tour_id': '', // Empty string as required
                     'accepted_time': selectedTime
                 })
             });
@@ -143,7 +122,7 @@ const ApplicantRespond: React.FC = () => {
                 },
                 body: new URLSearchParams({
                     'auth': passkey || '',
-                    'tour_id': tourId || '',
+                    'tour_id': '', // Empty string as required
                     'accepted_time': '' // Empty string for rejection
                 })
             });
@@ -173,6 +152,10 @@ const ApplicantRespond: React.FC = () => {
         );
     }
 
+    if (!tourData) {
+        return null;
+    }
+
     return (
         <>
             <Modal
@@ -190,7 +173,10 @@ const ApplicantRespond: React.FC = () => {
             <Container size="lg" py="xl">
                 <Paper shadow="sm" p="xl" withBorder>
                     <Stack gap="xl">
-                        <Title order={2} className="text-slate-600 mb-2">TURUNUZ İÇİN İSTENİLEN DEĞİŞİKLİKLERİ GÖZDEN GEÇİRMENİZ GEREKİYOR</Title>
+                        <Title order={2} className="text-slate-600 mb-2">
+                            TURUNUZ İÇİN İSTENİLEN DEĞİŞİKLİKLERİ GÖZDEN GEÇİRMENİZ GEREKİYOR
+                        </Title>
+                        
                         <Alert
                             color="blue"
                             variant="light"
@@ -203,11 +189,21 @@ const ApplicantRespond: React.FC = () => {
                             </Stack>
                         </Alert>
 
+                        <Card withBorder shadow="sm" radius="md" className="bg-blue-50">
+                            <Group gap="md">
+                                <IconUsers size={24} className="text-blue-600" />
+                                <Title order={3} className="text-blue-600">Tanıtım Ofisine Uygun Ziyaretçi Sayısı</Title>
+                            </Group>
+                            <Text size="xl" fw={700} mt="md" className="text-blue-600">
+                                {tourData.visitor_count} Kişi
+                            </Text>
+                        </Card>
+
                         <Stack gap="md">
                             <Title order={3}>Teklif Edilen Zamanlar</Title>
                             <RadioGroup value={selectedTime} onChange={setSelectedTime}>
                                 <Stack gap="lg">
-                                    {tourData.requested_times.map((time) => (
+                                    {tourData.requested_times.map((time: string) => (
                                         <Radio
                                             key={time}
                                             value={time}
@@ -254,11 +250,6 @@ const ApplicantRespond: React.FC = () => {
                             <Group>
                                 <Text fw={700}>Konum:</Text>
                                 <Text>{tourData.highschool.location}</Text>
-                            </Group>
-
-                            <Group>
-                                <Text fw={700}>Ziyaretçi Sayısı:</Text>
-                                <Text>{tourData.visitor_count}</Text>
                             </Group>
                         </Stack>
                     </Stack>

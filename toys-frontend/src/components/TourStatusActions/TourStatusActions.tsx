@@ -303,7 +303,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     <Modal
       opened={modificationOpened}
       onClose={closeModification}
-      title="Zaman Değişikliği İsteği"
+      title="Tur Değişikliği İsteği"
       size="lg"
       centered
     >
@@ -347,9 +347,9 @@ const TourStatusActions = ({ tour, onRefresh }) => {
             {selectedModificationTimes.map((time, index) => (
               <div key={index} className='flex mb-2'>
                 <Text className='mr-2'>{formatTimeDisplay(time)}</Text>
-                <Button
-                  size='compact-sm'
-                  color='red'
+                <Button 
+                  size='compact-sm' 
+                  color='red' 
                   onClick={() => setSelectedModificationTimes(prev => prev.filter(t => t !== time))}
                 >
                   İptal
@@ -381,7 +381,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
             disabled={selectedModificationTimes.length === 0}
             leftSection={<IconClockEdit size={16} />}
           >
-            Başvuruda Değişiklik İste
+            Zamanlarda Değişiklik İste
           </Button>
         </Group>
       </Stack>
