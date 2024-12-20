@@ -9,7 +9,11 @@ import {
   Title,
   Checkbox,
   Chip,
-  Button, Container, Pagination, useMatches, ScrollArea, Autocomplete
+  Button, 
+  Container, 
+  useMatches, 
+  ScrollArea, 
+  Autocomplete
 } from "@mantine/core";
 import {DateInput} from "@mantine/dates";
 import {UserContext} from "../../context/UserContext.tsx";
@@ -21,27 +25,42 @@ const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/
 const TourListPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
-
   const [tours, setTours] = useState([]);
   const [schoolName, setSchoolName] = useState("");
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+  const [guideMissing, setGuideMissing] = useState(false);
+  const [traineeMissing, setTraineeMissing] = useState(false);
 
   const getTours = useCallback(async () => {
     const toursUrl = new URL(TOURS_URL);
+    
+    // Always append required auth token
     toursUrl.searchParams.append("auth", userContext.authToken);
+    
+    // Always append optional parameters, even if empty
+    toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
+    toursUrl.searchParams.append("school_name", schoolName || '');
+    
+    // Handle dates
+    toursUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
+    toursUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
+    
+    // Handle filter flags
+    toursUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
+    toursUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
 
-    const res = await fetch(toursUrl,
-      {
-        method: "GET"
-      });
+    const res = await fetch(toursUrl, {
+      method: "GET"
+    });
 
     if(res.ok) {
       setTours(await res.json());
     }
-  }, [userContext.authToken]);
+  }, [userContext.authToken, statusFilter, schoolName, fromDate, toDate, guideMissing, traineeMissing]);
 
   useEffect(() => {
     getTours().catch(console.error);
-
     return () => { setTours([]); }
   }, [getTours]);
 
@@ -52,8 +71,19 @@ const TourListPage: React.FC = () => {
   });
 
   const listItems = useMemo(() =>
-      tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
-    [tours]);
+    tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
+  [tours]);
+
+  const handleSearch = () => {
+    getTours().catch(console.error);
+  };
+
+  const handleToDateChange = (date: Date | null) => {
+    if (date && fromDate && date < fromDate) {
+      return; // Don't allow to_date to be earlier than from_date
+    }
+    setToDate(date);
+  };
 
   return (
     <>
@@ -71,7 +101,7 @@ const TourListPage: React.FC = () => {
             Filtre
           </Title>
         </Box>
-        <Group grow  ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
+        <Group grow ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
           <Text size="md" fw={700} className="flex-grow-0">
             Okul:
           </Text>
@@ -82,13 +112,13 @@ const TourListPage: React.FC = () => {
             value={schoolName}
             data={[""]}
             onChange={setSchoolName}/>
-          <Button className="flex-grow-0" onClick={() => { setStatusFilter([]); }}>Ara</Button>
+          <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
           <Text size="md" fw={700}>
             Durum:
           </Text>
-          <Chip.Group multiple value={statusFilter} onChange={(filter: string[]) => { setStatusFilter(filter)} }>
+          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
             <Group>
               <Chip size="lg" color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
               <Chip size="lg" color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
@@ -108,9 +138,18 @@ const TourListPage: React.FC = () => {
               Başvuru Tarihi:
             </Text>
             <Group wrap="nowrap">
-              <DateInput clearable></DateInput>
+              <DateInput 
+                clearable
+                value={fromDate}
+                onChange={setFromDate}
+              />
               <Text>-</Text>
-              <DateInput clearable></DateInput>
+              <DateInput 
+                clearable
+                value={toDate}
+                onChange={handleToDateChange}
+                minDate={fromDate || undefined}
+              />
             </Group>
           </Group>
           <Group>
@@ -118,8 +157,18 @@ const TourListPage: React.FC = () => {
             <Text size="md" fw={700}>
               Diğer:
             </Text>
-            <Checkbox label="Rehber atanmamış." size="md"/>
-            <Checkbox label="Acemi rehber atanmamış." size="md"/>
+            <Checkbox 
+              label="Rehber atanmamış." 
+              size="md"
+              checked={guideMissing}
+              onChange={(event) => setGuideMissing(event.currentTarget.checked)}
+            />
+            <Checkbox 
+              label="Acemi rehber atanmamış." 
+              size="md"
+              checked={traineeMissing}
+              onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
+            />
           </Group>
         </Group>
         <Space h="md"/>
@@ -132,8 +181,6 @@ const TourListPage: React.FC = () => {
             <Space h="xs" />
           </Stack>
         </ScrollArea.Autosize>
-        <Divider />
-        <Pagination p="md" size="md" total={31}></Pagination>
       </Container>
     </>
   )
