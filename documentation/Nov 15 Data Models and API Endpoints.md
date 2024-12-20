@@ -523,16 +523,16 @@ response_type:json
 			application_id: "id of the application"
 			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-!!!! CHANGED 
+!!!! CHANGED
 			/modification
-			method: post
-			parameters:
-				auth: auth_token // passkey if an applicant is using this
-				tour_id: id of the tour
-				accepted_time: "" (ISO8601 accepted time, empty string means rejection)
-			response: 200 or 400
-			response_type: status code
-			description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
+				method: post
+				parameters:
+					auth: auth_token // passkey if an applicant is using this
+					tour_id: id of the tour
+					accepted_time: "" (ISO8601 accepted time, empty string means rejection)
+				response: 200 or 400
+				response_type: status code
+				description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
 
 		/fair #
 		method: post
