@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ManagementPaymentService {
@@ -135,7 +136,9 @@ public class ManagementPaymentService {
         getTourPaymentState(auth, guide_id).stream().forEach(
                 event -> {
                     double owed = ((Number) event.get("money_debted")).doubleValue() - ((Number)event.get("money_paid")).doubleValue();
+                    System.out.println("Owed before: " + owed);
 
+                    System.out.println("Event: "+event.get("event_id")+" Owed: " + owed);
                     Payment payment = new Payment();
                     payment.setEvent_id((String) event.get("event_id"))
                             .setAmount(owed)
@@ -148,6 +151,8 @@ public class ManagementPaymentService {
         oldPayments.addAll(guide.getFiscalState().getPayments());
         oldPayments.addAll(newPayments);
         guide.getFiscalState().setPayments(oldPayments);
+        guide.getFiscalState().setOwed(oldPayments.stream().collect(Collectors.summarizingDouble(Payment::getAmount)).getSum());
+        guide.getFiscalState().setPaid(oldPayments.stream().collect(Collectors.summarizingDouble(Payment::getAmount)).getSum());
         db.people.updateUser(guide);
     }
 }

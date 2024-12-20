@@ -1,9 +1,12 @@
 package server.respond.tours;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import server.apply.RequestService;
 
 @RestController
@@ -22,9 +25,11 @@ public class RespondToursController {
     @Autowired
     RequestService requestService;
 
+    @Deprecated
     @PostMapping("/respond/tours/changes")
-    public void respondToursChangesRequest(@RequestParam String auth, @RequestParam String idt, @RequestParam String response) {
-        requestService.respondToRequest(auth, idt, response);
+    public void respondToursChangesRequest(HttpServletResponse response) {
+        response.addHeader("Warning", "This endpoint is deprecated!");
+        //requestService.respondToRequest(auth, idt, response_str);
     }
 
 

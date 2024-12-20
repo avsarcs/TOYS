@@ -129,32 +129,6 @@ public class AnalyticsHighschoolService {
         return details;
     }
 
-    public void getIncomingStudents(String auth, String school_id, String year) {
-        if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
-        }
 
-        Highschool highschool = database.schools.getHighschoolByID(school_id);
-        if (highschool == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Highschool not found!");
-        }
-
-        Map<String, DDTO_UniStudentIncome> response = new HashMap<>();
-        database.universities.getUniversities().get("bilkent").getDepartments().forEach(
-                department -> {
-                    department.getYears().forEach(
-                            departmentalYear -> {
-                                if (departmentalYear.year.equals(year)) {
-                                    response.put(
-                                            department.getName(),
-                                            new DDTO_UniStudentIncome()
-                                                    .setTotal_count(departmentalYear.highschool_attendee_count.stream().mapToLong(data -> data.getTotal()).sum())
-                                    );
-                                }
-                            }
-                    );
-                }
-        );
-    }
 
 }

@@ -29,7 +29,7 @@ public class AnalyticsHighschoolController {
 
     @GetMapping("/internal/analytics/high-schools/students")
     public void getIncomingStudents(@RequestParam String auth, @RequestParam String high_school_id, @RequestParam String year) {
-        analyticsHighschoolsService.getIncomingStudents(auth, high_school_id, year);
+        //analyticsHighschoolsService.getIncomingStudents(auth, high_school_id, year);
     }
 
 
