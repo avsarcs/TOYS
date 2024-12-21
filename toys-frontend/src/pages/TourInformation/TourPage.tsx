@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Box, Divider, Flex, Group, Space, Stack, Title, Text } from "@mantine/core";
+import { Box, Divider, Flex, Space, Stack, Title, Text } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import { TourData } from "../../types/data.ts";
 import StatusInformation from "../../components/TourInformation/StatusInformation.tsx";
@@ -9,8 +9,8 @@ import GuideInformation from "../../components/TourInformation/GuideInformation.
 import TimeInformation from "../../components/TourInformation/TimeInformation.tsx";
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
-import TourStatusActions from "../../components/TourStatusActions/TourStatusActions.tsx";
 import TourReviews from "../../components/TourReviews/TourReviews.tsx";
+import {TourStatus} from "../../types/enum.ts";
 
 const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
 
@@ -77,19 +77,19 @@ const TourPage: React.FC = () => {
             :
             <>
               <Space h="lg" />
-              <Box bg="white" className="shadow-sm">
-                <Group p="lg" align="flex-start" justify="space-between" className="w-full">
-                  <StatusInformation tour={tour} refreshTour={refreshTour} />
-                  <TourStatusActions tour={tour} onRefresh={refreshTour} />
-                </Group>
-              </Box>
+              <StatusInformation tour={tour} refreshTour={refreshTour} />
               <Divider className="border-gray-300" />
               <Stack gap="0" className="bg-gray-50">
                 <GeneralInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
                 <ApplicantInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
-                <GuideInformation tour={tour} refreshTour={refreshTour} />
+                {
+                  tour.status === TourStatus.CONFIRMED || tour.status === TourStatus.FINISHED
+                  ?
+                  <GuideInformation tour={tour} refreshTour={refreshTour} />
+                  : null
+                }
                 <Divider className="border-gray-200" />
                 <TimeInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />

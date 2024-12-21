@@ -9,101 +9,76 @@ import {
   Title,
   Checkbox,
   Chip,
-  Button,
-  Container,
-  useMatches,
-  ScrollArea,
-  Autocomplete, Pagination, LoadingOverlay
+  Button, 
+  Container, 
+  useMatches, 
+  ScrollArea, 
+  Autocomplete
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
 import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
-import {notifications} from "@mantine/notifications";
 
-const TOURS_PER_PAGE = 7;
-const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
+const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fairs");
 
-const TourListPage: React.FC = () => {
+const FairsList: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [tours, setTours] = useState<SimpleEventData[]>([]);
+  const [fairs, setFairs] = useState<SimpleEventData[]>([]);
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
   const [guideMissing, setGuideMissing] = useState(false);
   const [traineeMissing, setTraineeMissing] = useState(false);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
 
-  const getTours = async () => {
-    setLoading(true);
-    const toursUrl = new URL(TOURS_URL);
+  const getFairs = async () => {
+    const fairsUrl = new URL(FAIRS_URL);
     
     // Always append required auth token
-    toursUrl.searchParams.append("auth", userContext.authToken);
+    fairsUrl.searchParams.append("auth", userContext.authToken);
     
     // Always append optional parameters, even if empty
-    toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
-    toursUrl.searchParams.append("school_name", searchSchoolName || '');
+    fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
+    fairsUrl.searchParams.append("school_name", searchSchoolName || '');
+    fairsUrl.searchParams.append("guide_not_assigned", guideMissing.toString());
     
     // Handle dates
-    toursUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
-    toursUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
+    fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
+    fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
     
     // Handle filter flags
-    toursUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
-    toursUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
+    fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
+    fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
 
-    const res = await fetch(toursUrl, {
+    const res = await fetch(fairsUrl, {
       method: "GET"
     });
 
     if(res.ok) {
       setTours(await res.json());
-      setPage(1);
     }
-    else {
-      setLoading(false);
-      throw new Error("Something went wrong");
-    }
-    setLoading(false);
   };
 
   useEffect(() => {
     // Initial load of tours
-    getTours().catch((reason) => {
-      console.error(reason);
-      notifications.show({
-        color: "red",
-        title: "Hay aksi!",
-        message: "Bir şeyler yanlış gitti. Sayfayı yenileyin veya site yöneticisine durumu haber edin."
-      });
-    });
+    getTours().catch(console.error);
+    return () => { setTours([]); }
   }, []); // Empty dependency array as we only want this to run once on mount
 
   const listHeight = useMatches({
     base: "",
     sm: "",
-    md: "35vh",
+    md: "50vh",
   });
 
-  const visibleTours = useMemo(() => tours.slice((page - 1) * TOURS_PER_PAGE, page * (TOURS_PER_PAGE)),
-    [page, tours]);
   const listItems = useMemo(() =>
-    visibleTours.map((tour, index) => <ListItem key={index} tour={tour}/>),
-  [visibleTours]);
+    tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
+  [tours]);
 
   const handleSearch = async () => {
-    await getTours().catch((reason) => {
-      console.error(reason);
-      notifications.show({
-        color: "red",
-        title: "Hay aksi!",
-        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
-      });
-    });
+    await getTours().catch(console.error);
   };
 
   const handleFromDateChange = (date: Date | null) => {
@@ -133,7 +108,7 @@ const TourListPage: React.FC = () => {
       <Divider className="border-gray-400"/>
       <Stack gap="0" bg="white">
         <Box p="lg">
-          <Title order={3}>
+          <Title order={2}>
             Filtre
           </Title>
         </Box>
@@ -151,19 +126,16 @@ const TourListPage: React.FC = () => {
           <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
-          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
-            <Group wrap="wrap">
           <Text size="md" fw={700}>
             Durum:
           </Text>
-              <Chip color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
-              <Chip color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
-              <Chip color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
-              <Chip color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
-              <Chip color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
-              <Chip color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
-              <Chip color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
-              <Chip color="blue" variant="outline" value="FINISHED">Bitti</Chip>
+          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
+            <Group>
+              <Chip size="lg" color="blue" variant="outline" value="AWAITING_CONFIRMATION">Onay Bekliyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="ACCEPTED">Onaylandı</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="COMPLETED">Bitti</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
@@ -211,24 +183,15 @@ const TourListPage: React.FC = () => {
       </Stack>
       <Divider size="sm" className="border-gray-300"/>
       <Container p="0" fluid bg="white">
-        {
-          loading
-            ?
-            <LoadingOverlay className="rounded-md"
-                            visible={loading} zIndex={10}
-                            overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
-            :
-          <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
-            <Stack gap="xs" className="overflow-x-clip" mah="20%">
-              {listItems}
-              <Space h="xs"/>
-            </Stack>
-          </ScrollArea.Autosize>
-        }
-      <Pagination p="md" value={page} onChange={setPage} total={Math.ceil(tours.length / TOURS_PER_PAGE)} />
+        <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
+          <Stack gap="xs" className="overflow-x-clip" mah="20%">
+            {listItems}
+            <Space h="xs" />
+          </Stack>
+        </ScrollArea.Autosize>
       </Container>
     </>
   )
 }
 
-export default TourListPage;
+export default FairsList;

@@ -2,12 +2,25 @@ package server.models.schools;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 public class UniHighschoolRecord {
     @JsonProperty("school")
     private String school_name;
     private long total;
     private long new_graduates;
     private long previous_graduates;
+
+    protected UniHighschoolRecord(Map<String, Object> map) {
+        this.school_name = (String) map.get("school");
+        this.total = (long) map.get("total");
+        this.new_graduates = (long) map.get("new_graduates");
+        this.previous_graduates = (long) map.get("previous_graduates");
+    }
+
+    public static UniHighschoolRecord fromMap(Map<String, Object> map) {
+        return new UniHighschoolRecord(map);
+    }
 
     public String getSchool_name() {
         return school_name;

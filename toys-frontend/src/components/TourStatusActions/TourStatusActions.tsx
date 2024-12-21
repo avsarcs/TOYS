@@ -32,8 +32,7 @@ const TIME_SLOTS: TimeSlot[] = [
   { start: '15:00', end: '17:00' },
 ];
 
-// @ts-expect-error no they are not of any type
-const TourStatusActions = ({ tour, onRefresh }) => {
+const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () => void}) => {
   const { user, authToken } = useContext(UserContext);
   const [opened, { open, close }] = useDisclosure(false);
   const [viewTimesOpened, { open: openViewTimes, close: closeViewTimes }] = useDisclosure(false);
@@ -132,7 +131,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     };
 
     // Create the specific application model based on tour type
-    const applicationModel = tour.type === "individual" 
+    const applicationModel = tour.type === "INDIVIDUAL"
       ? {
           ...baseApplication,
           requested_majors: (tour as TourData).requested_majors
@@ -388,10 +387,7 @@ const TourStatusActions = ({ tour, onRefresh }) => {
     </Modal>
   );
 
-  // requested_times is requested_time in the backend until its fixed so this has the possibility to explode.
-  // notified the backend about this.
-  const zartZurt: string = "RECEIVED" // tour.status 
-  switch (zartZurt) {
+  switch (tour.status) {
     case "RECEIVED":
       return (
         <>

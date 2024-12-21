@@ -36,6 +36,10 @@ public class Database {
         return firestoreDatabase;
     }
 
+    public static LocalFileService getLocalFileService() {
+        return instance.local;
+    }
+
     private static Database instance;
     public static Database getInstance() {
         if (instance == null) {
@@ -54,6 +58,7 @@ public class Database {
     public DBUniversityService universities;
     public DBPaymentService payments;
     public DBAuthService auth;
+    public LocalFileService local;
 
     private Database() {
 
@@ -91,6 +96,7 @@ public class Database {
         universities = new DBUniversityService();
         payments = new DBPaymentService();
         auth = new DBAuthService();
+        local = new LocalFileService();
     }
 
     public void pushString(String string) {

@@ -877,7 +877,13 @@ response_type:json
 			parameters:
 				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 				guide_not_assigned (OPTIONAL): bool
-				enrolled_in_fair (OPTIONAL): 
+				enrolled_in_fair (OPTIONAL):
+		#CHANGED
+				school_name: string
+				to_date: iso date string
+				from_date: iso date string
+				filter_guide_missing: bool
+				filter_trainee_missing: bool 
 			body: auth_token
 			response: list of fairs
 			response_type: json
