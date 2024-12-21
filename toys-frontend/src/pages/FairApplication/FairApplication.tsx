@@ -159,18 +159,34 @@ export const FairApplication: React.FC = () => {
 
     const attemptSubmitForm = async () => {
         if (validateStage1()) {
+            // Set the applicant role as "STUDENT"
+            setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: {
+                    ...prev.applicant,
+                    role: "STUDENT",
+                },
+            }));
+    
             const applicationUrl = new URL(FAIR_APPLICATION_URL);
             const res = await fetch(applicationUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(applicationInfo),
+                body: JSON.stringify({
+                    ...applicationInfo,
+                    applicant: {
+                        ...applicationInfo.applicant,
+                        role: "STUDENT",
+                    },
+                }),
             });
-
+    
             if (res.status === 200) navigate("/application-success");
         }
     };
+    
 
     return (
         <div className="application-wrapper p-8">
