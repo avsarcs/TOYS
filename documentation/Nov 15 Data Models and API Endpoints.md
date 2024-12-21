@@ -656,7 +656,7 @@ response_type:json
 		/dashboard
 			parameters:
 				authToken: auth_token
-				dashboard_category: NotificationCategory
+				dashboard_category: DashboardCategory
 			method: get
 			response: SimpleEventModel[]
 			
