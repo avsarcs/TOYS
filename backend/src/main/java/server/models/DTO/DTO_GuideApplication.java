@@ -26,7 +26,7 @@ public class DTO_GuideApplication {
         application.setHigh_school(DTO_Highschool.getDefault());
         application.setEmail("guideApplicant@email.com");
         application.setPhone("555 555 55 55");
-        application.setMajor(Department.ARTS);
+        application.setMajor(Department.AMERICAN_CULTURE_AND_LITERATURE);
         application.setCurrent_semester(2);
         application.setNext_semester_exchange(false);
         application.setHowdidyouhear("From a friend");

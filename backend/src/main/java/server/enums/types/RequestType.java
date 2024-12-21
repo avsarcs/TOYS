@@ -1,7 +1,8 @@
 package server.enums.types;
 
 public enum RequestType {
-    MODIFICATION,
+    TOUR_MODIFICATION,
     WITHDRAWAL,
     ASSIGNMENT,
+    PROMOTION,
 }

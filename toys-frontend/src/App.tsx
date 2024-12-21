@@ -1,13 +1,13 @@
-import { Route, Routes, useLocation } from "react-router-dom"
+import {Route, Routes, useLocation} from "react-router-dom"
 
-import { Navbar } from "./components/Navbar/Navbar.tsx";
+import {Navbar} from "./components/Navbar/Navbar.tsx";
 import HomePage from "./pages/Home/HomePage.tsx";
 import Force404 from "./pages/404/Force404.tsx";
 import LoginPage from "./pages/Login/LoginPage.tsx";
 import Comparison from "./pages/DataAnalysis/Comparison.tsx";
 import UniversitiesList from "./pages/DataAnalysis/UniversitiesList.tsx";
 import ProfilePage from "./pages/Profile/ProfilePage.tsx";
-import { hasNavbar } from "./lib/utils.tsx";
+import {hasNavbar} from "./lib/utils.tsx";
 import HighSchoolsList from "./pages/DataAnalysis/HighSchoolsList.tsx";
 import GroupTourApplication from "./pages/GroupTourApplication/GroupTourApplication.tsx";
 import ApplicationSuccess from "./pages/ApplicationSuccess/ApplicationSuccess.tsx";
@@ -22,6 +22,7 @@ import EditProfilePage from "./pages/Profile/EditProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
+import ApplicantRespond from "./pages/ApplicantRespond/ApplicantRespond.tsx";
 
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
@@ -29,42 +30,46 @@ import BilkentStudentDetails from "./pages/DataAnalysis/BilkentStudentDetails.ts
 import RivalsList from "./pages/DataAnalysis/RivalsList.tsx";
 import TourStatistics from "./pages/TourStatistics/TourStatistics.tsx";
 import TourListPage from "./pages/TourList/TourListPage.tsx";
+import CheckLogin from "./components/CheckLogin.tsx";
+import ManagePersonnel from "./pages/ManagePersonnel/ManagePersonnel.tsx";
 
 function App() {
-  const location = useLocation().pathname;
   dayjs.locale("tr");
+  const location = useLocation().pathname;
 
   return (
     <>
       <div className="app-container">
-        {hasNavbar(location) && <Navbar />}
+        {hasNavbar(location) && <CheckLogin checkOnce redirect children={<Navbar />}/>}
         <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />}></Route>
             <Route path="/*" element={<Force404 />} />
-            <Route path="/comparison" element={<Comparison />} />
-            <Route path="/dashboard" element={<Dashboard />}/>
-            <Route path="/tour/:tourId" element={<TourPage />}/>
-            <Route path="/tours" element={<TourListPage />}/>
-            <Route path="/universitieslist" element={<UniversitiesList />} />
-            <Route path="/rivalslist" element={<RivalsList />} />
-            <Route path="/highschoolslist" element={<HighSchoolsList />} />
-            <Route path="bilkentstudentdetails" element={<BilkentStudentDetails />} />
+            <Route path="/comparison" element={<CheckLogin redirect children={<Comparison />}/>} />
+            <Route path="/dashboard" element={<CheckLogin redirect children={<Dashboard />}/>} />
+            <Route path="/tour/:tourId" element={<CheckLogin redirect children={<TourPage />}/>} />
+            <Route path="/tours" element={<CheckLogin children={<TourListPage />}/>}/>
+            <Route path="/universitieslist" element={<CheckLogin redirect children={<UniversitiesList />}/>}/>
+            <Route path="/rivalslist" element={<CheckLogin redirect children={<RivalsList />}/>} />
+            <Route path="/highschoolslist" element={<CheckLogin redirect children={<HighSchoolsList />}/>} />
+            <Route path="/bilkentstudentdetails" element={<CheckLogin redirect children={<BilkentStudentDetails />}/>} />
             <Route path="/group-tour-application" element={<GroupTourApplication />} />
             <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
-            <Route path="/application-success" element={<ApplicationSuccess/>}/>
-            <Route path="/toys-applications" element={<ToysApplications/>} />
-            <Route path="/trainee-application-details/:application_id" element={<TraineeApplicationDetails/>} />
-            <Route path="/advisor-offers" element={<AdvisorOffers/>} />
-            <Route path="/guide-payments" element={<GuidePayments/>} />
-            <Route path="/payment-detail/:guideId" element={<PaymentDetail/>} />
-            <Route path="/profile/:profileId" element={<ProfilePage />}/>
-            <Route path="/profile" element={<ProfilePage />}/>
-            <Route path="/edit-profile" element={<EditProfilePage />}/>
+            <Route path="/application-success" element={<ApplicationSuccess />}/>
+            <Route path="/toys-applications" element={<CheckLogin redirect children={<ToysApplications />}/>} />
+            <Route path="/trainee-application-details/:application_id" element={<CheckLogin redirect children={<TraineeApplicationDetails />}/>}/>
+            <Route path="/advisor-offers" element={<CheckLogin redirect children={<AdvisorOffers />}/>} />
+            <Route path="/guide-payments" element={<CheckLogin redirect children={<GuidePayments />}/>} />
+            <Route path="/payment-detail/:guideId" element={<CheckLogin redirect children={<PaymentDetail />}/>} />
+            <Route path="/profile/:profileId" element={<CheckLogin redirect children={<ProfilePage />}/>}/>
+            <Route path="/profile" element={<CheckLogin redirect children={<ProfilePage />}/>}/>
+            <Route path="/edit-profile" element={<CheckLogin redirect checkOnce children={<EditProfilePage />}/>}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
-            <Route path="/review/:review-id" element={<ReviewDetailsPage />}/>
-            <Route path="/tourstatistics" element={<TourStatistics />}/>
+            <Route path="/review/:review-id" element={<CheckLogin redirect children={<ReviewDetailsPage />}/>}/>
+            <Route path="/tourstatistics" element={<CheckLogin redirect children={<TourStatistics />}/>}/>
+            <Route path="/manage-personnel" element={<CheckLogin redirect children={<ManagePersonnel />}/>}/>
+            <Route path="/applicant-respond" element={<ApplicantRespond />} />
           </Routes>
         </main>
       </div>

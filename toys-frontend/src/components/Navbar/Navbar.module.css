@@ -30,6 +30,7 @@
   flex: 1;
   margin-left: calc(var(--mantine-spacing-md) * -1);
   margin-right: calc(var(--mantine-spacing-md) * -1);
+  overflow-y: auto; /* Allow scrolling if content exceeds height */
 }
 
 .linksInner {
@@ -37,8 +38,75 @@
   padding-bottom: var(--mantine-spacing-xl);
 }
 
+.linkWrapper {
+  margin-bottom: var(--mantine-spacing-sm); /* Space between main links */
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-gray-3));
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+  margin-left: 16px;
+}
+
+.link:hover {
+  color: var(--mantine-color-blue-6);
+}
+
+.subLinksWrapper {
+  margin-top: 8px; /* Space between main link and sub-links */
+  padding-left: 20px; /* Indent sub-links */
+  border-left: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  list-style: none; /* Remove bullets */
+  max-height: 0; /* Initially collapsed */
+  overflow: hidden; /* Hide overflowing content */
+  transition: max-height 0.3s ease, opacity 0.3s ease; /* Smooth transition */
+  opacity: 0; /* Initially hidden */
+}
+
+.subLinksWrapper.open {
+  max-height: 500px; /* Expanded height (adjust as needed) */
+  opacity: 1; /* Fully visible */
+}
+
+.subLinkItem {
+  margin: 4px 0; /* Vertical space between sub-links */
+}
+
+.subLink {
+  display: block;
+  font-size: 1rem; /* Increase text size */
+  color: #003366; /* Dark blue color */
+  text-decoration: none; /* Remove underline */
+  margin-left: 32px; /* Indent sub-links */
+  padding: 4px 0; /* Add vertical spacing */
+  transition: color 0.2s ease;
+}
+
+.subLink:hover {
+  color: #002244;
+}
+
 .footer {
   margin-left: calc(var(--mantine-spacing-md) * -1);
   margin-right: calc(var(--mantine-spacing-md) * -1);
   border-top: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  padding-top: var(--mantine-spacing-md);
+}
+
+.arrow {
+  margin-left: auto; /* Push arrow to the right */
+  transition: transform 0.2s ease-in-out; /* Smooth rotation */
+  font-size: 0.9rem; /* Adjust size of the arrow */
+  color: inherit; /* Match color with parent link */
+}
+
+.arrowOpen {
+  transform: rotate(180deg); /* Rotate arrow when submenu is open */
 }

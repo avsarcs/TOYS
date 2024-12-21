@@ -1,27 +1,33 @@
-import { UnstyledButton, Group, Avatar, Text, rem } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
+import { UnstyledButton, Group, Avatar, Text } from '@mantine/core';
 import classes from './UserButton.module.css';
+import { UserContext } from '../../context/UserContext';
+import { useContext } from 'react';
+import {UserRoleText} from "../../types/enum.ts";
 
 export function UserButton() {
+  const userContext = useContext(UserContext);
   return (
     <UnstyledButton className={classes.user}>
       <Group>
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+          src={userContext.user.profile.profile_picture}
           radius="xl"
         />
 
         <div style={{ flex: 1 }}>
-          <Text size="sm" fw={500}>
-            Harriette Spoonlicker
-          </Text>
+        <Text size="sm" fw={500}>
+        <b>{userContext.user.profile.fullname}</b>
+        </Text>
 
+        <Text size="xs">
+          {UserRoleText[userContext.user.profile.role]}
+          </Text>
           <Text c="dimmed" size="xs">
-            hspoonlicker@outlook.com
+            {userContext.user.profile.email}
           </Text>
         </div>
 
-        <IconChevronRight style={{ width: rem(14), height: rem(14) }} stroke={1.5} />
+        
       </Group>
     </UnstyledButton>
   );

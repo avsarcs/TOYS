@@ -14,7 +14,10 @@ const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({ applic
     if (typeof schoolName == "string") {
       setApplicationInfo((appInfo) => ({
         ...appInfo,
-          highschool_name: schoolName
+          highschool: {
+            ...appInfo.highschool,
+            name: schoolName
+          }
         }
       ))
     }
@@ -101,8 +104,8 @@ const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({ applic
 
         <div className="mb-4">
           <label htmlFor="school" className="block font-medium mb-2">Okul <span className='text-red-400'>*</span></label>
-          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool_name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
-            {applicationInfo.highschool_name && `Şu anki seçiminiz: ${applicationInfo.highschool_name}`}
+          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool.name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
+            {applicationInfo.highschool.name && `Şu anki seçiminiz: ${applicationInfo.highschool.name}`}
             <SearchableSelect available_options={schools} value={schoolName} setValue={setSchoolName} placeholder='Okulunuzun adını giriniz' />
           </div>
         </div>

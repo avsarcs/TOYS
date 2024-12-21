@@ -6,9 +6,9 @@ export interface LoginData {
 }
 
 export interface TraineeGuideApplicationData {
-  fullname: string,
   id: string,
-  highschool: HighschoolData
+  fullname: string,
+  highschool: HighschoolData,
   email: string,
   phone: string,
   major: string,
@@ -31,9 +31,11 @@ export interface HighschoolData {
   name: string,
   location: string,
   priority: number,
+  ranking: number
 }
 
 export interface TourData {
+  tour_id: string,
   type: TourType,
   highschool: HighschoolData,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
@@ -53,12 +55,13 @@ export interface TourData {
 export interface ProfileData{
   experience: string,
   id: string,
+  email: string,
   created_at: string,
   updated_at: string,
   fullname: string,
   phone: string,
-  highschool: HighschoolData,
-  schedule: ScheduleData,
+  highschool: HighschoolDataForProfile,
+  schedule: ScheduleStub,
   iban: string,
   bank: string,
   major: string,
@@ -73,7 +76,13 @@ export interface ProfileData{
   profile_description: string,
   advisor_offer: boolean
 }
-
+export interface HighschoolDataForProfile {
+  id: string,
+  name: string
+}
+export interface ScheduleStub {
+  schedule: ScheduleData
+}
 export interface ScheduleData {
   MONDAY: DailyPlan,
   TUESDAY: DailyPlan,
@@ -94,17 +103,27 @@ export interface DailyPlan {
   _1430_1530: TimeSlotStatus,
   _1530_1630: TimeSlotStatus,
   _1630_1730: TimeSlotStatus,
+  _1730_1830: TimeSlotStatus
 }
 
 export interface SimpleEventData {
   event_type: EventType,
+  event_subtype: TourType,
   event_id: string,
+  event_status: TourStatus,
   highschool: HighschoolData,
   visitor_count: number,
   accepted_time: string,
   requested_times: string[],
 }
 
+export interface SimpleGuideData {
+  id: string,
+  name: string,
+  role: string,
+  major: string,
+  experience: string,
+}
 interface Recipient {
   id: string;
   name: string;

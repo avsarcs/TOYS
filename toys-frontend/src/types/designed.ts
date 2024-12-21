@@ -4,12 +4,12 @@ import {
   DashboardCategoryText,
   UserRole
 } from "./enum.ts";
-import { ProfileData, SimpleEventData, TourData } from "./data.ts";
+import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
 
 export interface User {
   id: string,
   role: UserRole,
-  profile: any
+  profile: ProfileData
 }
 
 export interface NavbarProps {
@@ -17,12 +17,13 @@ export interface NavbarProps {
 }
 
 export interface IndividualApplication {
-  highschool_name: string,
+  highschool: HighschoolData,
   requested_times: string[],
   requested_majors: string[],
   visitor_count: number,
   applicant: {
     fullname: string,
+    role: string,
     email: string,
     phone: string,
     notes: string
@@ -30,7 +31,7 @@ export interface IndividualApplication {
 }
 
 export interface GroupApplication {
-  highschool_name: string,
+  highschool: HighschoolData,
   requested_times: string[],
   visitor_count: number,
   applicant: {
@@ -114,13 +115,58 @@ export interface DashboardInfoBoxProps {
 }
 
 export interface TourSectionProps {
-  tour: TourData
+  tour: TourData,
+  refreshTour: () => void
 }
 
+export interface TourButtonProps {
+  tour: TourData,
+  refreshTour: () => void
+}
+
+export interface ManageGuidesWindowProps {
+  opened: boolean; // Controls modal visibility
+  onClose: () => void; // Closes the modal
+  tour: TourData; // ISO 8601 time
+  totalGuidesNeeded: number; // Total number of guides needed for the tour
+}
 export interface TourListItemProps {
   tour: SimpleEventData
 }
 
 export interface ProfileComponentProps {
+  profile: ProfileData
+}
+
+export interface MoneyForGuide {
+  guide: {
+      id: number;
+      name: string;
+      iban: string;
+      bank: string;
+  };
+  unpaid_hours: number;
+  debt: number;
+  money_paid: number;
+}
+
+export interface MoneyForTour {
+  tour_id: number;
+  tour_date: string;
+  hourly_rate: number;
+  tour_highschool: string;
+  hours_worked: number;
+  money_debted: number;
+  money_paid: number;
+}
+
+export interface SimpleGuide {
+  id: number;
+  name: string;
+  major: string;
+  experience: string;
+}
+
+export interface ProfileComponentProps{
   profile: ProfileData
 }

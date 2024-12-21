@@ -3,6 +3,7 @@ import { GroupApplicationStageProps } from '../../types/designed';
 import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
 import isEmpty from 'validator/lib/isEmpty';
 import { TextInput } from '@mantine/core';
+import { Select } from '@mantine/core';
 
 const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
 
@@ -14,7 +15,10 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
     if (typeof schoolName == "string") {
       setApplicationInfo((appInfo) => ({
         ...appInfo,
-        highschool_name: schoolName
+        highschool: {
+          ...appInfo.highschool,
+          name: schoolName
+        }
       }))
     }
   }, [schoolName])
@@ -34,9 +38,9 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             id="name"
             name="name"
             placeholder="Adınız ve Soyadınız"
-            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.full_name)) ? "Bu alanı boş bırakamazsınız." : false}
+            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.fullname)) ? "Bu alanı boş bırakamazsınız." : false}
             maxLength={100}
-            value={applicationInfo.applicant["full_name"]}
+            value={applicationInfo.applicant["fullname"]}
             onChange={(e) => {
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
@@ -100,33 +104,29 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
 
         <div className="mb-4">
           <label htmlFor="school" className="block font-medium mb-2">Okul <span className='text-red-400'>*</span></label>
-          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool_name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
-            {applicationInfo.highschool_name && `Şu anki seçiminiz: ${applicationInfo.highschool_name}`}
+          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool.name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
+            {applicationInfo.highschool.name && `Şu anki seçiminiz: ${applicationInfo.highschool.name}`}
             <SearchableSelect available_options={schools} value={schoolName} setValue={setSchoolName} placeholder='Okulunuzun adını giriniz' />
           </div>
         </div>
 
         <div className="mb-4">
-          <TextInput
-            type="text"
+          <Select
             label="Rolünüz"
-            withAsterisk
-            id="role"
-            name="role"
-            placeholder="Rolünüz; rehber öğretmen, müdür yardımcısı, öğretmen vs."
-            error={warnings["empty_fields"] ? "Bu alanı boş bırakamazsınız." : false}
-            maxLength={200}
-            value={applicationInfo.applicant["role"]}
-            onChange={(e) => {
+            placeholder="Öğrenci"
+            data={["Öğrenci", "Görevli, Öğretmen vs."]}
+            onChange={(_value, option) => {
+
+              const englishValue = _value == "Öğrenci" ? "student" : _value == "Görevli, Öğretmen vs." ? "teacher" : ""
+
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
                 applicant: {
                   ...appInfo.applicant,
-                  role: e.target.value,
+                  role: englishValue,
                 },
               }))
             }}
-            required
           />
         </div>
       </form>
