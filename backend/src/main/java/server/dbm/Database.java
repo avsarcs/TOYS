@@ -53,6 +53,7 @@ public class Database {
     public DBReviewService reviews;
     public DBUniversityService universities;
     public DBPaymentService payments;
+    public DBAuthService auth;
 
     private Database() {
 
@@ -89,6 +90,7 @@ public class Database {
         reviews = new DBReviewService();
         universities = new DBUniversityService();
         payments = new DBPaymentService();
+        auth = new DBAuthService();
     }
 
     public void pushString(String string) {

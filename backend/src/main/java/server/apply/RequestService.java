@@ -6,14 +6,14 @@ import server.auth.JWTService;
 import server.dbm.Database;
 import server.enums.status.RequestStatus;
 import server.mailService.MailServiceGateway;
-import server.models.people.GuideAssignmentRequest;
-import server.models.Request;
-import server.models.events.TourModificationRequest;
+import server.models.requests.GuideAssignmentRequest;
+import server.models.requests.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import server.models.people.details.ContactInfo;
+import server.models.requests.TourModificationRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class RequestService {
         }
         boolean force = false;
         if (requests.size() > 0) {
-            if (request.getRequested_by().getEmail().equals(ContactInfo.getDefault().getEmail())) {
+            if (request.getRequested_by().getContactInfo().getEmail().equals(ContactInfo.getDefault().getEmail())) {
                 // IT's alright, its a test-case scenario, skip this check
                 // also force an update, this is to make sure the test-case runs
                 force = true;
@@ -111,7 +111,7 @@ public class RequestService {
                     relatedRequests.add(request);
                 }
             } else if (request instanceof GuideAssignmentRequest) {
-                if (((GuideAssignmentRequest) request).getRequested_guide_id().equals(userId)) {
+                if (((GuideAssignmentRequest) request).getGuide_id().equals(userId)) {
                     relatedRequests.add(request);
                 }
             }

@@ -33,19 +33,19 @@ class University:
                     department_name_div = link_tag.find('div')
                     department_name = department_name_div.text.strip() if department_name_div else 'N/A'
                     if ("(%25 İndirimli)" in department_name):
-                        scholarship = "%25"
+                        scholarship = "%25 Burs"
                         department_name = department_name.replace(" (%25 İndirimli)", "")
                     elif ("(%50 İndirimli)" in department_name):
-                        scholarship = "%50"
+                        scholarship = "%50 Burs"
                         department_name = department_name.replace(" (%50 İndirimli)", "")
                     elif ("(%75 İndirimli)" in department_name):
-                        scholarship = "%75"
+                        scholarship = "%75 Burs"
                         department_name = department_name.replace(" (%75 İndirimli)", "")
                     elif ("(Burslu)" in department_name):
-                        scholarship = "%100"
+                        scholarship = "%100 Burs"
                         department_name = department_name.replace(" (Burslu)", "")
                     elif ("(Ücretli)" in department_name):
-                        scholarship = "%0"
+                        scholarship = "%0 Burs"
                         department_name = department_name.replace(" (Ücretli)", "")
                     else:
                         scholarship = "N/A"

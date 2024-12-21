@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Text,
@@ -9,51 +9,115 @@ import {
   Title,
   Checkbox,
   Chip,
-  Button, Container, Pagination, useMatches, ScrollArea, Autocomplete
+  Button,
+  Container,
+  useMatches,
+  ScrollArea,
+  Autocomplete, Pagination, LoadingOverlay
 } from "@mantine/core";
-import {DateInput} from "@mantine/dates";
-import {UserContext} from "../../context/UserContext.tsx";
-import {IconSearch} from "@tabler/icons-react";
+import { DateInput } from "@mantine/dates";
+import { UserContext } from "../../context/UserContext.tsx";
+import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
+import { SimpleEventData } from "../../types/data";
+import {notifications} from "@mantine/notifications";
 
+const TOURS_PER_PAGE = 7;
 const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
 
 const TourListPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [tours, setTours] = useState<SimpleEventData[]>([]);
+  const [searchSchoolName, setSearchSchoolName] = useState("");
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+  const [guideMissing, setGuideMissing] = useState(false);
+  const [traineeMissing, setTraineeMissing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const [tours, setTours] = useState([]);
-  const [schoolName, setSchoolName] = useState("");
-
-  const getTours = useCallback(async () => {
+  const getTours = async () => {
+    setLoading(true);
     const toursUrl = new URL(TOURS_URL);
+    
+    // Always append required auth token
     toursUrl.searchParams.append("auth", userContext.authToken);
+    
+    // Always append optional parameters, even if empty
+    toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
+    toursUrl.searchParams.append("school_name", searchSchoolName || '');
+    
+    // Handle dates
+    toursUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
+    toursUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
+    
+    // Handle filter flags
+    toursUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
+    toursUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
 
-    const res = await fetch(toursUrl,
-      {
-        method: "GET"
-      });
+    const res = await fetch(toursUrl, {
+      method: "GET"
+    });
 
     if(res.ok) {
       setTours(await res.json());
+      setPage(1);
     }
-  }, [userContext.authToken]);
+    else {
+      throw new Error("Something went wrong");
+    }
+  };
 
   useEffect(() => {
-    getTours().catch(console.error);
-
-    return () => { setTours([]); }
-  }, [getTours]);
+    // Initial load of tours
+    getTours().catch((reason) => {
+      console.error(reason);
+      notifications.show({
+        color: "red",
+        title: "Hay aksi!",
+        message: "Bir şeyler yanlış gitti. Sayfayı yenileyin veya site yöneticisine durumu haber edin."
+      });
+    });
+  }, []); // Empty dependency array as we only want this to run once on mount
 
   const listHeight = useMatches({
     base: "",
     sm: "",
-    md: "50vh",
+    md: "35vh",
   });
 
+  const visibleTours = useMemo(() => tours.slice((page - 1) * TOURS_PER_PAGE, page * (TOURS_PER_PAGE)),
+    [page, tours]);
   const listItems = useMemo(() =>
-      tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
-    [tours]);
+    visibleTours.map((tour, index) => <ListItem key={index} tour={tour}/>),
+  [visibleTours]);
+
+  const handleSearch = async () => {
+    await getTours().catch((reason) => {
+      console.error(reason);
+      notifications.show({
+        color: "red",
+        title: "Hay aksi!",
+        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
+      });
+    });
+  };
+
+  const handleFromDateChange = (date: Date | null) => {
+    setFromDate(date);
+    // If new fromDate makes current toDate invalid, clear toDate
+    if (date && toDate && toDate < date) {
+      setToDate(null);
+    }
+  };
+
+  const handleToDateChange = (date: Date | null) => {
+    if (date && fromDate && date < fromDate) {
+      return; // Don't allow to_date to be earlier than from_date
+    }
+    setToDate(date);
+  };
 
   return (
     <>
@@ -67,11 +131,11 @@ const TourListPage: React.FC = () => {
       <Divider className="border-gray-400"/>
       <Stack gap="0" bg="white">
         <Box p="lg">
-          <Title order={2}>
+          <Title order={3}>
             Filtre
           </Title>
         </Box>
-        <Group grow  ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
+        <Group grow ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
           <Text size="md" fw={700} className="flex-grow-0">
             Okul:
           </Text>
@@ -79,24 +143,25 @@ const TourListPage: React.FC = () => {
             leftSection={<IconSearch />}
             placeholder="Okul ismi..."
             limit={7}
-            value={schoolName}
+            value={searchSchoolName}
             data={[""]}
-            onChange={setSchoolName}/>
-          <Button className="flex-grow-0" onClick={() => { setStatusFilter([]); }}>Ara</Button>
+            onChange={setSearchSchoolName}/>
+          <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
+          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
+            <Group wrap="wrap">
           <Text size="md" fw={700}>
             Durum:
           </Text>
-          <Chip.Group multiple value={statusFilter} onChange={(filter: string[]) => { setStatusFilter(filter)} }>
-            <Group>
-              <Chip size="lg" color="blue" variant="outline" value="1">Onay Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="2">Değişim Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="3">Kabul Edildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="4">Reddedildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="5">Başladı</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="6">Bitti</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="7">İptal Edildi</Chip>
+              <Chip color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
+              <Chip color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
+              <Chip color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
+              <Chip color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
+              <Chip color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
+              <Chip color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
+              <Chip color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
+              <Chip color="blue" variant="outline" value="FINISHED">Bitti</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
@@ -107,9 +172,18 @@ const TourListPage: React.FC = () => {
               Başvuru Tarihi:
             </Text>
             <Group wrap="nowrap">
-              <DateInput clearable></DateInput>
+              <DateInput 
+                clearable
+                value={fromDate}
+                onChange={handleFromDateChange}
+              />
               <Text>-</Text>
-              <DateInput clearable></DateInput>
+              <DateInput 
+                clearable
+                value={toDate}
+                onChange={handleToDateChange}
+                minDate={fromDate || undefined}
+              />
             </Group>
           </Group>
           <Group>
@@ -117,22 +191,39 @@ const TourListPage: React.FC = () => {
             <Text size="md" fw={700}>
               Diğer:
             </Text>
-            <Checkbox label="Rehber atanmamış." size="md"/>
-            <Checkbox label="Acemi rehber atanmamış." size="md"/>
+            <Checkbox 
+              label="Rehber atanmamış." 
+              size="md"
+              checked={guideMissing}
+              onChange={(event) => setGuideMissing(event.currentTarget.checked)}
+            />
+            <Checkbox 
+              label="Acemi rehber atanmamış." 
+              size="md"
+              checked={traineeMissing}
+              onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
+            />
           </Group>
         </Group>
         <Space h="md"/>
       </Stack>
       <Divider size="sm" className="border-gray-300"/>
       <Container p="0" fluid bg="white">
-        <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
-          <Stack gap="xs" className="overflow-x-clip" mah="20%">
-            {listItems}
-            <Space h="xs" />
-          </Stack>
-        </ScrollArea.Autosize>
-        <Divider />
-        <Pagination p="md" size="md" total={31}></Pagination>
+        {
+          loading
+            ?
+            <LoadingOverlay className="rounded-md"
+                            visible={loading} zIndex={10}
+                            overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
+            :
+          <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
+            <Stack gap="xs" className="overflow-x-clip" mah="20%">
+              {listItems}
+              <Space h="xs"/>
+            </Stack>
+          </ScrollArea.Autosize>
+        }
+      <Pagination p="md" value={page} onChange={setPage} total={Math.ceil(tours.length / TOURS_PER_PAGE)} />
       </Container>
     </>
   )

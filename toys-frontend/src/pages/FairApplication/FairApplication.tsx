@@ -1,18 +1,18 @@
-import React, { useState, useContext } from 'react';
-import { Button, Alert } from '@mantine/core';
+import React, { useState, useContext } from "react";
+import { Button, Alert } from "@mantine/core";
 import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react";
-import { Stepper } from '@mantine/core';
+import { Stepper } from "@mantine/core";
 import "./FairApplication.css";
-import { FairApplicationModel } from '../../types/designed';
-import isEmail from 'validator/lib/isEmail';
-import isMobilePhone from 'validator/lib/isMobilePhone';
-import isEmpty from 'validator/lib/isEmpty';
-import { useNavigate } from 'react-router-dom';
+import { FairApplicationModel } from "../../types/designed";
+import isEmail from "validator/lib/isEmail";
+import isMobilePhone from "validator/lib/isMobilePhone";
+import isEmpty from "validator/lib/isEmpty";
+import { useNavigate } from "react-router-dom";
 
-import { UserContext } from '../../context/UserContext';
-import ApplicantInfoStage from '../../components/FairApplication/ApplicantInfoStage';
-import TimeSelectionStage from '../../components/FairApplication/TimeSelectionStage';
-import NotesStage from '../../components/FairApplication/NotesStage';
+import { UserContext } from "../../context/UserContext";
+import ApplicantInfoStage from "../../components/FairApplication/ApplicantInfoStage";
+import TimeSelectionStage from "../../components/FairApplication/TimeSelectionStage";
+import NotesStage from "../../components/FairApplication/NotesStage";
 
 const FAIR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/fair");
 
@@ -42,30 +42,57 @@ export const FairApplication: React.FC = () => {
         empty_fields: false,
         not_email: false,
         not_phone_no: false,
+        time_in_past: false,
+        end_before_start: false,
     });
     const [isStage2Valid, setIsStage2Valid] = useState(false);
+
+    const navigate = useNavigate();
 
     const attemptStageChange = (newStage: number) => {
         if (newStage < currentStage) {
             setCurrentStage(newStage);
             return;
         }
-    
+
         if (currentStage === 0 && validateStage1()) {
             setCurrentStage(newStage);
         } else if (currentStage === 1) {
-            // Validate and set date/time for Stage 2
-            if (isStage2Valid) {
-                setCurrentStage(newStage);
-            } else {
+            // Validate the Time Selection Stage
+            const startTime = new Date(applicationInfo.start_time);
+            const endTime = new Date(applicationInfo.end_time);
+            const now = new Date();
+
+            if (!applicationInfo.start_time || !applicationInfo.end_time) {
                 setWarnings((prev) => ({
                     ...prev,
                     empty_fields: true,
                 }));
+            } else if (startTime < now) {
+                setWarnings((prev) => ({
+                    ...prev,
+                    empty_fields: false,
+                    time_in_past: true,
+                }));
+            } else if (endTime <= startTime) {
+                setWarnings((prev) => ({
+                    ...prev,
+                    empty_fields: false,
+                    time_in_past: false,
+                    end_before_start: true,
+                }));
+            } else {
+                setWarnings((prev) => ({
+                    ...prev,
+                    empty_fields: false,
+                    time_in_past: false,
+                    end_before_start: false,
+                }));
+                setIsStage2Valid(true);
+                setCurrentStage(newStage);
             }
         }
     };
-    
 
     const validateStage1 = () => {
         let stagePass = true;
@@ -130,8 +157,6 @@ export const FairApplication: React.FC = () => {
         return stagePass;
     };
 
-    const navigate = useNavigate();
-
     const attemptSubmitForm = async () => {
         if (validateStage1()) {
             const applicationUrl = new URL(FAIR_APPLICATION_URL);
@@ -182,6 +207,18 @@ export const FairApplication: React.FC = () => {
                             <>
                                 <br />
                                 <strong>Geçerli bir telefon numarası girin.</strong>
+                            </>
+                        )}
+                        {warnings.time_in_past && (
+                            <>
+                                <br />
+                                <strong>Başlangıç zamanı geçmişte olamaz.</strong>
+                            </>
+                        )}
+                        {warnings.end_before_start && (
+                            <>
+                                <br />
+                                <strong>Bitiş zamanı başlangıç zamanından önce olamaz.</strong>
                             </>
                         )}
                     </Alert>

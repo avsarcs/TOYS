@@ -4,26 +4,24 @@ import java.util.List;
 import java.util.Map;
 
 public class University {
+    public boolean is_rival;
     public String university_type;
     public String name;
-    public long id;
-    public List<UniversityDepartment> departments;
+    public String id;
     public String url;
-
-    public University(String university_type, String name, long id, List<UniversityDepartment> departments, String url) {
-        this.university_type = university_type;
-        this.name = name;
-        this.id = id;
-        this.departments = departments;
-        this.url = url;
-    }
+    public String city;
+    public List<UniversityDepartment> departments;
+    public UniversityTableData table_data;
+    public Map<String, CityData> city_data;
+    
 
     protected University(Map<String, Object> map) {
         this.university_type = (String) map.get("university_type");
         this.name = (String) map.get("name");
-        this.id = (long) map.get("id");
+        this.id = (String) map.get("id");
         this.departments = (List<UniversityDepartment>) map.get("departments");
         this.url = (String) map.get("url");
+        this.city = (String) map.get("city");
     }
 
     public static University fromMap(Map<String, Object> map) {
@@ -32,9 +30,6 @@ public class University {
 
     public University() {}
 
-    public static University getDefault() {
-        return new University("default univesity type", "default university name", -1, List.of(UniversityDepartment.getDefault()), "default url");
-    }
     public String getUniversity_type() {
         return university_type;
     }
@@ -43,12 +38,23 @@ public class University {
         this.university_type = university_type;
     }
 
-    public long getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public University setId(String id) {
         this.id = id;
+        return this;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public University setCity(String city) {
+        this.city = city;
+        return this;
     }
 
     public String getName() {
@@ -66,7 +72,24 @@ public class University {
     public void setDepartments(List<UniversityDepartment> departments) {
         this.departments = departments;
     }
-
+    public UniversityTableData getTable_data() {
+        return table_data;
+    }
+    public void setTable_data(UniversityTableData table_data) {
+        this.table_data = table_data;
+    }
+    public Map<String, CityData> getCity_data() {
+        return city_data;
+    }
+    public void setCity_data(Map<String, CityData> city_data) {
+        this.city_data = city_data;
+    }
+    public boolean getIs_rival() {
+        return is_rival;
+    }
+    public void setIs_rival(boolean is_rival) {
+        this.is_rival = is_rival;
+    }
     public String getUrl() {
         return url;
     }

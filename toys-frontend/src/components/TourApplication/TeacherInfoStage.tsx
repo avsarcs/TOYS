@@ -1,35 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { GroupApplicationStageProps } from '../../types/designed';
 import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
 import isEmpty from 'validator/lib/isEmpty';
-import { TextInput } from '@mantine/core';
-import { Select } from '@mantine/core';
+import { TextInput, Select } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
+  const [schoolName, setSchoolName] = useState<string | null>(applicationInfo.highschool.name || null);
+  const [schools, setSchools] = useState<string[]>([]);
 
-  const [schoolName, setSchoolName] = useState<string | null>(null)
+  const getSchools = useCallback(async () => {
+    const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+    const url = new URL(apiURL + "internal/analytics/high-schools/all");
 
-  const schools = ["Hüseyin Avni Ulaş Anadolu Lisesi", "Bilkent Erzurum Laboratuvar Lisesi", "Arı Okulları", "Zart Zurt Okulları"]
+    try {
+      url.searchParams.append("auth", "");
+
+      const res = await fetch(url, {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        notifications.show({
+          color: "red",
+          title: "Error",
+          message: "Unable to fetch high schools.",
+        });
+      } else {
+        const resText = await res.text();
+        const resJson = JSON.parse(resText);
+
+        const schoolNames = resJson.map((school: { name: string }) => school.name);
+
+        if (schoolNames.length === 0) {
+          notifications.show({
+            color: "yellow",
+            title: "No Schools Found",
+            message: "No high schools are available at the moment.",
+          });
+        }
+
+        setSchools(schoolNames);
+      }
+    } catch (e) {
+      console.error("Error fetching schools:", e);
+      notifications.show({
+        color: "red",
+        title: "Oops!",
+        message: "Something went wrong. Please contact the site administrator.",
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    if (typeof schoolName == "string") {
+    getSchools();
+  }, [getSchools]);
+
+  useEffect(() => {
+    if (applicationInfo.highschool.name) {
+      setSchoolName(applicationInfo.highschool.name);
+    }
+  }, [applicationInfo.highschool.name]);
+
+  useEffect(() => {
+    if (typeof schoolName === "string") {
       setApplicationInfo((appInfo) => ({
         ...appInfo,
         highschool: {
           ...appInfo.highschool,
           name: schoolName
         }
-      }))
+      }));
     }
-  }, [schoolName])
-
+  }, [schoolName, setApplicationInfo]);
 
   return (
     <>
       <h1 className='header text-3xl font-semibold mb-2'>Grup Lideri Bilgileri <br /> (Rehber Öğretmen, Müdür Yardımcısı vs.)</h1>
       <h2 className='subheader mb-4'>Grup lideri hakkındaki bilgileri giriniz.</h2>
       <form className="p-6 rounded-md teacher-info">
-
         <div className="mb-4">
           <TextInput
             type="text"
@@ -48,7 +97,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
                   ...appInfo.applicant,
                   fullname: e.target.value,
                 },
-              }))
+              }));
             }}
             required
           />
@@ -72,7 +121,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
                   ...appInfo.applicant,
                   email: e.target.value,
                 },
-              }))
+              }));
             }}
             required
           />
@@ -96,7 +145,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
                   ...appInfo.applicant,
                   phone: e.target.value,
                 },
-              }))
+              }));
             }}
             required
           />
@@ -105,8 +154,13 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         <div className="mb-4">
           <label htmlFor="school" className="block font-medium mb-2">Okul <span className='text-red-400'>*</span></label>
           <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool.name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
-            {applicationInfo.highschool.name && `Şu anki seçiminiz: ${applicationInfo.highschool.name}`}
-            <SearchableSelect available_options={schools} value={schoolName} setValue={setSchoolName} placeholder='Okulunuzun adını giriniz' />
+            {schoolName && `Şu anki seçiminiz: ${schoolName}`}
+            <SearchableSelect 
+              available_options={schools} 
+              value={schoolName} 
+              setValue={setSchoolName} 
+              placeholder='Okulunuzun adını giriniz' 
+            />
           </div>
         </div>
 
@@ -115,17 +169,15 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             label="Rolünüz"
             placeholder="Öğrenci"
             data={["Öğrenci", "Görevli, Öğretmen vs."]}
-            onChange={(_value, option) => {
-
-              const englishValue = _value == "Öğrenci" ? "student" : _value == "Görevli, Öğretmen vs." ? "teacher" : ""
-
+            onChange={(_value) => {
+              const englishValue = _value === "Öğrenci" ? "STUDENT" : _value === "Görevli, Öğretmen vs." ? "TEACHER" : "";
               setApplicationInfo((appInfo) => ({
                 ...appInfo,
                 applicant: {
                   ...appInfo.applicant,
                   role: englishValue,
                 },
-              }))
+              }));
             }}
           />
         </div>

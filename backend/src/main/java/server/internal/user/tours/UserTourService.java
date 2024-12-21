@@ -1,22 +1,29 @@
 package server.internal.user.tours;
 
+import info.debatty.java.stringsimilarity.SorensenDice;
+import org.springframework.web.bind.annotation.RequestParam;
 import server.apply.RequestService;
+import server.auth.AuthService;
 import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
+import server.enums.roles.UserRole;
 import server.enums.status.RequestStatus;
+import server.enums.status.UserStatus;
 import server.enums.types.RequestType;
 import server.enums.status.TourStatus;
 import server.mailService.MailServiceGateway;
 import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
-import server.models.DTO.DTO_SimpleEvent;
+import server.models.DTO.DTOFactory;
+import server.models.people.User;
 import server.models.people.details.ContactInfo;
+import server.models.requests.GuideAssignmentRequest;
+import server.models.requests.Requester;
 import server.models.time.ZTime;
-import server.models.people.GuideAssignmentRequest;
 import server.models.events.TourRegistry;
 import server.models.people.Guide;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +39,10 @@ import java.util.ArrayList;
 
 @Service
 public class UserTourService {
+
+    @Autowired
+    DTOFactory dto;
+
     @Autowired
     Database databaseEngine;
 
@@ -40,6 +51,68 @@ public class UserTourService {
 
     @Autowired
     RequestService requestService;
+
+    @Autowired
+    AuthService authService;
+
+    public void removeGuides(String auth, String tourID, List<String> guides) {
+        if (!authService.check(auth, Permission.RU_FROM_TOUR)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
+        }
+
+        // first check if there are unresponded invitations with these guide ids
+        List<GuideAssignmentRequest> assignmentRequests = databaseEngine.requests.getGuideAssignmentRequests();
+
+        assignmentRequests = assignmentRequests.stream().filter(
+                inv -> inv.getEvent_id().matches(tourID)
+        ).filter(
+                inv -> guides.contains(inv.getGuide_id())
+        ).filter(
+                inv -> inv.getStatus().equals(RequestStatus.PENDING)
+        ).toList();
+
+        for (GuideAssignmentRequest request : assignmentRequests) {
+            requestService.respondToRequest(
+                    auth,
+                    request.getRequest_id(),
+                    RequestStatus.REJECTED.toString()
+            );
+            request.setStatus(RequestStatus.REJECTED);
+            databaseEngine.requests.updateRequest(request);
+        }
+
+        // get tours
+        Map<String, TourRegistry> tours = databaseEngine.tours.fetchTours();
+        // check if tour actually exists
+        if (!tours.containsKey(tourID)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour not found");
+        }
+        // check if user is already assigned to the tour
+        for (String guideID : guides) {
+            if (!tours.get(tourID).getGuides().contains(guideID)) {
+                return; // the user is not assigned to this tour, but its alright
+            }
+        }
+        // remove user from tour
+        tours.get(tourID).getGuides().removeAll(guides);
+        // save tour
+        databaseEngine.tours.updateTour(tours.get(tourID), tourID);
+
+        // notify the guides
+        for (String guideID : guides) {
+            try {
+                mailServiceGateway.sendMail(
+                        databaseEngine.people.fetchGuides(guideID).get(0).getProfile().getContact_info().getEmail(),
+                        Concerning.GUIDE,
+                        About.GUIDE_ASSIGNMENT,
+                        Status.RECIEVED,
+                        Map.of("tour_id", tourID)
+                );
+            } catch (Exception e) {
+                System.out.println("There was an error while trying to send an email! Probably couldn't find the guide" + guideID);
+            }
+        }
+    }
 
     public boolean enrollGuideInTour(String guideID, String tourID) {
         // get tours
@@ -84,46 +157,141 @@ public class UserTourService {
         return true;
     }
 
-    public List<DTO_SimpleEvent> getTours(String authToken) {
-        if (!JWTService.testToken.equals(authToken)) {
-            // validate token
-            if(!JWTService.getSimpleton().isValid(authToken)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-
-            // check permissions
-            if (!PermissionMap.hasPermission(
-                    JWTService.getSimpleton().getUserRole(authToken),
-                    Permission.VIEW_TOUR_INFO)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
+    public List<Map<String, Object>> getTours(
+            String auth,
+            String school_name,
+            List<String> status,
+            String from_date,
+            String to_Date,
+            boolean filter_guide_missing,
+            boolean filter_trainee_missing
+    ) {
+        if (!authService.check(auth, Permission.VIEW_TOUR_INFO)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
         }
         // extract user id from token
-        String userId = JWTService.getSimpleton().decodeUserID(authToken);
-        // get tours from database
-        List<DTO_SimpleEvent> tours = databaseEngine.tours
+        String userId = JWTService.getSimpleton().decodeUserID(auth);
+
+
+        UserRole userRole = JWTService.getSimpleton().getUserRole(auth);
+
+        SorensenDice alg = new SorensenDice();
+
+        List<Map<String, Object>> tours = databaseEngine.tours
                 .fetchTours()
                 .values()
                 .stream()
+                .filter(
+                        tour -> tour.getGuides().contains(userId) || !userRole.equals(UserRole.GUIDE)
+                ).filter(
+                        tour -> {
+                            if (!school_name.isEmpty()) {
+                                try {
+                                    return alg.similarity(school_name.toLowerCase(), databaseEngine.schools.getHighschoolByID(tour.getApplicant().getSchool()).getTitle().toLowerCase()) > 0.8;
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            } else {
+                                return true;
+                            }
+                        }
+                ).filter(
+                        tour -> {
+
+                            if (!status.isEmpty()) {
+                                try {
+                                    return status.stream().anyMatch(s -> s.equals(dto.simpleEvent(tour).get("event_status")));
+                                } catch (Exception E) {
+                                    // internal/tours status filtering
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                ).filter(
+                        tour -> {
+                            if (!from_date.isEmpty()) {
+                                try {
+                                    return tour.getAccepted_time().getDate().isAfter(ZonedDateTime.parse(from_date));
+                                } catch (Exception e) {
+                                    System.out.println("Error in from_date filter in /internal/tours");
+                                    return false;
+                                }
+                            } else {
+                                return true;
+                            }
+                        }
+                ).filter(
+                        tour -> {
+                            if (!to_Date.isEmpty()) {
+                                try {
+                                    return tour.getAccepted_time().getDate().isBefore(ZonedDateTime.parse(to_Date));
+                                } catch (Exception e) {
+                                    System.out.println("Error in to_date filter in /internal/tours");
+                                    return false;
+                                }
+                            } else {
+                                return true;
+                            }
+                        }
+                ).filter(
+                        tour -> {
+                            if (filter_guide_missing) {
+                                return tour.getGuides().isEmpty();
+                            } else {
+                                return true;
+                            }
+                        }
+                ).filter(
+                        tour -> {
+                            if (filter_trainee_missing) {
+                                boolean resp = false;
+                                try {
+                                    for (String guid : tour.getGuides()) {
+                                        resp = resp || databaseEngine.people.fetchGuides(guid).get(0).getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE);
+                                    }
+                                    return !resp;
+                                } catch (Exception e) {
+                                    System.out.println("Error in filter_trainee_missing filter in /internal/tours");
+                                    return false;
+                                }
+                            } else {
+                                return true;
+                            }
+                        }
+                ).sorted(
+                        (t1, t2) -> {
+                            if (t1.getTourStatus().equals(t2.getTourStatus())) {
+                                return 0;
+                            } else if (t1.getTourStatus().equals(TourStatus.ONGOING)) {
+                                return -1;
+                            } else if (t1.getTourStatus().equals(TourStatus.CONFIRMED)) {
+                                if (t2.getTourStatus().equals(TourStatus.ONGOING)) {
+                                    return 1;
+                                } else {
+                                    return -1;
+                                }
+                            } else if (
+                                    t1.getTourStatus().equals(TourStatus.PENDING_MODIFICATION)) {
+                                if (t2.getTourStatus().equals(TourStatus.ONGOING) || t2.getTourStatus().equals(TourStatus.CONFIRMED)) {
+                                    return 1;
+                                }
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        })
                 .collect(ArrayList::new,
-                        (list, tour) -> list.add(DTO_SimpleEvent.fromEvent(tour)),
+                        (list, tour) -> list.add(dto.simpleEvent(tour)),
                         ArrayList::addAll);
+
         // return tours
         return tours;
     }
 
     public void withdrawFromTour(String authToken, String tour_id) {
-        if (!JWTService.testToken.equals(authToken)) {
-            // validate token
-            if(!JWTService.getSimpleton().isValid(authToken)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-            // check permissions
-            if (!PermissionMap.hasPermission(
-                    JWTService.getSimpleton().getUserRole(authToken),
-                    Permission.RU_FROM_TOUR)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
+        if (!authService.check(authToken, Permission.RU_FROM_TOUR)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
         }
 
         String userID = JWTService.getSimpleton().decodeUserID(authToken);
@@ -178,19 +346,11 @@ public class UserTourService {
 
     }
 
-    public void updateTourStatus(String authToken, String tour_id, String statusString) {
-        if (!JWTService.testToken.equals(authToken)) {
-            // validate token
-            if (!JWTService.getSimpleton().isValid(authToken)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-            // validate permission
-            if (!PermissionMap.hasPermission(
-                    JWTService.getSimpleton().getUserRole(authToken),
-                    Permission.REPORT_TOUR_TIMES)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
+    public void updateTourStatus(String auth, String tour_id, String statusString) {
+        if (!authService.check(auth, Permission.REPORT_TOUR_TIMES)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
         }
+        
         // fetch tour
         TourRegistry tour = databaseEngine.tours.fetchTour(tour_id);
         if (tour == null) {
@@ -198,7 +358,7 @@ public class UserTourService {
         }
         // check if already assigned to tour
         boolean guideAssigned = false;
-        String userID = JWTService.getSimpleton().decodeUserID(authToken);
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
         for (String guideID : tour.getGuides()) {
             if (guideID.equals(userID)) {
                 guideAssigned = true;
@@ -235,22 +395,13 @@ public class UserTourService {
         databaseEngine.people.updateUser(guide);
     }
 
-    public void enrollInTour(String authToken, String tid) {
-        String userID;
-        if (!JWTService.testToken.equals(authToken)) {
-
-            // check token validity
-            if (!JWTService.getSimpleton().isValid(authToken)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-            // check permission
-            if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.RU_FROM_TOUR)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-            userID = JWTService.getSimpleton().decodeUserID(authToken);
-        } else {
-            userID  = Guide.getDefault().getBilkent_id();
+    public void enrollInTour(String auth, String tid) {
+        if (!authService.check(auth, Permission.RU_FROM_TOUR)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
         }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
         // get user
         Guide user;
         try {
@@ -301,29 +452,29 @@ public class UserTourService {
         enrollGuideInTour(userID, tid);
     }
 
-
-
-    public void inviteToTour(String authToken, String tourID, String guideID) {
-        if (!JWTService.testToken.equals(authToken)) {
-            // validate token
-            if (!JWTService.getSimpleton().isValid(authToken)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-            // check permission
-            if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.ASSIGN_OTHER_GUIDE)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
+    public void inviteGuideToTour(String auth, String tourID, String guideID) {
+        if (!authService.check(auth, Permission.ASSIGN_OTHER_GUIDE)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
         }
-        String userID = JWTService.getSimpleton().decodeUserID(authToken);
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
+        if (userID.equals(guideID)) {
+            enrollInTour(auth, tourID);
+            return;
+        }
         // check if tour exists
         TourRegistry tour = databaseEngine.tours.fetchTour(tourID);
         if (tour == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour not found");
         }
         // check if guide exists
-        Guide guide = databaseEngine.people.fetchGuides(guideID).get(0);
-        if (guide == null) {
+        User user = databaseEngine.people.fetchUser(guideID);
+        if (user == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guide not found");
+        }
+        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guide is not active!");
         }
         // check if guide is already assigned to the tour
         for (String assignedGuideID : tour.getGuides()) {
@@ -342,8 +493,8 @@ public class UserTourService {
             System.out.println("Although this guide requested something, they do not exist. This is not possible, and can only happen in a testing scenario.");
             requestBy = ContactInfo.getDefault();
         }
-        request.setRequested_by(requestBy);
-        request.setRequested_guide_id(guideID);
+        request.setRequested_by(new Requester().setContactInfo(requestBy).setBilkent_id(userID));
+        request.setGuide_id(guideID);
         request.setRequested_at(new ZTime(ZonedDateTime.now()));
         request.setStatus(RequestStatus.PENDING);
         request.setType(RequestType.ASSIGNMENT);
@@ -357,24 +508,22 @@ public class UserTourService {
         databaseEngine.requests.addRequest(request);
 
         mailServiceGateway.sendMail(
-                databaseEngine.people.fetchGuides(guideID).get(0).getProfile().getContact_info().getEmail(),
+                databaseEngine.people.fetchUser(guideID).getProfile().getContact_info().getEmail(),
                 Concerning.GUIDE,
                 About.GUIDE_ASSIGNMENT,
                 Status.RECIEVED,
                 Map.of("tour_id", tourID, "request_id", request.getRequest_id())
         );
     }
+    public void inviteGuidesToTour(String auth, String tourID, List<String> guideIDs) {
+        for (String guideID : guideIDs) {
+            inviteGuideToTour(auth, tourID, guideID);
+        }
+    }
 
-    public void respondToTourInvite(String authToken, String idt, String responseString) {
-        if (!JWTService.testToken.equals(authToken)) {
-            // validate token
-            if (!JWTService.getSimpleton().isValid(authToken)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
-            // check permission
-            if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.ASSIGN_OTHER_GUIDE)) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid auth token");
-            }
+    public void respondToTourInvite(String auth, String idt, String responseString) {
+        if (!authService.check(auth, Permission.ASSIGN_OTHER_GUIDE)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
         }
 
         // check response
@@ -397,13 +546,13 @@ public class UserTourService {
         if (response == RequestStatus.APPROVED) {
             //String guideID = JWTService.getSimpleton().decodeUserID(authToken);
             String tourID = request.getEvent_id();
-            enrollInTour(authToken, tourID);
-            requestService.respondToRequest(authToken, idt, responseString);
+            enrollInTour(auth, tourID);
+            requestService.respondToRequest(auth, idt, responseString);
         }
 
 
         mailServiceGateway.sendMail(
-                databaseEngine.people.fetchGuides(request.getRequested_guide_id()).get(0).getProfile().getContact_info().getEmail(),
+                databaseEngine.people.fetchGuides(request.getGuide_id()).get(0).getProfile().getContact_info().getEmail(),
                 Concerning.ADVISOR,
                 About.GUIDE_ASSIGNMENT,
                 Status.APPROVAL,

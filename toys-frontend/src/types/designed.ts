@@ -5,11 +5,12 @@ import {
   UserRole
 } from "./enum.ts";
 import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import {OnlyChildrenProps} from "./generic.ts";
 
 export interface User {
   id: string,
   role: UserRole,
-  profile: any
+  profile: ProfileData
 }
 
 export interface NavbarProps {
@@ -125,21 +126,45 @@ export interface DashboardItemProps {
 }
 
 export interface DashboardItemListProps {
+  loading: boolean,
   categories: { value: DashboardCategory, label: DashboardCategoryText }[],
   category: DashboardCategory,
   setCategory: Dispatch<SetStateAction<DashboardCategory>>
+  items: SimpleEventData[]
   setItem: Dispatch<SetStateAction<SimpleEventData | null>>
 }
 
 export interface DashboardInfoBoxProps {
   category: DashboardCategory,
-  item: SimpleEventData
+  item: SimpleEventData,
+  updateDashboard: () => void,
+}
+
+export interface DashboardInfoBoxButtonProps {
+  item: SimpleEventData,
+  updateDashboard: () => void
+}
+
+export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps, OnlyChildrenProps{
+  response: boolean
 }
 
 export interface TourSectionProps {
-  tour: TourData
+  tour: TourData,
+  refreshTour: () => void
 }
 
+export interface TourButtonProps {
+  tour: TourData,
+  refreshTour: () => void
+}
+
+export interface ManageGuidesWindowProps {
+  opened: boolean; // Controls modal visibility
+  onClose: () => void; // Closes the modal
+  tour: TourData; // ISO 8601 time
+  totalGuidesNeeded: number; // Total number of guides needed for the tour
+}
 export interface TourListItemProps {
   tour: SimpleEventData
 }

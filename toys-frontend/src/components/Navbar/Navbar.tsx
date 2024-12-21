@@ -132,8 +132,7 @@ export const Navbar: React.FC = () => {
           {opened && <UserButton />}
           <div className={classes.divider} style={{ marginTop: '10px' }} />
         </div>
-      )}
-     
+      )}  
       <ScrollArea className={classes.links}>
         <div className={classes.linksInner}>
           {opened &&
