@@ -85,6 +85,11 @@ public class AuthService {
 
             Map<String, Passkey> passkeys = database.auth.getPasskeys();
 
+            if (event_id.isEmpty()) {
+                return passkeys.entrySet().stream().anyMatch(
+                        e -> e.getValue().getKey().equals(auth) && !e.getValue().expired()
+                );
+            }
             if (!passkeys.containsKey(event_id)) {
                 return false;
             }

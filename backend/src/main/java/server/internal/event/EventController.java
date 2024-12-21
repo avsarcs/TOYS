@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import server.models.events.TourRegistry;
 
+import java.util.Map;
+
 @RestController
 public class EventController {
     @Autowired
@@ -15,6 +17,11 @@ public class EventController {
     @GetMapping("/internal/event/tour")
     public Object getTour(@RequestParam String auth, @RequestParam String tid) {
         return eventService.getTour(auth, tid);
+    }
+
+    @GetMapping("/internal/event/simple-tour")
+    public Map<String, Object> getSimpletour(@RequestParam String auth, @RequestParam String tid) {
+        return eventService.getSimpleTour(auth, tid);
     }
 
     @PostMapping("/internal/event/tour/start-tour")

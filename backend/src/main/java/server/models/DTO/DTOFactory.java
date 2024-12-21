@@ -8,8 +8,6 @@ import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
 import server.enums.status.ApplicationStatus;
-import server.enums.status.RequestStatus;
-import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.models.events.*;
@@ -28,6 +26,9 @@ import server.models.review.EventReview;
 import server.models.review.Review;
 import server.models.review.ReviewRecord;
 import server.models.schools.Highschool;
+import server.models.schools.University;
+import server.models.schools.UniversityDepartment;
+import server.models.schools.UniversityDepartmentYear;
 import server.models.time.ZTime;
 
 import java.time.Duration;
@@ -72,6 +73,31 @@ public class DTOFactory {
         } else {
             return highschool(highschool);
         }
+    }
+
+    public Map<String, Object> university(University university) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("name", university.getName());
+        dto.put("city", university.getCity());
+        dto.put("is_rival", university.getIs_rival());
+        dto.put("id", university.getId());
+
+        return dto;
+    }
+     
+    public Map<String, Object> simpleUniversity(University university) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("name", university.getName());
+        dto.put("id", university.getId());
+
+        return dto;
+    }
+
+    public String department(UniversityDepartment department) {
+        String dto = department.getName();
+        return dto;
     }
 
     public Map<String, Object> tourGuide(String guideID) {
@@ -151,8 +177,6 @@ public class DTOFactory {
         dto.put("actual_end_time", tour.getEnded_at());
         dto.put("classroom", tour.getClassroom());
         dto.put("tour_id", tour.getTour_id());
-
-        dto = eventStatus_directionalize(dto);
 
         return dto;
     }
@@ -241,8 +265,6 @@ public class DTOFactory {
         dto.put("event_status", tour.getTourStatus().name());
         dto.put("event_subtype", tour.getTour_type().name());
 
-
-        dto = eventStatus_directionalize(dto);
         return dto;
     }
 
@@ -258,8 +280,6 @@ public class DTOFactory {
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
         dto.put("event_subtype", application.getApplicant());
-
-        dto = eventStatus_directionalize(dto);
 
         return dto;
     }
@@ -297,8 +317,6 @@ public class DTOFactory {
         dto.put("event_status", request.getModifications().getStatus().name());
         dto.put("event_subtype", request.getModifications().getApplicant());
 
-        dto = eventStatus_directionalize(dto);
-
         return dto;
     }
 
@@ -315,26 +333,9 @@ public class DTOFactory {
         dto.put("event_status", application.getStatus().name());
         dto.put("event_subtype", application.getApplicant());
 
-        dto = eventStatus_directionalize(dto);
-
         return dto;
     }
 
-
-    private Map<String, Object> eventStatus_directionalize(Map<String, Object> event) {
-        TourStatus status = TourStatus.valueOf((String) event.get("event_status"));
-        if (status == TourStatus.PENDING_MODIFICATION) {
-            database.requests.getTourModificationRequests().stream().filter(
-                    r -> r.getTour_id().equals(event.get("event_id"))
-            ).filter(
-                    r -> r.getStatus().equals(RequestStatus.PENDING)
-            ).findFirst().ifPresent(
-                    r -> event.put("event_status", r.getRequested_by().getBilkent_id().isBlank() ?
-                            "APPLICANT_WANTS_CHANGE" : "TOYS_WANTS_CHANGE")
-            );
-        }
-        return event;
-    }
 
     public Map<String, Object> simpleEvent(FairRegistry tour) {
         Map<String, Object> dto = new HashMap<>();
@@ -349,8 +350,6 @@ public class DTOFactory {
         dto.put("event_status", tour.getFair_status().name());
 
         dto.put("event_subtype", "");
-
-        dto = eventStatus_directionalize(dto);
 
         return dto;
     }
@@ -489,7 +488,6 @@ public class DTOFactory {
         dto.put("name", guide.getProfile().getName());
         dto.put("major", guide.getDepartment());
         dto.put("experience", guide.getExperience().getPrevious_events().size() + " events");
-        dto.put("role", guide.getRole().name());
 
         return dto;
     }
@@ -622,18 +620,14 @@ public class DTOFactory {
         dto.put("event_id", tour.getTour_id());
         dto.put("event_date", tour.getStarted_at());
         double rate = 0;
-        AtomicDouble atomicRate = new AtomicDouble(0);
         try {
-            database.payments.getRates().stream()
+            rate = database.payments.getRates().stream()
                             .filter(hr -> hr.contains(tour.getStarted_at().getDate()))
-                            .findFirst().ifPresent(
-                                    r -> atomicRate.set(r.getRate())
-                    );
+                            .findFirst().get().getRate();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("There was an error when parsing the rate for a MoneyForTour DTO");
         }
-        rate = atomicRate.doubleValue();
         dto.put("hourly_rate", rate);
         Duration difference = Duration.between(tour.getStarted_at().getDate(), tour.getEnded_at().getDate());
         double hoursWorked = difference.toMinutes()/60.0;

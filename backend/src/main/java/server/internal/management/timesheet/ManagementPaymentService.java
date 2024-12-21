@@ -112,7 +112,12 @@ public class ManagementPaymentService {
                 }
         );
 
-        return response;
+        return response.stream().map(
+                e -> {
+                    e.putIfAbsent("guide_name", user.getProfile().getName());
+                    return e;
+                }
+        ).toList();
     }
 
     public void payGuide(String auth, String guide_id) {
