@@ -1,5 +1,8 @@
 package server.models.schools;
 
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,17 +14,33 @@ public class University {
     public String url;
     public String city;
     public List<UniversityDepartment> departments;
-    public UniversityTableData table_data;
-    public Map<String, CityData> city_data;
+
     
 
     protected University(Map<String, Object> map) {
         this.university_type = (String) map.get("university_type");
         this.name = (String) map.get("name");
         this.id = (String) map.get("id");
-        this.departments = (List<UniversityDepartment>) map.get("departments");
+        this.departments = new ArrayList<>();
+        try {
+            departments = ((List<Map<String, Object>>) map.get("departments")).stream().map(UniversityDepartment::fromMap).toList();
+        } catch (Exception E) {
+            E.printStackTrace();
+            System.out.println("Error in University.java");
+        }
         this.url = (String) map.get("url");
         this.city = (String) map.get("city");
+    }
+
+    public static University fromSource(Map<String, Object> map) {
+        University uni = new University();
+        uni.university_type = (String) map.get("university_type");
+        uni.name = (String) map.get("name");
+        uni.id = (String) map.get("id");
+        uni.departments = (List<UniversityDepartment>) map.get("departments");
+        uni.url = (String) map.get("url");
+        uni.city = (String) map.get("city");
+        return uni;
     }
 
     public static University fromMap(Map<String, Object> map) {
@@ -71,18 +90,6 @@ public class University {
 
     public void setDepartments(List<UniversityDepartment> departments) {
         this.departments = departments;
-    }
-    public UniversityTableData getTable_data() {
-        return table_data;
-    }
-    public void setTable_data(UniversityTableData table_data) {
-        this.table_data = table_data;
-    }
-    public Map<String, CityData> getCity_data() {
-        return city_data;
-    }
-    public void setCity_data(Map<String, CityData> city_data) {
-        this.city_data = city_data;
     }
     public boolean getIs_rival() {
         return is_rival;
