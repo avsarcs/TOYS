@@ -2,6 +2,7 @@ import { Card, Divider, Text } from "@mantine/core";
 import { DashboardItemProps } from "../../types/designed.ts";
 import {EventTypeText, TourTypeText} from "../../types/enum.ts";
 import dayjs from "dayjs";
+import React from "react";
 
 const Item: React.FC<DashboardItemProps> = (props: DashboardItemProps) => {
   return (

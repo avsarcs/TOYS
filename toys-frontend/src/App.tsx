@@ -50,7 +50,7 @@ function App() {
             <Route path="/*" element={<Force404 />} />
             <Route path="/comparison" element={<CheckLogin redirect required children={<Comparison />}/>} />
             <Route path="/dashboard" element={<CheckLogin redirect required children={<Dashboard />}/>} />
-            <Route path="/tour/:tourId" element={<CheckLogin redirect required children={<TourPage />}/>} />
+            <Route path="/tour/:tourId" element={<CheckLogin children={<TourPage />}/>} />
             <Route path="/tours" element={<CheckLogin redirect required children={<TourListPage />}/>}/>
             <Route path="/universitieslist" element={<CheckLogin redirect children={<UniversitiesList />}/>}/>
             <Route path="/rivalslist" element={<CheckLogin redirect children={<RivalsList />}/>} />

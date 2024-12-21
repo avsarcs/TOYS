@@ -549,12 +549,12 @@ response_type:json
 			auth: auth_token
 			request_id: "id of the assignment request"
 			response: true/false (accept/reject)
-
+!!!! CHANGED
 		/tour-invite
 		method: post
 		parameters:
 			auth: auth_token
-			request_id: "id of the assignment request"
+			request_id: "id of the assignment request OR the tour for the guide"
 			response: true/false (accept/reject)
 
 		/promotion

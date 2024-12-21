@@ -99,8 +99,8 @@ export enum ApplicantRole {
 }
 
 export enum TourType {
-  GROUP = "group",
-  INDIVIDUAL = "individual",
+  GROUP = "GROUP",
+  INDIVIDUAL = "INDIVIDUAL",
 }
 
 export enum TourTypeText {
