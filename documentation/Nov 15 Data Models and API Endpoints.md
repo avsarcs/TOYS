@@ -452,15 +452,8 @@ API endpoints:
 
 		/// DEPRECATED
 		/// USE respond/tour/modification for modificaiton change responses
-		/respond_changes # The 
-			method: post
-			parameters:
-				tour-id: tourID
-				passkey: passkey
-				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-					// if tour application is accepted, there should be accepted_time
-					// if the application is rejected, give an empty string
-			response: -
+		/respond_changes
+
 	/fair #
 		method: post
 		body: fairApplicationModel
@@ -505,7 +498,7 @@ response_type:json
 		response: 200 or 400
 		response_type: status code
 
-!!!! CHANGED
+!!!! CHANGED # Implemented Dec 22, 01:51
 	/of_tour (Requires Auth)
 		parameters:
 			tour_id=2590545wdge
@@ -542,7 +535,7 @@ response_type:json
 			application_id: "id of the application"
 			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-!!!! CHANGED
+!!!! CHANGED # Implemented, Dec 21
 			/modification
 				method: post
 				parameters:
@@ -567,7 +560,7 @@ response_type:json
 			auth: auth_token
 			request_id: "id of the assignment request"
 			response: true/false (accept/reject)
-!!!! CHANGED
+!!!! CHANGED # Implemented, Dec 21
 		/tour-invite
 		method: post
 		parameters:
@@ -633,7 +626,7 @@ response_type:json
 				}
 				response: 403 if has no Auth as Guide who has pending Advisor Offer
 				response_type: status code
-!!!! NEW
+!!!! NEW # Implemented Dec 22 01:51
 		/am-enrolled
 			params:
 				auth: auth token
@@ -643,7 +636,7 @@ response_type:json
 			response_type: boolean
 			description: returns whether the requesting Guide is enrolled in the event
 
-!!!! NEW
+!!!! NEW # Implemented Dec 22 01:51
 		/am-invited
 			params:
 				auth: auth token
@@ -653,7 +646,7 @@ response_type:json
 			response_type: boolean
 			description: returns whether the requesting Guide is invited to the event
 
-!!!! NEW
+!!!! NEW # Implemented Dec 22 01:51
 		/invitations (Requires auth as Advisor or up)
 			params:
 				auth: auth token
@@ -686,21 +679,17 @@ response_type:json
 				response: simpleGuideModel
 				response_type: json
 		
-		/requests # NEEDS TEST
+		/requests 
 			method: get
 			parameters:
                 authToken= jwt token
 			response: List of Requests (List<RequestBase>)
 			response_type: json
 
-			/respond # NEEDS TEST
-				parameters:
-					rid=request_id // which request is being responded to
-					response=accept/deny // what is the response
-					// bool value, True=accept
-				method: get
-				response: -
-		
+			# DEPRECATED
+			/respond
+
+		# DOC MISSING
 		/is-invited
 
 		/dashboard
@@ -712,7 +701,7 @@ response_type:json
 			
 	/event
 
-!!!! NEW
+!!!! NEW # # Implemented Dec 22 01:51
 		/simple-tour
 			parameters:
 				auth=jwt token // passkey if Applicant is making this request
@@ -756,7 +745,7 @@ response_type:json
 					"mod": group/ind tourApplicationModel
 				}]
 
-!!!! CHANGED
+!!!! CHANGED # Implemented Dec 22 01:51
 	/tours # NEEDS TEST
 		parameters:
 			authToken= jwt token
@@ -777,14 +766,7 @@ response_type:json
 
 		### DEPRECATED ###
 		### ALL STATUS UPDATES ARE DONE BY THE BACKEND, USE ALTERNATIVES ###
-		/status_update # NEEDS TEST
-			parameters:
-				tid=tour_id // which tour is this for
-				// changed
-				status=status // which status to update to ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
-				authToken: auth_token
-			method: post
-			response: -
+		/status_update 
 
 		# Just realized we are missing un-enroll
 		/enroll # NEEDS TEST
@@ -809,7 +791,7 @@ response_type:json
 			method: post
 			response: -
 
- !!!! ADDED REMOVING GUIDES
+ !!!! ADDED REMOVING GUIDES # # Implemented
 		/remove # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour to remove to
@@ -866,15 +848,8 @@ response_type:json
 					method: post
 					response: 200
 					response_type: status code
-			/// DEPRECATED
-			/unpay // to fix mistakes
-				/guide
-					parameters:
-						guide_id="bilko Id of the guide. Advisor is also guide"
-					method: post
-					response: 200
-					response_type: status code
-
+			## DEPRECATED
+			/unpay 
 		/people
 			method: get
 			body: auth_token
@@ -922,12 +897,6 @@ response_type:json
 			### DEPRECATED ###
 			use /respond/applications/guide instead!
 			/respond
-				parameters:
-					id=id of the person whose application we are responding to
-					response=accept/deny // bool value, True=accept
-				method: post
-				body: auth_token
-				response: -
 
 		/fairs
 			method: get
@@ -935,7 +904,7 @@ response_type:json
 				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 				guide_not_assigned (OPTIONAL): bool
 				enrolled_in_fair (OPTIONAL):
-		#CHANGED
+		#CHANGED # Implemented Dec 21
 				school_name: string
 				to_date: iso date string
 				from_date: iso date string
@@ -948,12 +917,5 @@ response_type:json
 			### DEPRECATED ###
 			use /respond/applications/fair instead!
 			/respond
-				parameters:
-					fid=fair_id // which fair application (all applications are fairs with status applied) to respond to
-					response=response // what is the response (accept/deny)
-					// bool value, True=accept
-				method: post
-				body: auth_token
-				response: -
 
 ```
