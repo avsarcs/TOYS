@@ -149,7 +149,10 @@ public class ReviewService {
                 e -> e.getValue()
                         .getEvent_id()
                         .equals(tour_id)
-        ).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No review for this tour!"));
+        ).findFirst().orElse(null);
+        if (reviewEntry == null) {
+            return new ArrayList<>();
+        }
         ReviewRecord reviewRecord = reviewEntry.getValue();
 
         EventReview review = database.reviews.getReview(reviewRecord.getReview_id());

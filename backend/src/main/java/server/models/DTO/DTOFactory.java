@@ -137,6 +137,7 @@ public class DTOFactory {
         dto.put("email", applicant.getContact_info().getEmail());
         dto.put("phone", applicant.getContact_info().getPhone());
         dto.put("notes", applicant.getNotes());
+        dto.put("school", highschool(applicant.getSchool()));
 
         return dto;
     }
@@ -155,7 +156,7 @@ public class DTOFactory {
 
         // TODO
         // This is extremely important, as we use this value to fetch the highschool object in serialization
-        applicant.setSchool("-");
+        applicant.setSchool((String) ((Map<String, Object>) map.get("highschool")).get("id"));
         return applicant;
     }
 

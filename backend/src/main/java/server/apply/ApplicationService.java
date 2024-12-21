@@ -52,20 +52,8 @@ public class ApplicationService {
     DTOFactory dto;
 
     public void cancelEvent(String auth, String event_id, Map<String,Object> body) {
-        if (!JWTService.getSimpleton().check(auth, Permission.REQUEST_TOUR_CHANGES)) {
-            Map<String, Passkey> passkeys = db.auth.getPasskeys();
-
-            if (!passkeys.containsKey(event_id)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized for this action!");
-            }
-
-            if (passkeys.get(event_id).expired()) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Passkey expired!");
-            }
-
-            if (!passkeys.get(event_id).getKey().equals(auth)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid passkey!");
-            }
+        if (!authService.checkWithPasskey(auth, event_id)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized for this action!");
         }
 
         Map<String, TourRegistry> tours = db.tours.fetchTours();
