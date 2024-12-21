@@ -37,7 +37,7 @@ const UniversitiesList: React.FC = () => {
     const [universities, setUniversities] = React.useState<{ university: string; city: string; isRival: string; id: string }[]>(defaultUniversities);
 
     const getCities = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/cities");
+        const url = new URL(TOUR_URL + "internal/analytics/cities");
         url.searchParams.append("auth", userContext.authToken);
 
         const res = await fetch(url, {
@@ -57,7 +57,7 @@ const UniversitiesList: React.FC = () => {
     }, [userContext.authToken]);
 
     const getUniversities = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/universities/all");
+        const url = new URL(TOUR_URL + "internal/analytics/universities/all");
         url.searchParams.append("auth", userContext.authToken);
 
         const res = await fetch(url, {
@@ -78,7 +78,7 @@ const UniversitiesList: React.FC = () => {
 
     const updateRival = useCallback(async (isRival: boolean, universityID: string) => {
         try {
-            const url = new URL(TOUR_URL + "/internal/analytics/universities/set_rivalry");
+            const url = new URL(TOUR_URL + "internal/analytics/universities/set_rivalry");
             url.searchParams.append("auth", userContext.authToken);
             url.searchParams.append("university_id", universityID);
             url.searchParams.append("value_to_set", isRival ? "true" : "false");
