@@ -26,7 +26,7 @@ public class DBSchoolService {
         this.mapper = Database.getObjectMapper();
     }
 
-    public void addHighschool(Highschool highschool) {
+    public void addHighschool(HighschoolRecord highschool) {
         try {
             DocumentReference reference = firestore.collection("edu").document("highschools");
 
@@ -52,8 +52,8 @@ public class DBSchoolService {
         }
     }
 
-    public  List<Highschool> getHighschools() {
-        List<Highschool> schools = new ArrayList<>();
+    public List<HighschoolRecord> getHighschools() {
+        List<HighschoolRecord> schools = new ArrayList<>();
         try {
             DocumentReference reference = firestore.collection("edu").document("highschools");
 
@@ -61,7 +61,7 @@ public class DBSchoolService {
 
             schools.addAll(
                     data.entrySet().stream().map(
-                            entry -> Highschool.fromMap((Map<String, Object>) entry.getValue())
+                            entry -> HighschoolRecord.fromMap((Map<String, Object>) entry.getValue()).setId(entry.getKey())
                     ).toList()
             );
 
@@ -73,11 +73,11 @@ public class DBSchoolService {
         return schools;
     }
 
-    public Highschool getHighschoolByID(String id) {
+    public HighschoolRecord getHighschoolByID(String id) {
         System.out.println("Getting for id: " + id);
         if (Objects.equals(id, DTO_Highschool.getDefault().getId())
         || Objects.equals(id, DTO_Highschool.getDefault().getId() + "new")) {
-            return Highschool.getDefault();
+            return HighschoolRecord.getDefault();
         }
 
         try {
@@ -88,7 +88,7 @@ public class DBSchoolService {
             if (!data.containsKey(id)) {
                 return null;
             }
-            return Highschool.fromMap((Map<String, Object>) data.get(id));
+            return HighschoolRecord.fromMap((Map<String, Object>) data.get(id));
 
         } catch (Exception e) {
             e.printStackTrace();

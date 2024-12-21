@@ -13,10 +13,7 @@ import server.models.DTO.DTOFactory;
 import server.models.DTO.dataDTO.*;
 import server.models.events.TourRegistry;
 import server.models.review.ReviewRecord;
-import server.models.schools.Highschool;
-import server.models.schools.UniHighschoolRecord;
-import server.models.schools.UniversityDepartment;
-import server.models.schools.UniversityDepartmentYear;
+import server.models.schools.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +34,7 @@ public class AnalyticsHighschoolService {
     AuthService authService;
 
     public List<Map<String, Object>> getAll(String auth) {
-        List<Highschool> highschools =  database.schools.getHighschools();
+        List<HighschoolRecord> highschools =  database.schools.getHighschools();
         List<Map<String, Object>> response = new ArrayList<>();
 
 
@@ -62,16 +59,16 @@ public class AnalyticsHighschoolService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
 
-        Highschool highschool = database.schools.getHighschoolByID(high_school_id);
+        HighschoolRecord highschool = database.schools.getHighschoolByID(high_school_id);
         if (highschool == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Highschool not found!");
         }
 
         DDTO_HighschoolDetails details = new DDTO_HighschoolDetails();
 
-        details.setCity(highschool.getCity());
-        details.setRanking(highschool.getRanking());
-        details.setPriority(highschool.getPriority());
+        details.setCity(highschool.getLocation());
+        //details.setRanking(highschool.getRanking());
+        //details.setPriority(highschool.getPriority());
 
         List<DDTO_YearlyStudentCount> counts = new ArrayList<>();
         // go through every year, get total student counts for those years
