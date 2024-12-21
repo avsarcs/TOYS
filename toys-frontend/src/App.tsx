@@ -23,9 +23,10 @@ import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
 import FairApplication from "./pages/FairApplication/FairApplication.tsx";
+import ChangeHourlyRate from "./pages/Puantaj/ChangeHourlyRate.tsx";
+import Contact from "./pages/Contact/Contact.tsx";
 import ApplicantRespond from "./pages/ApplicantRespond/ApplicantRespond.tsx";
 import ApplicantRequest from "./pages/ApplicantRequest/ApplicantRequest.tsx";
-
 import "dayjs/locale/tr"
 import dayjs from "dayjs";
 import BilkentStudentDetails from "./pages/DataAnalysis/BilkentStudentDetails.tsx";
@@ -74,6 +75,8 @@ function App() {
             <Route path="/manage-personnel" element={<CheckLogin required redirect children={<ManagePersonnel />}/>}/>
             <Route path="/applicant-respond/:passkey" element={<ApplicantRespond />} />
             <Route path="/applicant-request/:passkey" element={<ApplicantRequest />}/>
+            <Route path="/change-hourly-rate" element={<CheckLogin required redirect children={<ChangeHourlyRate />}/>}/>
+            <Route path="/contact" element={<Contact />}/>
           </Routes>
         </main>
       </div>
