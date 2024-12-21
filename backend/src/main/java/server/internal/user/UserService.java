@@ -329,4 +329,73 @@ public class UserService {
 
         return guides;
     }
+
+    public boolean amEnrolled(String auth, String event_id) {
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
+        try {
+            TourRegistry tour = database.tours.fetchTour(event_id);
+            return tour.getGuides().contains(userID);
+        } catch (Exception e) {
+            try {
+                FairRegistry fair = database.fairs.fetchFairs().get(event_id);
+                return fair.getGuides().contains(userID);
+            } catch (Exception e2) {
+                return false;
+            }
+        }
+    }
+
+    public boolean amInvited(String auth, String event_id) {
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
+        try {
+            return database.requests.getGuideAssignmentRequests().stream().anyMatch(
+                    r -> r.getEvent_id().equals(event_id) && r.getGuide_id().equals(userID)
+            );
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public List<Map<String, Object>> getInvitations(String auth, String my_invitations) {
+        if (!authService.check(auth)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        if (!authService.check(auth, Permission.ASSIGN_OTHER_GUIDE) && !my_invitations.isEmpty()) {
+            if (!Boolean.valueOf(my_invitations)) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view other people's invitations!");
+            }
+        }
+        final boolean onlyMine;
+        try {
+            onlyMine = my_invitations.isEmpty() ? true : Boolean.parseBoolean(my_invitations);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid parameter!");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+        List<Map<String, Object>> invitations = new ArrayList<>();
+
+        try {
+            database.requests.getGuideAssignmentRequests().stream()
+                    .filter(
+                            r -> !onlyMine || r.getGuide_id().equals(userID)
+                    ).map(dto::eventInvitation).forEach(invitations::add);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while fetching / parsing invitations!");
+        }
+
+        return invitations;
+    }
 }

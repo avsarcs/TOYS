@@ -97,7 +97,7 @@ public class ManagementFairService {
         List<Map<String, Object>> dtos = new ArrayList<>();
 
         try {
-            dtos = fairs.stream().map(f -> dto.fair(f.getValue())).toList();
+            dtos = fairs.stream().map(f -> dto.simpleEvent(f.getValue())).toList();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error while converting fairs to DTOs!");

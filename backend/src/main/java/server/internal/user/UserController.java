@@ -40,4 +40,19 @@ public class UserController {
         return userService.getDashboardEvents(auth, dashboard_category);
     }
 
+    @GetMapping("/internal/user/am-enrolled")
+    public boolean amEnrolled(@RequestParam String auth, @RequestParam String event_id) {
+        return userService.amEnrolled(auth, event_id);
+    }
+
+    @GetMapping("/internal/user/am-invited")
+    public boolean amInvited(@RequestParam String auth, @RequestParam String event_id) {
+        return userService.amInvited(auth, event_id);
+    }
+
+    @GetMapping("/internal/user/invitations")
+    public List<Map<String, Object>> getInvitations(@RequestParam String auth, @RequestParam String my_invitations) {
+        return userService.getInvitations(auth, my_invitations);
+    }
+
 }

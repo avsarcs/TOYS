@@ -21,6 +21,11 @@ public class AnalyticsHighschoolController {
         return analyticsHighschoolsService.getAll(auth);
     }
 
+    @GetMapping("/internal/analytics/high-schools/all-dto")
+    public List<Map<String, Object>> getAllDto(@RequestParam String auth){
+        return analyticsHighschoolsService.getAllDto(auth);
+    }
+
     @GetMapping("/internal/analytics/high-schools/details")
     public Map<String,Object> getDetails(@RequestParam String auth, @RequestParam String high_school_id) {
         return analyticsHighschoolsService.getDetails(auth, high_school_id);

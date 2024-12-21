@@ -59,6 +59,26 @@ public class AnalyticsHighschoolService {
         return response;
     }
 
+    public List<Map<String, Object>> getAllDto(String auth) {
+        List<HighschoolRecord> highschools =  database.schools.getHighschools();
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        response.addAll(
+                highschools.stream().map(hs -> dto.highschoolNoLocation(hs)).toList()
+        );
+
+        if (!authService.check(auth)) {
+            response.forEach(
+                    map -> {
+                        map.put("ranking", -1);
+                        map.put("priority", -1);
+                    }
+            );
+        }
+
+        return response;
+    }
+
     public Map<String, Object> getDetails(String auth, String high_school_id) {
         if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");

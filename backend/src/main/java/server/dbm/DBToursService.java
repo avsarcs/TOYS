@@ -26,8 +26,6 @@ public class DBToursService {
         this.mapper = Database.getObjectMapper();
     }
 
-
-
     public TourRegistry fetchTour (String tid) {
 
         try {
@@ -36,7 +34,10 @@ public class DBToursService {
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
 
             if (!data.containsKey(tid)) {
-                throw new RuntimeException("Tour with id " + tid + " not found.");
+                return null;
+
+                // This has been changed
+                //throw new RuntimeException("Tour with id " + tid + " not found.");
             }
             return TourRegistry.fromMap((Map<String, Object>) data.get(tid));
 
