@@ -60,8 +60,13 @@ const TourReviews: React.FC<TourReviewsProps> = ({ tourId }) => {
 
   if (reviews.length === 0) {
     return (
-      <Alert icon={<IconAlertCircle size={16} />} color="gray" variant="light">
-        Bu tur için henüz inceleme yapılmamış.
+      <Alert 
+        icon={<IconAlertCircle size={16} />} 
+        color="blue" 
+        variant="light" 
+        title="Bu tur için henüz inceleme yapılmadı"
+      >
+        Tur başvurusunu yapan yetkiliye e-postalasına gönderilen linkten inceleme yapması için hatırlatmada bulunabilirsiniz.
       </Alert>
     );
   }
