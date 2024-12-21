@@ -43,7 +43,7 @@ function App() {
   return (
     <>
       <div className="app-container">
-        {hasNavbar(location) && <CheckLogin checkOnce redirect children={<Navbar />}/>}
+        {hasNavbar(location) && <CheckLogin dontRerender redirect children={<Navbar />}/>}
         <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -68,7 +68,7 @@ function App() {
             <Route path="/payment-detail/:guideId" element={<CheckLogin required redirect children={<PaymentDetail />}/>} />
             <Route path="/profile/:profileId" element={<CheckLogin required redirect children={<ProfilePage />}/>}/>
             <Route path="/profile" element={<CheckLogin required redirect children={<ProfilePage />}/>}/>
-            <Route path="/edit-profile" element={<CheckLogin required redirect checkOnce children={<EditProfilePage />}/>}/>
+            <Route path="/edit-profile" element={<CheckLogin required redirect dontRerender children={<EditProfilePage />}/>}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
             <Route path="/review/:review-id" element={<CheckLogin required redirect children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<CheckLogin required redirect children={<TourStatistics />}/>}/>

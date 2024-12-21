@@ -27,7 +27,7 @@ const IndividualTourApplication: React.FC = () => {
 
     const [applicationInfo, setApplicationInfo] = useState<IndividualApplication>({
         "highschool": {
-            "id": "id of the highschool", "name": "Ankara Fen", "location": "Ankara", "priority": 1
+            "id": "", "name": "", "location": "", "priority": -1
         },
         "requested_times": [],
         "requested_majors": ["", "", ""],
@@ -41,7 +41,7 @@ const IndividualTourApplication: React.FC = () => {
         }
     })
 
-    const [currentStage, setCurrentStage] = useState(0)
+    const [currentStage, setCurrentStage] = useState(1)
 
     const attemptStageChange = (newStage: number) => {
 
