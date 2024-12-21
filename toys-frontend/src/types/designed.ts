@@ -168,6 +168,9 @@ export interface ManageGuidesWindowProps {
 export interface TourListItemProps {
   tour: SimpleEventData
 }
+export interface FairListItemProps {
+  fair: SimpleEventData
+}
 
 export interface ProfileComponentProps {
   profile: ProfileData

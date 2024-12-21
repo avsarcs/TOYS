@@ -139,6 +139,14 @@ export enum FairStatus {
   FINISHED = "FINISHED"
 }
 
+export enum FairStatusText {
+  RECEIVED = "Onay Bekliyor",
+  CONFIRMED = "Kabul Edildi",
+  REJECTED = "Reddedildi",
+  CANCELLED = "İptal Edildi",
+  ONGOING = "Devam Ediyor",
+  FINISHED = "Tamamlandı"
+}
 export enum DayOfTheWeek {
   MONDAY = "Monday",
   TUESDAY = "Tuesday",

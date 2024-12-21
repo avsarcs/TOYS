@@ -18,7 +18,7 @@ import {
 import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
 import { IconSearch } from "@tabler/icons-react";
-import ListItem from "../../components/TourList/ListItem.tsx";
+import ListItem from "../../components/FairList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
 
 const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fairs");
@@ -30,8 +30,8 @@ const FairsList: React.FC = () => {
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
-  const [guideMissing, setGuideMissing] = useState(false);
-  const [traineeMissing, setTraineeMissing] = useState(false);
+  const [guideMissing, setGuideMissing] = useState(true);
+  const [traineeMissing, setTraineeMissing] = useState(true);
 
   const getFairs = async () => {
     const fairsUrl = new URL(FAIRS_URL);
@@ -51,20 +51,20 @@ const FairsList: React.FC = () => {
     // Handle filter flags
     fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
     fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
+    fairsUrl.searchParams.append("enrolled_in_fair", "");
 
     const res = await fetch(fairsUrl, {
       method: "GET"
     });
 
     if(res.ok) {
-      setTours(await res.json());
+        setFairs(await res.json());
     }
   };
 
   useEffect(() => {
-    // Initial load of tours
-    getTours().catch(console.error);
-    return () => { setTours([]); }
+    getFairs().catch(console.error);
+    return () => { setFairs([]); }
   }, []); // Empty dependency array as we only want this to run once on mount
 
   const listHeight = useMatches({
@@ -74,11 +74,11 @@ const FairsList: React.FC = () => {
   });
 
   const listItems = useMemo(() =>
-    tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
-  [tours]);
+    fairs ? fairs.map((fair, index) => <ListItem key={index} fair={fair}/>) : null,
+  [fairs]);
 
   const handleSearch = async () => {
-    await getTours().catch(console.error);
+    await getFairs().catch(console.error);
   };
 
   const handleFromDateChange = (date: Date | null) => {
@@ -99,10 +99,10 @@ const FairsList: React.FC = () => {
   return (
     <>
       <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-        Turlar
+        Fuarlar
       </Title>
       <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-        bottom text.
+        Okullardan Gelen Fuar Davetleri
       </Title>
       <Space h="xl"/>
       <Divider className="border-gray-400"/>
@@ -131,11 +131,12 @@ const FairsList: React.FC = () => {
           </Text>
           <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
             <Group>
-              <Chip size="lg" color="blue" variant="outline" value="AWAITING_CONFIRMATION">Onay Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="ACCEPTED">Onaylandı</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
               <Chip size="lg" color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
               <Chip size="lg" color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="COMPLETED">Bitti</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="FINISHED">Bitti</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>

@@ -7,7 +7,8 @@ import {
   UserRole,
   DayOfTheWeek,
   TimeSlotStatus,
-  City
+  City,
+  FairStatus
 } from "./enum.ts";
 
 export interface LoginData {
@@ -118,11 +119,11 @@ export interface DailyPlan {
 
 export interface SimpleEventData {
   event_type: EventType,
-  event_subtype: TourType,
+  event_subtype: TourType | "FAIR",
   event_id: string,
-  event_status: TourStatus,
+  event_status: TourStatus | FairStatus, 
   highschool: HighschoolData,
-  visitor_count: number,
+  visitor_count?: number,
   accepted_time: string,
   requested_times: string[],
 }
