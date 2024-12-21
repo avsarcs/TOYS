@@ -5,7 +5,7 @@ import DetailsButton from "./DetailsButton.tsx";
 import AddButton from "./AddButton.tsx";
 
 interface RowData {
-    highSchool: string;
+    name: string;
     city: string;
     ranking: string;
     priority: string;
@@ -49,8 +49,8 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
 function filterData(data: RowData[], search: string, cities: string[]) {
     const query = normalizeString(search.trim());
     return data.filter((item) =>
-        normalizeString(item["highSchool"]).includes(query) &&
-        (cities.length === 0 || cities.includes(item["city"]))
+        normalizeString(item["name"]).includes(query) &&
+        (cities.length === 0 || cities.includes(item["city"].split(' ')[0]))
     );
 }
 
@@ -76,9 +76,11 @@ function sortData(
             }
 
             if(sortBy === 'ranking' || sortBy === 'priority') {
+                if (a[sortBy] === '' || b[sortBy] === '') {
+                    return 0;
+                }
                 return Number(a[sortBy]) - Number(b[sortBy]);
-            }
-            else {
+            } else {
                 return a[sortBy].localeCompare(b[sortBy]);
             }
         }),
@@ -118,13 +120,13 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities
     const paginatedData = sortedData.slice(startIndex, endIndex);
 
     const rows = paginatedData.map((row) => (
-        <Table.Tr key={row.highSchool}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.highSchool}</Table.Td>
+        <Table.Tr key={row.name}>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.name}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.city}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.ranking}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.priority}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
-                <DetailsButton openDetails={openDetails} highSchoolName={row.highSchool} highSchoolID={row.id}/>
+                <DetailsButton openDetails={openDetails} highSchoolName={row.name} highSchoolID={row.id}/>
             </Table.Td>
         </Table.Tr>
     ));
@@ -137,9 +139,9 @@ const HighSchoolsTable: React.FC<HighSchoolsTableProps> = ({data, search, cities
                 <Table.Tbody>
                     <Table.Tr>
                         <Th
-                            sorted={sortBy === 'highSchool'}
+                            sorted={sortBy === 'name'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('highSchool')}
+                            onSort={() => setSorting('name')}
                         >
                             <Text size={"xl"}>
                                 Lise

@@ -31,7 +31,7 @@ const defaultHeaderStyle = {
 const defaultCities: string[] = ["Yükleniyor..."];
 const defaultHighSchools = [
     {
-        highSchool: "Yükleniyor...",
+        name: "Yükleniyor...",
         city: "Yükleniyor...",
         ranking: "1",
         priority: "1",
@@ -58,7 +58,7 @@ const HighSchoolsList: React.FC = () => {
     }, []);
 
     const getHighSchools = useCallback(async () => {
-        const url = new URL(TOUR_URL + "internal/analytics/high-schools/all");
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/all-dto");
         url.searchParams.append("auth", userContext.authToken);
 
         console.log("Sent request for high schools list.");
