@@ -7,10 +7,10 @@ const EditProfilePage: React.FC = () => {
         <div className="edit-profile-page">
             <Box className="content" p="xl" pt="">
                 <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-                    Edit Profile Information
+                    Kişisel Bilgileri Düzenle
                 </Title>
                 <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                    Here you can update your personal details and profile picture.
+                    Kişisel bilgilerinizi ve profil fotoğrafınızı buradan güncelleyebilirsiniz.
                 </Title>
                 <Space h="xl"/>
                 <Divider className="border-gray-400"/>

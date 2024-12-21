@@ -1,24 +1,33 @@
 import React, { useState } from 'react';
-import { Button, Alert } from '@mantine/core';
-import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react"
+import { Button, Alert, Modal, Text } from '@mantine/core';
+import { IconChevronRight, IconChevronLeft, IconAlertCircle, IconCircleCheck, IconX } from "@tabler/icons-react"
 import { Stepper } from '@mantine/core';
 import "./GroupTourApplication.css";
 import { GroupApplication } from '../../types/designed';
 import isEmail from 'validator/lib/isEmail'
 import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
-
+import { useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
+import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
+import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
 import TeacherInfoStage from '../../components/TourApplication/TeacherInfoStage';
 import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import NotesStage from '../../components/TourApplication/NotesStage';
+const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
 
 
 export const GroupTourApplication: React.FC = () => {
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const userContext = useContext(UserContext);
 
   const [applicationInfo, setApplicationInfo] = useState<GroupApplication>({
-    "highschool_name": "",
+    "highschool": {
+      "id": "", "name": "", "location": "", "priority": 1
+    },
     "requested_times": [],
     "visitor_count": -1,
     "applicant": {
@@ -33,7 +42,6 @@ export const GroupTourApplication: React.FC = () => {
   const [currentStage, setCurrentStage] = useState(0)
 
   const attemptStageChange = (newStage: number) => {
-
     if (newStage < currentStage) {
       setCurrentStage(newStage)
       return
@@ -50,7 +58,6 @@ export const GroupTourApplication: React.FC = () => {
     if (currentStage == 2 && validateStage3()) {
       setCurrentStage(newStage)
     }
-
   }
 
   /**************
@@ -72,14 +79,12 @@ export const GroupTourApplication: React.FC = () => {
     const firstStageFields = ["fullname", "email", "phone", "role"]
     for (const field of firstStageFields) {
       // @ts-expect-error key coming from applicationInfo, there will be no conflict
-      if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool_name)) {
-
+      if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool.name)) {
         stagePass = false
         setWarnings((warnings) => ({
           ...warnings,
           "empty_fields": true
         }))
-
         empty_fields = true
       }
     }
@@ -99,12 +104,10 @@ export const GroupTourApplication: React.FC = () => {
       }))
       stagePass = false
     } else {
-
       setWarnings((warnings) => ({
         ...warnings,
         "not_email": false
       }))
-
     }
 
     if (!isMobilePhone(applicationInfo["applicant"]["phone"])) {
@@ -126,23 +129,18 @@ export const GroupTourApplication: React.FC = () => {
   // Validate if stage 2 is done.
   const validateStage2 = () => {
     if (applicationInfo.requested_times.length > 0) {
-
       setWarnings((warnings) => ({
         ...warnings,
         "not_enough_dates": false
       }))
       return true
-
     } else {
-
       setWarnings((warnings) => ({
         ...warnings,
         "not_enough_dates": true
       }))
       return false
-
     }
-
   }
 
   // Validate if stage 3 is done.
@@ -164,17 +162,69 @@ export const GroupTourApplication: React.FC = () => {
   }
 
   const navigate = useNavigate()
-  // Placeholder function
-  const attemptSubmitForm = () => {
-    // Do whatever the fuck you need to submit applicationInfo to the backend.
+  // Submit form function
+  const attemptSubmitForm = async () => {
     if (validateStage3()) {
-      navigate("/application-success")
-    }
+      const applicationUrl = new URL(TOUR_APPLICATION_URL)
+      applicationUrl.searchParams.append("auth", userContext.authToken)
+      
+      try {
+        const res = await fetch(applicationUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(applicationInfo)
+        });
 
+        if (res.status === 200) {
+          setShowSuccessModal(true);
+        } else {
+          setShowErrorModal(true);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+      }
+    }
   }
 
   return (
     <>
+      <Modal 
+        opened={showSuccessModal} 
+        onClose={() => {}} 
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        withCloseButton={false}
+        centered
+      >
+        <div className="text-center py-4">
+          <IconCircleCheck size={48} className="text-green-500 mx-auto mb-4" />
+          <Text size="xl" fw={700} className="text-green-700">
+            Tur Başvurunuz Başarıyla İletildi!
+          </Text>
+          <Text className='text-green-600'>
+            Size geri dönüş yapacağız.
+          </Text>
+        </div>
+      </Modal>
+
+      <Modal 
+        opened={showErrorModal} 
+        onClose={() => setShowErrorModal(false)}
+        centered
+      >
+        <div className="text-center py-4">
+          <IconX size={48} className="text-red-500 mx-auto mb-4" />
+          <Text size="xl" fw={700} className="text-red-700 mb-2">
+            Başvuru İletilirken Bir Hata Oluştu
+          </Text>
+          <Text size="sm" className="text-gray-600">
+            Lütfen daha sonra tekrar deneyiniz.
+          </Text>
+        </div>
+      </Modal>
+
       <div className='application-wrapper p-8'>
         <Stepper active={currentStage} onStepClick={attemptStageChange}>
           <Stepper.Step label="1. Aşama" description="Grup Lideri Bilgisi">
@@ -247,6 +297,48 @@ export const GroupTourApplication: React.FC = () => {
             </Button>
           }
         </div>
+        <div style={{ position: 'fixed', right: '10px', bottom: '10px', backgroundColor: '#2c3e50', color: '#ecf0f1', padding: '20px', borderRadius: '8px' }}>
+                <Container size="sm">
+                    <Title order={2} style={{ marginBottom: '20px', textAlign: 'center', color: '#ecf0f1' }}>
+                        Bize Ulaşın
+                    </Title>
+                    <Stack spacing="md">
+                        <Group>
+                            <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
+                                <IconMail size={24} color="#ecf0f1" />
+                            </ThemeIcon>
+                            <div>
+                                <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
+                                    Email
+                                </Text>
+                                <Text size="md" style={{ color: '#bdc3c7' }}>iletisim@ornek.com</Text>
+                            </div>
+                        </Group>
+                        <Group>
+                            <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
+                                <IconPhone size={24} color="#ecf0f1" />
+                            </ThemeIcon>
+                            <div>
+                                <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
+                                    Telefon
+                                </Text>
+                                <Text size="md" style={{ color: '#bdc3c7' }}>+90 555 555 55 55</Text>
+                            </div>
+                        </Group>
+                        <Group>
+                            <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
+                                <IconUser size={24} color="#ecf0f1" />
+                            </ThemeIcon>
+                            <div>
+                                <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
+                                    İlgili Kişi
+                                </Text>
+                                <Text size="md" style={{ color: '#bdc3c7' }}>Ahmet Yılmaz</Text>
+                            </div>
+                        </Group>
+                    </Stack>
+                </Container>
+            </div>
       </div>
     </>
   );

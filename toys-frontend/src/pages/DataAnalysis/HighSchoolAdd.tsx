@@ -27,12 +27,13 @@ interface HighSchoolAddProps {
     onClose: () => void;
 }
 
+const HIGHSCHOOL_ADD_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/add");
 const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
     const [selectedName, setSelectedName] = React.useState<string | null>(null);
-    const [selectedCity, setSelectedCity] = React.useState<string | null>(null);
+    const [selectedCity, setSelectedCity] = React.useState<City | null>(null);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
     const [cities, setCities] = React.useState(defaultCities);
 
@@ -116,7 +117,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector cities={cities} priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 

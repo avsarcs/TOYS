@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, rem} from '@mantine/core';
+import {Button, Text, rem} from '@mantine/core';
 import {IconChevronLeft} from "@tabler/icons-react";
 
 /**
@@ -22,7 +22,7 @@ const BackButton: React.FC<BackButtonProps> = ({onBack}) => {
         style={{width: "60%"}}
         leftSection={<IconChevronLeft style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
     >
-        <text>Geri</text>
+        <Text>Geri</Text>
     </Button>
 }
 

@@ -106,7 +106,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     const DetailsTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <DetailsTable priority={data.priority} ranking={data.ranking} city={data.city}/>
+        <DetailsTable priority={highSchool.priority} ranking={highSchool.ranking} city={highSchool.location}/>
         <Space h="xs" />
     </Container>
 

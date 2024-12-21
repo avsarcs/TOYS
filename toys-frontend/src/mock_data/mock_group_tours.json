@@ -1,138 +1,364 @@
 [
-    {
-      "highschool_name": "Ankara Fen Lisesi",
-      "guides": [
-        ["G001", "Ahmet Yılmaz"],
-        ["G002", "Ayşe Demir"]
-      ],
-      "trainee_guides": [
-        ["TG001", "Mehmet Can"]
-      ],
-      "type": "group",
-      "requested_times": [
-        "2024-09-30T09:00:00Z",
-        "2024-09-30T11:00:00Z"
-      ],
-      "accepted_time": "2024-09-30T09:00:00Z",
-      "visitor_count": 66,
-      "status": "AWAITING_CONFIRMATION",
-      "notes": "Large group from Ankara Fen Lisesi, requires two guides due to size",
-      "applicant": {
-        "fullname": "Mustafa Öztürk",
-        "role": "teacher",
-        "email": "m.ozturk@ankarafen.edu.tr",
-        "phone": "+90532XXXXXXX",
-        "notes": "Students are particularly interested in computer science labs"
-      },
-      "actual_start_time": "2024-11-15T14:22:14Z",
-      "actual_end_time": "2024-11-15T16:22:14Z",
-      "classroom": "Mithat Çoruh"
+  {
+    "highschool": {
+      "id": "hs1",
+      "name": "Atatürk High School"
     },
-    {
-      "highschool_name": "TED Ankara Koleji",
-      "guides": [
-        ["G003", "Zeynep Kaya"]
-      ],
-      "trainee_guides": [
-        ["TG002", "Ali Yıldız"],
-        ["TG003", "Selin Arslan"]
-      ],
-      "type": "group",
-      "requested_times": [
-        "2024-10-01T10:00:00Z",
-        "2024-10-01T13:00:00Z"
-      ],
-      "accepted_time": "2024-10-01T10:00:00Z",
-      "visitor_count": 45,
-      "status": "APPROVED",
-      "notes": "Group interested in robotics lab demonstration",
-      "applicant": {
-        "fullname": "Elif Şahin",
-        "role": "teacher",
-        "email": "e.sahin@tedankara.k12.tr",
-        "phone": "+90533XXXXXXX",
-        "notes": "Some students have mobility requirements"
-      },
-      "actual_start_time": null,
-      "actual_end_time": null,
-      "classroom": "Cahit Arf"
+    "guides": [
+      {
+        "id": "g1",
+        "full_name": "Ahmet Yılmaz",
+        "highschool": {
+          "id": "hs1",
+          "name": "Atatürk High School"
+        }
+      }
+    ],
+    "trainee_guides": [
+      {
+        "id": "tg1",
+        "full_name": "Mehmet Can",
+        "highschool": {
+          "id": "hs1",
+          "name": "Atatürk High School"
+        }
+      }
+    ],
+    "type": "group",
+    "requested_times": [
+      "2024-09-30T09:00:00Z+03:00",
+      "2024-09-30T11:00:00Z+03:00"
+    ],
+    "accepted_time": "2024-09-30T09:00:00Z+03:00",
+    "visitor_count": 66,
+    "status": "AWAITING_CONFIRMATION",
+    "notes": "Large group from partner school, needs two guides",
+    "applicant": {
+      "fullname": "Ayşe Kaya",
+      "role": "management",
+      "email": "ayse.kaya@school.edu",
+      "phone": "+905321234567",
+      "notes": "Students are participating in science fair"
     },
-    {
-      "highschool_name": "Çankaya Anadolu Lisesi",
-      "guides": [
-        ["G004", "Burak Çelik"]
-      ],
-      "trainee_guides": [],
-      "type": "group",
-      "requested_times": [
-        "2024-10-15T12:00:00Z",
-        "2024-10-15T14:00:00Z"
-      ],
-      "accepted_time": "2024-10-15T14:00:00Z",
-      "visitor_count": 35,
-      "status": "TOYS_WANTS_CHANGE",
-      "notes": "Schedule conflict with original time slot",
-      "applicant": {
-        "fullname": "Deniz Yılmaz",
-        "role": "student",
-        "email": "d.yilmaz@student.cankaya.edu.tr",
-        "phone": "+90535XXXXXXX",
-        "notes": "Requesting afternoon slot due to morning classes"
-      },
-      "actual_start_time": null,
-      "actual_end_time": null,
-      "classroom": "Ali Kuşçu"
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Mithat Çoruh"
+  },
+  {
+    "highschool": {
+      "id": "hs2",
+      "name": "Cumhuriyet High School"
     },
-    {
-      "highschool_name": "Bahçelievler Anadolu Lisesi",
-      "guides": [
-        ["G005", "Canan Aksoy"]
-      ],
-      "trainee_guides": [
-        ["TG004", "Emre Kara"]
-      ],
-      "type": "group",
-      "requested_times": [
-        "2024-11-01T09:00:00Z"
-      ],
-      "accepted_time": null,
-      "visitor_count": 25,
-      "status": "APPLICANT_WANTS_CHANGE",
-      "notes": "Group requested alternative date",
-      "applicant": {
-        "fullname": "Ayhan Koç",
-        "role": "teacher",
-        "email": "a.koc@bahcelievler.edu.tr",
-        "phone": "+90536XXXXXXX",
-        "notes": "Prefer a date after midterm exams"
-      },
-      "actual_start_time": null,
-      "actual_end_time": null,
-      "classroom": "İbn-i Sina"
+    "guides": [
+      {
+        "id": "g2",
+        "full_name": "Zeynep Demir",
+        "highschool": {
+          "id": "hs2",
+          "name": "Cumhuriyet High School"
+        }
+      }
+    ],
+    "trainee_guides": [],
+    "type": "individual",
+    "requested_times": [
+      "2024-10-15T13:00:00Z+03:00",
+      "2024-10-15T14:00:00Z+03:00"
+    ],
+    "accepted_time": "2024-10-15T13:00:00Z+03:00",
+    "visitor_count": 1,
+    "status": "AWAITING_CONFIRMATION",
+    "notes": "Individual visit for potential transfer student",
+    "applicant": {
+      "fullname": "Mustafa Öztürk",
+      "role": "teacher",
+      "email": "m.ozturk@school.edu",
+      "phone": "+90533987654",
+      "notes": "Student interested in robotics program"
     },
-    {
-      "highschool_name": "Milli Piyango Anadolu Lisesi",
-      "guides": [
-        ["G006", "Derya Yıldırım"]
-      ],
-      "trainee_guides": [],
-      "type": "group",
-      "requested_times": [
-        "2024-09-28T10:00:00Z"
-      ],
-      "accepted_time": "2024-09-28T10:00:00Z",
-      "visitor_count": 30,
-      "status": "REJECTED",
-      "notes": "Date unavailable due to facility maintenance",
-      "applicant": {
-        "fullname": "Kemal Özdemir",
-        "role": "student",
-        "email": "k.ozdemir@mp.edu.tr",
-        "phone": "+90537XXXXXXX",
-        "notes": "First time visit request"
-      },
-      "actual_start_time": null,
-      "actual_end_time": null,
-      "classroom": "Aziz Sancar"
-    }
-  ]
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Lab 2A"
+  },
+  {
+    "highschool": {
+      "id": "hs3",
+      "name": "Fatih High School"
+    },
+    "guides": [
+      {
+        "id": "g3",
+        "full_name": "Ali Yıldız",
+        "highschool": {
+          "id": "hs3",
+          "name": "Fatih High School"
+        }
+      }
+    ],
+    "trainee_guides": [
+      {
+        "id": "tg2",
+        "full_name": "Aylin Şen",
+        "highschool": {
+          "id": "hs3",
+          "name": "Fatih High School"
+        }
+      }
+    ],
+    "type": "group",
+    "requested_times": [
+      "2024-11-01T10:00:00Z+03:00",
+      "2024-11-01T14:00:00Z+03:00"
+    ],
+    "accepted_time": "2024-11-01T10:00:00Z+03:00",
+    "visitor_count": 45,
+    "status": "APPLICANT_WANTS_CHANGE",
+    "notes": "School requests afternoon slot due to transportation issues",
+    "applicant": {
+      "fullname": "Hakan Arslan",
+      "role": "management",
+      "email": "h.arslan@school.edu",
+      "phone": "+90535789012",
+      "notes": "Need to change to afternoon slot due to bus schedule"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Main Hall"
+  },
+  {
+    "highschool": {
+      "id": "hs4",
+      "name": "İnönü High School"
+    },
+    "guides": [
+      {
+        "id": "g4",
+        "full_name": "Elif Koç",
+        "highschool": {
+          "id": "hs4",
+          "name": "İnönü High School"
+        }
+      }
+    ],
+    "trainee_guides": [],
+    "type": "individual",
+    "requested_times": [
+      "2024-10-20T11:00:00Z+03:00"
+    ],
+    "accepted_time": "",
+    "visitor_count": 2,
+    "status": "TOYS_WANTS_CHANGE",
+    "notes": "Guide unavailable at requested time, suggesting alternative",
+    "applicant": {
+      "fullname": "Selim Yılmaz",
+      "role": "teacher",
+      "email": "s.yilmaz@school.edu",
+      "phone": "+90536234567",
+      "notes": "Coming with parent for school visit"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Conference Room A"
+  },
+  {
+    "highschool": {
+      "id": "hs5",
+      "name": "Mehmet Akif High School"
+    },
+    "guides": [
+      {
+        "id": "g5",
+        "full_name": "Can Özer",
+        "highschool": {
+          "id": "hs5",
+          "name": "Mehmet Akif High School"
+        }
+      }
+    ],
+    "trainee_guides": [],
+    "type": "group",
+    "requested_times": [
+      "2024-12-05T09:00:00Z+03:00"
+    ],
+    "accepted_time": "",
+    "visitor_count": 35,
+    "status": "TOYS_WANTS_CHANGE",
+    "notes": "Facility maintenance scheduled, need to reschedule",
+    "applicant": {
+      "fullname": "Nurten Şahin",
+      "role": "management",
+      "email": "n.sahin@school.edu",
+      "phone": "+90537345678",
+      "notes": "Flexible with timing"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Assembly Hall"
+  },
+  {
+    "highschool": {
+      "id": "hs6",
+      "name": "Gazi High School"
+    },
+    "guides": [
+      {
+        "id": "g6",
+        "full_name": "Deniz Aydın",
+        "highschool": {
+          "id": "hs6",
+          "name": "Gazi High School"
+        }
+      }
+    ],
+    "trainee_guides": [],
+    "type": "individual",
+    "requested_times": [
+      "2024-11-10T13:00:00Z+03:00"
+    ],
+    "accepted_time": "2024-11-10T13:00:00Z+03:00",
+    "visitor_count": 1,
+    "status": "APPLICANT_WANTS_CHANGE",
+    "notes": "Applicant requests morning slot instead",
+    "applicant": {
+      "fullname": "Canan Aksoy",
+      "role": "teacher",
+      "email": "c.aksoy@school.edu",
+      "phone": "+90538456789",
+      "notes": "Morning slot would be better for student"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Room 3B"
+  },
+  {
+    "highschool": {
+      "id": "hs7",
+      "name": "Namık Kemal High School"
+    },
+    "guides": [
+      {
+        "id": "g7",
+        "full_name": "Berk Çelik",
+        "highschool": {
+          "id": "hs7",
+          "name": "Namık Kemal High School"
+        }
+      }
+    ],
+    "trainee_guides": [
+      {
+        "id": "tg3",
+        "full_name": "Selin Yalçın",
+        "highschool": {
+          "id": "hs7",
+          "name": "Namık Kemal High School"
+        }
+      }
+    ],
+    "type": "group",
+    "requested_times": [
+      "2024-12-15T10:00:00Z+03:00"
+    ],
+    "accepted_time": "2024-12-15T10:00:00Z+03:00",
+    "visitor_count": 50,
+    "status": "APPROVED",
+    "notes": "All arrangements confirmed",
+    "applicant": {
+      "fullname": "Murat Özdemir",
+      "role": "management",
+      "email": "m.ozdemir@school.edu",
+      "phone": "+90539567890",
+      "notes": "Will arrive by private buses"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Auditorium"
+  },
+  {
+    "highschool": {
+      "id": "hs8",
+      "name": "Yunus Emre High School"
+    },
+    "guides": [
+      {
+        "id": "g8",
+        "full_name": "Pınar Kaya",
+        "highschool": {
+          "id": "hs8",
+          "name": "Yunus Emre High School"
+        }
+      }
+    ],
+    "trainee_guides": [],
+    "type": "individual",
+    "requested_times": [
+      "2024-11-20T14:00:00Z+03:00"
+    ],
+    "accepted_time": "2024-11-20T14:00:00Z+03:00",
+    "visitor_count": 2,
+    "status": "APPROVED",
+    "notes": "Special interest in art department",
+    "applicant": {
+      "fullname": "Leyla Güneş",
+      "role": "teacher",
+      "email": "l.gunes@school.edu",
+      "phone": "+90540678901",
+      "notes": "Student is an art competition winner"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": "Art Studio"
+  },
+  {
+    "highschool": {
+      "id": "hs9",
+      "name": "Mimar Sinan High School"
+    },
+    "guides": [],
+    "trainee_guides": [],
+    "type": "group",
+    "requested_times": [
+      "2024-12-20T09:00:00Z+03:00"
+    ],
+    "accepted_time": "",
+    "visitor_count": 80,
+    "status": "REJECTED",
+    "notes": "Group size exceeds maximum capacity",
+    "applicant": {
+      "fullname": "Kemal Yıldırım",
+      "role": "management",
+      "email": "k.yildirim@school.edu",
+      "phone": "+90541789012",
+      "notes": "Requesting tour for entire grade level"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": ""
+  },
+  {
+    "highschool": {
+      "id": "hs10",
+      "name": "Barbaros High School"
+    },
+    "guides": [],
+    "trainee_guides": [],
+    "type": "individual",
+    "requested_times": [
+      "2024-12-25T11:00:00Z+03:00"
+    ],
+    "accepted_time": "",
+    "visitor_count": 1,
+    "status": "REJECTED",
+    "notes": "Requested date falls on holiday",
+    "applicant": {
+      "fullname": "Sevgi Demir",
+      "role": "teacher",
+      "email": "s.demir@school.edu",
+      "phone": "+90542890123",
+      "notes": "Interested in winter term admission"
+    },
+    "actual_start_time": "",
+    "actual_end_time": "",
+    "classroom": ""
+  }
+]

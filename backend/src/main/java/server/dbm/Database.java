@@ -28,12 +28,18 @@ public class Database {
 
     private static ObjectMapper objectMapper;
 
+    private static LocalFileService local;
+
     public static ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
     public static Firestore getFirestoreDatabase() {
         return firestoreDatabase;
+    }
+
+    public static LocalFileService getLocalFileService() {
+        return local;
     }
 
     private static Database instance;
@@ -53,6 +59,7 @@ public class Database {
     public DBReviewService reviews;
     public DBUniversityService universities;
     public DBPaymentService payments;
+    public DBAuthService auth;
 
     private Database() {
 
@@ -89,6 +96,7 @@ public class Database {
         reviews = new DBReviewService();
         universities = new DBUniversityService();
         payments = new DBPaymentService();
+        auth = new DBAuthService();
     }
 
     public void pushString(String string) {

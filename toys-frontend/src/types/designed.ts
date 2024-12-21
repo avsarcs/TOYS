@@ -4,12 +4,13 @@ import {
   DashboardCategoryText,
   UserRole
 } from "./enum.ts";
-import { ProfileData, SimpleEventData, TourData } from "./data.ts";
+import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import {OnlyChildrenProps} from "./generic.ts";
 
 export interface User {
   id: string,
   role: UserRole,
-  profile: any
+  profile: ProfileData
 }
 
 export interface NavbarProps {
@@ -17,12 +18,13 @@ export interface NavbarProps {
 }
 
 export interface IndividualApplication {
-  highschool_name: string,
+  highschool: HighschoolData,
   requested_times: string[],
   requested_majors: string[],
   visitor_count: number,
   applicant: {
     fullname: string,
+    role: string,
     email: string,
     phone: string,
     notes: string
@@ -30,7 +32,7 @@ export interface IndividualApplication {
 }
 
 export interface GroupApplication {
-  highschool_name: string,
+  highschool: HighschoolData,
   requested_times: string[],
   visitor_count: number,
   applicant: {
@@ -42,11 +44,33 @@ export interface GroupApplication {
   }
 }
 
+export interface FairApplicationModel {
+  applicant: {
+		fullname: string;
+		email: string;
+    role: string;
+		phone: string;
+		school: HighschoolData;
+    notes: string;
+	};
+	start_time: string;
+  end_time: string;
+  fair_name: string;
+}
+
 export interface GroupApplicationStageProps {
   applicationInfo: GroupApplication;
   setApplicationInfo: Dispatch<SetStateAction<GroupApplication>>;
   warnings: Record<any, any>;
 }
+
+export interface FairApplicationProps {
+  applicationInfo: FairApplicationModel;
+  setApplicationInfo: Dispatch<SetStateAction<FairApplicationModel>>;
+  warnings: Record<any, any>;
+}
+
+
 
 export interface IndividualApplicationStageProps {
   applicationInfo: IndividualApplication,
@@ -102,25 +126,87 @@ export interface DashboardItemProps {
 }
 
 export interface DashboardItemListProps {
+  loading: boolean,
   categories: { value: DashboardCategory, label: DashboardCategoryText }[],
   category: DashboardCategory,
   setCategory: Dispatch<SetStateAction<DashboardCategory>>
+  items: SimpleEventData[]
   setItem: Dispatch<SetStateAction<SimpleEventData | null>>
 }
 
 export interface DashboardInfoBoxProps {
   category: DashboardCategory,
-  item: SimpleEventData
+  item: SimpleEventData,
+  updateDashboard: () => void,
+}
+
+export interface DashboardInfoBoxButtonProps {
+  item: SimpleEventData,
+  updateDashboard: () => void
+}
+
+export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps, OnlyChildrenProps{
+  response: boolean
 }
 
 export interface TourSectionProps {
-  tour: TourData
+  tour: TourData,
+  refreshTour: () => void
 }
 
+export interface TourButtonProps {
+  tour: TourData,
+  refreshTour: () => void
+}
+
+export interface ManageGuidesWindowProps {
+  opened: boolean; // Controls modal visibility
+  onClose: () => void; // Closes the modal
+  tour: TourData; // ISO 8601 time
+  totalGuidesNeeded: number; // Total number of guides needed for the tour
+}
 export interface TourListItemProps {
   tour: SimpleEventData
 }
+export interface FairListItemProps {
+  fair: SimpleEventData
+}
 
 export interface ProfileComponentProps {
+  profile: ProfileData
+}
+
+export interface MoneyForGuide {
+  guide: {
+      id: number;
+      name: string;
+      iban: string;
+      bank: string;
+  };
+  unpaid_hours: number;
+  debt: number;
+  money_paid: number;
+}
+
+export interface MoneyForEvent {
+  event_id: number;
+  event_date: string;
+  hourly_rate: number;
+  event_highschool: HighschoolData;
+  hours_worked: number;
+  money_debted: number;
+  money_paid: number;
+  guide_name: string;
+  event_type: string;
+}
+
+export interface SimpleGuide {
+  id: number;
+  name: string;
+  major: string;
+  experience: string;
+}
+
+export interface ProfileComponentProps{
   profile: ProfileData
 }
