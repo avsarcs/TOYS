@@ -10,6 +10,7 @@ import TimeInformation from "../../components/TourInformation/TimeInformation.ts
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
 import TourReviews from "../../components/TourReviews/TourReviews.tsx";
+import {TourStatus} from "../../types/enum.ts";
 
 const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
 
@@ -83,7 +84,12 @@ const TourPage: React.FC = () => {
                 <Divider className="border-gray-200" />
                 <ApplicantInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
-                <GuideInformation tour={tour} refreshTour={refreshTour} />
+                {
+                  tour.status === TourStatus.CONFIRMED || tour.status === TourStatus.FINISHED
+                  ?
+                  <GuideInformation tour={tour} refreshTour={refreshTour} />
+                  : null
+                }
                 <Divider className="border-gray-200" />
                 <TimeInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
