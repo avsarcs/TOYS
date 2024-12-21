@@ -51,15 +51,16 @@ public class EventService {
     MailServiceGateway mail;
 
     public Map<String, Object> getSimpleTour(String auth, String tid) {
-        if (!authService.checkWithPasskey(auth, tid, Permission.VIEW_TOUR_INFO)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view tour info!");
-        }
-
         if (tid.isEmpty()) {
             tid = database.auth.getPasskeys().entrySet().stream().filter(e -> e.getValue().getKey().equals(auth)).findFirst().orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Passkey not found!")
             ).getKey();
         }
+
+        if (!authService.checkWithPasskey(auth, tid, Permission.VIEW_TOUR_INFO)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view tour info!");
+        }
+
         TourRegistry tour = database.tours.fetchTour(tid);
 
         if (tour == null) {

@@ -30,6 +30,4 @@ public enum Department {
     HISTORY,
     TRANSLATION_AND_INTERPRETATION,
     TURKISH_LITERATURE
-
-
 }

@@ -166,7 +166,13 @@ public class AnalyticsHighschoolService {
         if (response == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No review for this tour!");
         }
-        response = reviewService.getReviewOfTour(auth, tour_id);
+
+        // This had to be done because the method signature of getReviewOfTour was changed
+
+        response = reviewService.getReviewOfTour(auth, tour_id).stream().filter(
+                e -> !e.containsKey("guide_id")
+        ).findFirst().orElse(Map.of());
+        //response = reviewService.getReviewOfTour(auth, tour_id);
         return response;
     }
 
