@@ -3,10 +3,10 @@ import "./ProfileInfo.css";
 
 import { UserRole, UserRoleText } from "../../../types/enum.ts";
 import { UserContext } from "../../../context/UserContext.tsx";
-import {useCallback, useContext } from "react";
-import {Link, useParams} from "react-router-dom";
+import { useCallback, useContext } from "react";
+import { Link, useParams } from "react-router-dom";
 import { ProfileComponentProps } from "../../../types/designed.ts";
-import {notifications} from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
@@ -29,7 +29,7 @@ const translateDays = (days: string[]): string => {
 };
 
 const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
-    const profile  = props.profile;
+    const profile = props.profile;
     const userContext = useContext(UserContext);
     const params = useParams();
     const profileId = params.profileId;
@@ -50,7 +50,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
             });
 
             if (!res.ok) {
-                notifications.show({title: "Error", message: "Failed to remove user from TOYS.", color: "red"});
+                notifications.show({ title: "Error", message: "Failed to remove user from TOYS.", color: "red" });
             }
 
             alert("User has been successfully removed from TOYS.");
@@ -63,7 +63,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
         }
     }, [profileId, userContext.authToken]);
 
-    
+
     return (
         <div className="profile-info">
             <Title order={3} className="text-blue-700 font-bold font-main">
@@ -76,10 +76,12 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>İsim: </strong> {profile.fullname} </p>
                 <p><strong>E-Mail: </strong> {profile.email} </p>
                 <p><strong>ID: </strong> {profile.id}</p>
-                <p><strong>Telefon: </strong>{profile.phone}</p>
-                <p><strong>Açıklama: </strong> {profile.profile_description}</p>
+                {( profile.role !== UserRole.COORDINATOR &&
+                (<><p><strong>Telefon: </strong>{profile.phone}</p>
+                <p><strong>Açıklama: </strong> {profile.profile_description}</p></>)
+                )}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
-                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR)  ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
             </div>
             <div className="toys-info">
                 <Title order={5} className="text-blue-700 font-bold font-main">
@@ -90,9 +92,9 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
                 {(profile.role === UserRole.ADVISOR) ? (
                     <p><strong>Sorumlu Olunan Gün: </strong> {translateDays(profile.responsible_days)} </p>
-                    ) : null}           
+                ) : null}
             </div>
-            <div className = "button-group">
+            <div className="button-group">
                 {profileId === undefined ? <div className="button">
                     <Button
                         component={Link}
