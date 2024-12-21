@@ -5,6 +5,7 @@ import {
   UserRole
 } from "./enum.ts";
 import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import {OnlyChildrenProps} from "./generic.ts";
 
 export interface User {
   id: string,
@@ -125,15 +126,27 @@ export interface DashboardItemProps {
 }
 
 export interface DashboardItemListProps {
+  loading: boolean,
   categories: { value: DashboardCategory, label: DashboardCategoryText }[],
   category: DashboardCategory,
   setCategory: Dispatch<SetStateAction<DashboardCategory>>
+  items: SimpleEventData[]
   setItem: Dispatch<SetStateAction<SimpleEventData | null>>
 }
 
 export interface DashboardInfoBoxProps {
   category: DashboardCategory,
-  item: SimpleEventData
+  item: SimpleEventData,
+  updateDashboard: () => void,
+}
+
+export interface DashboardInfoBoxButtonProps {
+  item: SimpleEventData,
+  updateDashboard: () => void
+}
+
+export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps, OnlyChildrenProps{
+  response: boolean
 }
 
 export interface TourSectionProps {

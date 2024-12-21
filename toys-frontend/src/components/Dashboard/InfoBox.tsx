@@ -5,6 +5,7 @@ import {DashboardCategory, EventType, EventTypeText, TourType, TourTypeText} fro
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
 import {IconCircleCheck, IconCircleX, IconUsers} from "@tabler/icons-react";
+import EventInvitationRespondButton from "./EventInvitationRespondButton.tsx";
 
 const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) => {
   const buttons = useMemo(() => {
@@ -12,18 +13,12 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
       case DashboardCategory.EVENT_INVITATION:
         return (
           <>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconCircleCheck/>}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
+            <EventInvitationRespondButton item={props.item} response={true} updateDashboard={props.updateDashboard}>
               Kabul Et
-            </Button>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconCircleX/>}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
+            </EventInvitationRespondButton>
+            <EventInvitationRespondButton item={props.item} response={false} updateDashboard={props.updateDashboard}>
               Reddet
-            </Button>
+            </EventInvitationRespondButton>
           </>
         );
       case DashboardCategory.PENDING_APPLICATION:

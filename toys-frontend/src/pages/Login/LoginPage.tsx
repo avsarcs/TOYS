@@ -1,6 +1,6 @@
 import { Image } from "@mantine/core"
 import LoginForm from "../../components/Login/LoginForm";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import RegisterForm from "../../components/Login/RegisterForm.tsx";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
@@ -11,9 +11,11 @@ const LoginPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
-  if(userContext.isLoggedIn) {
-    navigate(searchParams.get("redirect") ?? "/dashboard");
-  }
+  useEffect(() => {
+    if(userContext.isLoggedIn) {
+      navigate(searchParams.get("redirect") ?? "/dashboard", { replace: true });
+    }
+  }, [userContext.isLoggedIn]);
 
   return (
     <div className={"w-full min-h-screen grid lg:grid-cols-2 grid-cols-1 lg:grid-rows-1 grid-rows-2"}>
