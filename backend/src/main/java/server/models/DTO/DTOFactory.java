@@ -56,13 +56,26 @@ public class DTOFactory {
 
         dto.put("id", highschool.getId());
         dto.put("name", highschool.getTitle());
-        dto.put("location", highschool.getLocation());
+        dto.put("city", highschool.getLocation());
         dto.put("priority", highschool.getPriority());
         dto.put("ranking", highschool.getRanking());
 
         return dto;
     }
 
+    public Map<String, Object> highschoolNoLocation(HighschoolRecord highschool) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("id", highschool.getId());
+        String title = highschool.getTitle();
+        title = title.substring(0, title.indexOf("("));
+        dto.put("name", title);
+        dto.put("city", highschool.getLocation());
+        dto.put("priority", highschool.getPriority());
+        dto.put("ranking", highschool.getRanking());
+
+        return dto;
+    }
     public Highschool highschool(Map<String, Object> map) {
         Highschool highschool = new Highschool();
 
