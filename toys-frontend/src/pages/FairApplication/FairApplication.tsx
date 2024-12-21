@@ -42,6 +42,7 @@ export const FairApplication: React.FC = () => {
         empty_fields: false,
         not_email: false,
         not_phone_no: false,
+        end_date_earlier: false
     });
     const [isStage2Valid, setIsStage2Valid] = useState(false);
 

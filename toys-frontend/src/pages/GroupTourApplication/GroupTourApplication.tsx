@@ -25,7 +25,7 @@ export const GroupTourApplication: React.FC = () => {
 
   const [applicationInfo, setApplicationInfo] = useState<GroupApplication>({
     "highschool": {
-      "id": "id of the highschool", "name": "Ankara Fen", "location": "Ankara", "priority": 1
+      "id": "", "name": "", "location": "", "priority": 1
     },
     "requested_times": [],
     "visitor_count": -1,

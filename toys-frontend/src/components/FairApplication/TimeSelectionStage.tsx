@@ -123,7 +123,7 @@ const TimeSelectionStage: React.FC<TimeSelectionStageProps> = ({
             </Text>
             <Stack gap="sm">
             <TimeInput
-            label="Start Time"
+            label="Başlangıç Zamanı"
             value={startTime}
             onChange={handleStartTimeChange}
             withSeconds={false}
@@ -141,7 +141,7 @@ const TimeSelectionStage: React.FC<TimeSelectionStageProps> = ({
           />
 
 <TimeInput
-            label="End Time"
+            label="Bitiş Zamanı"
             value={endTime}
             onChange={handleEndTimeChange}
             withSeconds={false}

@@ -27,8 +27,8 @@ API endpoints:
                 method: get
                 parameters:
                     auth_token
+                    search= "ODTÜ" // search query
                     //removed: page_no=1 // which page to get
-                    //removed: search= "ODTÜ" // search query
                     //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
                     //removed: sort_by= "name" || "city" || "isRival" // which field to sort by
                     //removed: order= "asc" || "desc" // order of sorting
@@ -123,13 +123,13 @@ API endpoints:
                     value_to_set = "true" // true or false
                 body: auth_token
 
-        /high_schools
+        /high-schools
             /all // Returns all high schools
                 method: get
                 parameters:
                     auth_token
+                    search= "ODTÜ" // search query
                     //removed: pageNo=1 // which page to get
-                    //removed: search= "ODTÜ" // search query
                     //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
                     //removed: sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
                     //removed: order= "asc" || "desc" // order of sorting

@@ -283,10 +283,10 @@
 ```
 {
 	"applicant": {
-		"fullname": "Yavuz XD",
+		"fullname": "Yavuz XD", // it was "namename" before, wtf
 		"email": "yavuz.xd@something.com",
 		"phone": "5555555555",
-		"school": "Ankara Fen Lisesi",
+		"school": HighschoolModel,
 		"notes": "Notes by the applicant",
 	},
 	"start_time": "2024-11-15T14:22:14Z",
