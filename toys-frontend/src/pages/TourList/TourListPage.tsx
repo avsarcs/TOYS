@@ -65,8 +65,10 @@ const TourListPage: React.FC = () => {
       setPage(1);
     }
     else {
+      setLoading(false);
       throw new Error("Something went wrong");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
