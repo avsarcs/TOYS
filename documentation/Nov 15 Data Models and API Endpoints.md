@@ -878,7 +878,7 @@ response_type:json
 				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 				guide_not_assigned (OPTIONAL): bool
 				enrolled_in_fair (OPTIONAL):
-#CHANGED
+		#CHANGED
 				school_name: string
 				to_date: iso date string
 				from_date: iso date string
