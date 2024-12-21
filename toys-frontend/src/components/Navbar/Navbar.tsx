@@ -106,7 +106,9 @@ export const Navbar: React.FC = () => {
         <div className={classes.divider} />
       </div>
       <div className={classes.header} style={{ marginTop: '0', paddingTop: '20px', backgroundColor: '#e0f7ff' }}>
-        {opened && <UserButton />}
+        {opened && <Link to="/profile">
+          <UserButton />
+        </Link>}
         <div className={classes.divider} style={{ marginTop: '10px' }} />
       </div>
      

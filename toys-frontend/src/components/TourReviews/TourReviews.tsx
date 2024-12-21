@@ -66,7 +66,7 @@ const TourReviews: React.FC<TourReviewsProps> = ({ tourId }) => {
         variant="light" 
         title="Bu tur için henüz inceleme yapılmadı"
       >
-        Tur başvurusunu yapan yetkiliye e-postalasına gönderilen linkten inceleme yapması için hatırlatmada bulunabilirsiniz.
+        Tur başvurusunu yapan yetkiliye e-postasına gönderilen linkten inceleme yapması için hatırlatmada bulunabilirsiniz.
       </Alert>
     );
   }
