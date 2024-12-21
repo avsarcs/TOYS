@@ -882,6 +882,8 @@ response_type:json
 				school_name: string
 				to_date: iso date string
 				from_date: iso date string
+				filter_guide_missing: bool
+				filter_trainee_missing: bool 
 			body: auth_token
 			response: list of fairs
 			response_type: json
