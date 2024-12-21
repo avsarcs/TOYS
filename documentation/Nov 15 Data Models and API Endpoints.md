@@ -363,6 +363,24 @@ The `hours_worked` and such refer to the guide with ID provided as a parameter
 }
 ```
 
+!!!! NEW
+# Invitation Model
+If a tour or fair is cancelled / rejected, delete all Invitation models related to it immediately.
+```
+{
+	"inviter": {
+		"id": "id of the inviter",
+		"name": "name of the inviter"
+	},
+	"invited": {
+		"id": "id of the invited guide",
+		"name": "name of the invited guide"
+	}
+	"event_id": fair or tour id
+	"status": "WAITING_RESPONSE" | "ACCEPTED" | "REJECTED"
+}
+```
+
 
 ### Just Front-end
 
@@ -615,7 +633,37 @@ response_type:json
 				}
 				response: 403 if has no Auth as Guide who has pending Advisor Offer
 				response_type: status code
-			
+!!!! NEW
+		/am-enrolled
+			params:
+				auth: auth token
+				event_id: fair or tour id
+			method: get
+			response: true/false
+			response_type: boolean
+			description: returns whether the requesting Guide is enrolled in the event
+
+!!!! NEW
+		/am-invited
+			params:
+				auth: auth token
+				event_id: fair or tour id
+			method: get
+			response: true / false
+			response_type: boolean
+			description: returns whether the requesting Guide is invited to the event
+
+!!!! NEW
+		/invitations (Requires auth as Advisor or up)
+			params:
+				auth: auth token
+				my_invitations: "true" / "false" (OPTIONAL)
+			method: get
+			response: InvitationModel[]
+			response_type: json
+			description: my_invitaitons = true returns the invitations sent by the requester
+
+
 		/profile #
 			parameters:
 				id=id // user bilkent id / empty to get logged in user
@@ -652,6 +700,9 @@ response_type:json
 					// bool value, True=accept
 				method: get
 				response: -
+		
+		/is-invited
+
 		/dashboard
 			parameters:
 				authToken: auth_token

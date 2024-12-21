@@ -9,7 +9,7 @@ import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
 import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
-import { Container, Title, Text, Group, Stack, ThemeIcon } from '@mantine/core';
+import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 
 import { useNavigate } from 'react-router-dom';
