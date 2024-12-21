@@ -33,35 +33,24 @@ public class UserProfileService {
     @Autowired
     AuthService authService;
 
-    public List<Map<String, Object>> getSimpleGuides(String authToken, DTO_UserType type) {
+    public Map<String, Object> getSimpleGuides(String authToken, String id) {
         // validate jwt token
         if (!authService.check(authToken)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
-        List<Map<String, Object>> guides = new ArrayList<>();
-
-        List<Guide> people = database.people.fetchGuides(null);
-        people.addAll(database.people.fetchAdvisors(null));
-        for (Guide guide : people) {
-            if (type == DTO_UserType.TRAINEE) {
-                if (guide.getExperience().getExperienceLevel_level() == ExperienceLevel.TRAINEE) {
-                    guides.add(dto.simpleGuide(guide));
-                }
-            } else if (type == DTO_UserType.GUIDE) {
-                if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
-                    if (guide.getRole() == UserRole.GUIDE) {
-                        guides.add(dto.simpleGuide(guide));
-                    }
-                }
-            } else if (type == DTO_UserType.ADVISOR){
-                if (guide.getRole() == UserRole.ADVISOR) {
-                    guides.add(dto.simpleGuide(guide));
-                }
-            }
+        if (id.isEmpty()) {
+            id = JWTService.getSimpleton().decodeUserID(authToken);
+        }
+        User user = database.people.fetchUser(id);
+        if (user instanceof Advisor) {
+            Map<String, Object> resposnse =  dto.simpleGuide((Advisor) user);
+            resposnse.put("responsible_days", ((Advisor) user).getResponsibleFor());
+        } else if (user instanceof Guide) {
+            return dto.simpleGuide((Guide) user);
         }
 
-        return guides;
+        return Map.of();
     }
 
     public Map<String, Object> getProfile(String id, String auth) {
