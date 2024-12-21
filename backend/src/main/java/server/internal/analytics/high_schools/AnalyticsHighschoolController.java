@@ -23,7 +23,7 @@ public class AnalyticsHighschoolController {
     }
 
     @GetMapping("/internal/analytics/high-schools/details")
-    public DDTO_HighschoolDetails getDetails(@RequestParam String auth, @RequestParam String high_school_id) {
+    public Map<String,Object> getDetails(@RequestParam String auth, @RequestParam String high_school_id) {
         return analyticsHighschoolsService.getDetails(auth, high_school_id);
     }
 

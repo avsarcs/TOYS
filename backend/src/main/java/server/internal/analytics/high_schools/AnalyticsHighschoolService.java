@@ -1,5 +1,6 @@
 package server.internal.analytics.high_schools;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -54,48 +55,56 @@ public class AnalyticsHighschoolService {
         return response;
     }
 
-    public DDTO_HighschoolDetails getDetails(String auth, String high_school_id) {
+    public Map<String, Object> getDetails(String auth, String high_school_id) {
         if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
 
-        HighschoolRecord highschool = database.schools.getHighschoolByID(high_school_id);
-        if (highschool == null) {
+        HighschoolRecord hs = database.schools.getHighschoolByID(high_school_id);
+        if (hs == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Highschool not found!");
         }
 
-        DDTO_HighschoolDetails details = new DDTO_HighschoolDetails();
+        Map<String, Object> details_map = new HashMap<>();
 
-        details.setCity(highschool.getLocation());
-        //details.setRanking(highschool.getRanking());
-        //details.setPriority(highschool.getPriority());
 
-        List<DDTO_YearlyStudentCount> counts = new ArrayList<>();
+        details_map.put("city", hs.getLocation());
+        details_map.put("ranking", hs.getRanking());
+        details_map.put("priority", hs.getPriority());
+
+        List<Map<String, Object>> counts_map = new ArrayList<>();
+
         // go through every year, get total student counts for those years
-        for (UniversityDepartment department : database.universities.getUniversities().get("bilkent").getDepartments()) {
-            for (UniversityDepartmentYear year : department.getYears()) {
-                for (UniHighschoolRecord data : year.highschool_attendee_count) {
+        try {
 
-                    boolean added = false;
-                    for (DDTO_YearlyStudentCount count : counts) {
-                        if (count.getYear().equals(year.year)) {
-                            count.setCount(count.getCount() + data.getTotal());
-                            added = true;
-                            break;
+            for (UniversityDepartment department : database.universities.getUniversities().get("bilkent").getDepartments()) {
+                for (UniversityDepartmentYear year : department.getYears()) {
+                    for (UniHighschoolRecord data : year.highschool_attendee_count) {
+
+                        boolean added = false;
+                        for (Map<String, Object> count : counts_map) {
+                            if (count.get("year").equals(year.year)) {
+                                count.put("count", (int) count.get("count") + data.getTotal());
+                                added = true;
+                                break;
+                            }
                         }
-                    }
-                    if (!added) {
-                        DDTO_YearlyStudentCount newCount = new DDTO_YearlyStudentCount();
-                        newCount.setYear(year.year);
-                        newCount.setCount(data.getTotal());
-                        counts.add(newCount);
-                    }
+                        if (!added) {
+                            Map<String, Object> newCount = new HashMap<>();
+                            newCount.put("year", year.year);
+                            newCount.put("count", data.getTotal());
+                            counts_map.add(newCount);
+                        }
 
+                    }
                 }
             }
+        } catch (Exception E) {
+            E.printStackTrace();
+            System.out.println("There was an error while getting student counts for highschools.");
         }
 
-        details.setStudents(counts);
+        details_map.put("students", counts_map);
 
 
         // Fetch every review done by this school, assign tour id to review
@@ -106,14 +115,21 @@ public class AnalyticsHighschoolService {
         List<ReviewRecord> relatedReviews = database.reviews.getReviewRecords().entrySet().stream().filter(
                 record -> tourIDsForThisSchool.contains(record.getValue().getEvent_id())
         ).map(e -> e.getValue()).toList();
-        Map<String, DDTO_HighschoolTour> highschoolTours = new HashMap<>();
+
+
+        Map<String, Object> HSTours = new HashMap<>();
         for (ReviewRecord reviewRecord : relatedReviews) {
             try {
-                highschoolTours.putIfAbsent(
+                HSTours.putIfAbsent(
                         reviewRecord.getEvent_id(),
-                        new DDTO_HighschoolTour()
-                                .setTour_id(reviewRecord.getEvent_id())
-                                .setReview_rating(database.reviews.getReview(reviewRecord.getReview_id()).getEvent_review().getScore())
+                        Map.of(
+                                "date", database.tours.fetchTour(reviewRecord.getEvent_id()).getStarted_at(),
+                                "attendance", database.tours.fetchTour(reviewRecord.getEvent_id()).getExpected_souls(),
+                                "review_rating", database.reviews.getReview(reviewRecord.getReview_id()).getEvent_review().getScore(),
+                                "contact", database.tours.fetchTour(reviewRecord.getEvent_id()).getApplicant().getContact_info().getEmail(),
+                                "tour_id", reviewRecord.getEvent_id()
+                        )
+
                 );
             } catch (Exception e) {
                 e.printStackTrace();
@@ -121,9 +137,9 @@ public class AnalyticsHighschoolService {
             }
         }
 
-        details.setTours(highschoolTours.values().stream().toList());
+        details_map.put("tours", HSTours);
 
-        return details;
+        return details_map;
     }
 
 
