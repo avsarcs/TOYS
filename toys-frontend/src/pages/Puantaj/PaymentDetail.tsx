@@ -15,6 +15,7 @@ const PaymentDetail: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const { guideId } = useParams<{ guideId: string }>();
     const userContext = useContext(UserContext);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getPayments().catch((reason) => {
@@ -22,8 +23,21 @@ const PaymentDetail: React.FC = () => {
         });
     }, [guideId]);
 
+    const formatISODate = (isoDate: string | number | Date) => {
+        const date = new Date(isoDate);
+        console.log(isoDate);
+        return date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hourCycle: "h23",
+        });
+    };
 
     const getPayments = useCallback(async () => {
+        setLoading
         const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
         const url = new URL(apiURL + "internal/management/timesheet/payment-state/event");
         try
@@ -58,6 +72,10 @@ const PaymentDetail: React.FC = () => {
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
+        finally
+        {
+            setLoading(false);
+        }
     },[userContext.authToken]);
 
     const filteredPayments = tourPayments.filter((payment) => {
@@ -86,151 +104,239 @@ const PaymentDetail: React.FC = () => {
     };
 
     return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-        <button
-                        onClick={() => handleBackToGuides()}
+        <div style={{ position: "relative" }}>
+        {/* Loading Spinner Overlay */}
+        {loading && (
+            <div
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 1000,
+                    backdropFilter: "blur(5px)",
+                }}
+            >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div
                         style={{
-                            padding: "10px 30px",
-                            background: "#5c6bc0",
-                            color: "#fff",
+                            width: "50px",
+                            height: "50px",
+                            border: "6px solid #ccc",
+                            borderTop: "6px solid #007bff",
+                            borderRadius: "50%",
+                            animation: "spin 1s linear infinite",
+                        }}
+                    ></div>
+                    <p style={{ marginTop: "10px", fontSize: "1.2em", color: "#007bff" }}>
+                        Yükleniyor...
+                    </p>
+                </div>
+            </div>
+        )}
+    
+        {/* Main Content */}
+        <div
+            style={{
+                filter: loading ? "blur(5px)" : "none",
+                pointerEvents: loading ? "none" : "auto",
+            }}
+        >
+            <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+                <button
+                    onClick={() => handleBackToGuides()}
+                    style={{
+                        padding: "10px 30px",
+                        background: "#5c6bc0",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "20px",
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        fontSize: "1.2em",
+                    }}
+                >
+                    Back to All Guides
+                </button>
+                <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}>
+                    <b>Guide Payments</b>
+                </h1>
+                <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
+                    <p>
+                        <b>Viewing payments for guide: </b>
+                        {tourPayments.length > 0 && typeof tourPayments[0].guide_name === "string"
+                            ? tourPayments[0].guide_name
+                            : "Unknown"}
+                    </p>
+                </h2>
+    
+                <div style={{ height: "20px" }}></div>
+    
+                <div>
+                    <button
+                        onClick={() => setFilter("all")}
+                        style={{
+                            padding: "10px 15px",
+                            marginRight: "10px",
                             border: "none",
+                            background: filter === "all" ? "#d7bde2" : "#f1f1f1",
+                            color: filter === "all" ? "#6a1b9a" : "#000",
                             borderRadius: "20px",
-                            cursor: "pointer",
                             fontWeight: "bold",
-                            fontSize: "1.2em",
                         }}
                     >
-                        Back to All Guides
+                        All Tours
                     </button>
-    <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Guide Payments</b></h1>
-    <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
-    <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
-    <p><b>Viewing payments for guide: </b>
-        {tourPayments.length > 0 && typeof tourPayments[0].guide_name === "string"
-            ? tourPayments[0].guide_name
-            : "Unknown"}
-    </p>
-</h2>
-
-    </h2>
-    <div style={{ height: "20px" }}></div>
+                    <button
+                        onClick={() => setFilter("paid")}
+                        style={{
+                            padding: "10px 15px",
+                            marginRight: "10px",
+                            border: "none",
+                            background: filter === "paid" ? "#a5d6a7" : "#f1f1f1",
+                            color: filter === "paid" ? "#388e3c" : "#000",
+                            borderRadius: "20px",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Paid Tours
+                    </button>
+                    <button
+                        onClick={() => setFilter("unpaid")}
+                        style={{
+                            padding: "10px 15px",
+                            marginRight: "10px",
+                            border: "none",
+                            background: filter === "unpaid" ? "#ef9a9a" : "#f1f1f1",
+                            color: filter === "unpaid" ? "#d32f2f" : "#000",
+                            borderRadius: "20px",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Unpaid Tours
+                    </button>
+                </div>
     
-    <div>
-        <button
-            onClick={() => setFilter("all")}
-            style={{
-                padding: "10px 15px",
-                marginRight: "10px",
-                border: "none",
-                background: filter === "all" ? "#5c6bc0" : "#f1f1f1",
-                color: filter === "all" ? "#fff" : "#000",
-                borderRadius: "4px",
-            }}
-        >
-            All Tours
-        </button>
-        <button
-            onClick={() => setFilter("paid")}
-            style={{
-                padding: "10px 15px",
-                marginRight: "10px",
-                border: "none",
-                background: filter === "paid" ? "#4caf50" : "#f1f1f1",
-                color: filter === "paid" ? "#fff" : "#000",
-                borderRadius: "4px",
-            }}
-        >
-            Paid Tours
-        </button>
-        <button
-            onClick={() => setFilter("unpaid")}
-            style={{
-                padding: "10px 15px",
-                marginRight: "10px",
-                border: "none",
-                background: filter === "unpaid" ? "#f44336" : "#f1f1f1",
-                color: filter === "unpaid" ? "#fff" : "#000",
-                borderRadius: "4px",
-            }}
-        >
-            Unpaid Tours
-        </button>
-    </div>
-
-    <div style={{ marginTop: "20px" }}>
-        {paginatedPayments.length === 0 ? (
-            <p style={{ textAlign: "center", color: "red" }}>No record found.</p>
-        ) : (
-            paginatedPayments.map((payment) => (
+                <div style={{ marginTop: "20px" }}>
+                    {paginatedPayments.length === 0 ? (
+                        <p style={{ textAlign: "center", color: "red" }}>No record found.</p>
+                    ) : (
+                        paginatedPayments.map((payment) => (
+                            <div
+                                key={payment.event_id}
+                                style={{
+                                    padding: "20px",
+                                    marginBottom: "10px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    backgroundColor: "#f5f5f5",
+                                    borderRadius: "20px",
+                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    fontSize: "1.2em",
+                                }}
+                            >
+                                <div>
+                                    <p>
+                                        <b>Event Type: </b>
+                                        <span
+                                            style={{
+                                                backgroundColor:
+                                                    payment.event_type === "TOUR"
+                                                        ? "#ffcc80"
+                                                        : "#90caf9",
+                                                color:
+                                                    payment.event_type === "TOUR"
+                                                        ? "#e65100"
+                                                        : "#1e88e5",
+                                                padding: "5px 10px",
+                                                borderRadius: "10px",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            {payment.event_type}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <b>Event Highschool: </b>
+                                        {payment.event_highschool.name}
+                                    </p>
+                                    <p>
+                                        <b>Event ID: </b>
+                                        {payment.event_id}
+                                    </p>
+                                    <p>
+                                        <b>Event Date: </b>
+                                        {formatISODate(payment.event_date)}
+                                    </p>
+                                    <p>
+                                        <b>Hourly Rate: </b>
+                                        {payment.hourly_rate}
+                                    </p>
+                                    <p>
+                                        <b>Hours Worked: </b>
+                                        {payment.hours_worked}
+                                    </p>
+                                    <p>
+                                        <b>Money Debted: </b>
+                                        {payment.money_debted}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+    
+                {/* Pagination Controls */}
                 <div
-                  key={payment.event_id} // Use a unique key
-                  style={{
-                    padding: "20px",
-                    marginBottom: "10px",
-                    border: "1px solid #ccc",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "lightblue", 
-                    borderRadius: "8px", 
-                  }}
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "20px",
+                    }}
                 >
-                  <div>
-                    <p><b>Event Type: </b>{payment.event_type}</p>
-                    <p><b>Event Highschool: </b>{payment.event_highschool.name}</p>
-                    <p><b>Event ID: </b>{payment.event_id}</p>
-                    <p><b>Event Date: </b>{payment.event_date}</p>
-                    <p><b>Hourly Rate: </b>{payment.hourly_rate}</p>
-                    <p><b>Hours Worked: </b>{payment.hours_worked}</p>
-                    <p><b>Money Debted: </b>{payment.money_debted}</p>
-                  </div>
-                </div>           
-            ))
-        )}
+                    <button
+                        onClick={() => handlePageChange("prev")}
+                        disabled={currentPage === 1}
+                        style={{
+                            padding: "10px 15px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            marginRight: "10px",
+                            cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                            background: currentPage === 1 ? "#f1f1f1" : "#fff",
+                        }}
+                    >
+                        Previous
+                    </button>
+                    <span>
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        onClick={() => handlePageChange("next")}
+                        disabled={currentPage === totalPages}
+                        style={{
+                            padding: "10px 15px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            marginLeft: "10px",
+                            cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                            background: currentPage === totalPages ? "#f1f1f1" : "#fff",
+                        }}
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    {/* Pagination Controls */}
-    <div
-        style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "20px",
-        }}
-    >
-        <button
-            onClick={() => handlePageChange("prev")}
-            disabled={currentPage === 1}
-            style={{
-                padding: "10px 15px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginRight: "10px",
-                cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                background: currentPage === 1 ? "#f1f1f1" : "#fff",
-            }}
-        >
-            Previous
-        </button>
-        <span>
-            Page {currentPage} of {totalPages}
-        </span>
-        <button
-            onClick={() => handlePageChange("next")}
-            disabled={currentPage === totalPages}
-            style={{
-                padding: "10px 15px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginLeft: "10px",
-                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                background: currentPage === totalPages ? "#f1f1f1" : "#fff",
-            }}
-        >
-            Next
-        </button>
-    </div>
-</div> );
+     );
 };
 
 export default PaymentDetail;

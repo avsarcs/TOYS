@@ -19,6 +19,7 @@ const GuidePayments: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const userContext = useContext(UserContext);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getInfo().catch((reason) => {
@@ -28,6 +29,7 @@ const GuidePayments: React.FC = () => {
 
 
     const getInfo = useCallback( async() => {
+        setLoading(true);
         const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
         const url = new URL(apiURL + "internal/management/timesheet/payment-state/guides");
         try 
@@ -58,6 +60,9 @@ const GuidePayments: React.FC = () => {
                 title: "Hay aksi!",
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
+        }
+        finally {
+            setLoading(false); // Set loading to false after data is fetched
         }
     },[userContext.authToken]);
 
@@ -144,223 +149,337 @@ const GuidePayments: React.FC = () => {
     };
 
     return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-    <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Ödemeler</b></h1>
-    <div style={{ height: "20px" }}></div>
-    <div style={{ marginBottom: "20px", textAlign: "center", background: "#fff", borderRadius: "10px", padding: "20px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
-        <input
-            type="text"
-            placeholder="İsim aratın"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-                padding: "10px",
-                width: "60%",
-                marginBottom: "10px",
-                borderRadius: "20px",
-                border: "1px solid #ccc",
-            }}
-        />
-        <button
-            onClick={handleSearch}
-            style={{
-                padding: "10px 15px",
-                marginLeft: "10px",
-                borderRadius: "20px",
-                background: "#5c6bc0",
-                color: "#fff",
-                border: "none",
-            }}
-        >
-            Ara
-        </button>
-    </div>
-    
-    <div style={{ background: "#fff", borderRadius: "10px", padding: "20px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
-        <button
-            onClick={() => setFilter("all")}
-            style={{
-            padding: "10px 15px",
-            marginRight: "10px",
-            border: "none",
-            background: filter === "all" ? "#d7bde2" : "#f1f1f1", // pastel purple when selected
-            color: filter === "all" ? "purple" : "#000", // purple bold text when selected
-            fontWeight: "bold",
-            borderRadius: "20px",
-            }}
-        >
-            Tüm Ödemeler
-        </button>
-        <button
-            onClick={() => setFilter("paid")}
-            style={{
-            padding: "10px 15px",
-            marginRight: "10px",
-            border: "none",
-            background: filter === "paid" ? "#a8e6a1" : "#f1f1f1", // pastel light green when selected
-            color: filter === "paid" ? "green" : "#000", // green text when selected
-            fontWeight: "bold",
-            borderRadius: "20px",
-            }}
-        >
-            Yapılmış Ödemeler
-        </button>
-        <button
-            onClick={() => setFilter("unpaid")}
-            style={{
-            padding: "10px 15px",
-            marginRight: "10px",
-            border: "none",
-            background: filter === "unpaid" ? "#f8a1a1" : "#f1f1f1", // pastel red when selected
-            color: filter === "unpaid" ? "red" : "#000", // red text when selected
-            fontWeight: "bold",
-            borderRadius: "20px",
-            }}
-        >
-            Yapılmamış Ödemeler 
-        </button>
-        <button
-            onClick={() => paymentsData.forEach(payment => handlePayDebt(payment.guide.id))}
-            style={{
-            padding: "10px 15px",
-            border: "none",
-            background: "lightpink",
-            color: "red",
-            float: "right",
-            fontWeight: "bold",
-            borderRadius: "20px",
-            }}
-        >
-            Tüm Borçları Öde
-        </button>
-        <button
-            onClick={() => navigate('/change-hourly-rate')}
-            style={{
-            marginRight: "10px",
-            padding: "10px 15px",
-            border: "none",
-            background: "lightpink",
-            color: "red",
-            fontWeight: "bold",
-            borderRadius: "20px",
-            float: "right",
-            }}
-        >
-            Saatlik Ücreti Güncelle
-        </button>
-    </div>
-
-    <div style={{ marginTop: "20px" }}>
-        {paginatedPayments.length === 0 ? (
-            <p style={{ textAlign: "center", color: "red" }}>Kayıt bulunamadı.</p>
-        ) : (
-            paginatedPayments.map((payment) => (
+        <div style={{ position: "relative" }}>
+            {/* Loading Spinner Overlay */}
+            {loading && (
                 <div
-                    key={payment.guide.id}
                     style={{
-                        padding: "20px",
-                        marginBottom: "10px",
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
                         display: "flex",
-                        justifyContent: "space-between",
+                        justifyContent: "center",
                         alignItems: "center",
-                        backgroundColor: "#f1f1f1", 
-                        borderRadius: "20px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        maxWidth: "1850px",
-                        margin: "10px auto",
+                        zIndex: 1000,
+                        backdropFilter: "blur(5px)",
                     }}
                 >
-                    <div>
-                        <h1 style={{ fontSize: "1.5em", color: "darkblue" }}><b>{payment.guide.name}</b></h1>
-                        <p><b>Guide ID: </b> {payment.guide.id}</p>
-                        <p><b>Guide IBAN: </b> {payment.guide.iban}</p>
-                        <p><b>Guide Bank: </b> {payment.guide.bank}</p>
-                        <p><b>Unpaid Hours: </b>{payment.unpaid_hours}</p>
-                        <p><b>Debt: </b>{payment.debt}</p>
-                        <p><b>Total Amount Paid: </b>{payment.money_paid}</p>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <div
+                            style={{
+                                width: "50px",
+                                height: "50px",
+                                border: "6px solid #ccc",
+                                borderTop: "6px solid #007bff",
+                                borderRadius: "50%",
+                                animation: "spin 1s linear infinite",
+                            }}
+                        ></div>
+                        <p style={{ marginTop: "10px", fontSize: "1.2em", color: "#007bff" }}>
+                            Yükleniyor...
+                        </p>
                     </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                    <button
-                        onClick={() => handleDetails(payment.guide.id.toString())}
+                </div>
+            )}
+    
+            {/* Main Content */}
+            <div
+                style={{
+                    filter: loading ? "blur(5px)" : "none",
+                    pointerEvents: loading ? "none" : "auto",
+                }}
+            >
+                <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+                    <h1
                         style={{
-                            padding: "20px 60px",
-                            background: "#b7cced",
-                            color: "darkblue",
-                            border: "none",
-                            borderRadius: "20px",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                            fontSize: "1.2em",
+                            fontSize: "2.5em",
+                            color: "blue",
+                            textAlign: "center",
                         }}
                     >
-                        Ödeme Detayları
-                    </button>
-                    {payment.debt > 0 && (
-                        <button
-                            onClick={() => handlePayDebt(payment.guide.id)}
+                        <b>Ödemeler</b>
+                    </h1>
+                    <div style={{ height: "20px" }}></div>
+                    <div
+                        style={{
+                            marginBottom: "20px",
+                            textAlign: "center",
+                            background: "#fff",
+                            borderRadius: "10px",
+                            padding: "20px",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        }}
+                    >
+                        <input
+                            type="text"
+                            placeholder="İsim aratın"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             style={{
-                                padding: "20px 60px",
-                                background: "#d4edd3",
-                                color: "darkgreen",
-                                border: "none",
+                                padding: "10px",
+                                width: "60%",
+                                marginBottom: "10px",
                                 borderRadius: "20px",
-                                cursor: "pointer",
-                                fontWeight: "bold",
-                                fontSize: "1.2em",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                        <button
+                            onClick={handleSearch}
+                            style={{
+                                padding: "10px 15px",
+                                marginLeft: "10px",
+                                borderRadius: "20px",
+                                background: "#5c6bc0",
+                                color: "#fff",
+                                border: "none",
                             }}
                         >
-                            Borç Öde
+                            Ara
                         </button>
-                    )}
+                    </div>
+    
+                    <div
+                        style={{
+                            background: "#fff",
+                            borderRadius: "10px",
+                            padding: "20px",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        }}
+                    >
+                        <button
+                            onClick={() => setFilter("all")}
+                            style={{
+                                padding: "10px 15px",
+                                marginRight: "10px",
+                                border: "none",
+                                background: filter === "all" ? "#d7bde2" : "#f1f1f1",
+                                color: filter === "all" ? "purple" : "#000",
+                                fontWeight: "bold",
+                                borderRadius: "20px",
+                            }}
+                        >
+                            Tüm Ödemeler
+                        </button>
+                        <button
+                            onClick={() => setFilter("paid")}
+                            style={{
+                                padding: "10px 15px",
+                                marginRight: "10px",
+                                border: "none",
+                                background: filter === "paid" ? "#a8e6a1" : "#f1f1f1",
+                                color: filter === "paid" ? "green" : "#000",
+                                fontWeight: "bold",
+                                borderRadius: "20px",
+                            }}
+                        >
+                            Yapılmış Ödemeler
+                        </button>
+                        <button
+                            onClick={() => setFilter("unpaid")}
+                            style={{
+                                padding: "10px 15px",
+                                marginRight: "10px",
+                                border: "none",
+                                background: filter === "unpaid" ? "#f8a1a1" : "#f1f1f1",
+                                color: filter === "unpaid" ? "red" : "#000",
+                                fontWeight: "bold",
+                                borderRadius: "20px",
+                            }}
+                        >
+                            Yapılmamış Ödemeler
+                        </button>
+                        <button
+                            onClick={() =>
+                                paymentsData.forEach((payment) =>
+                                    handlePayDebt(payment.guide.id)
+                                )
+                            }
+                            style={{
+                                padding: "10px 15px",
+                                border: "none",
+                                background: "lightpink",
+                                color: "red",
+                                float: "right",
+                                fontWeight: "bold",
+                                borderRadius: "20px",
+                            }}
+                        >
+                            Tüm Borçları Öde
+                        </button>
+                        <button
+                            onClick={() => navigate("/change-hourly-rate")}
+                            style={{
+                                marginRight: "10px",
+                                padding: "10px 15px",
+                                border: "none",
+                                background: "lightpink",
+                                color: "red",
+                                fontWeight: "bold",
+                                borderRadius: "20px",
+                                float: "right",
+                            }}
+                        >
+                            Saatlik Ücreti Güncelle
+                        </button>
+                    </div>
+    
+                    <div style={{ marginTop: "20px" }}>
+                        {paginatedPayments.length === 0 ? (
+                            <p style={{ textAlign: "center", color: "red" }}>
+                                Kayıt bulunamadı.
+                            </p>
+                        ) : (
+                            paginatedPayments.map((payment) => (
+                                <div
+                                    key={payment.guide.id}
+                                    style={{
+                                        padding: "20px",
+                                        marginBottom: "10px",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        backgroundColor: "#f1f1f1",
+                                        borderRadius: "20px",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                        maxWidth: "1850px",
+                                        margin: "10px auto",
+                                    }}
+                                >
+                                    <div>
+                                        <h1
+                                            style={{
+                                                fontSize: "1.5em",
+                                                color: "darkblue",
+                                            }}
+                                        >
+                                            <b>{payment.guide.name}</b>
+                                        </h1>
+                                        <p>
+                                            <b>Guide ID: </b> {payment.guide.id}
+                                        </p>
+                                        <p>
+                                            <b>Guide IBAN: </b> {payment.guide.iban}
+                                        </p>
+                                        <p>
+                                            <b>Guide Bank: </b> {payment.guide.bank}
+                                        </p>
+                                        <p>
+                                            <b>Unpaid Hours: </b>
+                                            {payment.unpaid_hours}
+                                        </p>
+                                        <p>
+                                            <b>Debt: </b>
+                                            {payment.debt}
+                                        </p>
+                                        <p>
+                                            <b>Total Amount Paid: </b>
+                                            {payment.money_paid}
+                                        </p>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            gap: "10px",
+                                        }}
+                                    >
+                                        <button
+                                            onClick={() =>
+                                                handleDetails(
+                                                    payment.guide.id.toString()
+                                                )
+                                            }
+                                            style={{
+                                                padding: "20px 60px",
+                                                background: "#b7cced",
+                                                color: "darkblue",
+                                                border: "none",
+                                                borderRadius: "20px",
+                                                cursor: "pointer",
+                                                fontWeight: "bold",
+                                                fontSize: "1.2em",
+                                            }}
+                                        >
+                                            Ödeme Detayları
+                                        </button>
+                                        {payment.debt > 0 && (
+                                            <button
+                                                onClick={() =>
+                                                    handlePayDebt(payment.guide.id)
+                                                }
+                                                style={{
+                                                    padding: "20px 60px",
+                                                    background: "#d4edd3",
+                                                    color: "darkgreen",
+                                                    border: "none",
+                                                    borderRadius: "20px",
+                                                    cursor: "pointer",
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.2em",
+                                                }}
+                                            >
+                                                Borç Öde
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+    
+                    {/* Pagination Controls */}
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginTop: "20px",
+                        }}
+                    >
+                        <button
+                            onClick={() => handlePageChange("prev")}
+                            disabled={currentPage === 1}
+                            style={{
+                                padding: "10px 15px",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                                marginRight: "10px",
+                                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                                background:
+                                    currentPage === 1 ? "#f1f1f1" : "#fff",
+                            }}
+                        >
+                            Önceki Sayfa
+                        </button>
+                        <span>
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            onClick={() => handlePageChange("next")}
+                            disabled={currentPage === totalPages}
+                            style={{
+                                padding: "10px 15px",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                                marginLeft: "10px",
+                                cursor:
+                                    currentPage === totalPages
+                                        ? "not-allowed"
+                                        : "pointer",
+                                background:
+                                    currentPage === totalPages ? "#f1f1f1" : "#fff",
+                            }}
+                        >
+                            Sonraki Sayfa
+                        </button>
+                    </div>
                 </div>
-                    
-                </div>
-            ))
-        )}
-    </div>
-
-    {/* Pagination Controls */}
-    <div
-        style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "20px",
-        }}
-    >
-        <button
-            onClick={() => handlePageChange("prev")}
-            disabled={currentPage === 1}
-            style={{
-                padding: "10px 15px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginRight: "10px",
-                cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                background: currentPage === 1 ? "#f1f1f1" : "#fff",
-            }}
-        >
-            Önceki Sayfa
-        </button>
-        <span>
-            Page {currentPage} of {totalPages}
-        </span>
-        <button
-            onClick={() => handlePageChange("next")}
-            disabled={currentPage === totalPages}
-            style={{
-                padding: "10px 15px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginLeft: "10px",
-                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                background: currentPage === totalPages ? "#f1f1f1" : "#fff",
-            }}
-        >
-            Sonraki Sayfa
-        </button>
-    </div>
-</div> );
+            </div>
+        </div>
+    );
+    
 };
 
 export default GuidePayments;
