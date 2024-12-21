@@ -47,10 +47,10 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />}></Route>
             <Route path="/*" element={<Force404 />} />
-            <Route path="/comparison" element={<CheckLogin redirect children={<Comparison />}/>} />
-            <Route path="/dashboard" element={<CheckLogin redirect children={<Dashboard />}/>} />
-            <Route path="/tour/:tourId" element={<CheckLogin redirect children={<TourPage />}/>} />
-            <Route path="/tours" element={<CheckLogin children={<TourListPage />}/>}/>
+            <Route path="/comparison" element={<CheckLogin redirect required children={<Comparison />}/>} />
+            <Route path="/dashboard" element={<CheckLogin redirect required children={<Dashboard />}/>} />
+            <Route path="/tour/:tourId" element={<CheckLogin redirect required children={<TourPage />}/>} />
+            <Route path="/tours" element={<CheckLogin redirect required children={<TourListPage />}/>}/>
             <Route path="/universitieslist" element={<CheckLogin redirect children={<UniversitiesList />}/>}/>
             <Route path="/rivalslist" element={<CheckLogin redirect children={<RivalsList />}/>} />
             <Route path="/highschoolslist" element={<CheckLogin redirect children={<HighSchoolsList />}/>} />
@@ -58,18 +58,18 @@ function App() {
             <Route path="/group-tour-application" element={<GroupTourApplication />} />
             <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
             <Route path="/application-success" element={<ApplicationSuccess />}/>
-            <Route path="/toys-applications" element={<CheckLogin redirect children={<ToysApplications />}/>} />
-            <Route path="/trainee-application-details/:application_id" element={<CheckLogin redirect children={<TraineeApplicationDetails />}/>}/>
-            <Route path="/advisor-offers" element={<CheckLogin redirect children={<AdvisorOffers />}/>} />
-            <Route path="/guide-payments" element={<CheckLogin redirect children={<GuidePayments />}/>} />
-            <Route path="/payment-detail/:guideId" element={<CheckLogin redirect children={<PaymentDetail />}/>} />
-            <Route path="/profile/:profileId" element={<CheckLogin redirect children={<ProfilePage />}/>}/>
-            <Route path="/profile" element={<CheckLogin redirect children={<ProfilePage />}/>}/>
-            <Route path="/edit-profile" element={<CheckLogin redirect checkOnce children={<EditProfilePage />}/>}/>
+            <Route path="/toys-applications" element={<CheckLogin required redirect children={<ToysApplications />}/>} />
+            <Route path="/trainee-application-details/:application_id" element={<CheckLogin required redirect children={<TraineeApplicationDetails />}/>}/>
+            <Route path="/advisor-offers" element={<CheckLogin required redirect children={<AdvisorOffers />}/>} />
+            <Route path="/guide-payments" element={<CheckLogin required redirect children={<GuidePayments />}/>} />
+            <Route path="/payment-detail/:guideId" element={<CheckLogin required redirect children={<PaymentDetail />}/>} />
+            <Route path="/profile/:profileId" element={<CheckLogin required redirect children={<ProfilePage />}/>}/>
+            <Route path="/profile" element={<CheckLogin required redirect children={<ProfilePage />}/>}/>
+            <Route path="/edit-profile" element={<CheckLogin required redirect checkOnce children={<EditProfilePage />}/>}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
-            <Route path="/review/:review-id" element={<CheckLogin redirect children={<ReviewDetailsPage />}/>}/>
-            <Route path="/tourstatistics" element={<CheckLogin redirect children={<TourStatistics />}/>}/>
-            <Route path="/manage-personnel" element={<CheckLogin redirect children={<ManagePersonnel />}/>}/>
+            <Route path="/review/:review-id" element={<CheckLogin required redirect children={<ReviewDetailsPage />}/>}/>
+            <Route path="/tourstatistics" element={<CheckLogin required redirect children={<TourStatistics />}/>}/>
+            <Route path="/manage-personnel" element={<CheckLogin required redirect children={<ManagePersonnel />}/>}/>
             <Route path="/applicant-respond/:passkey" element={<ApplicantRespond />} />
             <Route path="/applicant-request/:passkey" element={<ApplicantRequest />}/>
           </Routes>

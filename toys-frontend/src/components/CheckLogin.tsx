@@ -1,7 +1,7 @@
 import {CheckLoginProps} from "../types/generic.ts";
 import {UserContext} from "../context/UserContext.tsx";
 import React, {useContext, useEffect, useState} from "react";
-import {Box, LoadingOverlay, Text} from "@mantine/core"
+import {Box, LoadingOverlay} from "@mantine/core"
 import {FetchingStatus} from "../types/enum.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 
@@ -11,13 +11,15 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
   const userContext = useContext(UserContext);
   const [fetchedOnce, setFetchedOnce] = useState(false);
   const [rendering, setRendering] = useState(false);
+  const [validRole, setValidRole] = useState(false);
 
   useEffect(() => {
     switch (userContext.fetchStatus) {
       case FetchingStatus.DONE:
         if(userContext.isLoggedIn) {
-          setRendering(true);
           setFetchedOnce(true);
+          setValidRole(props.acceptedRoles?.includes(userContext.user.role) ?? true);
+          setRendering(true);
         }
         else {
           if(fetchedOnce || !props.checkOnce) {
@@ -35,8 +37,23 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
       <>
         {
           (props.checkOnce && fetchedOnce) || userContext.fetchStatus === FetchingStatus.DONE
-            ? props.children
-            : <Text>Something went wrong when fetching user. Refresh the page or contact a site administrator.</Text>
+            ?
+            validRole
+              ?
+              props.children
+              : props.required
+                ?
+                (() => {
+                  throw new Error("User does not have permission to access this page.");
+                })()
+                : null
+            :
+                props.required
+                  ?
+                  (() => {
+                    throw new Error("Something went wrong when fetching user. Refresh the page or contact a site administrator.")
+                  })()
+                  : null
         }
       </>
     )
