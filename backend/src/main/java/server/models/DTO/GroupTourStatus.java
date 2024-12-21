@@ -11,9 +11,9 @@ public enum GroupTourStatus {
 
     public static GroupTourStatus fromTourStatus(TourStatus status) {
         switch (status) {
-            case AWAITING_CONFIRMATION:
+            case RECEIVED:
                 return AWAITING_CONFIRMATION;
-            case AWAITING_CHANGES:
+            case PENDING_MODIFICATION:
                 return APPLICANT_WANTS_CHANGE;
             case CONFIRMED:
                 return APPROVED;

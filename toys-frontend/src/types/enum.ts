@@ -1,4 +1,4 @@
-export enum UserFetchingStatus {
+export enum FetchingStatus {
   NONE = -1,
   FETCHING,
   DONE,
@@ -85,7 +85,7 @@ export enum DashboardCategory {
 
 export enum DashboardCategoryText {
   NONE = "Boş :(",
-  OWN_EVENT = "Atanmış Etkinlikler",
+  OWN_EVENT = "Rehberlik Edeceğiniz Etkinlikler",
   EVENT_INVITATION = "Rehberlik Etme Davetiyeleri",
   PENDING_APPLICATION = "Etkinlik Başvuruları",
   GUIDE_ASSIGNED = "Rehber Atanmış Etkinlikler",
@@ -99,8 +99,8 @@ export enum ApplicantRole {
 }
 
 export enum TourType {
-  GROUP = "GROUP",
-  INDIVIDUAL = "INDIVIDUAL",
+  GROUP = "group",
+  INDIVIDUAL = "individual",
 }
 
 export enum TourTypeText {
@@ -110,7 +110,8 @@ export enum TourTypeText {
 
 export enum TourStatus {
   RECEIVED = "RECEIVED",
-  PENDING_MODIFICATION = "PENDING_MODIFICATION",
+  TOYS_WANTS_CHANGE = "TOYS_WANTS_CHANGE",
+  APPLICANT_WANTS_CHANGE = "APPLICANT_WANTS_CHANGE",
   CONFIRMED = "CONFIRMED",
   REJECTED = "REJECTED",
   CANCELLED = "CANCELLED",
@@ -119,8 +120,9 @@ export enum TourStatus {
 }
 
 export enum TourStatusText {
-  RECEIVED = "Kabul Bekliyor",
-  PENDING_MODIFICATION = "Değişiklik Bekliyor",
+  RECEIVED = "Onay Bekliyor",
+  TOYS_WANTS_CHANGE = "Değişiklik Talebi Gönderildi",
+  APPLICANT_WANTS_CHANGE = "Başvuran Değişiklik Yaptı",
   CONFIRMED = "Kabul Edildi",
   REJECTED = "Reddedildi",
   CANCELLED = "İptal Edildi",
@@ -130,7 +132,6 @@ export enum TourStatusText {
 
 export enum FairStatus {
   RECEIVED = "RECEIVED",
-  PENDING_MODIFICATION = "PENDING_MODIFICATION",
   CONFIRMED = "CONFIRMED",
   REJECTED = "REJECTED",
   CANCELLED = "CANCELLED",

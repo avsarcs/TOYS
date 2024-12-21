@@ -12,6 +12,11 @@ public class LoginInfo {
         this.password = password;
     }
 
+    protected LoginInfo(Map<String, Object> map) {
+        this.bilkentID = (String) map.get("bilkentID");
+        this.password = (String) map.get("password");
+    }
+
     public static LoginInfo fromMap(Map<String, Object> map) {
         LoginInfo loginInfo = new LoginInfo((String) map.get("bilkentID"), (String) map.get("password"));
         return loginInfo;

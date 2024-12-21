@@ -1,10 +1,10 @@
-import { Button, Card, Center, Image, Space, Stack, Text, Title } from "@mantine/core";
-import { DashboardInfoBoxProps } from "../../types/designed.ts";
-import React, { useMemo } from "react";
-import { DashboardCategory, EventTypeText } from "../../types/enum.ts";
+import {Button, Card, Center, Image, Space, Stack, Text, Title} from "@mantine/core";
+import {DashboardInfoBoxProps} from "../../types/designed.ts";
+import React, {useMemo} from "react";
+import {DashboardCategory, EventType, EventTypeText, TourType, TourTypeText} from "../../types/enum.ts";
 import dayjs from "dayjs";
-import { Link } from "react-router-dom";
-import { IconCircleCheck, IconCircleX, IconUsers } from "@tabler/icons-react";
+import {Link} from "react-router-dom";
+import {IconCircleCheck, IconCircleX, IconUsers} from "@tabler/icons-react";
 
 const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) => {
   const buttons = useMemo(() => {
@@ -58,6 +58,24 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
     }
   }, [props.item, props.category]);
 
+  const icon = useMemo(() => {
+    switch(props.item.event_type) {
+      case EventType.TOUR:
+        if(props.item.event_subtype === TourType.INDIVIDUAL) {
+          return "individual_tour_icon.svg";
+        }
+        else if (props.item.event_subtype === TourType.GROUP) {
+          return "group_tour_icon.svg";
+        }
+        else {
+          return "";
+        }
+      default: return "";
+    }
+  }, [props.item.event_type, props.item.event_subtype]);
+
+  console.log(props.item);
+
   return (
     <Stack justify="flex-start" align="center">
       <Title order={2} fw={700} className="text-blue-700 font-main">
@@ -68,11 +86,12 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
           <Image
             w="auto"
             h="10rem"
+            src={icon}
             fallbackSrc="https://placehold.co/600x400?text=Placeholder"
           />
         </Center>
         <Space h="sm"/>
-        <Title order={3} fw={700} className="font-main">{ EventTypeText[props.item.event_type] }</Title>
+        <Title order={3} fw={700} className="font-main">{ TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type] }</Title>
         <Space h="sm"/>
         <Card.Section inheritPadding ta="start">
           <Text size="lg" className="text-gray-600">

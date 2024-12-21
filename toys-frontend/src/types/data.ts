@@ -35,6 +35,7 @@ export interface HighschoolData {
 }
 
 export interface TourData {
+  tour_id: string,
   type: TourType,
   highschool: HighschoolData,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
@@ -107,6 +108,7 @@ export interface DailyPlan {
 
 export interface SimpleEventData {
   event_type: EventType,
+  event_subtype: TourType,
   event_id: string,
   event_status: TourStatus,
   highschool: HighschoolData,
@@ -118,6 +120,7 @@ export interface SimpleEventData {
 export interface SimpleGuideData {
   id: string,
   name: string,
+  role: string,
   major: string,
   experience: string,
 }
