@@ -283,7 +283,7 @@
 ```
 {
 	"applicant": {
-		"namename": "Yavuz XD",
+		"fullname": "Yavuz XD",
 		"email": "yavuz.xd@something.com",
 		"phone": "5555555555",
 		"school": "Ankara Fen Lisesi",
