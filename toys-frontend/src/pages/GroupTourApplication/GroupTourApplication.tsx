@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Alert } from '@mantine/core';
-import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react"
+import { Button, Alert, Modal, Text } from '@mantine/core';
+import { IconChevronRight, IconChevronLeft, IconAlertCircle, IconCircleCheck, IconX } from "@tabler/icons-react"
 import { Stepper } from '@mantine/core';
 import "./GroupTourApplication.css";
 import { GroupApplication } from '../../types/designed';
@@ -19,7 +19,8 @@ const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + 
 
 
 export const GroupTourApplication: React.FC = () => {
-
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const userContext = useContext(UserContext);
 
   const [applicationInfo, setApplicationInfo] = useState<GroupApplication>({
@@ -40,7 +41,6 @@ export const GroupTourApplication: React.FC = () => {
   const [currentStage, setCurrentStage] = useState(0)
 
   const attemptStageChange = (newStage: number) => {
-
     if (newStage < currentStage) {
       setCurrentStage(newStage)
       return
@@ -57,7 +57,6 @@ export const GroupTourApplication: React.FC = () => {
     if (currentStage == 2 && validateStage3()) {
       setCurrentStage(newStage)
     }
-
   }
 
   /**************
@@ -80,13 +79,11 @@ export const GroupTourApplication: React.FC = () => {
     for (const field of firstStageFields) {
       // @ts-expect-error key coming from applicationInfo, there will be no conflict
       if (isEmpty(applicationInfo.applicant[field], { ignore_whitespace: true }) || isEmpty(applicationInfo.highschool.name)) {
-
         stagePass = false
         setWarnings((warnings) => ({
           ...warnings,
           "empty_fields": true
         }))
-
         empty_fields = true
       }
     }
@@ -106,12 +103,10 @@ export const GroupTourApplication: React.FC = () => {
       }))
       stagePass = false
     } else {
-
       setWarnings((warnings) => ({
         ...warnings,
         "not_email": false
       }))
-
     }
 
     if (!isMobilePhone(applicationInfo["applicant"]["phone"])) {
@@ -133,23 +128,18 @@ export const GroupTourApplication: React.FC = () => {
   // Validate if stage 2 is done.
   const validateStage2 = () => {
     if (applicationInfo.requested_times.length > 0) {
-
       setWarnings((warnings) => ({
         ...warnings,
         "not_enough_dates": false
       }))
       return true
-
     } else {
-
       setWarnings((warnings) => ({
         ...warnings,
         "not_enough_dates": true
       }))
       return false
-
     }
-
   }
 
   // Validate if stage 3 is done.
@@ -171,30 +161,66 @@ export const GroupTourApplication: React.FC = () => {
   }
 
   const navigate = useNavigate()
-  // Placeholder function
+  // Submit form function
   const attemptSubmitForm = async () => {
-    // Do whatever you need to submit applicationInfo to the backend.
     if (validateStage3()) {
-
       const applicationUrl = new URL(TOUR_APPLICATION_URL)
       applicationUrl.searchParams.append("auth", userContext.authToken)
       
-      const res = await fetch(applicationUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(applicationInfo)
-      })
+      try {
+        const res = await fetch(applicationUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(applicationInfo)
+        });
 
-      if (res.status == 200)
-        navigate("/application-success")
+        if (res.status === 200) {
+          setShowSuccessModal(true);
+        } else {
+          setShowErrorModal(true);
+        }
+      } catch (error) {
+        setShowErrorModal(true);
+      }
     }
-
   }
 
   return (
     <>
+      <Modal 
+        opened={showSuccessModal} 
+        onClose={() => {}} 
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        withCloseButton={false}
+        centered
+      >
+        <div className="text-center py-4">
+          <IconCircleCheck size={48} className="text-green-500 mx-auto mb-4" />
+          <Text size="xl" fw={700} className="text-green-700">
+            Tur Başvurunuz Başarıyla İletildi!
+          </Text>
+        </div>
+      </Modal>
+
+      <Modal 
+        opened={showErrorModal} 
+        onClose={() => setShowErrorModal(false)}
+        centered
+      >
+        <div className="text-center py-4">
+          <IconX size={48} className="text-red-500 mx-auto mb-4" />
+          <Text size="xl" fw={700} className="text-red-700 mb-2">
+            Başvuru İletilirken Bir Hata Oluştu
+          </Text>
+          <Text size="sm" className="text-gray-600">
+            Lütfen daha sonra tekrar deneyiniz.
+          </Text>
+        </div>
+      </Modal>
+
       <div className='application-wrapper p-8'>
         <Stepper active={currentStage} onStepClick={attemptStageChange}>
           <Stepper.Step label="1. Aşama" description="Grup Lideri Bilgisi">

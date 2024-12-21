@@ -12,11 +12,13 @@ import {
   Alert,
   Modal,
   Box,
+  MultiSelect,
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import 'dayjs/locale/tr';
 import { SimpleEventData } from '../../types/data';
+import { Department } from '../../types/enum';
 
 const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/simple-tour");
 const REQUEST_CHANGES_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
@@ -34,6 +36,11 @@ const TIME_SLOTS: TimeSlot[] = [
   { start: '15:00', end: '19:00' },
 ];
 
+const departmentOptions = Object.values(Department).map(dept => ({
+  value: dept,
+  label: dept
+}));
+
 const ApplicantRequest: React.FC = () => {
   const { passkey } = useParams();
   const [tourData, setTourData] = useState<SimpleEventData | null>(null);
@@ -42,36 +49,34 @@ const ApplicantRequest: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showModificationModal, setShowModificationModal] = useState(false);
 
-  // Time selection state
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [visitorCount, setVisitorCount] = useState<number | ''>(0);
+  const [selectedMajors, setSelectedMajors] = useState<string[]>([]);
 
-  // Mock data for testing
-  const mockTourData: SimpleEventData = {
-    event_type: "TOUR",
-    event_subtype: "group",
-    event_id: "123",
-    event_status: "CONFIRMED",
-    highschool: {
-      id: "1",
-      name: "Ankara Fen Lisesi",
-      location: "Çankaya, Ankara",
-      priority: 1,
-      ranking: 1
-    },
-    visitor_count: 25,
-    accepted_time: new Date(2024, 11, 19, 14, 0).toISOString(),
-    requested_times: ["2024-12-19T14:00:00+03:00"]
-  };
+  // // Test data setup
+  // useEffect(() => {
+  //   setTourData({
+  //     event_type: "TOUR",
+  //     event_subtype: "individual",
+  //     event_id: "123",
+  //     event_status: "CONFIRMED",
+  //     highschool: {
+  //       id: "1",
+  //       name: "Ankara Fen Lisesi",
+  //       location: "Çankaya, Ankara",
+  //       priority: 1,
+  //       ranking: 1
+  //     },
+  //     visitor_count: 25,
+  //     accepted_time: "2024-12-19T14:00:00+03:00",
+  //     requested_times: ["2024-12-19T14:00:00+03:00"]
+  //   });
+  // }, []);
 
   useEffect(() => {
-    // Simulate API call with mock data
-    setTourData(mockTourData);
-    setVisitorCount(mockTourData.visitor_count);
-
-    // Real API integration (commented out for now)
-    /*
+    console.log("passkey useeffect triggered")
+    console.log("passkey: " + passkey)
     const fetchTourData = async () => {
       try {
         const url = new URL(SIMPLE_TOUR_URL);
@@ -84,16 +89,22 @@ const ApplicantRequest: React.FC = () => {
         const data = await response.json();
         setTourData(data);
         setVisitorCount(data.visitor_count);
+        
+        if (data.event_subtype === "individual" && data.requested_majors) {
+          setSelectedMajors(data.requested_majors.slice(0, 3));
+        }
       } catch (err) {
         setError('Tur bilgileri yüklenirken bir hata oluştu');
       }
     };
 
     if (passkey) {
+      console.log("passkey var babba")
       fetchTourData();
+    } else {
+      console.log("passkey yok babba")
     }
-    */
-  }, []);
+  }, [passkey]);
 
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     if (!selectedDate) return;
@@ -113,6 +124,12 @@ const ApplicantRequest: React.FC = () => {
       }
       return [...prev, newTime].sort();
     });
+  };
+
+  const handleMajorChange = (value: string[]) => {
+    if (value.length <= 3) {
+      setSelectedMajors(value);
+    }
   };
 
   const formatTimeDisplay = (timeString: string): string => {
@@ -141,25 +158,25 @@ const ApplicantRequest: React.FC = () => {
       return;
     }
 
+    if (tourData.event_subtype === "individual" && selectedMajors.length !== 3) {
+      setError('Lütfen tam olarak 3 bölüm seçiniz');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      // Mock success for testing
-      // Comment out this block when implementing real API
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-
-      /*
       const baseApplication = {
         highschool: tourData.highschool,
         requested_times: selectedTimes,
         visitor_count: visitorCount
       };
-
+      
       const applicationModel = tourData.event_subtype === "individual"
         ? {
             ...baseApplication,
-            requested_majors: [] // You might need to handle this differently
+            requested_majors: selectedMajors
           }
         : baseApplication;
 
@@ -176,7 +193,6 @@ const ApplicantRequest: React.FC = () => {
       });
 
       if (!response.ok) throw new Error('Değişiklik talebi gönderilemedi');
-      */
 
       setSuccess('Değişiklik talebiniz başarıyla iletildi');
       setShowModificationModal(false);
@@ -191,45 +207,45 @@ const ApplicantRequest: React.FC = () => {
 
   if (!tourData) {
     return (
-      <Container size="lg" py="xl">
+      <Container size="lg" py="xl" className="px-4 sm:px-6 lg:px-8">
         <Alert color="blue">Tur bilgileri yükleniyor...</Alert>
       </Container>
     );
   }
 
   return (
-    <Container size="lg" py="xl">
-      <Paper shadow="sm" p="xl" withBorder>
+    <Container size="lg" py="xl" className="px-4 sm:px-6 lg:px-8">
+      <Paper shadow="sm" p="md" withBorder className="sm:p-xl">
         <Stack gap="xl">
-          <Title order={2} className="text-blue-700">
+          <Title order={2} className="text-blue-700 text-xl sm:text-2xl">
             Tur Başvurunuz Başarıyla Kabul Edildi!
           </Title>
 
           <Alert color="blue" variant="light">
             <Stack gap="xs">
-              <Text>• Tur başvurunuz Tanıtım Ofisi tarafından değerlendirilmiş ve onaylanmıştır.</Text>
-              <Text>• Kabul edilen tur detaylarını aşağıda görebilirsiniz.</Text>
+              <Text size="sm" className="sm:text-base">• Tur başvurunuz Tanıtım Ofisi tarafından değerlendirilmiş ve onaylanmıştır.</Text>
+              <Text size="sm" className="sm:text-base">• Kabul edilen tur detaylarını aşağıda görebilirsiniz.</Text>
             </Stack>
           </Alert>
 
           <Stack gap="md">
-            <Group>
-              <Text fw={700}>Okul:</Text>
+            <Group wrap="wrap" gap="xs">
+              <Text fw={700} className="w-full sm:w-auto">Okul:</Text>
               <Text>{tourData.highschool.name}</Text>
             </Group>
 
-            <Group>
-              <Text fw={700}>Ziyaretçi Sayısı:</Text>
+            <Group wrap="wrap" gap="xs">
+              <Text fw={700} className="w-full sm:w-auto">Ziyaretçi Sayısı:</Text>
               <Text>{tourData.visitor_count} kişi</Text>
             </Group>
 
-            <Group>
-              <Text fw={700}>Kabul Edilen Zaman:</Text>
+            <Group wrap="wrap" gap="xs">
+              <Text fw={700} className="w-full sm:w-auto">Kabul Edilen Zaman:</Text>
               <Text>{formatTimeDisplay(tourData.accepted_time)}</Text>
             </Group>
           </Stack>
 
-          <Alert color="yellow" variant="light" className="mt-4">
+          <Alert color="yellow" variant="light">
             <Text size="sm">
               - Eğer turunuzda değişiklik isterseniz turunuz baştan değerlendirilecektir ve reddedilebilir.
             </Text>
@@ -239,7 +255,7 @@ const ApplicantRequest: React.FC = () => {
             variant="light" 
             color="blue" 
             onClick={() => setShowModificationModal(true)}
-            className="w-fit"
+            className="w-full sm:w-fit"
           >
             Tur Zamanı veya Ziyaretçi Sayısında Değişiklik İste
           </Button>
@@ -262,7 +278,9 @@ const ApplicantRequest: React.FC = () => {
         opened={showModificationModal}
         onClose={() => setShowModificationModal(false)}
         title="Tur Değişiklik Talebi"
-        size="xl"
+        size="lg"
+        fullScreen={window.innerWidth < 640}
+        padding="md"
       >
         <Stack>
           <NumberInput
@@ -274,56 +292,78 @@ const ApplicantRequest: React.FC = () => {
             required
           />
 
-          <Box>
-            <Text c="blue" fw={500} mb="xs">Tarih Seçin</Text>
-            <DatePicker
-              locale="tr"
-              value={selectedDate}
-              onChange={setSelectedDate}
-              minDate={new Date()}
-            />
-          </Box>
-
-          {selectedDate && (
+          {tourData.event_subtype === "individual" && (
             <Box>
-              <Text c="blue" fw={500} mb="xs">Zaman Aralığı Seçin (En az 1, en fazla 3)</Text>
+              <MultiSelect
+                label="Rehber Bölüm Tercihleri (Tercih sırasıyla 3 bölüm seçiniz)"
+                data={departmentOptions}
+                value={selectedMajors}
+                onChange={handleMajorChange}
+                searchable
+                maxValues={3}
+                required
+                error={selectedMajors.length !== 3 ? "Lütfen tam olarak 3 bölüm seçiniz" : null}
+              />
+            </Box>
+          )}
+
+          <Group align="flex-start" className="flex-col sm:flex-row">
+            <Box className="w-full sm:w-auto">
+              <Text c="blue" fw={500} mb="xs">Önce Tarih Seçin</Text>
+              <DatePicker
+                locale="tr"
+                value={selectedDate}
+                onChange={setSelectedDate}
+                minDate={new Date()}
+                className="w-full sm:w-auto"
+              />
+            </Box>
+
+            <Box className="w-full sm:w-auto">
+              <Text c="blue" fw={500}>Sonra Zaman Aralığı Seçin</Text>
+              <Text mb={"xs"} fw={300}>(Zaman Aralıklarını Farklı Tarihlerden Seçebilirsiniz)</Text>
               <Stack gap="sm">
                 {TIME_SLOTS.map((slot) => (
                   <Button
                     key={`${slot.start}-${slot.end}`}
                     variant={isTimeSlotSelected(slot) ? "filled" : "light"}
                     onClick={() => handleTimeSlotClick(slot)}
-                    style={{ width: 200 }}
+                    disabled={!selectedDate}
+                    className="w-full sm:w-48"
                   >
                     {slot.start} - {slot.end}
                   </Button>
                 ))}
               </Stack>
             </Box>
-          )}
+          </Group>
 
           {selectedTimes.length > 0 && (
             <Box>
               <Text fw={500} mb="xs">Seçili Zaman Aralıkları:</Text>
-              {selectedTimes.map((time, index) => (
-                <div key={index} className="flex items-center gap-2 mb-2">
-                  <Text>{formatTimeDisplay(time)}</Text>
-                  <Button 
-                    size="compact-sm" 
-                    color="red" 
-                    onClick={() => setSelectedTimes(prev => prev.filter(t => t !== time))}
-                  >
-                    İptal
-                  </Button>
-                </div>
-              ))}
+              <Stack gap="xs">
+                {selectedTimes.map((time, index) => (
+                  <Group key={index} wrap="wrap" className="w-full">
+                    <Text className="flex-grow">{formatTimeDisplay(time)}</Text>
+                    <Button 
+                      size="compact-sm" 
+                      color="red" 
+                      onClick={() => setSelectedTimes(prev => prev.filter(t => t !== time))}
+                    >
+                      İptal
+                    </Button>
+                  </Group>
+                ))}
+              </Stack>
             </Box>
           )}
 
-          <Group justify="flex-end" mt="xl">
+          <Group justify="flex-end" mt="xl" className="flex-col-reverse sm:flex-row gap-2">
             <Button 
               variant="light" 
               onClick={() => setShowModificationModal(false)}
+              fullWidth
+              className="sm:w-auto"
             >
               İptal
             </Button>
@@ -331,7 +371,13 @@ const ApplicantRequest: React.FC = () => {
               color="blue"
               onClick={handleRequestChanges}
               loading={loading}
-              disabled={selectedTimes.length === 0 || !visitorCount}
+              disabled={
+                selectedTimes.length === 0 || 
+                !visitorCount || 
+                (tourData.event_subtype === "individual" && selectedMajors.length !== 3)
+              }
+              fullWidth
+              className="sm:w-auto"
             >
               Değişiklik Talep Et
             </Button>

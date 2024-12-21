@@ -117,7 +117,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             data={["Öğrenci", "Görevli, Öğretmen vs."]}
             onChange={(_value, option) => {
 
-              const englishValue = _value == "Öğrenci" ? "student" : _value == "Görevli, Öğretmen vs." ? "teacher" : ""
+              const englishValue = _value == "Öğrenci" ? "STUDENT" : _value == "Görevli, Öğretmen vs." ? "TEACHER" : ""
 
               setApplicationInfo((appInfo) => ({
                 ...appInfo,

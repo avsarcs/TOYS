@@ -70,8 +70,8 @@ function App() {
             <Route path="/review/:review-id" element={<CheckLogin redirect children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<CheckLogin redirect children={<TourStatistics />}/>}/>
             <Route path="/manage-personnel" element={<CheckLogin redirect children={<ManagePersonnel />}/>}/>
-            <Route path="/applicant-respond" element={<ApplicantRespond />} />
-            <Route path="/applicant-request" element={<ApplicantRequest />}/>
+            <Route path="/applicant-respond/:passkey" element={<ApplicantRespond />} />
+            <Route path="/applicant-request/:passkey" element={<ApplicantRequest />}/>
           </Routes>
         </main>
       </div>
