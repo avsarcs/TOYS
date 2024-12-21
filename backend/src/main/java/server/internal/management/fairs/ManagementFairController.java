@@ -20,15 +20,15 @@ public class ManagementFairController {
     public List<Map<String, Object>> getFairs(
             @RequestParam String auth,
             @RequestParam String status,
-            @RequestParam boolean guide_not_assigned,
-            @RequestParam boolean enrolled_in_fair,
+            @RequestParam String guide_not_assigned,
+            @RequestParam String enrolled_in_fair,
             @RequestParam String school_name,
-            @RequestParam String to_Date,
-            @RequestParam String from_Date,
-            @RequestParam boolean filter_guide_missing,
-            @RequestParam boolean filter_trainee_missing
+            @RequestParam String to_date,
+            @RequestParam String from_date,
+            @RequestParam String filter_guide_missing,
+            @RequestParam String filter_trainee_missing
     ) {
-        return internalManagementFairService.getFairs(auth, status, guide_not_assigned, enrolled_in_fair, school_name, to_Date, from_Date, filter_guide_missing, filter_trainee_missing);
+        return internalManagementFairService.getFairs(auth, status, guide_not_assigned, enrolled_in_fair, school_name, to_date, from_date, filter_guide_missing, filter_trainee_missing);
     }
 
     @PostMapping("/internal/management/fairs/respond")

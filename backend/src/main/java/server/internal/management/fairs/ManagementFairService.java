@@ -44,13 +44,13 @@ public class ManagementFairService {
     public List<Map<String, Object>> getFairs(
             String auth,
             String status,
-            boolean guide_not_assigned,
-            boolean enrolled_in_fair,
+            String guide_not_assigned,
+            String enrolled_in_fair,
             String school_name,
             String to_date,
             String from_Date,
-            boolean filter_guide_missing,
-            boolean filter_trainee_missing) {
+            String filter_guide_missing,
+            String filter_trainee_missing) {
 
         // validate token and permission
         if(!authService.check(auth, Permission.AR_FAIR_INVITATIONS)) {
@@ -61,7 +61,12 @@ public class ManagementFairService {
 
         List<Map.Entry<String, FairRegistry>> fairs = database.fairs.fetchFairs().entrySet() .stream()
                 .filter(f -> status.isEmpty() || f.getValue().getFair_status().name().equals(status))
-                .filter(f -> !guide_not_assigned || f.getValue().getGuides().isEmpty())
+                .filter(f -> {
+                    if (guide_not_assigned.isEmpty()) {
+                        return true;
+                    }
+                    return Boolean.valueOf(guide_not_assigned) == f.getValue().getGuides().isEmpty();
+                })
                 .filter(f -> true) // TODO: find out what enrolled_in_fair does, and kill who wrote it and didn't answer for so long on what it does
                 .filter(f -> {
                     if (school_name.isEmpty()) {
@@ -76,8 +81,18 @@ public class ManagementFairService {
                 })
                 .filter(f -> to_date.isEmpty() || f.getValue().getStarts_at().getDate().isBefore(new ZTime(to_date).getDate()))
                 .filter(f -> from_Date.isEmpty() || f.getValue().getEnds_at().getDate().isAfter(new ZTime(from_Date).getDate()))
-                .filter(f -> !filter_guide_missing || f.getValue().getGuides().size() == 0) // TODO: these need to be fixed, but not primary concern
-                .filter(f -> !filter_trainee_missing || f.getValue().getGuides().size() == 0).toList();
+                .filter(f -> {
+                    if (filter_guide_missing.isEmpty()) {
+                        return true;
+                    }
+                    return  Boolean.valueOf(filter_guide_missing) == f.getValue().getGuides().isEmpty();
+                }) // TODO: these need to be fixed, but not primary concern
+                .filter(f -> {
+                    if (filter_trainee_missing.isEmpty()) {
+                        return true;
+                    }
+                    return Boolean.valueOf(filter_trainee_missing) == f.getValue().getGuides().isEmpty();
+                }).toList();
 
         List<Map<String, Object>> dtos = new ArrayList<>();
 
