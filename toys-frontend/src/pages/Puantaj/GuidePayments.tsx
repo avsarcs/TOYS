@@ -21,6 +21,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconSearch, IconCreditCard, IconInfoCircle, IconCurrencyLira, IconClock, IconBuildingBank } from "@tabler/icons-react";
+import { MoneyForGuide } from "../../types/designed";
 
 const GUIDES_PER_PAGE = 5;
 
@@ -95,6 +96,20 @@ const GuidePayments: React.FC = () => {
     }
     setCurrentPage(1);
   };
+
+  const payAllDebts = async () => {
+    for (const payment of paymentsData) {
+      if (payment.debt > 0) {
+        try {
+          await handlePayDebt(payment.guide.id); // Wait for each payment to complete
+        } catch (error) {
+          console.error(`Error paying debt for guide ${payment.guide.id}:`, error);
+        }
+      }
+    }
+    console.log("Processed all payments.");
+  };
+  
 
   const handlePayDebt = useCallback(async (guideId: number) => {
     const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
@@ -180,7 +195,7 @@ const GuidePayments: React.FC = () => {
                 variant="filled"
                 color="red"
                 leftSection={<IconCreditCard size={16} />}
-                onClick={() => paymentsData.forEach((payment) => handlePayDebt(payment.guide.id))}
+                onClick={() => payAllDebts()}
               >
                 Tüm Borçları Öde
               </Button>
