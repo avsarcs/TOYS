@@ -722,6 +722,8 @@ response_type:json
 		// REQUEST: Returned tours should be ordered with "ONGOING" first, then "APPLICANT_WANTS_CHANGE", then "RECEIVED",
 		// then "CONFIRMED", then "TOYS_WANTS_CHANGE", then the rest
 
+		### DEPRECATED ###
+		### ALL STATUS UPDATES ARE DONE BY THE BACKEND, USE ALTERNATIVES ###
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
@@ -864,6 +866,8 @@ response_type:json
 				body: auth_token
 				response: -
 
+			### DEPRECATED ###
+			use /respond/applications/guide instead!
 			/respond
 				parameters:
 					id=id of the person whose application we are responding to
@@ -888,6 +892,8 @@ response_type:json
 			response: list of fairs
 			response_type: json
 
+			### DEPRECATED ###
+			use /respond/applications/fair instead!
 			/respond
 				parameters:
 					fid=fair_id // which fair application (all applications are fairs with status applied) to respond to
