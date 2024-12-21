@@ -16,18 +16,9 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
+// Default data
 const defaultData = {
-    "CS": {"total_count": 100, "50% scholarship": 75, "100% scholarship": 25},
-    "EE": {"total_count": 150, "50% scholarship": 100, "100% scholarship": 50},
-    "ME": {"total_count": 120, "50% scholarship": 80, "100% scholarship": 40},
-    "CE": {"total_count": 130, "50% scholarship": 90, "100% scholarship": 40},
-    "BIO": {"total_count": 110, "50% scholarship": 70, "100% scholarship": 40},
-    "CHE": {"total_count": 140, "50% scholarship": 90, "100% scholarship": 50},
-    "PHYS": {"total_count": 90, "50% scholarship": 60, "100% scholarship": 30},
-    "MATH": {"total_count": 80, "50% scholarship": 50, "100% scholarship": 30},
-    "STAT": {"total_count": 70, "50% scholarship": 40, "100% scholarship": 30},
-    "ENG": {"total_count": 60, "50% scholarship": 35, "100% scholarship": 25}
+    "Yükleniyor": {"total_count": 100, "50% scholarship": 50, "100% scholarship": 50}
 };
 
 interface HighSchoolStudentDetailsProps {
@@ -45,7 +36,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string, year: number) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/high_schools/students");
+        const url = new URL(TOUR_URL + "/internal/analytics/high-schools/students");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("high_school_id", high_school_id);
         url.searchParams.append("year", year.toString());

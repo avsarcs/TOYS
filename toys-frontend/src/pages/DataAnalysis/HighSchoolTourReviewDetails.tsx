@@ -16,7 +16,7 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
+// Default data
 const defaultData = {
     "author": "Yükleniyor...",
     "email": "Yükleniyor...",
@@ -41,7 +41,7 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string, tour_id: string) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/high_schools/students");
+        const url = new URL(TOUR_URL + "/internal/analytics/high-schools/students");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("high_school_id", high_school_id);
         url.searchParams.append("tour_id", tour_id);

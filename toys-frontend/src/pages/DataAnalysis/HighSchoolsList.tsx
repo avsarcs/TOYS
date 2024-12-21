@@ -5,6 +5,7 @@ import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilt
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
 import HighSchoolAdd from "./HighSchoolAdd.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -16,8 +17,17 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
+const defaultHeaderStyle = {
+    backgroundColor: 'white',
+    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+    width: '100%', // Ensure the container takes the full width of its parent
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center', // Center vertically
+    justifyContent: 'center', // Center horizontally
+};
 
-//test data
+// Default data
 const defaultCities: string[] = ["Yükleniyor..."];
 const defaultHighSchools = [
     {
@@ -25,7 +35,7 @@ const defaultHighSchools = [
         city: "Yükleniyor...",
         ranking: "1",
         priority: "1",
-        id: "1"
+        id: ""
     }
 ];
 
@@ -43,34 +53,24 @@ const HighSchoolsList: React.FC = () => {
     const [highSchools, setHighSchools] = React.useState(defaultHighSchools);
 
     const getCities = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/cities");
-        url.searchParams.append("auth", userContext.authToken);
-
-        const res = await fetch(url, {
-            method: "GET",
-        });
-
-        if (!res.ok) {
-            throw new Error("Response not OK.");
-        }
-
-        const resText = await res.text();
-        if(resText.length === 0) {
-            throw new Error("No city found.");
-        }
-
-        setCities(JSON.parse(resText));
-    }, [userContext.authToken]);
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
 
     const getHighSchools = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/high_schools/all");
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/all");
         url.searchParams.append("auth", userContext.authToken);
+
+        console.log("Sent request for high schools list.");
 
         const res = await fetch(url, {
             method: "GET",
         });
 
+        console.log("Received response for high schools list.");
+
         if (!res.ok) {
+            console.log(res);
             throw new Error("Response not OK.");
         }
 
@@ -79,7 +79,7 @@ const HighSchoolsList: React.FC = () => {
             throw new Error("No high school found.");
         }
 
-        setHighSchools((JSON.parse(resText))["high_schools"]);
+        setHighSchools((JSON.parse(resText)));
     }, [userContext.authToken]);
 
     React.useEffect(() => {
@@ -104,11 +104,11 @@ const HighSchoolsList: React.FC = () => {
         setAddModalOpened(true);
     }
 
-    const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+    const HeaderTextContainer = <div style={defaultHeaderStyle}>
         <Text style={{fontSize: 'xx-large'}}>
             Liseler Listesi
         </Text>
-    </Container>
+    </div>
 
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
@@ -122,11 +122,8 @@ const HighSchoolsList: React.FC = () => {
         <Space h="xs" />
     </Container>
 
-
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
-        <Space h="xl"/>
         {HeaderTextContainer}
-        <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
         {TableFilterContainer}
         <Space h="xl"/>

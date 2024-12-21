@@ -5,6 +5,7 @@ import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSch
 import AddButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolAdd/AddButton.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 import {notifications} from "@mantine/notifications";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -17,8 +18,8 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
-const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
+// Default data
+const defaultCities: string[] = ["Yükleniyor..."];
 const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolAddProps {
@@ -33,6 +34,12 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
     const [selectedName, setSelectedName] = React.useState<string | null>(null);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(null);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
+    const [cities, setCities] = React.useState(defaultCities);
+
+    const getCities = useCallback(async () => {
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
 
     const handleAddButtonClick = useCallback(async () => {
         if (!selectedName || !selectedCity || !selectedPriority) {
@@ -45,7 +52,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
         }
 
         try {
-            const url = new URL(TOUR_URL + "/internal/analytics/high_schools/add");
+            const url = new URL(TOUR_URL + "/internal/analytics/high-schools/add");
             url.searchParams.append("auth", userContext.authToken);
             url.searchParams.append("name", selectedName);
             url.searchParams.append("priority", selectedPriority);
@@ -90,6 +97,12 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
             });
         }
     }, [selectedName, selectedCity, selectedPriority, userContext.authToken]);
+
+    React.useEffect(() => {
+        getCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>

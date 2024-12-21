@@ -21,7 +21,7 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
+// Default data
 const defaultData = {
     "priority": 1, "ranking": 1, "city": "Yükleniyor...",
     "tours": [
@@ -58,7 +58,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/high_schools/details");
+        const url = new URL(TOUR_URL + "/internal/analytics/high-schools/details");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("high_school_id", high_school_id);
 

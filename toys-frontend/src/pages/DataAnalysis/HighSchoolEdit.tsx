@@ -5,6 +5,7 @@ import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSch
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 import {notifications} from "@mantine/notifications";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -17,8 +18,8 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
-const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
+// Default data
+const defaultCities: string[] = ["Yükleniyor..."];
 const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolEditProps {
@@ -37,6 +38,18 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(currentPriority);
+    const [cities, setCities] = React.useState(defaultCities);
+
+    const getCities = useCallback(async () => {
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
+
+    React.useEffect(() => {
+        getCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
 
     React.useEffect(() => {
         if (opened) {
@@ -73,7 +86,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
         }
 
         try {
-            const url = new URL(TOUR_URL + "/internal/analytics/high_schools/add");
+            const url = new URL(TOUR_URL + "/internal/analytics/high-schools/add");
             url.searchParams.append("high_school_id", highSchoolID);
             url.searchParams.append("auth", userContext.authToken);
             url.searchParams.append("name", selectedName);
