@@ -14,11 +14,17 @@ const PaymentDetail: React.FC = () => {
     const [filter, setFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const { guideId } = useParams<{ guideId: string }>();
+    const [guide, setGuide] = useState<SimpleGuide | null>(null);
     const userContext = useContext(UserContext);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getPayments().catch((reason) => {
+            console.error(reason);
+        });
+    }, [guideId]);
+    useEffect(() => {
+        getGuide().catch((reason) => {
             console.error(reason);
         });
     }, [guideId]);
@@ -38,9 +44,45 @@ const PaymentDetail: React.FC = () => {
         });
     };
     
+    const getGuide = useCallback(async () => {
+        const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+        const url = new URL(apiURL + "internal/user/profile/simple");
+        try
+        {
+            if (guideId) {
+                url.searchParams.append("id", guideId);
+            }
+            url.searchParams.append("auth", userContext.authToken);
+            const res = await fetch(url, {
+                method: "GET",
+            });
+            if (!res.ok) {
+                notifications.show({
+                    color: "red",
+                    title: "Hata",
+                    message: "Turlar görüntülenemiyor."
+                });
+            }
+            else {
+                const resText = await res.text();
+                const resJson = JSON.parse(resText);
+                setGuide(resJson);
+
+            }
+            
+        }
+        catch (e)
+        {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+            });
+        }
+    },[userContext.authToken]);
 
     const getPayments = useCallback(async () => {
-        setLoading
+        setLoading(true);
         const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
         const url = new URL(apiURL + "internal/management/timesheet/payment-state/event");
         try
@@ -172,9 +214,7 @@ const PaymentDetail: React.FC = () => {
                 <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
                     <p>
                         <b>Şu rehber için ödemeleri görüntülüyorsunuz: </b>
-                        {tourPayments.length > 0 && typeof tourPayments[0].guide_name === "string"
-                            ? tourPayments[0].guide_name
-                            : "Unknown"}
+                        {guide ? guide.name + " " : "Bilinmeyen Rehber"}
                     </p>
                 </h2>
     
