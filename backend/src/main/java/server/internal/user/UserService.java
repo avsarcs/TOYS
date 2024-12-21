@@ -35,6 +35,7 @@ import server.models.time.ZTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -159,7 +160,7 @@ public class UserService {
             );
         }
 
-        return response;
+        return response.stream().filter(Objects::nonNull).toList();
     }
 
     public List<Map<String, Object>> getAdvisorOffers(String auth, String guide_name, String type, String from_date_s, String to_date_s) {

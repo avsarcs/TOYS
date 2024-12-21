@@ -5,16 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import info.debatty.java.stringsimilarity.SorensenDice;
 import server.auth.AuthService;
 import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
+import server.enums.Department;
 import server.models.DTO.DTOFactory;
 import server.models.DTO.dataDTO.*;
 import server.models.events.TourRegistry;
 import server.models.review.ReviewRecord;
 import server.models.schools.*;
+import server.review.ReviewService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +81,7 @@ public class AnalyticsHighschoolService {
         // go through every year, get total student counts for those years
         try {
 
-            for (UniversityDepartment department : database.universities.getUniversities().get("bilkent").getDepartments()) {
+            for (UniversityDepartment department : database.universities.getUniversity("bilkent").getDepartments()) {
                 for (UniversityDepartmentYear year : department.getYears()) {
                     for (UniHighschoolRecord data : year.highschool_attendee_count) {
 
@@ -142,6 +146,114 @@ public class AnalyticsHighschoolService {
         return details_map;
     }
 
+    public Map<String, Object> getTourReviews(String auth, String high_school_id, String tour_id) {
+        if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
+        }
 
+        HighschoolRecord hs = database.schools.getHighschoolByID(high_school_id);
+        if (hs == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Highschool not found!");
+        }
+        
+        TourRegistry tour = database.tours.fetchTour(tour_id);
+        if (tour == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour not found!");
+        }
+        ReviewService reviewService = new ReviewService();
 
+        Map<String, Object> response = new HashMap<>();
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No review for this tour!");
+        }
+        response = reviewService.getReviewOfTour(auth, tour_id);
+        return response;
+    }
+
+    public Map<String, Object> getStudents(String auth, String high_school_id, String year) {
+        if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
+        }
+
+        HighschoolRecord hs = database.schools.getHighschoolByID(high_school_id);
+        if (hs == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Highschool not found!");
+        }
+
+        String hsName = hs.getTitle();
+        
+        SorensenDice alg = new SorensenDice();
+        University bilkent = database.universities.getUniversity("bilkent");
+
+        //bilkent.departments.get(0).years.get(0).getHighschool_attendee_count().get(0).getSchool_name();
+
+        Map<String, Map<String, Long>> resp = new HashMap<>();
+
+        bilkent.departments.stream().forEach(
+                dep -> dep.getYears().stream().forEach(
+                        y -> {
+                            if (y.getYear().equals(year)) {
+                                y.getHighschool_attendee_count().stream()
+                                        .filter(
+                                                d -> alg.similarity(d.getSchool_name().toLowerCase(), hsName.toLowerCase()) > 0.8
+                                        ).findFirst().ifPresent(
+                                                h -> {
+                                                    if (resp.containsKey(dep.getName())) {
+                                                        resp.get(dep.getName()).put(
+                                                                dep.getScholarship(), h.getTotal()
+                                                        );
+
+                                                    } else {
+                                                        resp.put(
+                                                                dep.getName(),
+                                                                Map.of(
+                                                                        dep.getScholarship(), h.getTotal()
+                                                                )
+                                                        );
+                                                    }
+
+                                                }
+                                        );
+                            }
+                        }
+                )
+        );
+
+        resp.entrySet().stream().forEach(
+                e -> {
+                    e.getValue().put("total_count", e.getValue().values().stream().reduce(0L, Long::sum));
+                }
+        );
+
+        Map<String, Object> response = new HashMap<>();
+        return response;
+    }
+
+    public void editHighSchool(String auth, Map<String, Object> highschool) {
+        if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
+        }
+        HighschoolRecord hs = new HighschoolRecord();
+        hs.setId((String) highschool.get("id"));
+        hs.setTitle((String) highschool.get("name"));
+        hs.setLocation((String) highschool.get("location"));
+        hs.setRanking((String) highschool.get("ranking"));
+        hs.setPriority((String) highschool.get("priority"));
+
+        database.schools.updateHighschool(hs);
+    }
+
+    public void addHighSchool(String auth, Map<String, Object> highschool) {
+        if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
+        }
+        HighschoolRecord hs = new HighschoolRecord();
+        hs.setId((String) highschool.get("id"));
+        hs.setTitle((String) highschool.get("name"));
+        hs.setLocation((String) highschool.get("location"));
+        hs.setRanking((String) highschool.get("ranking"));
+        hs.setPriority((String) highschool.get("priority"));
+
+        database.schools.addHighschool(hs);
+    }
 }

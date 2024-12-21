@@ -3,63 +3,60 @@ package server.models.schools;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UniversityEntryRecord {
-    @JsonProperty("ÖSYM Program Kodu")
     private String OSYMCode;
 
-    @JsonProperty("Üniversite Türü")
     private String UniType;
 
-    @JsonProperty("Fakülte / Yüksekokul")
     private String department;
 
-    @JsonProperty("Puan Türü")
+
     private String scoreType;
 
-    @JsonProperty("Burs Türü")
+  //  @JsonProperty("Burs Türü")
     private String scholarshipType;
 
-    @JsonProperty("Genel Kontenjan")
+//    @JsonProperty("Genel Kontenjan")
     private String capacity;
 
-    @JsonProperty("Okul Birincisi Kontenjanı")
+  //  @JsonProperty("Okul Birincisi Kontenjanı")
     private String valedictorianCapacity;
 
-    @JsonProperty("Toplam Kontenjan")
+  //  @JsonProperty("Toplam Kontenjan")
     private String totalCapacity;
 
-    @JsonProperty("Genel Kontenjana Yerleşen")
+ //   @JsonProperty("Genel Kontenjana Yerleşen")
     private String filled;
 
-    @JsonProperty("Okul Birincisi Kontenjanına Yerleşen")
+   // @JsonProperty("Okul Birincisi Kontenjanına Yerleşen")
     private String valedictorianFilled;
 
-    @JsonProperty("Toplam Yerleşen")
+  //  @JsonProperty("Toplam Yerleşen")
     private String totalFilled;
 
-    @JsonProperty("Boş Kalan Kontenjan")
+   // @JsonProperty("Boş Kalan Kontenjan")
     private String remainingCapacity;
 
-    @JsonProperty("İlk Yerleşme Oranı")
+  //  @JsonProperty("İlk Yerleşme Oranı")
     private String initialFillRate;
 
-    @JsonProperty("Yerleşip Kayıt Yaptırmayan")
+   // @JsonProperty("Yerleşip Kayıt Yaptırmayan")
     private String notRegistered;
 
-    @JsonProperty("Ek Yerleşen")
+   // @JsonProperty("Ek Yerleşen")
     private String extras;
 
-    @JsonProperty("0,12 Katsayı ile Yerleşen Son Kişinin Puanı")
+    //@JsonProperty("0,12 Katsayı ile Yerleşen Son Kişinin Puanı")
     private String basicEntryBottomScore;
 
-    @JsonProperty("0,12 + 0,06 Katsayı ile Yerleşen Son Kişinin Puanı")
+   // @JsonProperty("0,12 + 0,06 Katsayı ile Yerleşen Son Kişinin Puanı")
     private String augmentedEntryBottomScore;
 
-    @JsonProperty("0,12 Katsayı ile Yerleşen Son Kişinin Başarı Sırası")
+    //@JsonProperty("0,12 Katsayı ile Yerleşen Son Kişinin Başarı Sırası")
     private String basicEntryBottomRanking;
 
-    @JsonProperty("0,12 + 0,06 Katsayı ile Yerleşen Son Kişinin Başarı Sırası")
+    //@JsonProperty("0,12 + 0,06 Katsayı ile Yerleşen Son Kişinin Başarı Sırası")
     private String augmentedEntryBottomRanking;
 
-    @JsonProperty("Tavan Puanı")
+    //@JsonProperty("Tavan Puanı")
     private String thisYearsEntrants;
 }

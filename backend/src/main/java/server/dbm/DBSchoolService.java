@@ -96,4 +96,30 @@ public class DBSchoolService {
         }
         return null;
     }
+
+    public void updateHighschool(HighschoolRecord highschool) {
+        try {
+            DocumentReference reference = firestore.collection("edu").document("highschools");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("highschools");
+
+            data.put(
+                    highschool.getId(),
+                    highschool
+            );
+
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("highschools", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+
+            System.out.println("Highschool updated in database." + result.get().getUpdateTime());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to update highschool in the database.");
+        }
+    }
 }

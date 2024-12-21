@@ -1,6 +1,7 @@
 package server.models.schools;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class UniversityTableData {
 
@@ -15,6 +16,81 @@ public class UniversityTableData {
         return this;
     }
 
+    public static  UniversityTableData fromSource(Map<String, Object> map) {
+        UniversityTableData data = new UniversityTableData();
+        data.osym_code = (String) map.get("ÖSYM Program Kodu");
+        data.uni_type = (String) map.get("Üniversite Türü");
+        data.uni_name = (String) map.get("Üniversite");
+        data.faculty = (String) map.get("Fakülte / Yüksekokul");
+        data.score_type = (String) map.get("Puan Türü");
+        data.scholarship_type = (String) map.get("Burs Türü");
+        data.general_capacity = (String) map.get("Genel Kontenjan");
+        data.valedictorian_capacity = (String) map.get("Okul Birincisi Kontenjanı");
+        data.total_capacity = (String) map.get("Toplam Kontenjan");
+        data.general_capacity_fill = (String) map.get("Genel Kontenjana Yerleşen");
+        data.valedictorian_capacity_fill = (String) map.get("Okul Birincisi Kontenjanına Yerleşen");
+        data.total_fill = (String) map.get("Toplam Yerleşen");
+        data.unfilled_capacity = (String) map.get("Boş Kalan Kontenjan");
+        data.initial_fill = (String) map.get("İlk Yerleşme Oranı");
+        data.unregistered = (String) map.get("Yerleşip Kayıt Yaptırmayan");
+        data.latecomers = (String) map.get("Ek Yerleşen");
+        data.base_lastguy_score = (String) map.get("0,12 Katsayı ile Yerleşen Son Kişinin Puanı*");
+        data.amplified_lastguy_score = (String) map.get("0,12 + 0,06 Katsayı ile Yerleşen Son Kişinin Puanı*");
+        data.base_lastguy_rank = (String) map.get("0,12 Katsayı ile Yerleşen Son Kişinin Başarı Sırası*");
+        data.amplified_lastguy_rank = (String) map.get("0,12 + 0,06 Katsayı ile Yerleşen Son Kişinin Başarı Sırası*");
+
+        String extractedYear = null;
+        Pattern yearPattern = Pattern.compile("[0-9]{4}(?= Tavan Puan)");
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (yearPattern.matcher(entry.getKey()).find()) {
+                extractedYear = entry.getKey().substring(0, 4);
+                break;
+            }
+        }
+
+        if (extractedYear != null) {
+            data.best_score = (String) map.get(extractedYear + " Tavan Puan(0,12)*");
+            data.best_rank = (String) map.get(extractedYear + " Tavan Başarı Sırası(0,12)*");
+            data.fill_by_weird = (String) map.get((Integer.parseInt(extractedYear) - 1) + "'de Yerleşip " + extractedYear + "'de OBP'si Kırılarak Yerleşen Sayısı");
+            data.year = extractedYear;
+        }
+
+        data.average_obp = (String) map.get("Yerleşenlerin Ortalama OBP'si");
+        data.average_gpa = (String) map.get("Yerleşenlerin Ortalama Diploma Notu");
+        return data;
+    }
+
+    protected UniversityTableData(Map<String, Object> map) {
+        this.osym_code = (String) map.get("osym_code");
+        this.uni_type = (String) map.get("uni_type");
+        this.uni_name = (String) map.get("uni_name");
+        this.faculty = (String) map.get("faculty");
+        this.score_type = (String) map.get("score_type");
+        this.scholarship_type = (String) map.get("scholarship_type");
+        this.general_capacity = (String) map.get("general_capacity");
+        this.valedictorian_capacity = (String) map.get("valedictorian_capacity");
+        this.total_capacity = (String) map.get("total_capacity");
+        this.general_capacity_fill = (String) map.get("general_capacity_fill");
+        this.valedictorian_capacity_fill = (String) map.get("valedictorian_capacity_fill");
+        this.total_fill = (String) map.get("total_fill");
+        this.unfilled_capacity = (String) map.get("unfilled_capacity");
+        this.initial_fill = (String) map.get("initial_fill");
+        this.unregistered = (String) map.get("unregistered");
+        this.latecomers = (String) map.get("latecomers");
+        this.base_lastguy_score = (String) map.get("base_lastguy_score");
+        this.amplified_lastguy_score = (String) map.get("amplified_lastguy_score");
+        this.base_lastguy_rank = (String) map.get("base_lastguy_rank");
+        this.amplified_lastguy_rank = (String) map.get("amplified_lastguy_rank");
+        this.best_score = (String) map.get("best_score");
+        this.best_rank = (String) map.get("best_rank");
+        this.fill_by_weird = (String) map.get("fill_by_weird");
+        this.average_obp = (String) map.get("average_obp");
+        this.average_gpa = (String) map.get("average_gpa");
+    }
+
+    public static UniversityTableData fromMap(Map<String, Object> map) {
+        return new UniversityTableData(map);
+    }
 
     public UniversityTableData() {
     }
