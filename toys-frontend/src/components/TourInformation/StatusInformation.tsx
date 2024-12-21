@@ -1,12 +1,10 @@
 import React, {useContext, useMemo} from "react";
-import {Button, Group, Stack, Text} from "@mantine/core";
-import {IconCircleCheck, IconCircleX, IconPencil} from "@tabler/icons-react";
+import {Group, Stack, Text} from "@mantine/core";
 import {TourSectionProps} from "../../types/designed.ts";
 import {UserRole} from "../../types/enum.ts";
 import {UserContext} from "../../context/UserContext.tsx";
-import TourCancelButton from "./TourCancelButton.tsx";
-import TourRejectButton from "./TourRejectButton.tsx";
 import { TourTypeText } from "../../types/enum.ts";
+import TourStatusActions from "../TourStatusActions/TourStatusActions.tsx";
 
 // Define the new tour status text mapping
 const TourStatusText = {
@@ -22,49 +20,6 @@ const TourStatusText = {
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
   const userContext = useContext(UserContext);
-
-  const buttons = useMemo(() => {
-    switch(userContext.user.role) {
-      case UserRole.GUIDE:
-      case UserRole.ADVISOR:
-        switch(props.tour.status) {
-          case "RECEIVED":
-            return (
-              <>
-                <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-                <TourRejectButton {...props} />
-                <Button size="md" leftSection={<IconPencil />}>Değişiklik İste</Button>
-              </>
-            );
-          case "TOYS_WANTS_CHANGE":
-          case "APPLICANT_WANTS_CHANGE":
-            return (
-              <>
-                <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-                <Button size="md" leftSection={<IconCircleX/>}>Reddet</Button>
-              </>
-            );
-          case "CONFIRMED":
-            return (
-              <TourCancelButton {...props} />
-            );
-          default: return null;
-        }
-      case UserRole.NONE:
-        switch (props.tour.status) {
-          case "TOYS_WANTS_CHANGE":
-          case "APPLICANT_WANTS_CHANGE":
-            return (
-              <>
-                <Button size="md" leftSection={<IconCircleCheck/>}>Kabul Et</Button>
-                <Button size="md" leftSection={<IconCircleX/>}>Reddet</Button>
-              </>
-            );
-          default: return null;
-        }
-      default: return null;
-    }
-  }, [props, userContext.user.role]);
 
   const statusColorClass = useMemo(() => {
     switch (props.tour.status) {
@@ -97,7 +52,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
       </Stack>
       {
         userContext.user.role === UserRole.ADVISOR
-          ? <Group>{ buttons }</Group>
+          ? <Group><TourStatusActions tour={props.tour} onRefresh={props.refreshTour} /></Group>
           : null
       }
     </Group>

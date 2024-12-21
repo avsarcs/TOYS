@@ -30,7 +30,7 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
           <Text size="md" fw={700}>
             Rehberler:
             <Text c={guideListColor} span>
-              {guideListText}
+              &nbsp;{guideListText}
             </Text>
           </Text>
           <Text size="md" fw={700}>
