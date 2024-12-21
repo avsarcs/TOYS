@@ -7,12 +7,11 @@ export const ApplicationSuccess: React.FC = () => {
     return (
         <>
             <div className='application-success-container'>
+                <br></br>
                 <Title>Başvurunuzu aldık!</Title>
-                <div>Size geri dönüş yapacağız.</div>
-                <Title className='text-red-600' size="h1">KODUNUZU NOT ALIN!</Title> <Title>zurtzart</Title>
-                <div className='mb-3'>Başvurunuzda değişiklik yapmak istemeniz durumunda bu kodu temin etmeniz gerekmektedir. 
-                </div>
-                <img src="/bilkent_drone.jpg" />
+                <div>Size geri dönüş yapacağız. Bu sayfayı kapatabilirsiniz.</div>
+                <br></br>
+                <img src="/bilkent_drone.jpg" style={{ border: '10px solid black' }} />
             </div>
         </>
     );

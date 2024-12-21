@@ -14,6 +14,7 @@ const GUIDES_PER_PAGE = 5;
 const GuidePayments: React.FC = () => {
     const navigate = useNavigate();
     const [paymentsData, setPaymentsData] = useState<MoneyForGuide[]>(defaultPayment);
+    const [filteredData, setFilteredData] = useState<MoneyForGuide[] | null>(null);
     const [filter, setFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,13 +61,13 @@ const GuidePayments: React.FC = () => {
         }
     },[userContext.authToken]);
 
-    const filteredPayments = paymentsData.filter((payment) => {
+    const filteredPayments = (filteredData || paymentsData).filter((payment) => {
         if (filter === "all") return true;
         if (filter === "unpaid") return payment.debt > 0;
         if (filter === "paid") return payment.debt === 0;
         return true;
     });
-
+    
     const totalPages = Math.ceil(filteredPayments.length / GUIDES_PER_PAGE);
     const paginatedPayments = filteredPayments.slice(
         (currentPage - 1) * GUIDES_PER_PAGE,
@@ -75,14 +76,16 @@ const GuidePayments: React.FC = () => {
     
     const handleSearch = () => {
         if (searchTerm.trim() === "") {
-            setPaymentsData(paymentsData);
+            setFilteredData(null); // Reset to show all data
         } else {
             const filtered = paymentsData.filter((payment) =>
                 payment.guide.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
-            setPaymentsData(filtered);
+            setFilteredData(filtered);
         }
+        setCurrentPage(1); // Reset to the first page
     };
+    
 
     const handlePageChange = (direction: string) => {
         if (direction === "prev" && currentPage > 1) {
@@ -144,7 +147,7 @@ const GuidePayments: React.FC = () => {
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
     <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}><b>Guide Payments</b></h1>
     <div style={{ height: "20px" }}></div>
-    <div style={{ marginBottom: "20px", textAlign: "center" }}>
+    <div style={{ marginBottom: "20px", textAlign: "center", background: "#fff", borderRadius: "10px", padding: "20px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
         <input
             type="text"
             placeholder="Search by Name..."
@@ -154,7 +157,7 @@ const GuidePayments: React.FC = () => {
                 padding: "10px",
                 width: "60%",
                 marginBottom: "10px",
-                borderRadius: "4px",
+                borderRadius: "20px",
                 border: "1px solid #ccc",
             }}
         />
@@ -163,7 +166,7 @@ const GuidePayments: React.FC = () => {
             style={{
                 padding: "10px 15px",
                 marginLeft: "10px",
-                borderRadius: "4px",
+                borderRadius: "20px",
                 background: "#5c6bc0",
                 color: "#fff",
                 border: "none",
@@ -173,16 +176,17 @@ const GuidePayments: React.FC = () => {
         </button>
     </div>
     
-    <div>
+    <div style={{ background: "#fff", borderRadius: "10px", padding: "20px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
         <button
             onClick={() => setFilter("all")}
             style={{
-                padding: "10px 15px",
-                marginRight: "10px",
-                border: "none",
-                background: filter === "all" ? "#5c6bc0" : "#f1f1f1",
-                color: filter === "all" ? "#fff" : "#000",
-                borderRadius: "4px",
+            padding: "10px 15px",
+            marginRight: "10px",
+            border: "none",
+            background: filter === "all" ? "#d7bde2" : "#f1f1f1", // pastel purple when selected
+            color: filter === "all" ? "purple" : "#000", // purple bold text when selected
+            fontWeight: "bold",
+            borderRadius: "20px",
             }}
         >
             All
@@ -190,12 +194,13 @@ const GuidePayments: React.FC = () => {
         <button
             onClick={() => setFilter("paid")}
             style={{
-                padding: "10px 15px",
-                marginRight: "10px",
-                border: "none",
-                background: filter === "paid" ? "#4caf50" : "#f1f1f1",
-                color: filter === "paid" ? "#fff" : "#000",
-                borderRadius: "4px",
+            padding: "10px 15px",
+            marginRight: "10px",
+            border: "none",
+            background: filter === "paid" ? "#a8e6a1" : "#f1f1f1", // pastel light green when selected
+            color: filter === "paid" ? "green" : "#000", // green text when selected
+            fontWeight: "bold",
+            borderRadius: "20px",
             }}
         >
             Paid
@@ -203,12 +208,13 @@ const GuidePayments: React.FC = () => {
         <button
             onClick={() => setFilter("unpaid")}
             style={{
-                padding: "10px 15px",
-                marginRight: "10px",
-                border: "none",
-                background: filter === "unpaid" ? "#f44336" : "#f1f1f1",
-                color: filter === "unpaid" ? "#fff" : "#000",
-                borderRadius: "4px",
+            padding: "10px 15px",
+            marginRight: "10px",
+            border: "none",
+            background: filter === "unpaid" ? "#f8a1a1" : "#f1f1f1", // pastel red when selected
+            color: filter === "unpaid" ? "red" : "#000", // red text when selected
+            fontWeight: "bold",
+            borderRadius: "20px",
             }}
         >
             Unpaid
@@ -218,10 +224,11 @@ const GuidePayments: React.FC = () => {
             style={{
             padding: "10px 15px",
             border: "none",
-            background: "pink",
-            color: "black",
-            borderRadius: "4px",
+            background: "lightpink",
+            color: "red",
             float: "right",
+            fontWeight: "bold",
+            borderRadius: "20px",
             }}
         >
             Pay All Debts
@@ -232,9 +239,10 @@ const GuidePayments: React.FC = () => {
             marginRight: "10px",
             padding: "10px 15px",
             border: "none",
-            background: "pink",
-            color: "black",
-            borderRadius: "4px",
+            background: "lightpink",
+            color: "red",
+            fontWeight: "bold",
+            borderRadius: "20px",
             float: "right",
             }}
         >
@@ -252,18 +260,18 @@ const GuidePayments: React.FC = () => {
                     style={{
                         padding: "20px",
                         marginBottom: "10px",
-                        border: "1px solid #ccc",
-
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        backgroundColor: "lightblue", 
-                        borderRadius: "8px", 
-
+                        backgroundColor: "#f1f1f1", 
+                        borderRadius: "20px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        maxWidth: "1500px",
+                        margin: "10px auto",
                     }}
                 >
                     <div>
-                        <h1><b>{payment.guide.name}</b></h1>
+                        <h1 style={{ fontSize: "1.5em", color: "darkblue" }}><b>{payment.guide.name}</b></h1>
                         <p><b>Guide ID: </b> {payment.guide.id}</p>
                         <p><b>Guide IBAN: </b> {payment.guide.iban}</p>
                         <p><b>Guide Bank: </b> {payment.guide.bank}</p>
@@ -276,8 +284,8 @@ const GuidePayments: React.FC = () => {
                         onClick={() => handleDetails(payment.guide.id.toString())}
                         style={{
                             padding: "20px 60px",
-                            background: "#5c6bc0",
-                            color: "#fff",
+                            background: "#b7cced",
+                            color: "darkblue",
                             border: "none",
                             borderRadius: "20px",
                             cursor: "pointer",
@@ -292,8 +300,8 @@ const GuidePayments: React.FC = () => {
                             onClick={() => handlePayDebt(payment.guide.id)}
                             style={{
                                 padding: "20px 60px",
-                                background: "#f44336",
-                                color: "#fff",
+                                background: "#d4edd3",
+                                color: "darkgreen",
                                 border: "none",
                                 borderRadius: "20px",
                                 cursor: "pointer",

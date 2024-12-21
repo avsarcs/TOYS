@@ -22,6 +22,7 @@ import EditProfilePage from "./pages/Profile/EditProfilePage.tsx";
 import TourPage from "./pages/TourInformation/TourPage.tsx";
 import TourReviewPage from "./pages/TourReview/TourReview.tsx";
 import ReviewDetailsPage from "./pages/ReviewDetails/ReviewDetails.tsx";
+import FairApplication from "./pages/FairApplication/FairApplication.tsx";
 import ApplicantRespond from "./pages/ApplicantRespond/ApplicantRespond.tsx";
 import ApplicantRequest from "./pages/ApplicantRequest/ApplicantRequest.tsx";
 
@@ -57,6 +58,7 @@ function App() {
             <Route path="/bilkentstudentdetails" element={<CheckLogin redirect children={<BilkentStudentDetails />}/>} />
             <Route path="/group-tour-application" element={<GroupTourApplication />} />
             <Route path="/individual-tour-application" element={<IndividualTourApplication />} />
+            <Route path="/fair-application" element={<FairApplication />} />
             <Route path="/application-success" element={<ApplicationSuccess />}/>
             <Route path="/toys-applications" element={<CheckLogin required redirect children={<ToysApplications />}/>} />
             <Route path="/trainee-application-details/:application_id" element={<CheckLogin required redirect children={<TraineeApplicationDetails />}/>}/>
