@@ -164,7 +164,9 @@ public class UserTourService {
             String from_date,
             String to_Date,
             boolean filter_guide_missing,
-            boolean filter_trainee_missing
+            boolean filter_trainee_missing,
+            boolean am_enrolled,
+            boolean am_invited
     ) {
         if (!authService.check(auth, Permission.VIEW_TOUR_INFO)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to perform this action.!");
@@ -259,7 +261,26 @@ public class UserTourService {
                                 return true;
                             }
                         }
-                ).sorted(
+                ).filter(
+                        tour -> {
+                            if (am_enrolled) {
+                                return tour.getGuides().contains(userId);
+                            } else {
+                                return true;
+                            }
+                        }
+                ).filter(
+                        tour -> {
+                            if (am_invited) {
+                                return databaseEngine.requests.getGuideAssignmentRequests().stream().anyMatch(
+                                        req -> req.getGuide_id().equals(userId) && req.getEvent_id().equals(tour.getTour_id()) && req.getStatus().equals(RequestStatus.PENDING)
+                                );
+                            } else {
+                                return true;
+                            }
+                        }
+                )
+                .sorted(
                         (t1, t2) -> {
                             if (t1.getTourStatus().equals(t2.getTourStatus())) {
                                 return 0;
