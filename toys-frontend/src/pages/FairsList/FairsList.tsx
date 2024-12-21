@@ -21,37 +21,38 @@ import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
 
-const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
+const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fairs");
 
-const TourListPage: React.FC = () => {
+const FairsList: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [tours, setTours] = useState<SimpleEventData[]>([]);
+  const [fairs, setFairs] = useState<SimpleEventData[]>([]);
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
   const [guideMissing, setGuideMissing] = useState(false);
   const [traineeMissing, setTraineeMissing] = useState(false);
 
-  const getTours = async () => {
-    const toursUrl = new URL(TOURS_URL);
+  const getFairs = async () => {
+    const fairsUrl = new URL(FAIRS_URL);
     
     // Always append required auth token
-    toursUrl.searchParams.append("auth", userContext.authToken);
+    fairsUrl.searchParams.append("auth", userContext.authToken);
     
     // Always append optional parameters, even if empty
-    toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
-    toursUrl.searchParams.append("school_name", searchSchoolName || '');
+    fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
+    fairsUrl.searchParams.append("school_name", searchSchoolName || '');
+    fairsUrl.searchParams.append("guide_not_assigned", guideMissing.toString());
     
     // Handle dates
-    toursUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
-    toursUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
+    fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
+    fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
     
     // Handle filter flags
-    toursUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
-    toursUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
+    fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
+    fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
 
-    const res = await fetch(toursUrl, {
+    const res = await fetch(fairsUrl, {
       method: "GET"
     });
 
@@ -130,14 +131,11 @@ const TourListPage: React.FC = () => {
           </Text>
           <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
             <Group>
-              <Chip size="lg" color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="AWAITING_CONFIRMATION">Onay Bekliyor</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="ACCEPTED">Onaylandı</Chip>
               <Chip size="lg" color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
               <Chip size="lg" color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="FINISHED">Bitti</Chip>
+              <Chip size="lg" color="blue" variant="outline" value="COMPLETED">Bitti</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
