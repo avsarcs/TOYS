@@ -15,6 +15,15 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
+const defaultHeaderStyle = {
+    backgroundColor: 'white',
+    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+    width: '100%', // Ensure the container takes the full width of its parent
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center', // Center vertically
+    justifyContent: 'center', // Center horizontally
+};
 
 //test data
 const defaultCities = ["Yükleniyor..."];
@@ -66,6 +75,14 @@ const UniversitiesList: React.FC = () => {
 
         if (!res.ok) {
             throw new Error("Response not OK.");
+        }
+
+        if (res.status === 401) {
+            notifications.show({
+                color: "red",
+                title: "Tekrar giriş yapmanız gerekiyor.",
+                message: "Oturumun süresi dolmuş."
+            });
         }
 
         const resText = await res.text();
@@ -135,11 +152,11 @@ const UniversitiesList: React.FC = () => {
         });
     }, []);
 
-    const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+    const HeaderTextContainer = <div style={defaultHeaderStyle}>
         <Text style={{fontSize: 'xx-large'}}>
             Üniversiteler Listesi
         </Text>
-    </Container>
+    </div>
 
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
@@ -155,9 +172,7 @@ const UniversitiesList: React.FC = () => {
 
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
-        <Space h="xl"/>
         {HeaderTextContainer}
-        <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
         {TableFilterContainer}
         <Space h="xl"/>
