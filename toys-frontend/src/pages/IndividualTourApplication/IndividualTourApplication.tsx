@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Alert } from '@mantine/core';
-import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react"
+import { Button, Alert, Modal, Text } from '@mantine/core';
+import { IconChevronRight, IconChevronLeft, IconAlertCircle, IconCircleCheck, IconX } from "@tabler/icons-react"
 import { Stepper } from '@mantine/core';
 import "./IndividualTourApplication.css";
 import { IndividualApplication } from '../../types/designed';
@@ -21,6 +21,9 @@ const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + 
 
 const IndividualTourApplication: React.FC = () => {
 
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+
     const userContext = useContext(UserContext);
 
     const [applicationInfo, setApplicationInfo] = useState<IndividualApplication>({
@@ -32,14 +35,14 @@ const IndividualTourApplication: React.FC = () => {
         "visitor_count": -1,
         "applicant": {
             "fullname": "",
-            "role": "student",
+            "role": "STUDENT",
             "email": "",
             "phone": "",
             "notes": ""
         }
     })
 
-    const [currentStage, setCurrentStage] = useState(1)
+    const [currentStage, setCurrentStage] = useState(0)
 
     const attemptStageChange = (newStage: number) => {
 
@@ -75,6 +78,7 @@ const IndividualTourApplication: React.FC = () => {
         "not_email": false,
         "not_phone_no": false,
         "not_enough_dates": false,
+        "no_major_selected": false
     })
 
     const clearWarnings = () => {
@@ -146,8 +150,22 @@ const IndividualTourApplication: React.FC = () => {
 
     // stage2 is valid all the time
     const validateStage2 = () => {
-        return true
-    }
+        if (!applicationInfo.requested_majors ||
+            applicationInfo.requested_majors.length === 0 ||
+            applicationInfo.requested_majors.some(major => major.trim() === '')) {
+            setWarnings(prev => ({
+                ...prev,
+                "no_major_selected": true
+            }));
+            return false;
+        } else {
+            setWarnings(prev => ({
+                ...prev,
+                "no_major_selected": false
+            }));
+            return true;
+        }
+    };
 
     // Validate if stage 3 is done.
     const validateStage3 = () => {
@@ -189,32 +207,67 @@ const IndividualTourApplication: React.FC = () => {
         }
     }
 
-    const navigate = useNavigate()
-
     const attemptSubmitForm = async () => {
-        // Do whatever you need to submit applicationInfo to the backend.
-        if (validateStage3()) {
+        if (validateStage4()) {
+            const applicationUrl = new URL(TOUR_APPLICATION_URL);
+            // applicationUrl.searchParams.append("auth", userContext.authToken);
 
-            const applicationUrl = new URL(TOUR_APPLICATION_URL)
-            
-            const res = await fetch(applicationUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(applicationInfo)
-            })
-      
-            if (res.status == 200)
-              navigate("/application-success")
-          }
+            try {
+                const res = await fetch(applicationUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(applicationInfo)
+                });
 
-        if (validateStage4())
-            navigate("/application-success")
+                if (res.status === 200) {
+                    setShowSuccessModal(true);
+                } else {
+                    setShowErrorModal(true);
+                }
+            } catch (error) {
+                setShowErrorModal(true);
+            }
+        }
     }
 
     return (
         <>
+            <Modal
+                opened={showSuccessModal}
+                onClose={() => { }}
+                closeOnClickOutside={false}
+                closeOnEscape={false}
+                withCloseButton={false}
+                centered
+            >
+                <div className="text-center py-4">
+                    <IconCircleCheck size={48} className="text-green-500 mx-auto mb-4" />
+                    <Text size="xl" fw={700} className="text-green-700">
+                        Tur Başvurunuz Başarıyla İletildi!
+                    </Text>
+                    <Text className='text-green-600'>
+                        Size geri dönüş yapacağız.
+                    </Text>
+                </div>
+            </Modal>
+
+            <Modal
+                opened={showErrorModal}
+                onClose={() => setShowErrorModal(false)}
+                centered
+            >
+                <div className="text-center py-4">
+                    <IconX size={48} className="text-red-500 mx-auto mb-4" />
+                    <Text size="xl" fw={700} className="text-red-700 mb-2">
+                        Başvuru İletilirken Bir Hata Oluştu
+                    </Text>
+                    <Text size="sm" className="text-gray-600">
+                        Lütfen daha sonra tekrar deneyiniz.
+                    </Text>
+                </div>
+            </Modal>
             <div className='application-wrapper p-8'>
                 <Stepper active={currentStage} onStepClick={attemptStageChange}>
                     <Stepper.Step label="1. Aşama" description="Hakkınızda">
@@ -237,7 +290,8 @@ const IndividualTourApplication: React.FC = () => {
                             {warnings["empty_fields"] && (<><br /> <strong>Bıraktığınız boş alanları doldurun.</strong></>)}
                             {warnings["not_email"] && (<><br />  <strong>Geçerli bir e-posta adresi girin.</strong></>)}
                             {warnings["not_phone_no"] && (<><br />  <strong>Geçerli bir telefon numarası girin.</strong></>)}
-                            {warnings["not_enough_dates"] && (<><br />  <strong>En az bir zaman aralığı seçin.</strong></>)}<br />
+                            {warnings["not_enough_dates"] && (<><br />  <strong>En az bir zaman aralığı seçin.</strong></>)}
+                            {warnings["no_major_selected"] && (<><br />  <strong>Boş bölüm seçimi bırakamazsınız / En az bir bölüm seçmelisiniz</strong></>)}<br />
                         </Alert>
                     }
                     {currentStage == 0 && <IndividualInfoStage

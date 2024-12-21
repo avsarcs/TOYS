@@ -202,6 +202,9 @@ export const GroupTourApplication: React.FC = () => {
           <Text size="xl" fw={700} className="text-green-700">
             Tur Başvurunuz Başarıyla İletildi!
           </Text>
+          <Text className='text-green-600'>
+            Size geri dönüş yapacağız.
+          </Text>
         </div>
       </Modal>
 
