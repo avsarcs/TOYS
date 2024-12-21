@@ -8,6 +8,7 @@ import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchool
 import HighSchoolEdit from "./HighSchoolEdit.tsx";
 import HighSchoolStudentDetails from "./HighSchoolStudentDetails.tsx";
 import HighSchoolTourReviewDetails from "./HighSchoolTourReviewDetails.tsx";
+import {HighschoolData} from "../../types/data.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -71,10 +72,12 @@ const data = {
 interface HighSchoolDetailsProps {
     opened: boolean;
     onClose: () => void;
-    highSchool: any;
+    highSchool: HighschoolData;
 }
 
 const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, highSchool}) => {
+    console.log(highSchool);
+
     const [editModalOpened, setEditModalOpened] = React.useState(false);
     const [studentDetailsModalOpened, setStudentDetailsModalOpened] = React.useState(false);
     const [studentDetailsModalYear, setStudentDetailsModalYear] = React.useState(0);
@@ -97,13 +100,13 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
-            {highSchool}
+            {highSchool.name}
         </Text>
     </Container>
 
     const DetailsTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <DetailsTable priority={data.priority} ranking={data.ranking} city={data.city}/>
+        <DetailsTable priority={highSchool.priority} ranking={highSchool.ranking} city={highSchool.location}/>
         <Space h="xs" />
     </Container>
 
@@ -163,8 +166,8 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 opened={editModalOpened}
                 onClose={() => setEditModalOpened(false)}
                 currentName={highSchool}
-                currentCity={data.city}
-                currentPriority={data.priority.toString()}
+                currentCity={highSchool.location}
+                currentPriority={highSchool.priority.toString()}
             />
         }
         {

@@ -41,7 +41,8 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
       notifications.show({
         color: "red",
         title: "Hay aksi!",
-        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine haber verin."
+        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine haber verin.",
+        autoClose: false
       });
       props.setRegistering(false);
       return;

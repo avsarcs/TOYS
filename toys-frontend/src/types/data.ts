@@ -1,4 +1,14 @@
-import { ApplicantRole, Department, EventType, TourStatus, TourType, UserRole, DayOfTheWeek, TimeSlotStatus } from "./enum.ts";
+import {
+  ApplicantRole,
+  Department,
+  EventType,
+  TourStatus,
+  TourType,
+  UserRole,
+  DayOfTheWeek,
+  TimeSlotStatus,
+  City
+} from "./enum.ts";
 
 export interface LoginData {
   bilkentID: string,
@@ -29,7 +39,7 @@ export interface ApplicantData {
 export interface HighschoolData {
   id: string,
   name: string,
-  location: string,
+  location: City,
   priority: number,
   ranking: number
 }

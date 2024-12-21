@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, rem} from '@mantine/core';
+import {Button, Text, rem} from '@mantine/core';
 import {IconPencil} from "@tabler/icons-react";
 
 /**
@@ -22,7 +22,7 @@ const EditButton: React.FC<EditButtonProps> = ({onEdit}) => {
         style={{width: "60%"}}
         leftSection={<IconPencil style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
     >
-        <text>Düzenle</text>
+        <Text>Düzenle</Text>
     </Button>
 }
 
