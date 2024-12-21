@@ -1,77 +1,50 @@
 package server.models.schools;
 
-import java.util.Map;
-
-public class Highschool extends HighschoolRecord {
-    private String name;
-    private String city;
-    private String id;
-    private long ranking;
-    private long priority;
-
-    protected Highschool(Map<String, Object> map) {
-        super(map);
-        this.name = (String) map.get("name");
-        this.city = (String) map.get("city");
-        this.id = (String) map.get("id");
-        this.ranking = (long) map.get("ranking");
-        this.priority = (long) map.get("priority");
-    }
-
-    public static Highschool fromMap(Map<String, Object> map) {
-        return new Highschool(map);
-    }
-
-    protected Highschool(HighschoolRecord base) {
-        super(base);
-    }
+public class Highschool {
+    private String title;
+    private String location;
+    private HighschoolEntrenceDetails details;
 
     public static Highschool getDefault() {
-        Highschool hs = new Highschool(HighschoolRecord.getDefault());
-        hs.setName(hs.getTitle());
-        hs.setCity(hs.getLocation());
-        hs.setId("Default HS ID");
-        hs.setRanking(0);
-        hs.setPriority(0);
+        Highschool hs = new Highschool();
+        hs.setTitle("Default HighSchool Name");
+        hs.setLocation("Default HighSchool Location");
+        hs.setDetails(HighschoolEntrenceDetails.getDefault());
         return hs;
     }
 
-    public Highschool() {};
-
-    public String getName() {
-        return name;
+    public static String getID(String name) {
+        String ID = "";
+        for (int i = 0; i < name.length(); i++) {
+            ID += Integer.valueOf(name.charAt(i)).toString();
+        }
+        return ID;
     }
 
-    public Highschool setName(String name) {
-        this.name = name;
+    public String getTitle() {
+        return title;
+    }
+
+    public Highschool setTitle(String title) {
+        this.title = title;
         return this;
     }
 
-    public String getCity() {
-        return city;
+    public String getLocation() {
+        return location;
     }
 
-    public Highschool setCity(String city) {
-        this.city = city;
+    public Highschool setLocation(String location) {
+        this.location = location;
         return this;
     }
 
-    public String getId() {
-        return id;
+    public HighschoolEntrenceDetails getDetails() {
+        return details;
     }
 
-    public Highschool setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public Highschool setRanking(long ranking) {
-        this.ranking = ranking;
-        return this;
-    }
-
-    public Highschool setPriority(long priority) {
-        this.priority = priority;
+    public Highschool setDetails(HighschoolEntrenceDetails details) {
+        this.details = details;
         return this;
     }
 }

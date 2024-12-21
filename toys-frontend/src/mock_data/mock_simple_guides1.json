@@ -1,72 +1,50 @@
 [
 	{
-	  "id": "22231331",
-	  "name": "Balik Baliksatan",
-	  "major": "CS",
-	  "role": "GUIDE",
-	  "experience": "3 events"
+		"id": 22231331,
+		"name": "Balik Baliksatan",
+		"major": "CS",
+		"experience": "3 events"
 	},
 	{
-	  "id": "21903214",
-	  "name": "Ahmet Yilmaz",
-	  "major": "EEE",
-	  "role": "ADVISOR",
-	  "experience": "15 events"
+		"id": 22231332,
+		"name": "Ali Alkan",
+		"major": "EE",
+		"experience": "5 events"
 	},
 	{
-	  "id": "22145632",
-	  "name": "Elif Demir",
-	  "major": "CS",
-	  "role": "TRAINEE",
-	  "experience": "1 event"
+		"id": 22231333,
+		"name": "Ceyda Candan",
+		"major": "ME",
+		"experience": "2 events"
 	},
 	{
-	  "id": "21878943",
-	  "name": "Mehmet Kaya",
-	  "major": "ME",
-	  "role": "GUIDE",
-	  "experience": "7 events"
+		"id": 22231334,
+		"name": "Derya Deniz",
+		"major": "BIO",
+		"experience": "4 events"
 	},
 	{
-	  "id": "22567890",
-	  "name": "Zeynep Aksoy",
-	  "major": "IE",
-	  "role": "GUIDE",
-	  "experience": "5 events"
+		"id": 22231335,
+		"name": "Emre Eryılmaz",
+		"major": "CS",
+		"experience": "6 events"
 	},
 	{
-	  "id": "21654321",
-	  "name": "Can Ozturk",
-	  "major": "CS",
-	  "role": "ADVISOR",
-	  "experience": "12 events"
+		"id": 22231336,
+		"name": "Fatma Fidan",
+		"major": "CHE",
+		"experience": "1 event"
 	},
 	{
-	  "id": "22098765",
-	  "name": "Deniz Aydin",
-	  "major": "EEE",
-	  "role": "TRAINEE",
-	  "experience": "0 events"
+		"id": 22231337,
+		"name": "Gül Gündoğan",
+		"major": "CS",
+		"experience": "3 events"
 	},
 	{
-	  "id": "21789012",
-	  "name": "Selin Yildiz",
-	  "major": "ME",
-	  "role": "GUIDE",
-	  "experience": "4 events"
-	},
-	{
-	  "id": "22345678",
-	  "name": "Burak Celik",
-	  "major": "CS",
-	  "role": "GUIDE",
-	  "experience": "6 events"
-	},
-	{
-	  "id": "21432109",
-	  "name": "Ayse Sahin",
-	  "major": "IE",
-	  "role": "ADVISOR",
-	  "experience": "18 events"
+		"id": 22231338,
+		"name": "Hakan Halıcı",
+		"major": "EEE",
+		"experience": "5 events"
 	}
-  ]
+]

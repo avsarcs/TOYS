@@ -26,7 +26,7 @@ interface HighSchoolEditProps {
     opened: boolean;
     highSchoolID: string;
     currentName: string;
-    currentCity: City;
+    currentCity: string;
     currentPriority: string;
     onClose: () => void;
 }
@@ -36,7 +36,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
-    const [selectedCity, setSelectedCity] = React.useState<City | null>(currentCity);
+    const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(currentPriority);
     const [cities, setCities] = React.useState(defaultCities);
 
@@ -145,7 +145,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector priorities={priorities} currentName={currentName} currentCity={currentCity} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 

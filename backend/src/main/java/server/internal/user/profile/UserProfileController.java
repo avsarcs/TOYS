@@ -22,8 +22,8 @@ public class UserProfileController {
     }
 
     @GetMapping("/internal/user/profile/simple")
-    public Map<String, Object> getSimpleGuides(@RequestParam String auth, @RequestParam String id) {
-        return userProfileService.getSimpleGuides(auth, id);
+    public List<DTO_SimpleGuide> getSimpleGuides(@RequestParam String auth, @RequestParam DTO_UserType type) {
+        return userProfileService.getSimpleGuides(auth, type);
     }
 
     @PostMapping("/internal/user/profile/update")

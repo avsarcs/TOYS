@@ -77,7 +77,7 @@ public class DBFairsService {
 
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
-                fairs.putIfAbsent(entry.getKey(), FairRegistry.fromMap((Map<String, Object>) entry.getValue()));
+                fairs.putIfAbsent(entry.getKey(), FairRegistry.fromMap((Map<String, Object>) data.get("fairs")));
             }
         } catch (Exception e) {
             e.printStackTrace();

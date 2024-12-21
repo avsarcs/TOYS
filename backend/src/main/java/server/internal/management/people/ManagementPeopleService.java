@@ -1,6 +1,5 @@
 package server.internal.management.people;
 
-import server.auth.AuthService;
 import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
@@ -16,14 +15,13 @@ import server.models.*;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
 import server.models.people.GuideApplication;
+import server.models.people.GuideAssignmentRequest;
 import server.models.people.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import server.models.people.details.ContactInfo;
-import server.models.requests.GuideAssignmentRequest;
-import server.models.requests.Requester;
 import server.models.time.ZTime;
 
 import java.time.ZonedDateTime;
@@ -38,20 +36,26 @@ public class ManagementPeopleService {
     @Autowired
     MailServiceGateway mailService;
 
-    @Autowired
-    AuthService authService;
-
-    public void inviteUserToFair(String auth, String invitee, String fairId) {
-
-        if (!authService.check(auth, Permission.INVITE_GUIDE_TO_FAIR)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to invite users to fairs!");
+    public void inviteUserToFair(String authToken, String invitee, String fairId) {
+        // validate jwt token
+        if (!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
+        // validate permission
+        if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.INVITE_GUIDE_TO_FAIR)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to invite users to fairs!");
+        }
 
         //check if fair exists
         if (databaseEngine.fairs
                 .fetchFairs()
-                .keySet().stream().noneMatch(k -> k.equals(fairId))) {
+                .keySet()
+                .stream()
+                .filter(
+                        k -> k.equals(fairId)
+                ).toList()
+                .size() == 0) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Fair does not exist!");
         }
 
@@ -63,18 +67,16 @@ public class ManagementPeopleService {
         GuideAssignmentRequest request = new GuideAssignmentRequest();
 
         request.setEvent_id(fairId);
-        request.setGuide_id(invitee);
+        request.setRequested_guide_id(invitee);
         request.setRequested_at(new ZTime(ZonedDateTime.now()));
         request.setStatus(RequestStatus.PENDING);
         request.setType(RequestType.ASSIGNMENT);
         request.setNotes("");
 
-        String userID = JWTService.getSimpleton().decodeUserID(auth);
-
         // fetch the source contact info
-        ContactInfo contact = databaseEngine.people.fetchUser(userID).getProfile().getContact_info();
+        ContactInfo contact = databaseEngine.people.fetchUser(JWTService.getSimpleton().decodeUserID(authToken)).getProfile().getContact_info();
 
-        request.setRequested_by(new Requester().setBilkent_id(userID).setContactInfo(contact));
+        request.setRequested_by(contact);
 
         // add the invitation request
         databaseEngine.requests.addRequest(request);
@@ -100,9 +102,14 @@ public class ManagementPeopleService {
     }
 
     public void fireUser(String auth, String firee) {
+        // validate jwt token
+        if (!JWTService.getSimpleton().isValid(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
 
-        if (!authService.check(auth, Permission.FIRE_GUIDE_OR_ADVISOR)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to fire users!");
+        // validate permission
+        if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(auth), Permission.FIRE_GUIDE_OR_ADVISOR)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to invite users to fairs!");
         }
 
         // check if user exists
@@ -128,7 +135,7 @@ public class ManagementPeopleService {
         for (Map.Entry<String, FairRegistry> fair : fairs.entrySet()) {
             // check if guide is assigned to said fair
             if (fair.getValue().getGuides().contains(firee)) {
-                if (fair.getValue().getFair_status() == FairStatus.CONFIRMED) {
+                if (fair.getValue().getFair_status() == FairStatus.ACCEPTED) {
                     fair.getValue().getGuides().remove(firee);
                     databaseEngine.fairs.updateFair(fair.getValue(), fair.getKey());
                 }
@@ -141,17 +148,30 @@ public class ManagementPeopleService {
     }
 
     public Map<String, Application> getApplications(String authToken) {
-        if (!authService.check(authToken, Permission.AR_GUIDE_APPLICATIONS)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view applications");
+        // validate jwt token
+        if (!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        // validate permission
+        if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.AR_GUIDE_APPLICATIONS)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view or respond to applications!");
         }
 
         // get and return all applications
         return databaseEngine.applications.getApplications();
     }
 
-    public List<User> getPeople(String auth) {
-        if (!authService.check(auth, Permission.VIEW_WORK_DONE_BY_GUIDE)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view applications");
+    public List<User> getPeople(String authToken) {
+
+        // validate jwt token
+        if (!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        // validate permission
+        if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.VIEW_WORK_DONE_BY_GUIDE)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view people");
         }
 
         // get all users
@@ -164,8 +184,12 @@ public class ManagementPeopleService {
     }
 
     public void respondToApplication( String authToken, String applicationId, String response) {
-        if (!authService.check(authToken, Permission.AR_GUIDE_APPLICATIONS)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view applications");
+        // validate token and permission
+        if (!JWTService.getSimpleton().isValid(authToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+        if (!PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(authToken), Permission.AR_GUIDE_APPLICATIONS)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view or respond to applications!");
         }
 
         ApplicationType type = databaseEngine.applications.getApplications().get(applicationId).getType();

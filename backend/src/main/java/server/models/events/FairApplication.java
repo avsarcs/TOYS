@@ -21,8 +21,8 @@ public class FairApplication extends Application {
 
     protected FairApplication(Map<String,Object> map) {
         super(map);
-        this.starts_at = new ZTime((String) map.get("starts_at"));
-        this.ends_at = new ZTime((String) map.get("ends_at"));
+        this.starts_at = ZTime.fromMap((Map<String, Object>) map.get("starts_at"));
+        this.ends_at = ZTime.fromMap((Map<String, Object>) map.get("end_at"));
         this.notes = (String) map.get("notes");
         this.fair_name = (String) map.get("fair_name");
         this.applicant = Applicant.fromMap((Map<String, Object>) map.get("applicant"));
@@ -40,31 +40,6 @@ public class FairApplication extends Application {
 
     private Applicant applicant;
 
-
-    public FairApplication setStarts_at(ZTime starts_at) {
-        this.starts_at = starts_at;
-        return this;
-    }
-
-    public FairApplication setEnds_at(ZTime ends_at) {
-        this.ends_at = ends_at;
-        return this;
-    }
-
-    public FairApplication setNotes(String notes) {
-        this.notes = notes;
-        return this;
-    }
-
-    public FairApplication setFair_name(String fair_name) {
-        this.fair_name = fair_name;
-        return this;
-    }
-
-    public FairApplication setApplicant(Applicant applicant) {
-        this.applicant = applicant;
-        return this;
-    }
 
     public ZTime getStarts_at() {
         return starts_at;

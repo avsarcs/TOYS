@@ -2,14 +2,14 @@ import React, {createContext, useCallback, useEffect, useMemo, useState} from 'r
 import {OnlyChildrenProps} from '../types/generic';
 import {User} from '../types/designed';
 import {useCookies} from "react-cookie";
-import {UserRole, TimeSlotStatus, FetchingStatus} from "../types/enum.ts";
+import {UserRole, DayOfTheWeek, TimeSlotStatus} from "../types/enum.ts";
+import { ScheduleData, HighschoolData} from '../types/data.ts'; 
+
 
 interface UserContextType {
   authToken: string;
   setAuthToken: (token: string) => void;
-  fetchStatus: FetchingStatus;
   user: User;
-  updateUser: () => Promise<boolean>
   isLoggedIn: boolean;
 }
 
@@ -22,7 +22,6 @@ const EMPTY_USER: User = {
   profile: {
       experience: "",
       id: "",
-      email: "",
       created_at: "",
       updated_at: "",
       fullname: "",
@@ -30,8 +29,10 @@ const EMPTY_USER: User = {
       highschool: {
         id: "",
         name: "",
+        location: "",
+        priority: undefined
       },
-      schedule: { schedule: {
+      schedule: {
         MONDAY: {
           _830_930: TimeSlotStatus.FREE,
           _930_1030: TimeSlotStatus.FREE,
@@ -42,7 +43,6 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         },
         TUESDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -54,7 +54,6 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         },
         WEDNESDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -66,7 +65,6 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         },
         THURSDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -78,7 +76,6 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         },
         FRIDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -90,7 +87,6 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         },
         SATURDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -102,7 +98,6 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         },
         SUNDAY: {
           _830_930: TimeSlotStatus.FREE,
@@ -114,21 +109,19 @@ const EMPTY_USER: User = {
           _1430_1530: TimeSlotStatus.FREE,
           _1530_1630: TimeSlotStatus.FREE,
           _1630_1730: TimeSlotStatus.FREE,
-          _1730_1830: TimeSlotStatus.FREE
         }
-      }
       },
       iban: "",
       bank: "",
       major: "",
       reviews: {
-        average: 0,
-        count: 0
+        average: undefined,
+        count: undefined
       },
       role: UserRole.NONE,
       responsible_days: [],
       profile_picture: "",
-      previous_tour_count: 0,
+      previous_tour_count: undefined,
       profile_description: "",
       advisor_offer: false
   }
@@ -138,28 +131,28 @@ export const UserContext = createContext<UserContextType>({
   authToken: "",
   setAuthToken: () => {},
   user: EMPTY_USER,
-  fetchStatus: FetchingStatus.NONE,
-  updateUser: () => Promise.resolve(new Promise<boolean>(() => false)),
   isLoggedIn: false
-});
+  });
 
 export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
-  const [cookies, setCookie] = useCookies(["auth"], {});
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [fetchStatus, setFetchStatus] = useState(FetchingStatus.NONE);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [cookies, setCookie] = useCookies(["auth"], {})
   const [user, setUser] = useState<User>(EMPTY_USER);
 
-  const checkAuth = useCallback(async () => {
+  const setAuthToken = useCallback((auth: string) => {
+    setCookie("auth", auth);
+  }, [setCookie]);
+
+  const checkAuth = async (auth: string) => {
     setUser(EMPTY_USER);
     setIsLoggedIn(false);
 
-    if (!cookies.auth || cookies.auth.length === 0) {
-      setFetchStatus(FetchingStatus.DONE);
+    if (!auth || auth.length === 0) {
       return;
     }
 
     const validURL = new URL(AUTH_VALID_URL);
-    validURL.searchParams.append("auth", cookies.auth);
+    validURL.searchParams.append("auth", auth);
     const validRes = await fetch(
       validURL,
       {
@@ -167,22 +160,14 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
       }
     );
 
-    if (!validRes.ok) {
-      setFetchStatus(FetchingStatus.FAILED);
-      return;
-    }
-
     const isValid = await validRes.json();
 
-    if (isValid !== true) {
-      setFetchStatus(FetchingStatus.DONE);
-      setCookie("auth", "");
-      setIsLoggedIn(false);
+    if (validRes.status !== 200 || isValid !== true) {
       return;
     }
 
     const profileURL = new URL(USER_PROFILE_URL);
-    profileURL.searchParams.append("auth", cookies.auth);
+    profileURL.searchParams.append("auth", auth);
     profileURL.searchParams.append("id", "");
     const profileRes = await fetch(
       profileURL,
@@ -191,47 +176,29 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
       }
     );
 
-    if (profileRes.ok) {
+    if (profileRes.status === 200) {
       const profile = await profileRes.json();
       setUser({
         id: profile.id,
         role: profile.role,
         profile: profile,
       });
-      setFetchStatus(FetchingStatus.DONE);
       setIsLoggedIn(true);
     }
-    else {
-      setFetchStatus(FetchingStatus.FAILED);
-    }
-  }, [cookies.auth, setCookie, setUser, setIsLoggedIn, setFetchStatus]);
+  }
 
-  const setAuthToken = useCallback((auth: string) => {
-    setFetchStatus(FetchingStatus.FETCHING);
-    setCookie("auth", auth);
-  }, [setCookie, setFetchStatus]);
-
-  const updateUser = useCallback(() => {
-    setFetchStatus(FetchingStatus.FETCHING);
-    return new Promise<boolean>(() => {
-      return checkAuth().then(() => user.id.length !== 0);
-    });
-  }, [checkAuth, user]);
+  useEffect(() => {
+    checkAuth(cookies.auth).catch(console.error);
+  }, [cookies.auth]);
 
   const userContextValue = useMemo(() => {
     return {
       authToken: cookies.auth,
       setAuthToken,
-      updateUser,
-      fetchStatus,
       user,
       isLoggedIn,
     }
-  }, [cookies.auth, setAuthToken, updateUser, fetchStatus, user, isLoggedIn]);
-
-  useEffect(() => {
-    checkAuth().catch(console.error);
-  }, [checkAuth]);
+  }, [cookies.auth, setAuthToken, user, isLoggedIn])
 
   return (
     <UserContext.Provider value={userContextValue}>

@@ -1,4 +1,4 @@
-const navbarlessPage: string[] = ["/login", "/", "/group-tour-application", "/individual-tour-application", "/fair-application", "/application-success"];
+const navbarlessPage: string[] = ["/login", "/"];
 
 export function hasNavbar(location: string): boolean {
   return !navbarlessPage.includes(location);

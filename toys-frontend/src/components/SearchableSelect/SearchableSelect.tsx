@@ -66,7 +66,7 @@ export const SearchableSelect:React.FC<SearchableSelectProps> = ({
 
       <Combobox.Dropdown>
         <Combobox.Options>
-          {options.length > 0 ? options : <Combobox.Empty>Aramanızın tam karşılığı bulunamadı</Combobox.Empty>}
+          {options.length > 0 ? options : <Combobox.Empty>Arama bulunamadı</Combobox.Empty>}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>

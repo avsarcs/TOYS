@@ -1,14 +1,14 @@
 import React from 'react';
 import {Select, rem} from '@mantine/core';
 import {IconBuildings} from '@tabler/icons-react';
-import {City} from "../../../../../types/enum.ts";
 
 /**
  * Properties for city selector dropdown menu.
  */
 interface CitySelectorProps {
-    selectedCity: City | null; // Selected city.
-    setSelectedCity: (selectedCity: City | null) => void;
+    cities: string[]; // List of cities to display in the dropdown menu.
+    selectedCity: string | null; // Selected city.
+    setSelectedCity: (selectedCity: string | null) => void;
 }
 
 /**
@@ -17,17 +17,17 @@ interface CitySelectorProps {
  * @param selectedCity Selected city.
  * @param setSelectedCity Function that sets the selected city.
  */
-const CitySelector: React.FC<CitySelectorProps> = ({selectedCity, setSelectedCity}) => {
+const CitySelector: React.FC<CitySelectorProps> = ({cities, selectedCity, setSelectedCity}) => {
     return <Select
         label = "Bir Şehir Seçin"
-        data = {Object.entries(City).map((city) => ({ value: city[0], label: city[1] }))}
+        data = {cities.map((city) => ({ value: city, label: city }))}
         defaultValue = {selectedCity}
         searchable = {true}
         placeholder="Şehir ismi girin."
         radius = "10"
         leftSection={<IconBuildings style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         onChange={(selectedValue) => {
-            setSelectedCity(selectedValue as City);
+            setSelectedCity(selectedValue);
         }}
     />
 }

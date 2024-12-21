@@ -1,13 +1,16 @@
 import { Image } from "@mantine/core"
-import {useContext} from "react";
+import LoginForm from "../../components/Login/LoginForm";
+import {useContext, useState} from "react";
+import RegisterForm from "../../components/Login/RegisterForm.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
 
 const HomePage: React.FC = () => {
+  const [registering, setRegistering] = useState(false);
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
-  if(userContext.isLoggedIn) {
+  if(userContext?.isLoggedIn) {
     navigate("/dashboard");
   }
 
@@ -50,9 +53,9 @@ const HomePage: React.FC = () => {
             <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full w-full max-w-md h-16 text-xl whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300 flex items-center justify-center" to="/individual-tour-application">
               Bireysel Öğrenci Turu Başvurusu Yap
             </Link>
-            <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full w-full max-w-md h-16 text-xl whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300 flex items-center justify-center" to="/fair-application">
-              Fuar Katılımı Başvurusu Yap
-            </Link>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full w-full max-w-md h-16 text-xl whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300">
+                Fuar Katılımı Başvurusu Yap
+            </button>
             <div className="mt-8">
               <h2 className="text-white mb-4 text-1xl lg:text-2xl text-center"><b>TOYS çalışanı mısınız? </b></h2>
                 <Link className="bg-purple-400 hover:bg-purple-600 text-white font-bold py-3 px-8 rounded-full w-full max-w-md h-16 text-xl whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300 flex items-center justify-center" to="/login">

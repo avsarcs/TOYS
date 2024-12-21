@@ -23,25 +23,10 @@ interface Guide {
     name: string;
 }
 
-interface TourToReviewModel {
+interface TourData {
     tour_id: string;
     tour_date: string;
-    guides: {
-        id: string;
-        name: string;
-    }[];
-}
-
-interface ReviewCreateModel {
-    for: 'TOUR' | 'GUIDE';
-    tour_id: string;
-    tour_date: string;
-    guide?: {
-        id: string;
-        name: string;
-    };
-    score: number;
-    body?: string;
+    guides: Guide[];
 }
 
 interface GuideReview {
@@ -50,14 +35,11 @@ interface GuideReview {
     comment: string;
 }
 
-const REVIEW_DETAILS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review/tour-details");
-const SUBMIT_REVIEW_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review/tour");
-
 const TourReviewPage: React.FC = () => {
     const { 'reviewer-id': reviewerId } = useParams<{ 'reviewer-id': string }>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [tourData, setTourData] = useState<TourToReviewModel | null>(null);
+    const [tourData, setTourData] = useState<TourData | null>(null);
     const [optionalFieldsOpen, setOptionalFieldsOpen] = useState<boolean>(false);
     const [hasOpenedOptionalFields, setHasOpenedOptionalFields] = useState<boolean>(false);
     const [showPrompt, setShowPrompt] = useState<boolean>(false);
@@ -66,9 +48,10 @@ const TourReviewPage: React.FC = () => {
     const [tourScore, setTourScore] = useState<number>(5);
     const [tourComment, setTourComment] = useState<string>('');
     const [guideReviews, setGuideReviews] = useState<GuideReview[]>([]);
-    
+
     useEffect(() => {
-        const fetchTourDetails = async () => {
+        // ... existing initialization code ...
+        const initializePage = async () => {
             if (!reviewerId) {
                 setError('Invalid reviewer ID');
                 setIsLoading(false);
@@ -77,36 +60,32 @@ const TourReviewPage: React.FC = () => {
 
             try {
                 setIsLoading(true);
-                const detailsUrl = new URL(REVIEW_DETAILS_URL);
-                detailsUrl.searchParams.append('reviewer_id', reviewerId);
-                
-                const response = await fetch(detailsUrl);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch tour details');
-                }
-
-                const tourToReviewData: TourToReviewModel = await response.json();
-                
-                setTourData(tourToReviewData);
-                
-                // Initialize guide reviews
-                setGuideReviews(tourToReviewData.guides.map(guide => ({
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const mockTourData: TourData = {
+                    tour_id: "tour123",
+                    tour_date: "2024-12-15",
+                    guides: [
+                        { id: "guide1", name: "Orhun Ege Çelik" }
+                    ]
+                };
+                setTourData(mockTourData);
+                setGuideReviews(mockTourData.guides.map(guide => ({
                     guideId: guide.id,
                     score: 5,
                     comment: ''
                 })));
             } catch (err) {
-                setError('Tur İnceleme Sayfası Yüklenemedi. Lütfen Yakın Zamanda Tekrar Deneyin.');
+                setError('Failed to load tour details. Please try again later.');
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchTourDetails();
+        initializePage();
     }, [reviewerId]);
 
     useEffect(() => {
+        // Check if there are any comments
         const hasAnyComments = tourComment.trim() !== '' ||
             guideReviews.some(review => review.comment.trim() !== '');
         setHasComments(hasAnyComments);
@@ -129,74 +108,35 @@ const TourReviewPage: React.FC = () => {
         });
     };
 
-    const handleSubmitInitial = () => {
+    const handleSubmit = (): void => {
+        if (!tourData) return;
+
         if (!hasOpenedOptionalFields) {
-            setOptionalFieldsOpen(false);
+            setOptionalFieldsOpen(true);
             setShowPrompt(true);
             return;
         }
 
-        handleFinalSubmit();
-    };
+        const tourReview = {
+            for: 'TOUR',
+            tour_id: tourData.tour_id,
+            tour_date: tourData.tour_date,
+            score: tourScore,
+            body: tourComment
+        };
 
-    const handleYorumYap = () => {
-        setShowPrompt(false);
-        setOptionalFieldsOpen(true);
-        setHasOpenedOptionalFields(true);
-    };
+        const guideReviewObjects = tourData.guides.map((guide, index) => ({
+            for: 'GUIDE',
+            tour_id: tourData.tour_id,
+            tour_date: tourData.tour_date,
+            guide_id: guide.id,
+            guide_name: guide.name,
+            score: guideReviews[index].score,
+            body: guideReviews[index].comment
+        }));
 
-    const handleFinalSubmit = async () => {
-        if (!tourData || !reviewerId) return;
-
-        try {
-            setIsLoading(true);
-
-            // Create review models array
-            const reviews: ReviewCreateModel[] = [
-                // Tour review
-                {
-                    for: 'TOUR',
-                    tour_id: tourData.tour_id,
-                    tour_date: tourData.tour_date,
-                    score: tourScore,
-                    body: tourComment.trim() || ""
-                },
-                // Guide reviews
-                ...tourData.guides.map((guide, index) => ({
-                    for: 'GUIDE' as const,
-                    tour_id: tourData.tour_id,
-                    tour_date: tourData.tour_date,
-                    guide: {
-                        id: guide.id,
-                        name: guide.name
-                    },
-                    score: guideReviews[index].score,
-                    body: guideReviews[index].comment.trim() || ""
-                }))
-            ];
-
-            const submitUrl = new URL(SUBMIT_REVIEW_URL);
-            submitUrl.searchParams.append('reviewer_id', reviewerId);
-
-            const response = await fetch(submitUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(reviews)
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to submit review');
-            }
-
-            // Handle successful submission (you might want to redirect or show a success message)
-            
-        } catch (err) {
-            setError('Failed to submit review. Please try again later.');
-        } finally {
-            setIsLoading(false);
-        }
+        console.log('Sending tour review:', tourReview);
+        console.log('Sending guide reviews:', guideReviewObjects);
     };
 
     const formatDate = (isoDate: string): string => {
@@ -223,6 +163,47 @@ const TourReviewPage: React.FC = () => {
         );
     }
 
+    const handleSubmitInitial = () => {
+        if (!hasOpenedOptionalFields) {
+            setOptionalFieldsOpen(false);
+            setShowPrompt(true);
+            return;
+        }
+
+        handleFinalSubmit();
+    };
+
+    const handleYorumYap = () => {
+        setShowPrompt(false);
+        setOptionalFieldsOpen(true);
+        setHasOpenedOptionalFields(true);
+    };
+
+    const handleFinalSubmit = () => {
+        if (!tourData) return;
+
+        const tourReview = {
+            for: 'TOUR',
+            tour_id: tourData.tour_id,
+            tour_date: tourData.tour_date,
+            score: tourScore,
+            body: tourComment
+        };
+
+        const guideReviewObjects = tourData.guides.map((guide, index) => ({
+            for: 'GUIDE',
+            tour_id: tourData.tour_id,
+            tour_date: tourData.tour_date,
+            guide_id: guide.id,
+            guide_name: guide.name,
+            score: guideReviews[index].score,
+            body: guideReviews[index].comment
+        }));
+
+        console.log('Sending tour review:', tourReview);
+        console.log('Sending guide reviews:', guideReviewObjects);
+    };
+
     const renderSubmitButton = () => {
         if (showPrompt) {
             return null;
@@ -239,7 +220,6 @@ const TourReviewPage: React.FC = () => {
         );
     };
 
-    // Rest of the component remains the same...
     return (
         <Container size="sm" className="py-8 relative max-w-2xl mx-auto">
             <LoadingOverlay visible={isLoading} />
@@ -324,19 +304,19 @@ const TourReviewPage: React.FC = () => {
                             <Group className="gap-4">
                                 <Button
                                     size="md"
-                                    variant="light"
                                     className="bg-green-600 hover:bg-green-700 text-white font-medium px-8 py-2 rounded-lg transition-colors"
+                                    onClick={handleFinalSubmit}
+                                >
+                                    Yalnızca skorları gönder
+                                </Button>
+                                <Button
+                                    size="md"
+                                    variant="light"
+                                    className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium px-8 py-2 rounded-lg transition-colors"
                                     onClick={handleYorumYap}
                                     leftSection={<IconMessageCircle size={20} />}
                                 >
                                     Yorum Yap
-                                </Button>
-                                <Button
-                                    size="md"
-                                    className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium px-8 py-2 rounded-lg transition-colors"
-                                    onClick={handleFinalSubmit}
-                                >
-                                    Yalnızca skorları gönder
                                 </Button>
                             </Group>
                         </Stack>

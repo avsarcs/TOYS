@@ -2,7 +2,7 @@ package server.enums.status;
 
 public enum ApplicationStatus {
     CONFILCT,
-    RECEIVED,
+    RECIEVED,
     APPROVED,
     REJECTED
 }

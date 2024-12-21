@@ -1,46 +1,29 @@
 package server.models.schools;
 
-import org.checkerframework.checker.units.qual.A;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class University {
-    public boolean is_rival;
     public String university_type;
     public String name;
-    public String id;
-    public String url;
-    public String city;
+    public long id;
     public List<UniversityDepartment> departments;
+    public String url;
 
-    
+    public University(String university_type, String name, long id, List<UniversityDepartment> departments, String url) {
+        this.university_type = university_type;
+        this.name = name;
+        this.id = id;
+        this.departments = departments;
+        this.url = url;
+    }
 
     protected University(Map<String, Object> map) {
         this.university_type = (String) map.get("university_type");
         this.name = (String) map.get("name");
-        this.id = (String) map.get("id");
-        this.departments = new ArrayList<>();
-        try {
-            departments = ((List<Map<String, Object>>) map.get("departments")).stream().map(UniversityDepartment::fromMap).toList();
-        } catch (Exception E) {
-            E.printStackTrace();
-            System.out.println("Error in University.java");
-        }
+        this.id = (long) map.get("id");
+        this.departments = (List<UniversityDepartment>) map.get("departments");
         this.url = (String) map.get("url");
-        this.city = (String) map.get("city");
-    }
-
-    public static University fromSource(Map<String, Object> map) {
-        University uni = new University();
-        uni.university_type = (String) map.get("university_type");
-        uni.name = (String) map.get("name");
-        uni.id = (String) map.get("id");
-        uni.departments = (List<UniversityDepartment>) map.get("departments");
-        uni.url = (String) map.get("url");
-        uni.city = (String) map.get("city");
-        return uni;
     }
 
     public static University fromMap(Map<String, Object> map) {
@@ -49,6 +32,9 @@ public class University {
 
     public University() {}
 
+    public static University getDefault() {
+        return new University("default univesity type", "default university name", -1, List.of(UniversityDepartment.getDefault()), "default url");
+    }
     public String getUniversity_type() {
         return university_type;
     }
@@ -57,23 +43,12 @@ public class University {
         this.university_type = university_type;
     }
 
-
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public University setId(String id) {
+    public void setId(long id) {
         this.id = id;
-        return this;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public University setCity(String city) {
-        this.city = city;
-        return this;
     }
 
     public String getName() {
@@ -91,12 +66,7 @@ public class University {
     public void setDepartments(List<UniversityDepartment> departments) {
         this.departments = departments;
     }
-    public boolean getIs_rival() {
-        return is_rival;
-    }
-    public void setIs_rival(boolean is_rival) {
-        this.is_rival = is_rival;
-    }
+
     public String getUrl() {
         return url;
     }

@@ -7,12 +7,12 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
 import server.enums.types.RequestType;
-import server.models.requests.GuideAssignmentRequest;
-import server.models.requests.Request;
+import server.models.people.GuideAssignmentRequest;
+import server.models.Request;
+import server.models.events.TourModificationRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import server.models.requests.TourModificationRequest;
 
 import java.util.*;
 
@@ -61,12 +61,7 @@ public class DBRequestService {
         String document = request.getType().name().toLowerCase();
         DocumentReference reference = firestore.collection("requests").document(document);
         try {
-            Map<String, Object> data = new HashMap<>();
-            try {
-                data = (Map<String, Object>) reference.get().get().getData().get(document);
-            } catch (Exception E) {
-
-            }
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
             data.putIfAbsent(
                     request.getRequest_id(),
                     mapper.convertValue(request, new TypeReference<HashMap<String, Object>>() {
@@ -100,41 +95,6 @@ public class DBRequestService {
         return requests;
     }
 
-    public List<TourModificationRequest> getTourModificationRequests() {
-        List<TourModificationRequest> requests = new ArrayList<>();
-        try {
-            DocumentReference reference = firestore.collection("requests").document("tour_modification");
-
-            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tour_modification");
-
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                requests.add(TourModificationRequest.fromMap((Map<String, Object>) entry.getValue()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to fetch directors from database.");
-        }
-        return requests;
-    }
-
-    public List<GuideAssignmentRequest> getGuideAssignmentRequests() {
-        List<GuideAssignmentRequest> requests = new ArrayList<>();
-        try {
-            DocumentReference reference = firestore.collection("requests").document("assignment");
-
-            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("assignment");
-
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                requests.add(GuideAssignmentRequest.fromMap((Map<String, Object>) entry.getValue()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to fetch directors from database.");
-        }
-        return requests;
-    }
-
-    @Deprecated
     public List<Request> getRequestsOfType(RequestType type, String request_id) {
         List<Request> requests = new ArrayList<Request>();
         try {
@@ -145,7 +105,7 @@ public class DBRequestService {
             if (request_id == null) {
                 for (Map.Entry<String, Object> entry : data.entrySet()) {
                     if (((Map<String,Object>) entry.getValue()).get("type").equals(type.name())) {
-                        if (type == RequestType.TOUR_MODIFICATION) {
+                        if (type == RequestType.MODIFICATION) {
                             requests.add(TourModificationRequest.fromMap((Map<String, Object>) entry.getValue()));
                         } else if (type == RequestType.ASSIGNMENT) {
                             requests.add(GuideAssignmentRequest.fromMap((Map<String, Object>) entry.getValue()));
@@ -160,7 +120,7 @@ public class DBRequestService {
             } else {
                 if (data.containsKey(request_id)) {
                     if (((Map<String,Object>)data.get(request_id)).get("type").equals(type.name())) {
-                        if (type == RequestType.TOUR_MODIFICATION) {
+                        if (type == RequestType.MODIFICATION) {
                             requests.add(TourModificationRequest.fromMap((Map<String, Object>) data.get(request_id)));
                         } else if (type == RequestType.ASSIGNMENT) {
                             requests.add(GuideAssignmentRequest.fromMap((Map<String, Object>) data.get(request_id)));

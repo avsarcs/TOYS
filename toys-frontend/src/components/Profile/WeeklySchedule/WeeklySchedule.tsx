@@ -1,25 +1,14 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import "./WeeklySchedule.css";
 import { ScrollArea, Title } from "@mantine/core";
-import { ProfileData, ScheduleData, DailyPlan, ScheduleStub} from "../../../types/data.ts";
+import { ProfileData, ScheduleData, DailyPlan} from "../../../types/data.ts";
 import { TimeSlotStatus } from "../../../types/enum.ts";
 import { UserContext } from "../../../context/UserContext.tsx";
 import { ProfileComponentProps } from "../../../types/designed.ts";
-import {notifications} from "@mantine/notifications";
 
 const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponentProps) => {
     const userContext = useContext(UserContext);
 
-    const dayTranslations: { [key in keyof ScheduleData]: string } = {
-        MONDAY: "Pazartesi",
-        TUESDAY: "Salı",
-        WEDNESDAY: "Çarşamba",
-        THURSDAY: "Perşembe",
-        FRIDAY: "Cuma",
-        SATURDAY: "Cumartesi",
-        SUNDAY: "Pazar",
-    };
-    
     // Human-readable times for display
     const readableTimes = [
         "8:30 - 9:30",
@@ -31,7 +20,6 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         "14:30 - 15:30",
         "15:30 - 16:30",
         "16:30 - 17:30",
-        "17:30 - 18:30",
     ];
 
     // Keys for accessing schedule data
@@ -45,24 +33,16 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         "_1430_1530",
         "_1530_1630",
         "_1630_1730",
-        "_1730_1830",
     ];
 
     const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    let scheduleMatrix = days.map((day) =>
+
+    // Convert ScheduleData to a matrix for rendering
+    const scheduleMatrix = days.map((day) =>
         times.map((time) =>
-            props.profile.schedule.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
+            props.profile.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
         )
     );
-    useEffect(() => {
-        // Convert ScheduleData to a matrix for rendering
-        scheduleMatrix = days.map((day) =>
-            times.map((time) =>
-                props.profile.schedule.schedule[day as keyof ScheduleData][time as keyof DailyPlan] === TimeSlotStatus.BUSY || false
-            )
-        );
-        setSchedule(scheduleMatrix);
-    }, [props.profile.schedule.schedule]);
 
     // Initialize state with a valid matrix
     const [schedule, setSchedule] = useState<boolean[][]>(scheduleMatrix);
@@ -96,20 +76,17 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                 updatedSchedule[day][time as keyof DailyPlan] = schedule[rowIndex][colIndex] ? TimeSlotStatus.BUSY : TimeSlotStatus.FREE;
             });
         });
-        const updatedScheduleStub: ScheduleStub = {
-            schedule: updatedSchedule,
-        };
+
         const updatedProfile: ProfileData = {
             ...props.profile,
-            schedule: updatedScheduleStub,
+            schedule: updatedSchedule,
         };
 
         try {
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
 
             // Add query parameters
-            url.searchParams.append("auth", userContext.authToken);
-            console.log(updatedProfile);
+            url.searchParams.append("authToken", userContext.authToken);
 
             const response = await fetch(url.toString(), {
                 method: "POST",
@@ -117,12 +94,12 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    ...updatedProfile
+                    updatedProfile,
                 }),
             });
 
             if (!response.ok) {
-                notifications.show({ title: "Error", message: "Failed to update schedule.", color: "red" });
+                throw new Error("Failed to save the schedule.");
             }
 
             console.log("Schedule saved successfully.");
@@ -137,6 +114,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
         setSchedule([...backupSchedule]);
         setIsEditing(false);
     };
+    console.log(schedule);
     return (
         <div className="weekly-schedule">
             <div className="header">
@@ -152,14 +130,11 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                             Kaydet
                         </button>
                     </>
-                ) :
-                        userContext.user.id === props.profile.id
-                            ?
-                            <button onClick={startEditing} className="settings-button">
-                                Haftalık Programı Düzenle
-                            </button>
-                            : null
-                }
+                ) : (
+                    <button onClick={startEditing} className="settings-button">
+                        Haftalık Programı Düzenle
+                    </button>
+                )}
             </div>
 
             {isEditing && (
@@ -172,7 +147,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                         <tr>
                             <th></th>
                             {days.map((day) => (
-                                <th key={day}>{dayTranslations[day as keyof ScheduleData]}</th>
+                                <th key={day}>{day}</th>
                             ))}
                         </tr>
                     </thead>
@@ -182,19 +157,10 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
                                 <td>{time}</td>
                                 {days.map((_, rowIndex) => (
                                     <td
-                                        key={colIndex*10 + rowIndex}
-                                        className={
-                                        //this is stupid and bad
-                                        // but so is chatgpt
-                                            (schedule[rowIndex][colIndex] ? "busy" : "available") +
-                                            (isEditing ? "" : " !cursor-default")
-                                        }
-                                        onClick={
-                                            isEditing
-                                                ?
-                                                () => toggleCell(rowIndex, colIndex)
-                                                : undefined
-                                    }
+                                        key={colIndex}
+                                        
+                                        className={schedule[rowIndex][colIndex] ? "busy" : "available"}
+                                        onClick={() => toggleCell(rowIndex, colIndex)}
                                     ></td>
                                 ))}
                             </tr>

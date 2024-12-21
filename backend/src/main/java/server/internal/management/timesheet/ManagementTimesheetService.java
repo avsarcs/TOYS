@@ -4,67 +4,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import server.auth.AuthService;
 import server.auth.JWTService;
-import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
-import server.models.DTO.DTOFactory;
-import server.models.payment.HourlyRate;
+import server.models.payment.DTO_HourlyRate;
 import server.models.time.ZTime;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ManagementTimesheetService {
     @Autowired
     Database database;
 
-    @Autowired
-    DTOFactory dto;
+    public void setHourlyRate(String auth, DTO_HourlyRate rate) {
 
-    @Autowired
-    AuthService authService;
-
-    public void setHourlyRate(String auth, Map<String, Object> rateMap) {
-
-        HourlyRate rate = dto.hourlyRate(rateMap);
-
-        if (!authService.check(auth, Permission.MANAGE_TIMESHEET)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to manage timesheet");
+        if (!JWTService.getSimpleton().isValid(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
-        List<HourlyRate> rates =  database.payments.getRates();
-
-        if (rates.isEmpty()) {
-            rates.add(HourlyRate.millennia());
+        if (PermissionMap.hasPermission(
+                JWTService.getSimpleton().getUserRole(auth),
+                server.auth.Permission.MANAGE_TIMESHEET)
+        ) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to manage timesheet!");
         }
-        HourlyRate newRate = null;
-        for (HourlyRate other : rates) {
-            try {
-                newRate = rate.overlap(other);
-                if (newRate != null) {
-                    break;
-                }
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hourly Rate non-subset overlap!");
+
+        DTO_HourlyRate rateToAdd = null;
+        List<DTO_HourlyRate> rates =  database.payments.getRates();
+        for (DTO_HourlyRate r : rates) {
+            if (rate.getApplied_from().getDate().isAfter(r.getApplied_from().getDate())
+                    && rate.getApplied_until().getDate().isBefore(r.getApplied_from().getDate())) {
+                rateToAdd = new DTO_HourlyRate()
+                        .setRate(r.getRate())
+                        .setApplied_from(rate.getApplied_until())
+                        .setApplied_from(r.getApplied_until());
+
+                r.setApplied_until(new ZTime(rate.getApplied_from().getDate().minusNanos(1))); // subtract one nanosecond, so they are TECHNICALLY not equal
+
+                // Subset
+            } else if (rate.getApplied_until().getDate().isBefore(r.getApplied_from().getDate())
+                    || rate.getApplied_from().getDate().isAfter(r.getApplied_until().getDate())) {
+                // No intersection
+            } else {
+                throw new ResponseStatusException(HttpStatus.valueOf(400), "Non-subset Hourly Rate overlap!");
             }
         }
-
-        if (newRate != null) {
-            rates.add(newRate);
+        if (rateToAdd != null) {
+            rates.add(rateToAdd);
         }
-
         rates.add(rate);
-
         database.payments.setHourlyRates(rates);
     }
 
-    public List<Map<String,Object>> getRates(String auth) {
-        if (!authService.check(auth, Permission.MANAGE_TIMESHEET)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to manage timesheet");
-        }
-        return database.payments.getRates().stream().map(r -> dto.hourlyRate(r)).toList();
+    public List<DTO_HourlyRate> getRates() {
+        return database.payments.getRates();
     }
 }

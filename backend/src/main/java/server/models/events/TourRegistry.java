@@ -4,6 +4,7 @@ import server.enums.status.ApplicationStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.enums.status.TourStatus;
+import server.models.DTO.DTO_GroupTour;
 import server.models.DTO.DTO_IndividualTour;
 import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.GroupTourStatus;
@@ -25,15 +26,6 @@ public class TourRegistry extends TourApplication {
     public TourRegistry(TourApplication application) {
         super(application);
         tour_id = "tour_" + System.currentTimeMillis();
-
-        this.accepted_time = new ZTime("1970-01-01T00:00:00Z");
-        this.guides = new ArrayList<>();
-        this.tour_status = TourStatus.RECEIVED;
-        this.notes = "";
-        this.reviews = new ArrayList<>();
-        this.started_at = new ZTime("1970-01-01T00:00:00Z");
-        this.ended_at = new ZTime("1970-01-01T00:00:00Z");
-        this.classroom = "";
     }
 
     public static TourRegistry getDefault() {
@@ -81,16 +73,69 @@ public class TourRegistry extends TourApplication {
         return ended_at;
     }
 
-    public TourRegistry modify(TourApplication application) {
-        this.setApplicant(application.getApplicant());
-        this.setInterested_in(application.getInterested_in());
-        this.setExpected_souls(application.getExpected_souls());
-        this.getApplicant().setNotes(application.getApplicant().getNotes());
-        this.setRequested_hours(application.getRequested_hours());
-        this.setStatus(application.getStatus());
-        this.setTour_type(application.getTour_type());
-        this.setType(application.getType());
-        return this;
+    public static TourRegistry fromDTO(DTO_GroupTour dto) {
+        TourRegistry tour = new TourRegistry();
+        tour.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getName()));
+        tour.setRequested_hours(dto.getRequested_times());
+        tour.setExpected_souls(dto.getVisitor_count());
+        tour.setNotes(dto.getNotes());
+        tour.setTour_type(TourType.GROUP);
+        tour.setInterested_in(new ArrayList<>());
+        if (dto.getStatus() == GroupTourStatus.REJECTED) {
+            tour.setStatus(ApplicationStatus.REJECTED);
+        } else if (dto.getStatus() == GroupTourStatus.AWAITING_CONFIRMATION){
+            tour.setStatus(ApplicationStatus.RECIEVED);
+        } else {
+            tour.setStatus(ApplicationStatus.APPROVED);
+        }
+
+        try {
+            tour.setTour_status(TourStatus.valueOf(dto.getStatus().name()));
+        } catch (Exception e) {
+            System.out.println("Error in setting tour status, defaulting to CONFIRMED");
+            tour.setTour_status(TourStatus.CONFIRMED);
+        }
+
+        tour.setClassroom(dto.getClassroom());
+        tour.setEnded_at(dto.getActual_end_time());
+        tour.setStarted_at(dto.getActual_start_time());
+        tour.setType(ApplicationType.TOUR);
+
+        List<DTO_SimpleGuide> guides = dto.getGuides();
+        guides.addAll(dto.getTrainee_guides());
+        tour.setGuides(guides.stream().map(DTO_SimpleGuide::getId).toList());
+        return tour;
+    }
+
+    public static TourRegistry fromDTO(DTO_IndividualTour dto) {
+        TourRegistry tour = new TourRegistry();
+        tour.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getName()));
+        tour.setRequested_hours(dto.getRequested_times());
+        tour.setExpected_souls(dto.getVisitor_count());
+        tour.setNotes(dto.getNotes());
+        tour.setTour_type(TourType.GROUP);
+        tour.setInterested_in(dto.getRequested_majors());
+        if (dto.getStatus() == GroupTourStatus.REJECTED) {
+            tour.setStatus(ApplicationStatus.REJECTED);
+        } else if (dto.getStatus() == GroupTourStatus.AWAITING_CONFIRMATION){
+            tour.setStatus(ApplicationStatus.RECIEVED);
+        } else {
+            tour.setStatus(ApplicationStatus.APPROVED);
+        }
+
+        try {
+            tour.setTour_status(TourStatus.valueOf(dto.getStatus().name()));
+        } catch (Exception e) {
+            System.out.println("Error in setting tour status, defaulting to CONFIRMED");
+            tour.setTour_status(TourStatus.CONFIRMED);
+        }
+
+        tour.setClassroom(dto.getClassroom());
+        tour.setEnded_at(dto.getActual_end_time());
+        tour.setStarted_at(dto.getActual_start_time());
+        tour.setType(ApplicationType.TOUR);
+
+        return tour;
     }
 
     public static TourRegistry fromMap(Map<String, Object> map) {

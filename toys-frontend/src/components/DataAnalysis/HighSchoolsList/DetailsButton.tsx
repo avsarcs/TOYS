@@ -1,6 +1,5 @@
 import React from 'react';
-import {Button, Text} from '@mantine/core';
-import {HighschoolData} from "../../../types/data.ts";
+import {Button} from '@mantine/core';
 
 /**
  * Properties for see details button.
@@ -25,7 +24,7 @@ const DetailsButton: React.FC<DetailsButtonProps> = ({openDetails, highSchoolNam
         }}
         style={{width: "60%"}}
     >
-        <Text>Detaylar</Text>
+        <text>Detaylar</text>
     </Button>
 }
 

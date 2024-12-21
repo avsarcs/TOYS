@@ -16,27 +16,35 @@ import java.util.Map;
 
 @Service
 public class DBUniversityService {
-    private static final String universityFilePath = "data/universities.json";
-    private final LocalFileService local;
+    private final Firestore firestore;
     private final ObjectMapper mapper;
 
     public DBUniversityService() {
-        this.local = Database.getLocalFileService();
+        this.firestore = Database.getFirestoreDatabase();
         this.mapper = Database.getObjectMapper();
     }
     // Adding may be useless, but it is still here if needed
     public boolean addUniversity(University university) {
 
-        try {
-            Map<String, Object> data = local.loadMap(universityFilePath);
+        DocumentReference reference = firestore.collection("universities").document("universities");
 
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
+            if (data == null) {
+                data = new HashMap<>();
+            }
             data.putIfAbsent(
                     university.getUid(),
                     mapper.convertValue(university, new TypeReference<HashMap<String, Object>>() {})
             );
-            if (local.saveMap(universityFilePath, data)) {
-                System.out.println("University added to database.");
-            }
+            // Not sure about this line
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("universities", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            System.out.println("University added to database." + result.get().getUpdateTime());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to add university to database.");
@@ -49,10 +57,13 @@ public class DBUniversityService {
     public Map<String, University> getUniversities() {
         Map<String, University> universities = new HashMap<>();
         try {
-            Map<String, Object> data = local.loadMap(universityFilePath);
+            DocumentReference reference = firestore.collection("universities").document("universities");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 universities.putIfAbsent(entry.getKey(), University.fromMap((Map<String, Object>)entry.getValue()));
+                //universities.putIfAbsent(entry.getKey(), mapper.convertValue(entry.getValue(), University.class));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,10 +72,11 @@ public class DBUniversityService {
         return universities;
     }
 
-    public University getUniversity(String uid) {
+    public University fetchUniversity(String uid) {
         try {
+            DocumentReference reference = firestore.collection("universities").document("universities");
 
-            Map<String, Object> data = local.loadMap(universityFilePath);
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
 
             if (!data.containsKey(uid)) {
                 throw new RuntimeException("University with id " + uid + " not found.");
@@ -76,25 +88,5 @@ public class DBUniversityService {
             System.out.println("Failed to fetch university from database.");
         }
         return null;
-    }
-    public void updateUniversityRivalry(String uid, boolean isRival) {
-        try {
-            Map<String, Object> data = local.loadMap(universityFilePath);
-
-            if (!data.containsKey(uid)) {
-                throw new RuntimeException("University with id " + uid + " not found.");
-            }
-
-
-            ((Map<String, Object>) data.get(uid)).put("is_rival", isRival);
-
-            if (local.saveMap(universityFilePath, data)) {
-                System.out.println("University rivalry status updated successfully.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to update university rivalry status.");
-        }
     }
 }

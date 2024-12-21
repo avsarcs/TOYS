@@ -1,8 +1,6 @@
 package server.models.people.details;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import server.enums.DayTimeSlots;
-import server.enums.status.TimeSlotStatus;
 import server.models.DailyPlan;
 
 import java.time.DayOfWeek;
@@ -10,64 +8,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Schedule {
-    private Map<DayOfWeek, Map<DayTimeSlots, TimeSlotStatus>> schedule;
-
-    public Schedule(Schedule other) {
-        this.schedule = new HashMap<>();
-        for (DayOfWeek day : DayOfWeek.values()) {
-            Map<DayTimeSlots, TimeSlotStatus> dailyPlan = new HashMap<>();
-            for (DayTimeSlots slot : DayTimeSlots.values()) {
-                dailyPlan.put(slot, other.getSchedule().get(day).get(slot));
-            }
-            schedule.put(day, dailyPlan);
-        }
-    }
-
+    private Map<DayOfWeek, DailyPlan> schedule;
     protected Schedule(Map<String, Object> map) {
+        for (String key: map.keySet()) {
+            System.out.println("key: " + key );
+        }
         schedule = new HashMap<>();
         for (DayOfWeek day : DayOfWeek.values()) {
-            Map<DayTimeSlots, TimeSlotStatus> dailyPlan = new HashMap<>();
-            for (DayTimeSlots slot : DayTimeSlots.values()) {
-                try {
-
-                    dailyPlan.put(
-                            slot,
-                            TimeSlotStatus.valueOf(
-                                    (String) (
-                                            (Map<String, Object>) map.get(day.name())).get(slot.name()
-                                    ))
-                    );
-                } catch (Exception E) {
-                    System.out.println("Error in Schedule.java");
-                }
-            }
             schedule.put(
                     day,
-                    dailyPlan
+                    DailyPlan.fromMap(
+                            (Map<String, Object>) map.get(day.toString())
+                    )
             );
         }
     }
     public static Schedule getDefault() {
         Schedule schedul = new Schedule();
-        Map<DayOfWeek, Map<DayTimeSlots, TimeSlotStatus>> schedule = new HashMap<>();
+        Map<DayOfWeek, DailyPlan> plan = new HashMap<>();
         for (DayOfWeek day : DayOfWeek.values()) {
-            Map<DayTimeSlots, TimeSlotStatus> dailyPlan = new HashMap<>();
-            for (DayTimeSlots slot : DayTimeSlots.values()) {
-                dailyPlan.put(slot, TimeSlotStatus.FREE);
-            }
-            schedule.put(day, dailyPlan);
+            plan.put(day, DailyPlan.getDefault());
         }
-        schedul.setSchedule(schedule);
+        schedul.setSchedule(plan);
         return schedul;
     }
     public Schedule() {
         schedule = new HashMap<>();
         for (DayOfWeek day : DayOfWeek.values()) {
-            Map<DayTimeSlots, TimeSlotStatus> dailyPlan = new HashMap<>();
-            for (DayTimeSlots slot : DayTimeSlots.values()) {
-                dailyPlan.put(slot, TimeSlotStatus.FREE);
-            }
-            schedule.put(day, dailyPlan);
+            schedule.put(day, new DailyPlan());
         }
     }
     public static Schedule fromMap(Map<String, Object> map) {
@@ -93,11 +61,11 @@ public class Schedule {
         return valid;
     }
 
-    public Map<DayOfWeek, Map<DayTimeSlots, TimeSlotStatus>> getSchedule() {
+    public Map<DayOfWeek, DailyPlan> getSchedule() {
         return schedule;
     }
 
-    public Schedule setSchedule(Map<DayOfWeek, Map<DayTimeSlots, TimeSlotStatus>> schedule) {
+    public Schedule setSchedule(Map<DayOfWeek, DailyPlan> schedule) {
         this.schedule = schedule;
         return this;
     }

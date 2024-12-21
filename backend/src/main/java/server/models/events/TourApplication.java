@@ -59,7 +59,7 @@ public class TourApplication extends Application {
         application.setNotes(dto.getNotes());
         application.setExpected_souls(dto.getVisitor_count());
         application.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getId()));
-        application.setStatus(ApplicationStatus.RECEIVED);
+        application.setStatus(ApplicationStatus.RECIEVED);
         application.setInterested_in(new ArrayList<>());
         application.setRequested_hours(dto.getRequested_times());
         return application;
@@ -72,7 +72,7 @@ public class TourApplication extends Application {
         application.setTour_type(TourType.INDIVIDUAL);
         application.setExpected_souls(dto.getVisitor_count());
         application.setApplicant(Applicant.fromDTO(dto.getApplicant(), dto.getHighschool().getId()));
-        application.setStatus(ApplicationStatus.RECEIVED);
+        application.setStatus(ApplicationStatus.RECIEVED);
         application.setInterested_in(dto.getMajors());
         application.setNotes("No notes are provided for these applications.");
         application.setRequested_hours(dto.getRequested_times());
@@ -86,7 +86,7 @@ public class TourApplication extends Application {
             valid = valid && tour_type != null;
             valid = valid && requested_hours != null && !requested_hours.isEmpty();
             if (tour_type == TourType.INDIVIDUAL) {
-                valid = valid && interested_in != null;
+                valid = valid && interested_in != null && !interested_in.isEmpty();
             }
             valid = valid && expected_souls > 0;
             valid = valid && applicant != null && applicant.isValid();

@@ -1,10 +1,9 @@
 package server.enums.status;
 
 public enum FairStatus {
-    RECEIVED,
-    CONFIRMED,
+    INVITED,
+    ACCEPTED,
     REJECTED,
-    ONGOING,
     FINISHED,
     CANCELLED,
 }

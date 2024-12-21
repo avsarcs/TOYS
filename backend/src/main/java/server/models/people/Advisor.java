@@ -7,28 +7,26 @@ import server.enums.status.UserStatus;
 import server.enums.roles.UserRole;
 import server.models.Application;
 import server.models.Experience;
-import server.models.payment.FiscalState;
 import server.models.people.details.AuthInfo;
 import server.models.people.details.Profile;
 
 import java.time.DayOfWeek;
-import java.util.List;
 import java.util.Map;
 
 public class Advisor extends Guide {
-    private List<DayOfWeek> responsibleFor;
+    private DayOfWeek responsibleFor;
 
     public Advisor() {
 
     }
     protected Advisor(Map<String, Object> map) {
         super(map);
-        this.responsibleFor = ((List<String>) map.get("responsibleFor")).stream().map(DayOfWeek::valueOf).toList();
+        this.responsibleFor = DayOfWeek.valueOf((String) map.get("responsibleFor"));
     }
 
     public static Advisor getDefault() {
         Advisor advisor = new Advisor();
-        advisor.setResponsibleFor(List.of(DayOfWeek.MONDAY));
+        advisor.setResponsibleFor(DayOfWeek.MONDAY);
         advisor.setExperience(Experience.getDefault());
         advisor.setHigh_school("000000");
         advisor.setRole(UserRole.ADVISOR);
@@ -41,27 +39,18 @@ public class Advisor extends Guide {
         advisor.setDepartment(Department.MANAGEMENT);
         advisor.setBilkent_id("000001");
         advisor.setProfile(Profile.getDefault());
-        advisor.setFiscalState(new FiscalState(0, 0, List.of()));
-
         return advisor;
-    }
-
-    public Advisor modifyWithDTO(Map<String, Object> dto) {
-        super.modifyWithDTO(dto);
-
-        this.setResponsibleFor(((List<String>) dto.get("responsible_days")).stream().map(DayOfWeek::valueOf).toList());
-        return this;
     }
 
     public static Advisor fromMap(Map<String, Object> map) {
         return new Advisor(map);
     }
 
-    public List<DayOfWeek> getResponsibleFor() {
+    public DayOfWeek getResponsibleFor() {
         return responsibleFor;
     }
 
-    public Advisor setResponsibleFor(List<DayOfWeek> responsibleFor) {
+    public Advisor setResponsibleFor(DayOfWeek responsibleFor) {
         this.responsibleFor = responsibleFor;
         return this;
     }

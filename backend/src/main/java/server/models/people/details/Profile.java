@@ -20,21 +20,6 @@ public class Profile {
 
     private Schedule schedule;
 
-    public Profile() {
-    }
-
-    public Profile(Profile other) {
-        this.name = other.name;
-        this.profile_picture = other.profile_picture;
-        this.profile_description = other.profile_description;
-        this.highschool_id = other.highschool_id;
-        this.major = other.major;
-        this.semester = other.semester;
-        this.contact_info = new ContactInfo(other.contact_info);
-        this.payment_info = new PaymentInfo(other.payment_info);
-        this.schedule = new Schedule(other.schedule);
-    }
-
     public static Profile fromDTO_GuideApplication(DTO_GuideApplication dto) {
         Profile profile = new Profile();
         profile.setName(dto.getFull_name());

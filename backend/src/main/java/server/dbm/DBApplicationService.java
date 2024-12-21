@@ -6,8 +6,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
-import org.checkerframework.checker.units.qual.A;
-import server.auth.Passkey;
 import server.enums.status.ApplicationStatus;
 import server.enums.types.ApplicationType;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,6 @@ import server.models.Application;
 import server.models.events.FairApplication;
 import server.models.people.GuideApplication;
 import server.models.events.TourApplication;
-import server.models.time.ZTime;
 
 import java.util.*;
 
@@ -28,8 +25,7 @@ public class DBApplicationService {
         this.firestore = Database.getFirestoreDatabase();
         this.mapper = Database.getObjectMapper();
     }
-
-    public void addApplication(Application application) {
+    public boolean addApplication(Application application) {
 
         String document = "";
         document = application instanceof GuideApplication ?  "guides" : document;
@@ -59,7 +55,9 @@ public class DBApplicationService {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to add application to database.");
+            return false;
         }
+        return false;
     }
 
     public Map<String, Application> getApplications() {
@@ -89,7 +87,7 @@ public class DBApplicationService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Failed to get applications from database.");
+            System.out.println("Failed to add application to database.");
         }
         return applications;
     }

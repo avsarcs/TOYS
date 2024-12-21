@@ -1,16 +1,14 @@
 # Group Tour Model
 ```
 {
-	"tour_id": "tour id",
 	"highschool": HighSchoolModel,
 	"guides": [ { "id": "guide id", "full_name":"guide_name", "highschool": HighSchoolModel } ],
 	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": HighSchoolModel } ],
-	"type": "group", // or "individual" frontend will do conditional rendering based on this property
-	"requested_times": ["2024-09-30T09:00:00Z+03:00", "2024-09-30T11:00:00Z+03:00"],
-	"accepted_time": "2024-09-30T09:00:00Z+03:00",
+	"type": "group", // frontend will do conditional rendering based on this property
+	"requested_times": ["2024-09-30T09:00:00Z", "2024-09-30T11:00:00Z"],
+	"accepted_time": "2024-09-30T09:00:00Z",
 	"visitor_count": 66,
-	// changed # Done @ Dec 20 - 2306
-	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -19,8 +17,8 @@
 		"phone": "ThePhoneOfTheApplicant1",
 		"notes": "Notes added by the applicant."
 	},
-	"actual_start_time": "2024-11-15T14:22:14Z+03:00",
-	"actual_end_time": "2024-11-15T14:22:14Z+03:00",
+	"actual_start_time": "2024-11-15T14:22:14Z",
+	"actual_end_time": "2024-11-15T14:22:14Z",
 	"classroom": "Mithat Çoruh"
 }
 ```
@@ -63,7 +61,6 @@
 
 ```
 {
-	"tour_id": "tour id",
 	"highschool": HighSchoolModel
 	"guides": [ {"id": "guide id", "full_name":"guide_name", "highschool": { "name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1 } } ],
 	"trainee_guides": [ { "id": "trainee_guide id", "full_name":"trainee_guide_name","highschool": { "name": "Ankara Fen", "id": "999", "location": "Ankara", "priority": 1 } } ],
@@ -72,8 +69,7 @@
 	"requested_majors": [ "major1", "major2", "major3" ],
 	"accepted_time": "2024-09-30T09:00:00Z",
 	"visitor_count": 4,
-	// changed # Done @ Dec 20 - 2306
-	"status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "TOYS_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 	"notes": "The notes for the tour added by the tour guide and the advisor.",
 	"applicant": {
 		"fullname": "TheNameOfTheApplicant1",
@@ -92,18 +88,13 @@
 ```
 {
     "event_type": "TOUR" | "FAIR"
-	"event_subtype": "TOUR",
 	"event_id": "id",
-	// changed # Done @ Dec 20 - 2306
-	"event_status": "RECEIVED" | "TOYS_WANTS_CHANGE" | "APPLICANT_WANTS_CHANGE" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED" // changed # Done @ Dec 20 - 2306
 	"highschool": HighSchoolModel
-	// accepted_time field empty/null for tours *_WANTS_CHANGE
+	// accepted_time field empty/null for tours AWAITING_MODIFICATION
 	"accepted_time": "2024-11-15T14:22:14Z",
-
-!!!! CHANGED # Done @ Dec 20 - 2306
-	"requested_times": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
+	"requested_time": ["2024-11-16T14:22:14Z", "2024-11-17T14:22:14Z"],
 	"visitor_count": 34,
-	"guides": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
+	"guide": [ {"id": "guide id", "full_name":"guide_name" ] ... ],
 }
 ```
 
@@ -129,8 +120,7 @@
 	"id": "id of the highschool",
 	"name": "Ankara Fen",
 	"location": "Ankara",
-	"priority": 1 (min. 1, max. 4),
-	"ranking": 1
+	"priority": 1 (min. 1, max. 4)
 }
 
 # Review Model
@@ -249,14 +239,12 @@
 "FREE" | "BUSY" | "tour id guide needs to go at that time"
 ```
 
-!!!! CHANGED - added "role" field
 # Simple Guide Model
 ```
 {
 	"id": 22231331, // bilkent id
 	"name": "Balik Baliksatan",
 	"major": "CS",
-	"role": "ADVISOR" | "TRAINEE" | "GUIDE"
 	"experience": "3 events"
 }
 ```
@@ -275,7 +263,7 @@
 	"start_time": "2024-11-15T14:22:14Z",
 	"end_time": "2024-11-15T14:22:14Z",
 	"fair_name": "KARIYERKE",
-	"status": "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+	"status": "AWAITING_CONFIRMATION" | "APPLICANT_WANTS_CHANGE" | "APPROVED" | "REJECTED"
 }
 ```
 
@@ -283,11 +271,11 @@
 ```
 {
 	"applicant": {
-		"fullname": "Yavuz XD", // it was "namename" before, wtf
+		"name": "Yavuz",
+		"surname": "XD",
 		"email": "yavuz.xd@something.com",
 		"phone": "5555555555",
-		"school": HighschoolModel,
-		"notes": "Notes by the applicant",
+		"school": "Ankara Fen Lisesi",
 	},
 	"start_time": "2024-11-15T14:22:14Z",
 	"end_time": "2024-11-15T14:22:14Z",
@@ -338,16 +326,15 @@
 }
 ```
 
-# Money for Event Model
-// THIS HAS BEEN CHANGED BE CAREFUL
+# Money for Tour Model
 Coordinator will ask for this model providing a guide ID.
 The `hours_worked` and such refer to the guide with ID provided as a parameter
 ```
 {
-	"event_id": 41234343241sfd,
-	"event_date": date the tour happened,
+	"tour_id": 41234343241sfd,
+	"tour_date": date the tour happened,
 	"hourly_rate": 2.5 // float, in TL. This returns the hourly rate AT the date tour happened.
-	"event_highschool": "Ankara Fen",
+	"tour_highschool": "Ankara Fen",
 	"hours_worked": 3.2 // float, can NOT be lower than zero. zero will be interpreted as "Guide didn't enter Tour Start and End times yet."
 	"money_debted": 2.0 // float, in TL.
 	"money_paid": 1.8 // float, in TL. You see, MoneyForGuide model keeps track of the total `money_paid` to that Guide. What you do is that you assume that money was used to pay every tour STARTING FROM THE OLDEST one.
@@ -360,24 +347,6 @@ The `hours_worked` and such refer to the guide with ID provided as a parameter
 	"rate": 2.2 // float, in TL
 	"applied_from": date in ISO 8601 format,
 	"applied_until": date in ISO 8601 format | "TODAY"
-}
-```
-
-!!!! NEW
-# Invitation Model
-If a tour or fair is cancelled / rejected, delete all Invitation models related to it immediately.
-```
-{
-	"inviter": {
-		"id": "id of the inviter",
-		"name": "name of the inviter"
-	},
-	"invited": {
-		"id": "id of the invited guide",
-		"name": "name of the invited guide"
-	}
-	"event_id": fair or tour id
-	"status": "WAITING_RESPONSE" | "ACCEPTED" | "REJECTED"
 }
 ```
 
@@ -419,7 +388,6 @@ API endpoints:
 		response_type: string
 
 /apply
-
 	/guide #
 		method: post
 		body: guideApplicationModel
@@ -430,59 +398,33 @@ API endpoints:
 		body: groupTourApplicationModel | individualTourApplicationModel
 		response: -
 
-		/isfree 
-			parameters:
-				start=start_time
-				end=end_time
-			method: get
+		/isfree
+		parameters:
+			start=start_time
+			end=end_time
+		method: get
 
-		/gettype #
-			parameters:
-				uuid=uuid of the application
-			method: get
-			response: type of application
+		/gettype
+		parameters:
+			uuid=uuid of the application
+		method: get
+		response: type of application
+
+        /individual #
+            method: post
+            body: groupTourApplicationModel | individualTourApplicationModel
+            response: -
 
 		/request_changes #NEEDS TEST
 			method: post
-			parameters:
-				tour_id: tourID
-				auth: passkey | auth token 
-			body: groupTourApplicationModel | individualTourApplicationModel
-			response: -
-
-		/// DEPRECATED
-		/// USE respond/tour/modification for modificaiton change responses
-		/respond_changes # The 
-			method: post
-			parameters:
-				tour-id: tourID
-				passkey: passkey
-				accepted_time="2024-12-17T14:45:17+03:00" // ISO 8601, time that the Tour starts
-					// if tour application is accepted, there should be accepted_time
-					// if the application is rejected, give an empty string
+			body: tourChangeRequestModelReviewTourDetail
 			response: -
 	/fair #
 		method: post
 		body: fairApplicationModel
 		response: -
-	/cancel #
-		method: post
-		parameters:
-			auth: jwt_token //if applicant is cancelling, they provide passkey
-			event_id: string
-		body:
-			{
-				reason: string
-			}
 
 /review
-!!!! NEW
-parameters:
-	review_id=id of the review
-method: get
-response: ReviewModel
-response_type:json
-
 	/tour
 		parameters:
 			reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE
@@ -505,15 +447,18 @@ response_type:json
 		response: 200 or 400
 		response_type: status code
 
-!!!! CHANGED
 	/of_tour (Requires Auth)
 		parameters:
 			tour_id=2590545wdge
 			auth = auth_token
 		method: get
-		response: ReviewModel[]
-		description: Send multiple review models, one for the tour and the others
-		for the reviews of the guides on the same tour.
+		response: {
+			"average": 5.67,
+			"count": 25
+			"reviews": ReviewModel[]
+		}
+		description: Only return reviews with status ACCEPTED and non-empty bodies.
+		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
 	/of_guide (Requires Auth)
 		parameters:
@@ -528,79 +473,34 @@ response_type:json
 		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
 /respond
-	/application
-		/guide #
-		method: post
-		parameters:
-			auth: auth_token
-			applicant_id: "bilkent id of the applicant"
-			response: true/false (accept / reject relatively)
-		/tour #
-		method: post
-		parameters:
-			auth: auth_token
-			application_id: "id of the application"
-			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
+	/tours #
+	    parameters:
+	        tid=tour_id // which tour is this for
+	        response=accept/deny // what is the response
+	        // bool value, True=accept
+	    method: post
+	    body: auth_token // auth token
 
-!!!! CHANGED
-			/modification
-				method: post
-				parameters:
-					auth: auth_token // passkey if an applicant is using this
-					tour_id: id of the tour
-					accepted_time: "" (ISO8601 accepted time, empty string means rejection)
-				response: 200 or 400
-				response_type: status code
-				description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
-
-		/fair #
-		method: post
-		parameters:
-			auth: auth_token
-			application_id: "id of the applicaiton"
-			response: true/false (accept / reject)
-
-	/guide
-		/fair-invite
-		method: post
-		parameters:
-			auth: auth_token
-			request_id: "id of the assignment request"
-			response: true/false (accept/reject)
-!!!! CHANGED
-		/tour-invite
-		method: post
-		parameters:
-			auth: auth_token
-			request_id: "id of the assignment request OR the tour for the guide"
-			response: true/false (accept/reject)
-
-		/promotion
-		method: post
-		parameters:
-			auth: auth_token
-			request_id: "id of the assignment request"
-			response: true/false (accept/reject)
-
+	    /changes # NEEDS TEST
+            parameters:
+                idt=identifier_token // to keep track of the request
+                response=accept/deny // accept or reject changes
+                // bool value, True=accept
+            method: post
+            body: -
+            response: -
 
 /internal (Requires Auth)
-	@Deprecated! Frontend and Backend share a set of constant enums, please use them	
-	/majors
-		method: get
-		response: string array of the Major enums
-		response_type:json
-		
 	/user
 		/guides
 			parameters:
-				auth: auth token
 				name (OPTIONAL) = "Orhun Eg" // optional name search string
 				type (OPTIONAL)  = "TRAINEE" | "GUIDE" | "ADVISOR" // optional parameter to filter by type 
 			method: get
 			response: SimpleGuideModel[]
 			response_type: json
 			
-		/available-guides
+		/available_guides
 			parameters:
 				time=time in ISO 8601 format
 				type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
@@ -608,7 +508,7 @@ response_type:json
 			response: SimpleGuideModel[]
 			response_type: json
 
-		/advisor-offer (Requires Auth as Coordinator)
+		/advisor_offer (Requires Auth as Coordinator)
 			parameters:
 				name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
 				type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
@@ -633,37 +533,7 @@ response_type:json
 				}
 				response: 403 if has no Auth as Guide who has pending Advisor Offer
 				response_type: status code
-!!!! NEW
-		/am-enrolled
-			params:
-				auth: auth token
-				event_id: fair or tour id
-			method: get
-			response: true/false
-			response_type: boolean
-			description: returns whether the requesting Guide is enrolled in the event
-
-!!!! NEW
-		/am-invited
-			params:
-				auth: auth token
-				event_id: fair or tour id
-			method: get
-			response: true / false
-			response_type: boolean
-			description: returns whether the requesting Guide is invited to the event
-
-!!!! NEW
-		/invitations (Requires auth as Advisor or up)
-			params:
-				auth: auth token
-				my_invitations: "true" / "false" (OPTIONAL)
-			method: get
-			response: InvitationModel[]
-			response_type: json
-			description: my_invitaitons = true returns the invitations sent by the requester
-
-
+			
 		/profile #
 			parameters:
 				id=id // user bilkent id / empty to get logged in user
@@ -700,27 +570,14 @@ response_type:json
 					// bool value, True=accept
 				method: get
 				response: -
-		
-		/is-invited
-
 		/dashboard
 			parameters:
 				authToken: auth_token
-				dashboard_category: DashboardCategory
+				dashboard_category: NotificationCategory
 			method: get
 			response: SimpleEventModel[]
 			
 	/event
-
-!!!! NEW
-		/simple-tour
-			parameters:
-				auth=jwt token // passkey if Applicant is making this request
-				tid=tour_id
-			method: get
-			response: SimpleEventModel
-			response_type:json
-
 		/tour
 			parameters:
 				auth= jwt token
@@ -728,60 +585,18 @@ response_type:json
 			method: get
 			response: TourModel
 			response_type: json
-			
 
-			// When a guide starts a tour, they use this endpoint
-			/start-tour
-				method: post
-				parameters:
-					auth: jwt token
-					tour_id: id of the tour to start
-					start_time: iso8601 time of tour start // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
-
-			/end-tour
-				method: post
-				parameters:
-					auth: jwt token
-					tour_id: id of the tour to stop
-					end_time: iso8601 time of tour end // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
-			
-			/modifications
-				method: get
-				parameters:
-					auth=jwt_token
-					tour_id=tour_id
-				response:
-				[{
-					"id": "mod id",
-					"mod": group/ind tourApplicationModel
-				}]
-
-!!!! CHANGED
 	/tours # NEEDS TEST
 		parameters:
 			authToken= jwt token
-			school_name = "BİLKENT ER" // OPTIONAL filter by highschool string
-			status=string[] // OPTIONAL tour status filtering string ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
-			from_date=ISO 8601 string // OPTIONAL
-			to_date=ISO 8601 string // OPTIONAL
-			filter_guide_missing="true"/"false" // if False, include both guide missing and not missing.
-			filter_trainee_missing="true"/"false" // if False, include both guide missing and not missing
-			am_enrolled="true"/"false" // if False, include both enrolled and not enrolled
-			am_invited="true"/"false" // if False, include both invited and not invited
-			// from_date & to_date can be sent isolated or both. to_date will not be earlier than from_date	
 		method: get
 		response: List of tours (List<SimpleEventModel>)
 		response_type: json
-		// REQUEST: Returned tours should be ordered with "ONGOING" first, then "APPLICANT_WANTS_CHANGE", then "RECEIVED",
-		// then "CONFIRMED", then "TOYS_WANTS_CHANGE", then the rest
 
-		### DEPRECATED ###
-		### ALL STATUS UPDATES ARE DONE BY THE BACKEND, USE ALTERNATIVES ###
 		/status_update # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour is this for
-				// changed
-				status=status // which status to update to ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
+				status=status // which status to update to (ONGOING, FINISHED, CANCELLED)
 				authToken: auth_token
 			method: post
 			response: -
@@ -790,33 +605,25 @@ response_type:json
 		/enroll # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour to enroll for
-				auth: auth_token
+				authToken: auth_token
 			method: post
 			response: -
 
 		/withdraw
 			parameters:
 				tid=tour_id // which tour to withdraw from
-				auth: auth_token
+				authToken: auth_token
 			method: post
 			response: -	
 
 		/invite # NEEDS TEST
 			parameters:
 				tid=tour_id // which tour to invite to
-				guid=guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
-				auth: auth_token
+				guid=guide_id // who to invite
+				authToken: auth_token
 			method: post
 			response: -
 
- !!!! ADDED REMOVING GUIDES
-		/remove # NEEDS TEST
-			parameters:
-				tid=tour_id // which tour to remove to
-				guid=guide_id[] // MULTIPLE GUIDES CAN BE REMOVED AT ONCE
-				auth: auth_token
-			method: post
-			response: -
 	/management
 		/timesheet (Requires Auth as Coordinator)
 			/hourly_rate
@@ -836,7 +643,6 @@ response_type:json
 			/payment_state
 				/guides
 					parameters:
-						auth: authToken
 						name (OPTIONAL)="Orhun Eg" // optional filter by name string
 					method: get
 					response: MoneyForGuideModel[]
@@ -844,33 +650,32 @@ response_type:json
 
 				/guide
 					parameters:
-						auth: authToken
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
 					response: MoneyForGuideModel
 					response_type: json
 
-				/event
+				/tour
 					parameters:
-						auth: authToken
 						guide_id="bilko Id of the guide. Advisor is also guide"
 					method: get
-					response: MoneyForEventModel[]
+					response: MoneyForTourModel[]
 					response_type: json
 
 			/pay
 				/guide
 					parameters:
-						auth: authToken
 						guide_id="bilko Id of the guide. Advisor is also guide"
+						how_much=43.5 // float, in TL
 					method: post
 					response: 200
 					response_type: status code
-			/// DEPRECATED
+			
 			/unpay // to fix mistakes
 				/guide
 					parameters:
 						guide_id="bilko Id of the guide. Advisor is also guide"
+						how_much=43.5 // float, in TL
 					method: post
 					response: 200
 					response_type: status code
@@ -919,8 +724,6 @@ response_type:json
 				body: auth_token
 				response: -
 
-			### DEPRECATED ###
-			use /respond/applications/guide instead!
 			/respond
 				parameters:
 					id=id of the person whose application we are responding to
@@ -932,21 +735,13 @@ response_type:json
 		/fairs
 			method: get
 			parameters:
-				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+				status (OPTIONAL): "AWAITING_CONFIRMATION" | "COMPLETED" | "ACCEPTED" | "REJECTED" | "CANCELLED"
 				guide_not_assigned (OPTIONAL): bool
-				enrolled_in_fair (OPTIONAL):
-		#CHANGED
-				school_name: string
-				to_date: iso date string
-				from_date: iso date string
-				filter_guide_missing: bool
-				filter_trainee_missing: bool 
+				enrolled_in_fair (OPTIONAL): 
 			body: auth_token
 			response: list of fairs
 			response_type: json
 
-			### DEPRECATED ###
-			use /respond/applications/fair instead!
 			/respond
 				parameters:
 					fid=fair_id // which fair application (all applications are fairs with status applied) to respond to

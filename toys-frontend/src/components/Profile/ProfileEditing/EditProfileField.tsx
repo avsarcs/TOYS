@@ -15,7 +15,7 @@ const EditProfileField: React.FC<EditProfileFieldProps> = ({ label, value, onCha
             value={value}
             onChange={(e) => onChange && onChange(e.currentTarget.value)}
             disabled={!editable}
-            placeholder={`${label}`}
+            placeholder={`Enter ${label.toLowerCase()}`}
             required
             className="mb-4"
         />

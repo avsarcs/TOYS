@@ -3,9 +3,9 @@ package server.models;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import server.enums.status.RequestStatus;
 import server.enums.types.RequestType;
+import server.models.events.TourModificationRequest;
+import server.models.people.GuideAssignmentRequest;
 import server.models.people.details.ContactInfo;
-import server.models.requests.GuideAssignmentRequest;
-import server.models.requests.TourModificationRequest;
 import server.models.time.ZTime;
 
 import java.util.Map;

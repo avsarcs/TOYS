@@ -2,10 +2,9 @@ package server.internal.management.timesheet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import server.models.payment.HourlyRate;
+import server.models.payment.DTO_HourlyRate;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class ManagementTimesheetController {
@@ -13,14 +12,14 @@ public class ManagementTimesheetController {
     ManagementTimesheetService managementTimesheetService;
 
     @PostMapping("/internal/management/timesheet/hourly-rate")
-    public void setHourlyRate(@RequestParam String auth, @RequestBody Map<String, Object> rate) {
+    public void setHourlyRate(@RequestParam String auth, @RequestBody DTO_HourlyRate rate) {
         managementTimesheetService.setHourlyRate(auth, rate);
     }
 
     @GetMapping("/internal/management/timesheet/hourly-rate")
-    public List<Map<String,Object>> getRates(@RequestParam String auth)
+    public List<DTO_HourlyRate> getRates()
     {
-        return managementTimesheetService.getRates(auth);
+        return managementTimesheetService.getRates();
     }
 
 }

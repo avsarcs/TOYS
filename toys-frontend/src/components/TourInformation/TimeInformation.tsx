@@ -51,7 +51,7 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
       </Group>
       <Space h="md"/>
       {
-        (userContext.user.role === UserRole.GUIDE || userContext.user.role === UserRole.ADVISOR)
+        (userContext?.user.role === UserRole.GUIDE || userContext?.user.role === UserRole.ADVISOR)
           ?
         <Group>
           <Button size="md" disabled={started}>Turu Başlat</Button>

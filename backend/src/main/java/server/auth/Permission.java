@@ -9,8 +9,6 @@ public enum Permission {
     REPORT_TOUR_TIMES,
     AR_TOUR_REQUESTS,
 
-    EDIT_TOUR_SS_TIME,
-
     REQUEST_TOUR_CHANGES,
     AR_TOUR_CHANGES,
     ASSIGN_OTHER_GUIDE,

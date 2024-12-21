@@ -1,13 +1,12 @@
 package server.models;
 
 import server.enums.DayTimeSlots;
-import server.enums.status.TimeSlotStatus;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DailyPlan {
-    private Map<DayTimeSlots, TimeSlotStatus> dailyPlan;
+    private Map<DayTimeSlots, Boolean> dailyPlan;
 
     public static DailyPlan fromMap(Map<String, Object> map) {
         return new DailyPlan(map);
@@ -15,18 +14,15 @@ public class DailyPlan {
 
     protected DailyPlan(Map<String, Object> map) {
         this.dailyPlan = new HashMap<>();
-        for (String key : map.keySet()) {
-            System.out.println("KEY: " + key);
-        }
         for (DayTimeSlots slot : DayTimeSlots.values()) {
-            dailyPlan.put(slot, TimeSlotStatus.valueOf((String) ((Map<String, Object>)map.get("dailyPlan")).get(slot.name())));
+            dailyPlan.put(slot, (Boolean) map.get(slot.toString()));
         }
     }
     public static DailyPlan getDefault() {
         DailyPlan dailyPlan = new DailyPlan();
-        Map<DayTimeSlots, TimeSlotStatus> plan = dailyPlan.getDailyPlan();
+        Map<DayTimeSlots, Boolean> plan = dailyPlan.getDailyPlan();
         for (DayTimeSlots slot : DayTimeSlots.values()) {
-            plan.put(slot, TimeSlotStatus.FREE);
+            plan.put(slot, false);
         }
         dailyPlan.setDailyPlan(plan);
         return dailyPlan;
@@ -34,19 +30,18 @@ public class DailyPlan {
     public DailyPlan() {
         this.dailyPlan = new HashMap<>();
         for (DayTimeSlots slot : DayTimeSlots.values()) {
-            dailyPlan.put(slot, TimeSlotStatus.FREE);
+            dailyPlan.put(slot, false);
         }
     }
 
-    TimeSlotStatus getSlot(DayTimeSlots slot) {
+    Boolean getSlot(DayTimeSlots slot) {
         return dailyPlan.get(slot);
     }
-
-    public Map<DayTimeSlots, TimeSlotStatus> getDailyPlan() {
+    public Map<DayTimeSlots, Boolean> getDailyPlan() {
         return dailyPlan;
     }
 
-    public DailyPlan setDailyPlan(Map<DayTimeSlots, TimeSlotStatus> dailyPlan) {
+    public DailyPlan setDailyPlan(Map<DayTimeSlots, Boolean> dailyPlan) {
         this.dailyPlan = dailyPlan;
         return this;
     }

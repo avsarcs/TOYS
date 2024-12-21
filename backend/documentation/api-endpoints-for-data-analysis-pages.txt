@@ -27,8 +27,8 @@ API endpoints:
                 method: get
                 parameters:
                     auth_token
-                    search= "ODTÜ" // search query
                     //removed: page_no=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
                     //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
                     //removed: sort_by= "name" || "city" || "isRival" // which field to sort by
                     //removed: order= "asc" || "desc" // order of sorting
@@ -123,13 +123,13 @@ API endpoints:
                     value_to_set = "true" // true or false
                 body: auth_token
 
-        /high-schools
+        /high_schools
             /all // Returns all high schools
                 method: get
                 parameters:
                     auth_token
-                    search= "ODTÜ" // search query
                     //removed: pageNo=1 // which page to get
+                    //removed: search= "ODTÜ" // search query
                     //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
                     //removed: sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
                     //removed: order= "asc" || "desc" // order of sorting
@@ -230,8 +230,12 @@ API endpoints:
                 // It may be used to edit the name, priority, and city
                 // Response with success or error
                 method: post
-                body: Highschool Model
-                parameters: auth_token
+                parameters:
+                    high_school_id = "2" // id of the high school
+                    name = "Ankara Fen Lisesi" // new name
+                    priority = "1" // new priority
+                    city = "Ankara" // new city
+                body: auth_token
                 response: {
                     status: "success" || "error"
                 }
@@ -240,51 +244,46 @@ API endpoints:
                 // It takes the name, priority, and city as parameters
                 // Response with success or error and id
                 method: post
-                body: Highschool Model
-                parameters: auth_token
+                parameters:
+                    name = "Ankara Fen Lisesi" // name of the high school
+                    priority = "1" // priority of the high school
+                    city = "Ankara" // city of the high school
+                body: auth_token
                 response: {
                     status: "success" || "error",
                     id: "2"
                 }
 
-        /students // Data for Bilkent student details page.
-            /all // General information for Bilkent's current students.
+        /students
+            /all
                 method: get
                 parameters:
                     auth_token
                 response: {
-                    // Number of active students from each high school.
                     high_schools: {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300, "Diğer": 500}, // Send up to ~5 high schools, then send "Diğer" with the total count of the rest
-                    // Number of active students from each city.
                     cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Diğer": 500}, // Send up to ~5 cities, then send "Diğer" with the total count of the rest
-                    // Number of students that came to Bilkent from top 10 high schools in each year (enrollment year).
                     rankings: {"2020": 1000, "2021": 800, "2022": 600, "2023"}
-                    // List of Bilkent's departments to be used in department selector later on for department specific data.
                     departments: ["CS", "EE", "IE"]; // Department names are printed as-is. Thus, they should be translated to Turkish before being displayed.
                 }
 
-            /departments // Data that is specific to a department of Bilkent but not to a year.
+            /departments
                 method: get
                 parameters:
                     auth_token
                     department = "CS" // name of the department
                 response: {
-                    // List of years that this department took students in.
-                    years: ["2018", "2019", "2020"];
-                    // Tavan sıralama of students that got into this department in each year, depending on kontenjan type.
+                    years: ["2018", "2019", "2020"]; // List of years that this department took students in.
                     rankings: {"2020": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "2021": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "2022": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}}; // Years and scholarship names are printed as-is. Thus, they should be translated to Turkish before being displayed.
                 }
 
-            /department_high_schools // Data that is specific to a department of Bilkent and a year. YEAR IS THE YEAR OF THE STUDENTS' ENROLLMENT.
-            // This is seperated from /departments as I expect each year to have many high schools. Thus, I believe it is better to have a separate endpoint for year based data. I will only call this when user changes year.
-            // If you think otherwise, you can insert the students data into the /departments endpoint with the following format: students: {year: rankings, year: rankings...}.
+            /department_high_schools // This is seperated from /departments as I expect each year to have many high schools. Thus, I believe it is better to have a separate endpoint for year based data. I will only call this when user changes year.
+                                    // If you think otherwise, you can insert the students data into the /departments endpoint with the following format: students: {year: rankings, year: rankings...}.
                 method: get
                 parameters:
                     auth_token
                     department = "CS" // name of the department
                     year = "2024" // data year to show in highschool student counts table
                 response: {
-                   // Number of students from each high school per kontenjan.
                    students: {"İzmir Fen Lisesi": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "Ankara Fen Lisesi": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "İstanbul Erkek Lisesi": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "Kabataş Erkek Lisesi": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "Galatasaray Lisesi": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}, "Bornova Anadolu Lisesi": {"%0 Burs": 2, "%50 Burs": 60, "%100 Burs": 50}, "Kadıköy Anadolu Lisesi": {"%0 Burs": 1, "%50 Burs": 70, "%100 Burs": 40}};
                 }
 
@@ -293,10 +292,7 @@ API endpoints:
             parameters:
                 authToken: auth_token
             response: { // Day names, statuses, and cities are printed as-is. Thus, they should be translated to Turkish before being displayed.
-                // Number of tours in this day.
                 days: {"Pazartesi": 1000, "Salı": 800, "Çarşamba": 600, "Perşembe": 400, "Cuma": 200, "Cumartesi": 100, "Pazar": 50},
-                // Number of tours in those statuses.
                 statuses: {"Tamamlandı": 1000, "Beklemede": 600, "İptal Edildi": 400},
-                // Number of tour groups per home city.
                 cities: {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Diğer": 25},
             }

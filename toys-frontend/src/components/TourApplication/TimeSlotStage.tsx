@@ -77,22 +77,13 @@ const TimeSlotStage: React.FC<GroupApplicationStageProps | IndividualApplication
   };
 
   const formatTimeDisplay = (timeString: string): string => {
-    // Extract the date and time parts from the ISO string
-    const [datePart, timePart] = timeString.split('T');
-    const timeStart = timePart.split('+')[0]; // Remove the timezone offset
+    const date = new Date(timeString);
+    const timeSlot = TIME_SLOTS.find(slot => timeString.endsWith(slot.start));
     
-    // Find the corresponding time slot
-    const timeSlot = TIME_SLOTS.find(slot => slot.start === timeStart);
-    if (!timeSlot) return 'Invalid time';
-    
-    // Parse the date
-    const [year, month, day] = datePart.split('-').map(num => parseInt(num));
-    const date = new Date(year, month - 1, day);
-    
-    return `${date.toLocaleDateString('tr-TR', {
+    return `${date.toLocaleDateString('tr-tr', {
       month: 'long',
       day: 'numeric',
-    })}, ${timeSlot.start} - ${timeSlot.end}`;
+    })}, ${timeSlot?.start} - ${timeSlot?.end}`;
   };
 
   return (

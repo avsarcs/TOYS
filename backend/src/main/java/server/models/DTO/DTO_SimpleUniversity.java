@@ -17,7 +17,7 @@ public class DTO_SimpleUniversity {
         // TODO fix city and is_rival
         simpleUniversity.setCity("No data available");
         simpleUniversity.setIs_rival(false);
-        simpleUniversity.setId(Long.parseLong(university.getId()));
+        simpleUniversity.setId(university.getId());
         simpleUniversity.setName(university.getName());
 
         return simpleUniversity;

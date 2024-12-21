@@ -1,24 +1,24 @@
 [
 {
-	"event_id": 41234343241,
-	"event_date": "2021-06-01",
+    "guide_id": 22203332,
+	"guide_name": "Alex Johnson",
+	"tour_id": 41234343241,
+	"tour_date": "2021-06-01",
 	"hourly_rate": 100, 
-	"event_highschool": "Ankara Fen",
+	"tour_highschool": "Ankara Fen",
 	"hours_worked": 20, 
     "money_debted": 0, 
-	"guide_name": "Sydney Bleeney",
-    "money_paid": 2000,
-	"event_type": "TOUR"
+    "money_paid": 2000 
 }, 
 {
-	"event_id": 4123413443241,
-	"event_date": "2021-06-01",
+	"guide_id": 22203331,
+	"guide_name": "Sydney Bleeney",
+	"tour_id": 4123413443241,
+	"tour_date": "2021-06-01",
 	"hourly_rate": 200, 
-	"event_highschool": "BELS",
+	"tour_highschool": "BELS",
 	"hours_worked": 20, 
     "money_debted": 300, 
-	"guide_name": "Sydney Bleeney",
-    "money_paid": 1000, 
-	"event_type": "FAIR"
+    "money_paid": 1000 
 }
 ]

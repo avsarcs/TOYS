@@ -112,7 +112,7 @@ const HighSchoolsList: React.FC = () => {
 
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <TableFilter setSearch={setSearch} setSelectedCities={setSelectedCities}/>
+        <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
         <Space h="xs" />
     </Container>
 
@@ -140,37 +140,10 @@ const HighSchoolsList: React.FC = () => {
             />
         )}
         {
-            fetchedHighschools && highSchools.length > 0
-              ?
-              <>
-            <Space h="xl"/>
-            {HeaderTextContainer}
-            <hr style={{border: '1px solid black'}}/>
-            <Space h="xl"/>
-            {TableFilterContainer}
-            <Space h="xl"/>
-            <Space h="xl"/>
-            {HighSchoolsTableContainer}
-            <Space h="xl"/>
-            <Space h="xl" />
-            {selectedHighSchool && (
-                <HighSchoolDetails
-                    opened={detailsModalOpened}
-                    onClose={() => setDetailsModalOpened(false)}
-                    highSchool={selectedHighSchool}
-                />
-            )}
-            {
-                <HighSchoolAdd
-                    opened={addModalOpened}
-                    onClose={() => setAddModalOpened(false)}
-                />
-            }
-              </>
-            :
-              <LoadingOverlay
-                visible={!fetchedHighschools} zIndex={10}
-                overlayProps={{ blur: 1, color: "#444", opacity: 0.8 }}/>
+            <HighSchoolAdd
+                opened={addModalOpened}
+                onClose={() => setAddModalOpened(false)}
+            />
         }
     </div>
 }

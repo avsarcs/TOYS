@@ -1,11 +1,9 @@
 package server.models.review;
 
-import java.util.Map;
-
 public class ReviewRecord {
     private String event_id;
-    private String review_id;
     private ReviewResponse status;
+    private String review_id;
 
     public String getEvent_id() {
         return event_id;
@@ -14,18 +12,6 @@ public class ReviewRecord {
     public ReviewRecord setEvent_id(String event_id) {
         this.event_id = event_id;
         return this;
-    }
-
-
-    public ReviewRecord() {
-    }
-    protected ReviewRecord(Map<String, Object> map) {
-        this.event_id = (String) map.get("event_id");
-        this.review_id = (String) map.get("review_id");
-        this.status = ReviewResponse.valueOf((String) map.get("status"));
-    }
-    public static ReviewRecord fromMap(Map<String, Object> map) {
-        return new ReviewRecord(map);
     }
 
     public ReviewResponse getStatus() {

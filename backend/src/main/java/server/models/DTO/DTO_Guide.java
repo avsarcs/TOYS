@@ -3,7 +3,6 @@ package server.models.DTO;
 import server.enums.Department;
 import server.enums.roles.UserRole;
 import server.models.people.Guide;
-import server.models.people.details.Schedule;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ public class DTO_Guide {
     private DTO_Highschool highschool;
     private Department major;
     private UserRole role;
-    private Schedule schedule;
     private String profile_picture;
     private long previous_tour_count;
     private String profile_description;
@@ -36,7 +34,6 @@ public class DTO_Guide {
         dto.setProfile_description(guide.getProfile().getProfile_description());
         dto.setAdvisor_application_status(false); // TODO wtf is this
         dto.setAttended_events(guide.getExperience().getPrevious_events());
-        dto.setSchedule(guide.getProfile().getSchedule());
         return dto;
     }
 
@@ -54,20 +51,10 @@ public class DTO_Guide {
         this.profile_description = (String) map.get("profile_description");
         this.advisor_application_status = (boolean) map.get("advisor_application_status");
         this.attended_events = (List<String>) map.get("attended_events");
-        this.schedule = Schedule.fromMap((Map<String, Object>) map.get("schedule"));
     }
 
     public static DTO_Guide fromMap(Map<String,Object> map) {
         return new DTO_Guide(map);
-    }
-
-    public Schedule getSchedule() {
-        return schedule;
-    }
-
-    public DTO_Guide setSchedule(Schedule schedule) {
-        this.schedule = schedule;
-        return this;
     }
 
     public String getId() {

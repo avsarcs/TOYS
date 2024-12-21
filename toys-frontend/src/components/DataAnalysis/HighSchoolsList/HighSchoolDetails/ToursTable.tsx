@@ -44,7 +44,7 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
         <Table.Th style={{padding: 0, textAlign: "center"}}>
             <UnstyledButton onClick={onSort}>
                 <Group justify="space-between">
-                    <Text span fw={500} fz="sm">
+                    <Text fw={500} fz="sm">
                         {children}
                     </Text>
                     <Center>
@@ -136,7 +136,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('date')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Tarih
                             </Text>
                         </Th>
@@ -145,7 +145,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('attendance')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Katılımcı Sayısı
                             </Text>
                         </Th>
@@ -154,7 +154,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('type')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Tür
                             </Text>
                         </Th>
@@ -163,7 +163,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('reviewRating')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Değerlendirme
                             </Text>
                         </Th>
@@ -172,7 +172,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('contact')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 İletişim
                             </Text>
                         </Th>
@@ -185,7 +185,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                     ) : (
                         <Table.Tr>
                             <Table.Td colSpan={Object.keys(data[0]).length}>
-                                <Text span fw={500} ta="center">
+                                <Text fw={500} ta="center">
                                     Tur bulunamadı.
                                 </Text>
                             </Table.Td>
