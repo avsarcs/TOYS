@@ -494,9 +494,8 @@ response_type:json
 			auth = auth_token
 		method: get
 		response: ReviewModel[]
-		description: İki adet Review Model gönderir. İkisinin de tour_id aynı tur.
-		Birisi for:GUIDE, birisi for:TOUR. Eğer review yapılmamışsa henüz
-		iki tane ReviewModel gönder yine ama id kısmı boş olsun.
+		description: Send multiple review models, one for the tour and the others
+		for the reviews of the guides on the same tour.
 
 	/of_guide (Requires Auth)
 		parameters:
