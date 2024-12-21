@@ -74,7 +74,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Rehber Başvuruları', icon: IconBrandSafari, link: '/toys-applications' });
     links.push({ label: 'Danışman Teklifleri', icon: IconUserUp, link: '/advisor-offers' });
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });
-    links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '#' });
+    links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '/manage-personnel' });
   }
   else if (user.role === UserRole.ADVISOR) {
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });

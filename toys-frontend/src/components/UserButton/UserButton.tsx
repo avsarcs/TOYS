@@ -1,11 +1,10 @@
-import { UnstyledButton, Group, Avatar, Text, rem } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
+import { UnstyledButton, Group, Avatar, Text } from '@mantine/core';
 import classes from './UserButton.module.css';
 import { UserContext } from '../../context/UserContext';
-import React, { useContext, useState } from 'react';
+import { useContext } from 'react';
+import {UserRoleText} from "../../types/enum.ts";
 
 export function UserButton() {
-  const { user } = useContext(UserContext);
   const userContext = useContext(UserContext);
   return (
     <UnstyledButton className={classes.user}>
@@ -21,13 +20,11 @@ export function UserButton() {
         </Text>
 
         <Text size="xs">
-          {userContext.user.profile.role}
+          {UserRoleText[userContext.user.profile.role]}
           </Text>
           <Text c="dimmed" size="xs">
-          {/*{userContext.user.profile.email}*/}
-          email
+            {userContext.user.profile.email}
           </Text>
-          
         </div>
 
         

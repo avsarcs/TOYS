@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import server.auth.AuthService;
 import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
@@ -29,13 +30,12 @@ public class ManagementFairService {
     @Autowired
     MailServiceGateway mailService;
 
+    @Autowired
+    AuthService authService;
+
     public List<DTO_Fair> getFairs(String auth) {
         // validate token and permission
-        if (!JWTService.getSimpleton().isValid(auth)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
-        }
-
-        if (PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(auth), Permission.AR_FAIR_INVITATIONS)) {
+        if(!authService.check(auth, Permission.AR_FAIR_INVITATIONS)) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view fairs!");
         }
 
@@ -49,11 +49,7 @@ public class ManagementFairService {
 
     public void respondToFairInvitation(String auth, String fairID, String response) {
         // validate token and permission
-        if (!JWTService.getSimpleton().isValid(auth)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
-        }
-
-        if (PermissionMap.hasPermission(JWTService.getSimpleton().getUserRole(auth), Permission.AR_FAIR_INVITATIONS)) {
+        if (!authService.check(auth, Permission.AR_FAIR_INVITATIONS)) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view fairs!");
         }
 
@@ -81,7 +77,7 @@ public class ManagementFairService {
             Status mailStatus = Status.APPROVAL;
             if (status == ApplicationStatus.REJECTED) {
                 mailStatus = Status.REJECTION;
-            } else if (status == ApplicationStatus.RECIEVED) {
+            } else if (status == ApplicationStatus.RECEIVED) {
                 mailStatus = Status.RECIEVED;
             }
             mailService.sendMail(

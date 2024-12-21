@@ -8,6 +8,13 @@ import java.util.Map;
 public class PaymentInfo {
     private String iban;
 
+    public PaymentInfo() {
+    }
+
+    public PaymentInfo(PaymentInfo other) {
+        this.iban = other.getIban();
+    }
+
     public static PaymentInfo getDefault() {
         return new PaymentInfo().setIban("TR89 3704 0044 3588 9126 02");
     }
@@ -16,6 +23,9 @@ public class PaymentInfo {
     public boolean isValid() {
         boolean valid = true;
         try {
+            if (iban.isEmpty()) {
+                return true;
+            }
             valid = valid && iban != null && !iban.isEmpty();
             valid = valid && iban.replaceAll(" ", "").matches(Patterns.IBAN.pattern());
         } catch (Exception e) {
