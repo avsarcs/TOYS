@@ -1,72 +1,102 @@
-import React, { useState } from 'react';
-import { IconChevronDown } from '@tabler/icons-react';
+import React from 'react';
+import { Box, Stack, Title, Text, Autocomplete, Button, Group } from '@mantine/core';
+import { IconPlus, IconX } from '@tabler/icons-react';
 import { IndividualApplicationStageProps } from '../../types/designed';
-import majorOptions from "../../mock_data/mock_majors.json"
+import { Department } from '../../types/enum';
 
 const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
   applicationInfo,
   setApplicationInfo,
 }) => {
-  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const majorOptions = Object.values(Department);
 
-  const toggleDropdown = (index: number): void => {
-    setOpenDropdown(openDropdown === index ? null : index);
-  };
-
-  const handleMajorSelect = (index: number, selectedMajor: string): void => {
-    const newMajorChoices = [...applicationInfo.requested_majors];
-    if (newMajorChoices.includes(selectedMajor)) {
+  const addMajor = () => {
+    if (!applicationInfo.requested_majors) {
+      setApplicationInfo(prev => ({
+        ...prev,
+        requested_majors: ['']
+      }));
       return;
     }
-    newMajorChoices[index] = selectedMajor;
-    setApplicationInfo((prevInfo) => ({
-      ...prevInfo,
-      requested_majors: newMajorChoices,
+
+    if (applicationInfo.requested_majors.length >= 3) return;
+
+    setApplicationInfo(prev => ({
+      ...prev,
+      requested_majors: [...prev.requested_majors || [], '']
     }));
-    setOpenDropdown(null);
+  };
+
+  const removeMajor = (index: number) => {
+    const newMajors = [...(applicationInfo.requested_majors || [])];
+    newMajors.splice(index, 1);
+    
+    setApplicationInfo(prev => ({
+      ...prev,
+      requested_majors: newMajors
+    }));
+  };
+
+  const handleMajorSelect = (index: number, value: string | null) => {
+    if (!Object.values(Department).includes(value as Department) && value !== null) return;
+    
+    const newMajors = [...(applicationInfo.requested_majors || [])];
+    newMajors[index] = value as Department;
+
+    setApplicationInfo(prev => ({
+      ...prev,
+      requested_majors: newMajors
+    }));
   };
 
   return (
-    <div className="w-full max-w-md space-y-2 p-4">
-      <h1 className='header text-3xl font-semibold mb-2'>Rehber Bölüm Tercihi<br/></h1>
-      <h2 className='subheader mb-4'>Garanti vermemekle birlikte turunuz için seçtiğiniz bölümden bir rehber ayarlamaya çalışacağız. (Bir tercihiniz yoksa bu aşamayı atlayabilirsiniz.)</h2>
-      {applicationInfo.requested_majors.map((major, index) => (
-        <div key={index} className="">
-          <button
-            onClick={() => toggleDropdown(index)}
-            className="w-full flex items-center justify-between px-4 py-2 text-left bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-700 font-medium">
-                {index === 0 ? 'Birinci Seçim' : index === 1 ? 'İkinci Seçim' : 'Üçüncü Seçim'}
-              </span>
-              <span className="text-gray-500">{major}</span>
-            </div>
-            <IconChevronDown
-              className={`w-5 h-5 transition-transform ${
-                openDropdown === index ? 'transform rotate-180' : ''
-              }`}
-            />
-          </button>
+    <Box className="w-full max-w-md">
+      <Stack gap="md" p="md">
+        <Title order={2}>Rehber Bölüm Tercihi</Title>
+        <Text size="sm" c="dimmed">
+          Garanti vermemekle birlikte turunuz için seçtiğiniz bölümden bir rehber ayarlamaya çalışacağız.
+          (Bir tercihiniz yoksa bu aşamayı atlayabilirsiniz.)
+        </Text>
 
-          {openDropdown === index && (
-            <div className="absolute z-10 max-w-80 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
-              <div className="py-1">
-                {majorOptions.filter((option) => !applicationInfo.requested_majors.includes(option)).map((option) => (
-                  <button
-                    key={option}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                    onClick={() => handleMajorSelect(index, option)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+        <Stack gap="md">
+          {(applicationInfo.requested_majors || []).map((major, index) => (
+            <Group key={index} gap="xs" align="flex-end">
+              <Autocomplete
+                className="flex-grow"
+                label={`${index + 1}. Seçim`}
+                value={major}
+                onChange={(value) => handleMajorSelect(index, value)}
+                data={majorOptions}
+                classNames={{
+                  input: 'bg-blue-50 border-0',
+                  label: 'text-blue-500 font-medium mx-2'
+                }}
+                placeholder="Bölüm seçiniz"
+                clearable
+              />
+              <Button 
+                color="red" 
+                variant="subtle" 
+                onClick={() => removeMajor(index)}
+                className="mb-1"
+              >
+                <IconX size={16} />
+              </Button>
+            </Group>
+          ))}
+        </Stack>
+
+        {(!applicationInfo.requested_majors || applicationInfo.requested_majors.length < 3) && (
+          <Button
+            variant="light"
+            leftSection={<IconPlus size={16} />}
+            onClick={addMajor}
+          >
+            Seçim Ekle
+          </Button>
+        )}
+      </Stack>
+    </Box>
   );
 };
 

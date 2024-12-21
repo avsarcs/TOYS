@@ -187,7 +187,7 @@ public class UserTourService {
                         tour -> {
                             if (!school_name.isEmpty()) {
                                 try {
-                                    return alg.similarity(school_name, databaseEngine.schools.getHighschoolByID(tour.getApplicant().getSchool()).getName()) > 0.8;
+                                    return alg.similarity(school_name.toLowerCase(), databaseEngine.schools.getHighschoolByID(tour.getApplicant().getSchool()).getTitle().toLowerCase()) > 0.8;
                                 } catch (Exception e) {
                                     return false;
                                 }

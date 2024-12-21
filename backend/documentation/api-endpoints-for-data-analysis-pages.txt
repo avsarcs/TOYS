@@ -27,8 +27,8 @@ API endpoints:
                 method: get
                 parameters:
                     auth_token
+                    search= "ODTÜ" // search query
                     //removed: page_no=1 // which page to get
-                    //removed: search= "ODTÜ" // search query
                     //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
                     //removed: sort_by= "name" || "city" || "isRival" // which field to sort by
                     //removed: order= "asc" || "desc" // order of sorting
@@ -123,13 +123,13 @@ API endpoints:
                     value_to_set = "true" // true or false
                 body: auth_token
 
-        /high_schools
+        /high-schools
             /all // Returns all high schools
                 method: get
                 parameters:
                     auth_token
+                    search= "ODTÜ" // search query
                     //removed: pageNo=1 // which page to get
-                    //removed: search= "ODTÜ" // search query
                     //removed: cities= ["Ankara", "İstanbul"] // cities to filter by
                     //removed: sortBy=  "name" || "city" || "ranking" || "priority" // which field to sort by
                     //removed: order= "asc" || "desc" // order of sorting
@@ -230,12 +230,8 @@ API endpoints:
                 // It may be used to edit the name, priority, and city
                 // Response with success or error
                 method: post
-                parameters:
-                    high_school_id = "2" // id of the high school
-                    name = "Ankara Fen Lisesi" // new name
-                    priority = "1" // new priority
-                    city = "Ankara" // new city
-                body: auth_token
+                body: Highschool Model
+                parameters: auth_token
                 response: {
                     status: "success" || "error"
                 }
@@ -244,11 +240,8 @@ API endpoints:
                 // It takes the name, priority, and city as parameters
                 // Response with success or error and id
                 method: post
-                parameters:
-                    name = "Ankara Fen Lisesi" // name of the high school
-                    priority = "1" // priority of the high school
-                    city = "Ankara" // city of the high school
-                body: auth_token
+                body: Highschool Model
+                parameters: auth_token
                 response: {
                     status: "success" || "error",
                     id: "2"

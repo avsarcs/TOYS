@@ -25,10 +25,7 @@ import server.models.requests.TourModificationRequest;
 import server.models.review.EventReview;
 import server.models.review.Review;
 import server.models.review.ReviewRecord;
-import server.models.schools.Highschool;
-import server.models.schools.University;
-import server.models.schools.UniversityDepartment;
-import server.models.schools.UniversityDepartmentYear;
+import server.models.schools.*;
 import server.models.time.ZTime;
 
 import java.time.Duration;
@@ -54,6 +51,18 @@ public class DTOFactory {
         return dto;
     }
 
+    public Map<String, Object> highschool(HighschoolRecord highschool) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("id", highschool.getId());
+        dto.put("name", highschool.getTitle());
+        dto.put("location", highschool.getLocation());
+        dto.put("priority", highschool.getPriority());
+        dto.put("ranking", highschool.getRanking());
+
+        return dto;
+    }
+
     public Highschool highschool(Map<String, Object> map) {
         Highschool highschool = new Highschool();
 
@@ -66,7 +75,7 @@ public class DTOFactory {
     }
 
     public Map<String, Object> highschool(String highschool_id) {
-        Highschool highschool = database.schools.getHighschoolByID(highschool_id);
+        HighschoolRecord highschool = database.schools.getHighschoolByID(highschool_id);
         if (highschool == null) {
             System.out.println("Highschool with id [" + highschool_id+ "] not found!");
             return Map.of();
@@ -279,7 +288,7 @@ public class DTOFactory {
         dto.put("visitor_count", application.getExpected_souls());
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
-        dto.put("event_subtype", application.getApplicant());
+        dto.put("event_subtype", application.getTour_type());
 
         return dto;
     }
@@ -315,7 +324,7 @@ public class DTOFactory {
         dto.put("visitor_count", request.getModifications().getExpected_souls());
         dto.put("guides", List.of());
         dto.put("event_status", request.getModifications().getStatus().name());
-        dto.put("event_subtype", request.getModifications().getApplicant());
+        dto.put("event_subtype", request.getModifications().getTour_type());
 
         return dto;
     }
@@ -331,7 +340,7 @@ public class DTOFactory {
         dto.put("visitor_count", 0);
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
-        dto.put("event_subtype", application.getApplicant());
+        dto.put("event_subtype", "FAIR");
 
         return dto;
     }
@@ -344,7 +353,7 @@ public class DTOFactory {
         dto.put("event_id", tour.getFair_id());
         dto.put("highschool", highschool(tour.getApplicant().getSchool()));
         dto.put("accepted_time", tour.getStarts_at());
-        dto.put("requested_times", tour.getStarts_at());
+        dto.put("requested_times", List.of(tour.getStarts_at()));
         dto.put("visitor_count", 0);
         dto.put("guides", tour.getGuides().stream().map(guideID -> tourGuide(guideID)).toList());
         dto.put("event_status", tour.getFair_status().name());
@@ -563,7 +572,7 @@ public class DTOFactory {
                 "bank", "N/A"
 
         ));
-        dto.put("debt", user.getFiscalState().getOwed());
+        dto.put("debt", user.getFiscalState().getOwed() - user.getFiscalState().getPaid());
         dto.put("money_paid", user.getFiscalState().getPaid());
         dto.put("unpaid_hours", "");
 
@@ -591,7 +600,7 @@ public class DTOFactory {
         dto.put("hours_worked", hoursWorked);
         dto.put("money_debted", hoursWorked * rate);
 
-        Highschool highschool_obj = new Highschool();
+        HighschoolRecord highschool_obj = new Highschool();
 
         try {
             highschool_obj = database.schools.getHighschoolByID(fair.getApplicant().getSchool());
@@ -642,7 +651,7 @@ public class DTOFactory {
                 payment -> moneyPaid.addAndGet(payment.getAmount())
         );
 
-        Highschool highschool_obj = new Highschool();
+        HighschoolRecord highschool_obj = new Highschool();
 
         try {
             highschool_obj = database.schools.getHighschoolByID(tour.getApplicant().getSchool());

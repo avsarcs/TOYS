@@ -1,8 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolAdd/InputSelector.tsx";
 import AddButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolAdd/AddButton.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
+import {notifications} from "@mantine/notifications";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -16,7 +19,7 @@ const defaultContainerStyle = {
 };
 
 //test data
-const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
+
 const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolAddProps {
@@ -24,18 +27,48 @@ interface HighSchoolAddProps {
     onClose: () => void;
 }
 
+const HIGHSCHOOL_ADD_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/add");
 const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
+    const userContext = useContext(UserContext);
     const [selectedName, setSelectedName] = React.useState<string | null>(null);
-    const [selectedCity, setSelectedCity] = React.useState<string | null>(null);
+    const [selectedCity, setSelectedCity] = React.useState<City | null>(null);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
 
-    const handleAddButtonClick = () => {
+    const handleAddButtonClick = async () => {
         if (!selectedName || !selectedCity || !selectedPriority) {
             alert("Lütfen tüm detayları doldurun.");
             return;
         }
 
-        // TODO: Add the high school to the database
+        const addUrl = new URL(HIGHSCHOOL_ADD_URL);
+        addUrl.searchParams.append("auth", userContext.authToken);
+
+        const addRes = await fetch(addUrl, {
+            method: "POST",
+            headers: new Headers({"Content-Type": "application/json"}),
+            body: JSON.stringify({
+                id: "",
+                name: selectedName,
+                location: selectedCity,
+                priority: selectedPriority,
+                ranking: -1,
+            })
+        });
+
+        if(addRes.ok) {
+            notifications.show({
+                color: "green",
+                title: "İşlem başarılı.",
+                message: "Lise eklendi."
+            });
+        }
+        else {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
+            });
+        }
 
         window.location.reload();
     };
@@ -52,7 +85,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector cities={cities} priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 

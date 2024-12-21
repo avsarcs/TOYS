@@ -8,16 +8,38 @@ public class HighschoolRecord {
     private HighschoolEntranceDetails details;
 
 
+    private String id;
+    private String priority;
+    private String ranking;
+
     protected HighschoolRecord(HighschoolRecord other) {
         this.title = other.title;
         this.location = other.location;
         this.details = new HighschoolEntranceDetails(other.details);
+
+        this.id = other.id;
+        this.priority = other.priority;
+        this.ranking = other.ranking;
     }
 
     protected HighschoolRecord(Map<String,Object> map) {
         title =(String) map.get("title");
         location = (String) map.get("location");
         details = HighschoolEntranceDetails.fromMap((Map<String,Object>) map.get("details"));
+
+        id = "";
+        priority = "";
+        ranking = "";
+        
+        if (map.containsKey("id")) {
+            id = (String) map.get("id");
+        }
+        if (map.containsKey("priority")) {
+            priority = (String) map.get("priority");
+        }
+        if (map.containsKey("ranking")) {
+            ranking = (String) map.get("ranking");
+        }
     }
 
     public static HighschoolRecord fromMap(Map<String, Object> map) {
@@ -65,6 +87,33 @@ public class HighschoolRecord {
 
     public HighschoolRecord setDetails(HighschoolEntranceDetails details) {
         this.details = details;
+        return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public HighschoolRecord setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public HighschoolRecord setPriority(String priority) {
+        this.priority = priority;
+        return this;
+    }
+
+    public String getRanking() {
+        return ranking;
+    }
+
+    public HighschoolRecord setRanking(String ranking) {
+        this.ranking = ranking;
         return this;
     }
 }

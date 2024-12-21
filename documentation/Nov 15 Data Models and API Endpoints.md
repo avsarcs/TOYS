@@ -283,10 +283,10 @@
 ```
 {
 	"applicant": {
-		"namename": "Yavuz XD",
+		"fullname": "Yavuz XD", // it was "namename" before, wtf
 		"email": "yavuz.xd@something.com",
 		"phone": "5555555555",
-		"school": "Ankara Fen Lisesi",
+		"school": HighschoolModel,
 		"notes": "Notes by the applicant",
 	},
 	"start_time": "2024-11-15T14:22:14Z",
@@ -487,14 +487,15 @@ response_type:json
 		response: 200 or 400
 		response_type: status code
 
+!!!! CHANGED
 	/of_tour (Requires Auth)
 		parameters:
 			tour_id=2590545wdge
 			auth = auth_token
 		method: get
-		response: ReviewModel
-		description: Only return reviews with status ACCEPTED and non-empty bodies.
-		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
+		response: ReviewModel[]
+		description: Send multiple review models, one for the tour and the others
+		for the reviews of the guides on the same tour.
 
 	/of_guide (Requires Auth)
 		parameters:
@@ -548,12 +549,12 @@ response_type:json
 			auth: auth_token
 			request_id: "id of the assignment request"
 			response: true/false (accept/reject)
-
+!!!! CHANGED
 		/tour-invite
 		method: post
 		parameters:
 			auth: auth_token
-			request_id: "id of the assignment request"
+			request_id: "id of the assignment request OR the tour for the guide"
 			response: true/false (accept/reject)
 
 		/promotion
@@ -654,7 +655,7 @@ response_type:json
 		/dashboard
 			parameters:
 				authToken: auth_token
-				dashboard_category: NotificationCategory
+				dashboard_category: DashboardCategory
 			method: get
 			response: SimpleEventModel[]
 			
@@ -876,7 +877,13 @@ response_type:json
 			parameters:
 				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
 				guide_not_assigned (OPTIONAL): bool
-				enrolled_in_fair (OPTIONAL): 
+				enrolled_in_fair (OPTIONAL):
+		#CHANGED
+				school_name: string
+				to_date: iso date string
+				from_date: iso date string
+				filter_guide_missing: bool
+				filter_trainee_missing: bool 
 			body: auth_token
 			response: list of fairs
 			response_type: json

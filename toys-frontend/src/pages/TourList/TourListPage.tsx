@@ -9,18 +9,20 @@ import {
   Title,
   Checkbox,
   Chip,
-  Button, 
-  Container, 
-  useMatches, 
-  ScrollArea, 
-  Autocomplete
+  Button,
+  Container,
+  useMatches,
+  ScrollArea,
+  Autocomplete, Pagination, LoadingOverlay
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
 import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
+import {notifications} from "@mantine/notifications";
 
+const TOURS_PER_PAGE = 7;
 const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
 
 const TourListPage: React.FC = () => {
@@ -32,8 +34,11 @@ const TourListPage: React.FC = () => {
   const [toDate, setToDate] = useState<Date | null>(null);
   const [guideMissing, setGuideMissing] = useState(false);
   const [traineeMissing, setTraineeMissing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const getTours = async () => {
+    setLoading(true);
     const toursUrl = new URL(TOURS_URL);
     
     // Always append required auth token
@@ -57,27 +62,48 @@ const TourListPage: React.FC = () => {
 
     if(res.ok) {
       setTours(await res.json());
+      setPage(1);
     }
+    else {
+      setLoading(false);
+      throw new Error("Something went wrong");
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
     // Initial load of tours
-    getTours().catch(console.error);
-    return () => { setTours([]); }
+    getTours().catch((reason) => {
+      console.error(reason);
+      notifications.show({
+        color: "red",
+        title: "Hay aksi!",
+        message: "Bir şeyler yanlış gitti. Sayfayı yenileyin veya site yöneticisine durumu haber edin."
+      });
+    });
   }, []); // Empty dependency array as we only want this to run once on mount
 
   const listHeight = useMatches({
     base: "",
     sm: "",
-    md: "50vh",
+    md: "35vh",
   });
 
+  const visibleTours = useMemo(() => tours.slice((page - 1) * TOURS_PER_PAGE, page * (TOURS_PER_PAGE)),
+    [page, tours]);
   const listItems = useMemo(() =>
-    tours ? tours.map((tour, index) => <ListItem key={index} tour={tour}/>) : null,
-  [tours]);
+    visibleTours.map((tour, index) => <ListItem key={index} tour={tour}/>),
+  [visibleTours]);
 
   const handleSearch = async () => {
-    await getTours().catch(console.error);
+    await getTours().catch((reason) => {
+      console.error(reason);
+      notifications.show({
+        color: "red",
+        title: "Hay aksi!",
+        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
+      });
+    });
   };
 
   const handleFromDateChange = (date: Date | null) => {
@@ -107,7 +133,7 @@ const TourListPage: React.FC = () => {
       <Divider className="border-gray-400"/>
       <Stack gap="0" bg="white">
         <Box p="lg">
-          <Title order={2}>
+          <Title order={3}>
             Filtre
           </Title>
         </Box>
@@ -125,19 +151,19 @@ const TourListPage: React.FC = () => {
           <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
+          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
+            <Group wrap="wrap">
           <Text size="md" fw={700}>
             Durum:
           </Text>
-          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
-            <Group>
-              <Chip size="lg" color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
-              <Chip size="lg" color="blue" variant="outline" value="FINISHED">Bitti</Chip>
+              <Chip color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
+              <Chip color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
+              <Chip color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
+              <Chip color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
+              <Chip color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
+              <Chip color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
+              <Chip color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
+              <Chip color="blue" variant="outline" value="FINISHED">Bitti</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
@@ -185,12 +211,21 @@ const TourListPage: React.FC = () => {
       </Stack>
       <Divider size="sm" className="border-gray-300"/>
       <Container p="0" fluid bg="white">
-        <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
-          <Stack gap="xs" className="overflow-x-clip" mah="20%">
-            {listItems}
-            <Space h="xs" />
-          </Stack>
-        </ScrollArea.Autosize>
+        {
+          loading
+            ?
+            <LoadingOverlay className="rounded-md"
+                            visible={loading} zIndex={10}
+                            overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
+            :
+          <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
+            <Stack gap="xs" className="overflow-x-clip" mah="20%">
+              {listItems}
+              <Space h="xs"/>
+            </Stack>
+          </ScrollArea.Autosize>
+        }
+      <Pagination p="md" value={page} onChange={setPage} total={Math.ceil(tours.length / TOURS_PER_PAGE)} />
       </Container>
     </>
   )

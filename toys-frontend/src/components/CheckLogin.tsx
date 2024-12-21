@@ -1,7 +1,7 @@
 import {CheckLoginProps} from "../types/generic.ts";
 import {UserContext} from "../context/UserContext.tsx";
 import React, {useContext, useEffect, useState} from "react";
-import {Box, LoadingOverlay, Text} from "@mantine/core"
+import {Box, LoadingOverlay} from "@mantine/core"
 import {FetchingStatus} from "../types/enum.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 
@@ -11,32 +11,61 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
   const userContext = useContext(UserContext);
   const [fetchedOnce, setFetchedOnce] = useState(false);
   const [rendering, setRendering] = useState(false);
+  const [validRole, setValidRole] = useState(false);
+  const [auth, setAuth] = useState("");
 
   useEffect(() => {
-    switch (userContext.fetchStatus) {
-      case FetchingStatus.DONE:
+    if (userContext.fetchStatus === FetchingStatus.DONE) {
+      if(auth.length === 0) {
         if(userContext.isLoggedIn) {
-          setRendering(true);
+          setAuth(userContext.authToken);
           setFetchedOnce(true);
+          setValidRole(props.acceptedRoles?.includes(userContext.user.role) ?? true);
+          setRendering(true);
         }
-        else {
-          if(fetchedOnce || !props.checkOnce) {
+        else if(props.required) {
+          if(!fetchedOnce || !props.dontRerender) {
             navigate("/login?redirect=" + (props.redirect ? path.pathname : ""), { replace: true });
           }
         }
-        break;
-      default: break;
+        else {
+          setRendering(true);
+        }
+      }
+      else {
+        if(auth !== userContext.authToken) {
+          setRendering(false);
+          setFetchedOnce(false);
+          setValidRole(false);
+          setAuth(userContext.authToken ?? "");
+        }
+      }
     }
-  }, [navigate, path.pathname, props, userContext.fetchStatus, userContext.isLoggedIn])
+  }, [navigate, path.pathname, props, userContext.authToken, userContext.fetchStatus, userContext.isLoggedIn])
 
   return (
     rendering
     ? (
       <>
         {
-          (props.checkOnce && fetchedOnce) || userContext.fetchStatus === FetchingStatus.DONE
-            ? props.children
-            : <Text>Something went wrong when fetching user. Refresh the page or contact a site administrator.</Text>
+          (props.dontRerender && fetchedOnce) || userContext.fetchStatus === FetchingStatus.DONE
+            ?
+            validRole
+              ?
+              props.children
+              : props.required
+                ?
+                (() => {
+                  throw new Error("User does not have permission to access this page.");
+                })()
+                : null
+            :
+            props.required
+              ?
+              (() => {
+                throw new Error("Something went wrong when fetching user. Refresh the page or contact a site administrator.")
+              })()
+              : null
         }
       </>
     )

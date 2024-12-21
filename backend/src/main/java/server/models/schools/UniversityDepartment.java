@@ -1,6 +1,8 @@
 package server.models.schools;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class UniversityDepartment {
     public String name;
@@ -8,6 +10,22 @@ public class UniversityDepartment {
     public String scholarship;
 
     public List<UniversityDepartmentYear> years;
+
+    public static UniversityDepartment fromMap(Map<String, Object> map) {
+        return new UniversityDepartment(map);
+    }
+    protected UniversityDepartment(Map<String, Object> map) {
+        this.name = (String) map.get("name");
+        this.id = (String) map.get("id");
+        this.scholarship = (String) map.get("scholarship");
+        this.years = new ArrayList<>();
+        try {
+            years = ((List<Map<String, Object>>) map.get("years")).stream().map(UniversityDepartmentYear::fromMap).toList();
+        } catch (Exception E) {
+            E.printStackTrace();
+            System.out.println("Error in UniversityDepartment.java");
+        }
+    }
 
     public UniversityDepartment (String name, String id, String scholarship) {
         this.name = name;

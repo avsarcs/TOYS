@@ -5,6 +5,7 @@ import {
   UserRole
 } from "./enum.ts";
 import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import {OnlyChildrenProps} from "./generic.ts";
 
 export interface User {
   id: string,
@@ -43,11 +44,33 @@ export interface GroupApplication {
   }
 }
 
+export interface FairApplicationModel {
+  applicant: {
+		fullname: string;
+		email: string;
+    role: string;
+		phone: string;
+		school: HighschoolData;
+    notes: string;
+	};
+	start_time: string;
+  end_time: string;
+  fair_name: string;
+}
+
 export interface GroupApplicationStageProps {
   applicationInfo: GroupApplication;
   setApplicationInfo: Dispatch<SetStateAction<GroupApplication>>;
   warnings: Record<any, any>;
 }
+
+export interface FairApplicationProps {
+  applicationInfo: FairApplicationModel;
+  setApplicationInfo: Dispatch<SetStateAction<FairApplicationModel>>;
+  warnings: Record<any, any>;
+}
+
+
 
 export interface IndividualApplicationStageProps {
   applicationInfo: IndividualApplication,
@@ -103,15 +126,27 @@ export interface DashboardItemProps {
 }
 
 export interface DashboardItemListProps {
+  loading: boolean,
   categories: { value: DashboardCategory, label: DashboardCategoryText }[],
   category: DashboardCategory,
   setCategory: Dispatch<SetStateAction<DashboardCategory>>
+  items: SimpleEventData[]
   setItem: Dispatch<SetStateAction<SimpleEventData | null>>
 }
 
 export interface DashboardInfoBoxProps {
   category: DashboardCategory,
-  item: SimpleEventData
+  item: SimpleEventData,
+  updateDashboard: () => void,
+}
+
+export interface DashboardInfoBoxButtonProps {
+  item: SimpleEventData,
+  updateDashboard: () => void
+}
+
+export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps, OnlyChildrenProps{
+  response: boolean
 }
 
 export interface TourSectionProps {
@@ -150,14 +185,16 @@ export interface MoneyForGuide {
   money_paid: number;
 }
 
-export interface MoneyForTour {
-  tour_id: number;
-  tour_date: string;
+export interface MoneyForEvent {
+  event_id: number;
+  event_date: string;
   hourly_rate: number;
-  tour_highschool: string;
+  event_highschool: HighschoolData;
   hours_worked: number;
   money_debted: number;
   money_paid: number;
+  guide_name: string;
+  event_type: string;
 }
 
 export interface SimpleGuide {

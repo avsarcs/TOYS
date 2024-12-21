@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, rem} from '@mantine/core';
+import {Button, rem, Text} from '@mantine/core';
 import {IconPlus} from '@tabler/icons-react';
 
 /**
@@ -23,7 +23,7 @@ const AddButton: React.FC<AddButtonProps> = ({addHighSchool}) => {
         style={{width: "60%"}}
         leftSection={<IconPlus style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
     >
-        <text>Lise Ekleyin</text>
+        <Text>Lise Ekleyin</Text>
     </Button>
 }
 

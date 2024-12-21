@@ -1,4 +1,4 @@
-package server.models.schools;
+/*package server.models.schools;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -50,3 +50,4 @@ public class UniversityTableDataSerializer extends JsonSerializer<UniversityTabl
         }
     }
 }
+*/
