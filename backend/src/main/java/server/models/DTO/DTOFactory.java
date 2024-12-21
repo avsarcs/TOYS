@@ -70,7 +70,9 @@ public class DTOFactory {
 
         dto.put("id", highschool.getId());
         String title = highschool.getTitle();
-        title = title.substring(0, title.indexOf("("));
+        if (title.contains("(")){
+            title = title.substring(0, title.indexOf("("));
+        }
         dto.put("name", title);
         dto.put("city", highschool.getLocation());
         dto.put("priority", highschool.getPriority());
