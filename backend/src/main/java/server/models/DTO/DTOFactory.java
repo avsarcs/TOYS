@@ -288,7 +288,7 @@ public class DTOFactory {
         dto.put("visitor_count", application.getExpected_souls());
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
-        dto.put("event_subtype", application.getApplicant());
+        dto.put("event_subtype", application.getTour_type());
 
         return dto;
     }
@@ -324,7 +324,7 @@ public class DTOFactory {
         dto.put("visitor_count", request.getModifications().getExpected_souls());
         dto.put("guides", List.of());
         dto.put("event_status", request.getModifications().getStatus().name());
-        dto.put("event_subtype", request.getModifications().getApplicant());
+        dto.put("event_subtype", request.getModifications().getTour_type());
 
         return dto;
     }
@@ -340,7 +340,7 @@ public class DTOFactory {
         dto.put("visitor_count", 0);
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
-        dto.put("event_subtype", application.getApplicant());
+        dto.put("event_subtype", "FAIR");
 
         return dto;
     }
@@ -353,7 +353,7 @@ public class DTOFactory {
         dto.put("event_id", tour.getFair_id());
         dto.put("highschool", highschool(tour.getApplicant().getSchool()));
         dto.put("accepted_time", tour.getStarts_at());
-        dto.put("requested_times", tour.getStarts_at());
+        dto.put("requested_times", List.of(tour.getStarts_at()));
         dto.put("visitor_count", 0);
         dto.put("guides", tour.getGuides().stream().map(guideID -> tourGuide(guideID)).toList());
         dto.put("event_status", tour.getFair_status().name());

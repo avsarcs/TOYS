@@ -65,17 +65,9 @@ public class Highschool extends HighschoolRecord {
         return this;
     }
 
-    public long getRanking() {
-        return ranking;
-    }
-
     public Highschool setRanking(long ranking) {
         this.ranking = ranking;
         return this;
-    }
-
-    public long getPriority() {
-        return priority;
     }
 
     public Highschool setPriority(long priority) {
