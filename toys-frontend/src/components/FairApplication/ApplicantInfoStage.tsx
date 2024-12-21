@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FairApplicationProps } from '../../types/designed';
-import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
 import isEmpty from 'validator/lib/isEmpty';
-import { TextInput } from '@mantine/core';
-import { notifications } from '@mantine/notifications'; 
+import { TextInput, Autocomplete } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconSearch } from '@tabler/icons-react';
+import { HighschoolData } from '../../types/data';
 
 const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
-  const [schoolName, setSchoolName] = useState<string | null>(applicationInfo.applicant.school.name || null);
-
-  const [schools, setSchools] = useState<string[]>([]); // State to store high schools
+  // Store complete highschool objects
+  const [schools, setSchools] = useState<HighschoolData[]>([]);
   
   const getSchools = useCallback(async () => {
-    const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS); // Replace with your backend API base address
+    const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
     const url = new URL(apiURL + "internal/analytics/high-schools/all");
   
     try {
-      url.searchParams.append("auth", ""); // Auth parameter set to null
+      url.searchParams.append("auth", "");
   
       const res = await fetch(url, {
         method: "GET",
@@ -29,14 +29,20 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
         });
       } else {
         const resText = await res.text();
-        const resJson = JSON.parse(resText); // This is an array of high schools
-  
-        console.log("API Response:", resJson); // Debugging the response
-  
-        // Directly map the array to extract school names
-        const schoolNames = resJson.map((school: { name: string }) => school.name);
-  
-        if (schoolNames.length === 0) {
+        const resJson = JSON.parse(resText);
+        
+        // Group schools by name to handle duplicates
+        const schoolsByName = resJson.reduce((acc: { [key: string]: HighschoolData }, school: HighschoolData) => {
+          if (!acc[school.name]) {
+            acc[school.name] = school;
+          }
+          return acc;
+        }, {});
+
+        // Convert back to array
+        const uniqueSchools = Object.values(schoolsByName);
+        
+        if (uniqueSchools.length === 0) {
           notifications.show({
             color: "yellow",
             title: "No Schools Found",
@@ -44,7 +50,7 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
           });
         }
   
-        setSchools(schoolNames); // Update the schools state with just the names
+        setSchools(uniqueSchools);
       }
     } catch (e) {
       console.error("Error fetching schools:", e);
@@ -55,35 +61,18 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
       });
     }
   }, []);
-  
-  
 
   useEffect(() => {
     getSchools();
   }, [getSchools]);
-  // Sync `schoolName` with `applicationInfo` on initial render
-  useEffect(() => {
-    if (applicationInfo.applicant.school.name) {
-      setSchoolName(applicationInfo.applicant.school.name);
-    }
-  }, [applicationInfo.applicant.school.name]);
 
-  // Update applicationInfo when `schoolName` changes
-  useEffect(() => {
-    if (typeof schoolName === 'string') {
-      setApplicationInfo((prev) => ({
-        ...prev,
-        applicant: {
-          ...prev.applicant,
-          role: "STUDENT",
-          school: {
-            ...prev.applicant.school,
-            name: schoolName,
-          },
-        },
-      }));
-    }
-  }, [schoolName, setApplicationInfo]);
+  // Get unique school names for the Autocomplete
+  const schoolNames = schools.map(school => school.name);
+
+  // Function to find the complete school object by name
+  const findSchoolByName = (name: string): HighschoolData | undefined => {
+    return schools.find(school => school.name === name);
+  };
 
   return (
     <>
@@ -92,7 +81,6 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
       </h1>
       <h2 className="subheader mb-4">Başvuruyu yapan kişi hakkındaki bilgileri giriniz.</h2>
       <form className="p-6 rounded-md teacher-info">
-        {/* Name Field */}
         <div className="mb-4">
           <TextInput
             type="text"
@@ -114,7 +102,6 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
           />
         </div>
 
-        {/* Email Field */}
         <div className="mb-4">
           <TextInput
             type="email"
@@ -136,7 +123,6 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
           />
         </div>
 
-        {/* Phone Field */}
         <div className="mb-4">
           <TextInput
             type="tel"
@@ -158,26 +144,33 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
           />
         </div>
 
-        {/* School Selection */}
         <div className="mb-4">
-          <label htmlFor="school" className="block font-medium mb-2">
-            Okul <span className="text-red-400">*</span>
-          </label>
-          <div
-            className={`${
-              warnings.empty_fields && isEmpty(applicationInfo.applicant.school.name)
-                ? "border-red-600 border-2 rounded-md"
-                : "border-gray-300"
-            }`}
-          >
-            {schoolName && `Şu anki seçiminiz: ${schoolName}`}
-            <SearchableSelect
-              available_options={schools}
-              value={schoolName}
-              setValue={setSchoolName}
-              placeholder="Okulunuzun adını giriniz"
-            />
-          </div>
+          <Autocomplete
+            label="Okul"
+            placeholder="Okulunuzun adını giriniz"
+            data={schoolNames}
+            limit={5}
+            value={applicationInfo.applicant.school.name}
+            onChange={(value) => {
+              const selectedSchool = findSchoolByName(value);
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: {
+                  ...prev.applicant,
+                  school: selectedSchool || {
+                    id: "",
+                    name: value,
+                    location: "",
+                    priority: 1,
+                    ranking: 0
+                  }
+                }
+              }));
+            }}
+            leftSection={<IconSearch size={16} />}
+            withAsterisk
+            error={warnings.empty_fields && isEmpty(applicationInfo.applicant.school.name) ? "Bu alanı boş bırakamazsınız." : false}
+          />
         </div>
       </form>
     </>
