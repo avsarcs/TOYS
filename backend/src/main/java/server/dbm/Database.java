@@ -67,6 +67,8 @@ public class Database {
         objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+        local = new LocalFileService();
+
         if (this.firestoreDatabase == null) {
             try {
                 InputStream serviceAccountFile = getCredentials(credentialsFile);

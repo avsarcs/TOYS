@@ -8,6 +8,7 @@ import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
 import server.enums.status.ApplicationStatus;
+import server.enums.status.RequestStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.models.events.*;
@@ -21,6 +22,7 @@ import server.models.people.details.PaymentInfo;
 import server.models.people.details.Profile;
 import server.models.people.details.Schedule;
 import server.models.requests.AdvisorPromotionRequest;
+import server.models.requests.GuideAssignmentRequest;
 import server.models.requests.TourModificationRequest;
 import server.models.review.EventReview;
 import server.models.review.Review;
@@ -150,7 +152,34 @@ public class DTOFactory {
         dto.put("email", applicant.getContact_info().getEmail());
         dto.put("phone", applicant.getContact_info().getPhone());
         dto.put("notes", applicant.getNotes());
-        dto.put("school", highschool(applicant.getSchool()));
+        dto.put("highschool", highschool(applicant.getSchool()));
+
+        return dto;
+    }
+
+    public Map<String, Object> eventInvitation(GuideAssignmentRequest request) {
+        Map<String, Object> dto = new HashMap<>();
+
+        String inviterName = database.people.fetchUser(request.getRequested_by().getBilkent_id()).getProfile().getName();
+
+        dto.put("inviter", Map.of(
+                "id", request.getRequested_by().getBilkent_id(),
+                "name", inviterName
+        ));
+
+        String inviteeName = database.people.fetchUser(request.getGuide_id()).getProfile().getName();
+
+        dto.put("invited", Map.of(
+                "id", request.getGuide_id(),
+                "name", inviteeName
+        ));
+
+        dto.put("event_id", request.getEvent_id());
+        switch (request.getStatus()) {
+            case APPROVED -> dto.put("status", "ACCEPTED");
+            case REJECTED -> dto.put("status", "REJECTED");
+            case PENDING -> dto.put("status", "WAITING_RESPONSE");
+        }
 
         return dto;
     }
