@@ -10,6 +10,7 @@ import TimeInformation from "../../components/TourInformation/TimeInformation.ts
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
 import TourStatusActions from "../../components/TourStatusActions/TourStatusActions.tsx";
+import TourReviews from "../../components/TourReviews/TourReviews.tsx";
 
 const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
 
@@ -41,7 +42,6 @@ const TourPage: React.FC = () => {
     }
 
     setTour(JSON.parse(tourText));
-    console.log(JSON.parse(tourText))
   }, [userContext.authToken]);
 
   useEffect(() => {
@@ -92,6 +92,10 @@ const TourPage: React.FC = () => {
                 <GuideInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
                 <TimeInformation tour={tour} refreshTour={refreshTour} />
+                <Divider className="border-gray-200" />
+                <Box p="lg" className="bg-white">
+                  <TourReviews tourId={tour.tour_id} />
+                </Box>
               </Stack>
             </>
         }
