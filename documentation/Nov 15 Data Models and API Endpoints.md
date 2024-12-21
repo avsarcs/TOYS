@@ -487,14 +487,15 @@ response_type:json
 		response: 200 or 400
 		response_type: status code
 
+!!!! CHANGED
 	/of_tour (Requires Auth)
 		parameters:
 			tour_id=2590545wdge
 			auth = auth_token
 		method: get
-		response: ReviewModel
-		description: Only return reviews with status ACCEPTED and non-empty bodies.
-		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
+		response: ReviewModel[]
+		description: Send multiple review models, one for the tour and the others
+		for the reviews of the guides on the same tour.
 
 	/of_guide (Requires Auth)
 		parameters:
