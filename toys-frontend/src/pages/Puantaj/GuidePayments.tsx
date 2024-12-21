@@ -358,24 +358,24 @@ const GuidePayments: React.FC = () => {
                                             <b>{payment.guide.name}</b>
                                         </h1>
                                         <p>
-                                            <b>Guide ID: </b> {payment.guide.id}
+                                            <b>Rehber ID: </b> {payment.guide.id}
                                         </p>
                                         <p>
-                                            <b>Guide IBAN: </b> {payment.guide.iban}
+                                            <b>Rehber IBAN: </b> {payment.guide.iban}
                                         </p>
                                         <p>
-                                            <b>Guide Bank: </b> {payment.guide.bank}
+                                            <b>Rehber Bankası: </b> {payment.guide.bank}
                                         </p>
                                         <p>
-                                            <b>Unpaid Hours: </b>
+                                            <b>Ödenmemiş Çalışma Saatleri: </b>
                                             {payment.unpaid_hours}
                                         </p>
                                         <p>
-                                            <b>Debt: </b>
+                                            <b>Borç: </b>
                                             {payment.debt}
                                         </p>
                                         <p>
-                                            <b>Total Amount Paid: </b>
+                                            <b>Ödenen Toplam Miktar: </b>
                                             {payment.money_paid}
                                         </p>
                                     </div>

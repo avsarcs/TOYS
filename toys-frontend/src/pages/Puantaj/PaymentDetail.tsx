@@ -25,16 +25,19 @@ const PaymentDetail: React.FC = () => {
 
     const formatISODate = (isoDate: string | number | Date) => {
         const date = new Date(isoDate);
-        console.log(isoDate);
-        return date.toLocaleDateString("en-GB", {
+    
+        // Convert to time zone-adjusted string
+        return date.toLocaleString("en-GB", {
+            timeZone: "UTC", // Adjust time to your desired time zone (e.g., "Europe/London", "America/New_York")
             day: "2-digit",
-            month: "long",
+            month: "2-digit",
             year: "numeric",
             hour: "2-digit",
             minute: "2-digit",
-            hourCycle: "h23",
+            hourCycle: "h23", // Use 24-hour time format
         });
     };
+    
 
     const getPayments = useCallback(async () => {
         setLoading
@@ -161,14 +164,14 @@ const PaymentDetail: React.FC = () => {
                         fontSize: "1.2em",
                     }}
                 >
-                    Back to All Guides
+                    Tüm Rehberler
                 </button>
                 <h1 style={{ fontSize: "2.5em", color: "blue", textAlign: "center" }}>
-                    <b>Guide Payments</b>
+                    <b>Rehber Ödemeleri</b>
                 </h1>
                 <h2 style={{ fontSize: "1.5em", textAlign: "center", color: "black" }}>
                     <p>
-                        <b>Viewing payments for guide: </b>
+                        <b>Şu rehber için ödemeleri görüntülüyorsunuz: </b>
                         {tourPayments.length > 0 && typeof tourPayments[0].guide_name === "string"
                             ? tourPayments[0].guide_name
                             : "Unknown"}
@@ -190,7 +193,7 @@ const PaymentDetail: React.FC = () => {
                             fontWeight: "bold",
                         }}
                     >
-                        All Tours
+                        Tüm Etkinlikler
                     </button>
                     <button
                         onClick={() => setFilter("paid")}
@@ -204,7 +207,7 @@ const PaymentDetail: React.FC = () => {
                             fontWeight: "bold",
                         }}
                     >
-                        Paid Tours
+                        Ödenmiş Etkinlikler
                     </button>
                     <button
                         onClick={() => setFilter("unpaid")}
@@ -218,13 +221,13 @@ const PaymentDetail: React.FC = () => {
                             fontWeight: "bold",
                         }}
                     >
-                        Unpaid Tours
+                        Ödenmemiş Etkinlikler
                     </button>
                 </div>
     
                 <div style={{ marginTop: "20px" }}>
                     {paginatedPayments.length === 0 ? (
-                        <p style={{ textAlign: "center", color: "red" }}>No record found.</p>
+                        <p style={{ textAlign: "center", color: "red" }}>Hiçbir kayıt bulunamadı.</p>
                     ) : (
                         paginatedPayments.map((payment) => (
                             <div
@@ -243,7 +246,7 @@ const PaymentDetail: React.FC = () => {
                             >
                                 <div>
                                     <p>
-                                        <b>Event Type: </b>
+                                        <b>Etkinlik Tipi: </b>
                                         <span
                                             style={{
                                                 backgroundColor:
@@ -259,31 +262,31 @@ const PaymentDetail: React.FC = () => {
                                                 fontWeight: "bold",
                                             }}
                                         >
-                                            {payment.event_type}
+                                            {payment.event_type === "TOUR" ? "Tur" : "Fuar"}
                                         </span>
                                     </p>
                                     <p>
-                                        <b>Event Highschool: </b>
+                                        <b>Lise: </b>
                                         {payment.event_highschool.name}
                                     </p>
                                     <p>
-                                        <b>Event ID: </b>
+                                        <b>Etkinlik ID: </b>
                                         {payment.event_id}
                                     </p>
                                     <p>
-                                        <b>Event Date: </b>
+                                        <b>Etkinlik Tarihi: </b>
                                         {formatISODate(payment.event_date)}
                                     </p>
                                     <p>
-                                        <b>Hourly Rate: </b>
+                                        <b>Saatlik Maaş: </b>
                                         {payment.hourly_rate}
                                     </p>
                                     <p>
-                                        <b>Hours Worked: </b>
+                                        <b>Çalışılan Saatler: </b>
                                         {payment.hours_worked}
                                     </p>
                                     <p>
-                                        <b>Money Debted: </b>
+                                        <b>Borç: </b>
                                         {payment.money_debted}
                                     </p>
                                 </div>
@@ -313,10 +316,10 @@ const PaymentDetail: React.FC = () => {
                             background: currentPage === 1 ? "#f1f1f1" : "#fff",
                         }}
                     >
-                        Previous
+                        Önceki Sayfa
                     </button>
                     <span>
-                        Page {currentPage} of {totalPages}
+                        Sayfa {currentPage} / {totalPages}
                     </span>
                     <button
                         onClick={() => handlePageChange("next")}
@@ -330,7 +333,7 @@ const PaymentDetail: React.FC = () => {
                             background: currentPage === totalPages ? "#f1f1f1" : "#fff",
                         }}
                     >
-                        Next
+                        Sonraki Sayfa
                     </button>
                 </div>
             </div>
