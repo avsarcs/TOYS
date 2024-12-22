@@ -76,9 +76,6 @@ const UniversitiesList: React.FC = () => {
         }
 
         const resText = await res.text();
-
-        console.log(resText);
-
         const fetched = (JSON.parse(resText));
 
         if(fetched.length === 0) {

@@ -117,6 +117,7 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
                         }
                     }}
                     universityID={row.id}
+                    disabled={row.id === "bilkent"}
                 />
             </Table.Td>
         </Table.Tr>
