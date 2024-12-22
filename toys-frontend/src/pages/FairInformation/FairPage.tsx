@@ -6,7 +6,6 @@ import StatusInformation from "../../components/FairInformation/StatusInformatio
 import GeneralInformation from "../../components/FairInformation/GeneralInformation.tsx";
 import ApplicantInformation from "../../components/FairInformation/ApplicantInformation.tsx";
 import GuideInformation from "../../components/FairInformation/GuideInformation.tsx";
-import TimeInformation from "../../components/FairInformation/TimeInformation.tsx";
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
 import {FairStatus} from "../../types/enum.ts";
@@ -90,7 +89,6 @@ const FairPage: React.FC = () => {
                   : null
                 }
                 <Divider className="border-gray-200" />
-                <TimeInformation fair={fair} refreshFair={refreshFair} />
                 <Divider className="border-gray-200" />
               </Stack>
             </>
