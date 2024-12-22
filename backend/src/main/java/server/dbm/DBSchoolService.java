@@ -31,9 +31,13 @@ public class DBSchoolService {
             DocumentReference reference = firestore.collection("edu").document("highschools");
 
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("highschools");
-
+            String uuid = UUID.randomUUID().toString();
+            while (data.containsKey(uuid)) {
+                uuid = UUID.randomUUID().toString();
+            }
+            highschool.setId(uuid);
             data.put(
-                    highschool.getId(),
+                    uuid,
                     highschool
             );
 

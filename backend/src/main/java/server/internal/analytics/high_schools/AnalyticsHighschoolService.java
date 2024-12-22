@@ -274,7 +274,6 @@ public class AnalyticsHighschoolService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
         HighschoolRecord hs = new HighschoolRecord();
-        hs.setId((String) highschool.get("id"));
         hs.setTitle((String) highschool.get("name"));
         hs.setLocation((String) highschool.get("location"));
         hs.setRanking((String) highschool.get("ranking"));
