@@ -8,14 +8,16 @@ import {IconCalendarFilled} from '@tabler/icons-react';
 interface YearSelectorProps {
     years: string[]; // List of years to display in the dropdown menu.
     onYearChange: (selectedYear: string | null) => void;
+    selectedYear: string | null;
 }
 
 /**
  * Dropdown menu for selecting a year.
  * @param years List of years to display in the dropdown menu.
  * @param onYearChange Function that sets the selected year.
+ * @param selectedYear Currently selected year.
  */
-const YearSelector: React.FC<YearSelectorProps> = ({years, onYearChange}) => {
+const YearSelector: React.FC<YearSelectorProps> = ({years, onYearChange, selectedYear}) => {
     return <Select
         label = "Bir Yıl Seçin"
         placeholder = "Yıl seçmek için tıklayın."
@@ -25,6 +27,7 @@ const YearSelector: React.FC<YearSelectorProps> = ({years, onYearChange}) => {
         radius = "10"
         required
         leftSection={<IconCalendarFilled style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+        value={selectedYear}
         onChange={(selectedValue) => {
             onYearChange(selectedValue);
         }}

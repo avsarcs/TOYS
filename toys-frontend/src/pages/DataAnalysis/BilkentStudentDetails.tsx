@@ -145,11 +145,12 @@ const BilkentStudentDetails: React.FC = () => {
             getYearsAndScholarshipData(selectedDepartment).catch((reason) => {
                 console.error(reason);
             });
+        setSelectedYear(null);
     }, [selectedDepartment]);
 
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
-        if(selectedDepartment && selectedYear && selectedYear !== "Yükleniyor...")
+        if(selectedDepartment && selectedYear != null && selectedYear !== "Yükleniyor...")
             getDepartmentData(selectedDepartment, selectedYear).catch((reason) => {
                 console.error(reason);
             });
@@ -193,10 +194,21 @@ const BilkentStudentDetails: React.FC = () => {
     </Container>
 
     const dataForTable = (data: Record<string, Record<string, number>>)=> {
-        return Object.entries(data).map(([highSchool, scholarships]) => ({
+        const uniqueScholarships = new Set<string>();
+        Object.values(data).forEach(scholarships => {
+            Object.keys(scholarships).forEach(scholarship => uniqueScholarships.add(scholarship));
+        });
+
+        return Object.entries(data).map(([highSchool, scholarships]) => {
+            const completeScholarships = Array.from(uniqueScholarships).reduce((acc, scholarship) => {
+                acc[scholarship] = scholarships[scholarship] || 0;
+                return acc;
+            }, {} as Record<string, number>);
+            return {
             highSchool,
-            ...scholarships
-        }));
+                ...completeScholarships
+            };
+        });
     };
 
     let ShownDataContainer: JSX.Element;
@@ -221,11 +233,11 @@ const BilkentStudentDetails: React.FC = () => {
                         <SearchBar onSearchChange={setSelectedSearch}/>
                     </div>
                     <div style={{ flex: 0.25, marginLeft: '10px' }}>
-                        <YearSelector years={years} onYearChange={setSelectedYear}/>
+                        <YearSelector years={years} onYearChange={setSelectedYear} selectedYear={selectedYear}/>
                     </div>
                 </div>
                 <Space h="md"/>
-                {selectedYear === "Yükleniyor..." ? (
+                {selectedYear === null || selectedYear === "Yükleniyor..." ? (
                     <Text style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 'large' }}>
                         Lütfen yıl seçin.
                     </Text>
