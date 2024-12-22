@@ -77,11 +77,15 @@ const UniversitiesList: React.FC = () => {
 
         const resText = await res.text();
 
-        if(resText.length === 0) {
+        console.log(resText);
+
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
             throw new Error("No university found.");
         }
 
-        setUniversities((JSON.parse(resText)));
+        setUniversities(fetched);
     }, [userContext.authToken]);
 
     const updateRival = useCallback(async (isRival: boolean, universityID: string) => {
