@@ -24,7 +24,7 @@ const FairPage: React.FC = () => {
   const getFair = useCallback(async (fairId: string) => {
     console.log(fairId);
     const fairUrl = new URL(FAIR_URL);
-    fairUrl.searchParams.append("fid", fairId);
+    fairUrl.searchParams.append("fair_id", fairId);
     fairUrl.searchParams.append("auth", await userContext.getAuthToken());
 
     const res = await fetch(fairUrl, {
