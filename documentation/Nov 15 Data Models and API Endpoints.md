@@ -890,7 +890,7 @@ response_type:json
 			/invite
 				parameters:
 					fid=fair_id // which fair to invite to
-					ids=[id] // who to invite
+					ids=[id] // who to invite -- array of guide ids
 				method: post
 				body: auth_token
 				response: -
