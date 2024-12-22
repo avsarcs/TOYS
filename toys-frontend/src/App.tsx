@@ -36,6 +36,7 @@ import TourListPage from "./pages/TourList/TourListPage.tsx";
 import CheckLogin from "./components/CheckLogin.tsx";
 import ManagePersonnel from "./pages/ManagePersonnel/ManagePersonnel.tsx";
 import FairsList from "./pages/FairsList/FairsList.tsx";
+import FairPage from "./pages/FairInformation/FairPage.tsx";
 
 function App() {
   dayjs.locale("tr");
@@ -54,6 +55,7 @@ function App() {
             <Route path="/dashboard" element={<CheckLogin redirect required children={<Dashboard />}/>} />
             <Route path="/tour/:tourId" element={<CheckLogin children={<TourPage />}/>} />
             <Route path="/tours" element={<CheckLogin redirect required children={<TourListPage />}/>}/>
+            <Route path="/fair/:fairId" element={<CheckLogin children={<FairPage />}/>} />
             <Route path="/fairs" element={<CheckLogin redirect required children={<FairsList />}/>}/>
             <Route path="/universitieslist" element={<CheckLogin redirect children={<UniversitiesList />}/>}/>
             <Route path="/rivalslist" element={<CheckLogin redirect children={<RivalsList />}/>} />

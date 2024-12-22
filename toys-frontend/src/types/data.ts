@@ -63,6 +63,17 @@ export interface TourData {
   classroom: string,
 }
 
+export interface FairData {
+  fair_id: string,
+  highschool: HighschoolData,
+  guides: { id: string; full_name: string, highschool: HighschoolData }[],
+  trainee_guides: { id: string; full_name: string, highschool: HighschoolData }[],
+  accepted_time: string,
+  status: FairStatus,
+  notes: string,
+  applicant: ApplicantData,
+}
+
 export interface ProfileData{
   experience: string,
   id: string,
