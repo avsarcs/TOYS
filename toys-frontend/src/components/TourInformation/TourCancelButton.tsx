@@ -13,7 +13,7 @@ const TourCancelButton: React.FC<TourButtonProps> = (props: TourButtonProps) => 
 
   const setStatus = async () => {
     const cancelUrl = new URL(CANCEL_URL);
-    cancelUrl.searchParams.append("auth", await userContext.getAuthToken());
+    cancelUrl.searchParams.append("auth", userContext.authToken);
     cancelUrl.searchParams.append("event_id", props.tour.tour_id);
 
     try {

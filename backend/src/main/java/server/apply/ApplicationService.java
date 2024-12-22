@@ -280,16 +280,7 @@ public class ApplicationService {
         tourApplication.setStatus(ApplicationStatus.RECEIVED);
         // get application
         // check application validity
-        if (tourApplication.isValid()) {
-            // if valid, send email to the applicant notifying them of the application has been received
-            mailServiceGateway.sendMail(
-                    tourApplication.getApplicant().getContact_info().getEmail(),
-                    Concerning.EVENT_APPLICANT,
-                    About.TOUR_APPLICATION,
-                    Status.RECIEVED,
-                    Map.of("name", tourApplication.getApplicant().getName())
-            );
-        } else {
+        if (!tourApplication.isValid()) {
             // if invalid, send email to the applicant notifying them of invalidity
             // the application is not valid
             System.out.println("Invalid tour application!");
