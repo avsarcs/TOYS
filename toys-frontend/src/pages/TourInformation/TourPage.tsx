@@ -24,7 +24,7 @@ const TourPage: React.FC = () => {
 
   const getTour = useCallback(async (tourId: string) => {
     const tourUrl = new URL(TOUR_URL);
-    tourUrl.searchParams.append("tid", tourId);
+    tourUrl.searchParams.append("tour_id", tourId);
     tourUrl.searchParams.append("auth", await userContext.getAuthToken());
 
     const res = await fetch(tourUrl, {

@@ -33,7 +33,7 @@ const TourListPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string[]>([
     "RECEIVED",
     "TOYS_WANTS_CHANGE",
-    "APPLICANT_WANTS_CHANGE", 
+    "APPLICANT_WANTS_CHANGE",
     "CONFIRMED",
     "REJECTED",
     "CANCELLED",

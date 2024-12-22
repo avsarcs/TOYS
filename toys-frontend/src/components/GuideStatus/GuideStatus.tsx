@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Box, Button, Group, Alert, Text, Space } from '@mantine/core';
-import { IconInfoCircle, IconCheck, IconX } from '@tabler/icons-react';
+import { Box, Button, Group, Alert, Text, Space, Stack } from '@mantine/core';
+import { IconInfoCircle, IconCheck, IconX, IconUserPlus, IconLogout } from '@tabler/icons-react';
 import { UserContext } from '../../context/UserContext';
 import { UserRole } from '../../types/enum';
 import { TourData } from '../../types/data';
@@ -13,15 +13,20 @@ interface GuideStatusProps {
 
 const TOUR_START_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/start-tour");
 const TOUR_END_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/end-tour");
+const TOUR_ENROLL_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/enroll");
+const TOUR_WITHDRAW_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/withdraw");
 
 const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
   const userContext = useContext(UserContext);
   const [isEnrolled, setIsEnrolled] = useState<boolean>(false);
   const [isInvited, setIsInvited] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [enrollSuccess, setEnrollSuccess] = useState<boolean>(false);
+  const [withdrawSuccess, setWithdrawSuccess] = useState<boolean>(false);
+  const [inviteResponseSuccess, setInviteResponseSuccess] = useState<boolean>(false);
 
   const checkEnrollmentStatus = useCallback(async () => {
-    if (userContext.user.role !== UserRole.GUIDE) return;
+    if (userContext.user.role !== UserRole.GUIDE && userContext.user.role !== UserRole.ADVISOR) return;
 
     try {
       const enrolledUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/am-enrolled");
@@ -139,6 +144,14 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
       });
 
       if (res.ok) {
+        setInviteResponseSuccess(true);
+        notifications.show({
+          title: 'Başarılı',
+          message: 'Tur daveti kabul edildi',
+          color: 'green',
+          icon: <IconCheck />,
+          autoClose: 5000,
+        });
         refreshTour();
         await checkEnrollmentStatus();
       }
@@ -162,6 +175,14 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
       });
 
       if (res.ok) {
+        setInviteResponseSuccess(true);
+        notifications.show({
+          title: 'Başarılı',
+          message: 'Tur daveti reddedildi',
+          color: 'blue',
+          icon: <IconCheck />,
+          autoClose: 5000,
+        });
         refreshTour();
         await checkEnrollmentStatus();
       }
@@ -172,17 +193,131 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
     }
   };
 
+  const handleEnroll = async () => {
+    setIsLoading(true);
+    try {
+      const enrollUrl = new URL(TOUR_ENROLL_URL);
+      enrollUrl.searchParams.append("auth", await userContext.getAuthToken());
+      enrollUrl.searchParams.append("event_id", tour.tour_id);
+
+      const res = await fetch(enrollUrl, {
+        method: 'POST'
+      });
+
+      if (res.ok) {
+        setEnrollSuccess(true);
+        notifications.show({
+          title: 'Başarılı',
+          message: 'Tura başarıyla kaydoldunuz',
+          color: 'green',
+          icon: <IconCheck />,
+          autoClose: 5000,
+        });
+        refreshTour();
+        await checkEnrollmentStatus();
+      } else {
+        throw new Error('Failed to enroll in tour');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Hata',
+        message: 'Tura kaydolma işlemi başarısız oldu',
+        color: 'red',
+        icon: <IconX />,
+        autoClose: 5000,
+      });
+      console.error('Error enrolling in tour:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    setIsLoading(true);
+    try {
+      const withdrawUrl = new URL(TOUR_WITHDRAW_URL);
+      withdrawUrl.searchParams.append("auth", await userContext.getAuthToken());
+      withdrawUrl.searchParams.append("event_id", tour.tour_id);
+
+      const res = await fetch(withdrawUrl, {
+        method: 'POST'
+      });
+
+      if (res.ok) {
+        setWithdrawSuccess(true);
+        notifications.show({
+          title: 'Başarılı',
+          message: 'Turdan başarıyla ayrıldınız',
+          color: 'green',
+          icon: <IconCheck />,
+          autoClose: 5000,
+        });
+        refreshTour();
+        await checkEnrollmentStatus();
+      } else {
+        throw new Error('Failed to withdraw from tour');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Hata',
+        message: 'Turdan ayrılma işlemi başarısız oldu',
+        color: 'red',
+        icon: <IconX />,
+        autoClose: 5000,
+      });
+      console.error('Error withdrawing from tour:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     checkEnrollmentStatus();
   }, [checkEnrollmentStatus]);
 
-  if ((userContext.user.role !== UserRole.GUIDE && userContext.user.role !== UserRole.ADVISOR) || (!isEnrolled && !isInvited)) {
+  if (userContext.user.role !== UserRole.GUIDE && userContext.user.role !== UserRole.ADVISOR) {
     return null;
   }
 
-  return (
-    <Box p="lg" w="100%">
-      {isEnrolled && (
+  if (!isEnrolled && !isInvited) {
+    return (
+      <Box p="lg" w="100%">
+        <Alert
+          variant="light"
+          color="blue"
+          radius="md"
+          icon={<IconInfoCircle />}
+          title="Rehber Durumu"
+          className="bg-slate-100"
+        >
+          {enrollSuccess ? (
+            <Text size="sm" className="text-green-600 font-medium">
+              Tura başarıyla kaydoldunuz!
+            </Text>
+          ) : (
+            <>
+              <Text size="sm" className="text-slate-900" mb="md">
+                Bu tura rehber olarak kaydolabilirsiniz.
+              </Text>
+              <Button
+                leftSection={<IconUserPlus size={16} />}
+                variant="filled"
+                color="blue"
+                onClick={handleEnroll}
+                loading={isLoading}
+              >
+                Bu Turun Rehberi Ol
+              </Button>
+            </>
+          )}
+        </Alert>
+      </Box>
+    );
+  }
+
+  if (isEnrolled) {
+    return (
+      <Box p="lg" w="100%">
         <Alert
           variant="light"
           color="blue"
@@ -191,38 +326,61 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
           title="Rehber Durumu"
           className="bg-blue-50"
         >
-          <Text size="sm" c="blue">Bu turun rehberi sizsiniz!</Text>
-          {userContext.user.role === UserRole.GUIDE && (
+          {withdrawSuccess ? (
+            <Text size="sm" className="text-green-600 font-medium">
+              Turdan başarıyla ayrıldınız!
+            </Text>
+          ) : (
             <>
-              <Space h="md" />
-              <Group>
+              <Text size="sm" c="blue" mb="md">Bu turun rehberi sizsiniz!</Text>
+              <Stack gap="md">
+                {userContext.user.role === UserRole.GUIDE && (
+                  <Group>
+                    {tour.status !== "ONGOING" && tour.status !== "FINISHED" && (
+                      <Button
+                        w="fit-content"
+                        color="green"
+                        onClick={handleStartTour}
+                        loading={isLoading}
+                      >
+                        TURUN BAŞLADIĞINI BİLDİR
+                      </Button>
+                    )}
+                    {tour.status === "ONGOING" && (
+                      <Button
+                        w="fit-content"
+                        color="red"
+                        onClick={handleEndTour}
+                        loading={isLoading}
+                      >
+                        TURUN BİTTİĞİNİ BİLDİR
+                      </Button>
+                    )}
+                  </Group>
+                )}
                 {tour.status !== "ONGOING" && tour.status !== "FINISHED" && (
                   <Button
-                    w="fit-content"
-                    color="green"
-                    onClick={handleStartTour}
-                    loading={isLoading}
-                  >
-                    TURUN BAŞLADIĞINI BİLDİR
-                  </Button>
-                )}
-                {tour.status === "ONGOING" && (
-                  <Button
-                    w="fit-content"
+                    leftSection={<IconLogout size={16} />}
+                    variant="subtle"
                     color="red"
-                    onClick={handleEndTour}
+                    w="fit-content"
+                    onClick={handleWithdraw}
                     loading={isLoading}
                   >
-                    TURUN BİTTİĞİNİ BİLDİR
+                    Bu Turun Rehberi Olmaktan Vazgeç
                   </Button>
                 )}
-              </Group>
+              </Stack>
             </>
           )}
         </Alert>
-      )}
+      </Box>
+    );
+  }
 
-      {!isEnrolled && isInvited && (
+  if (isInvited) {
+    return (
+      <Box p="lg" w="100%">
         <Alert
           variant="light"
           color="blue"
@@ -231,33 +389,43 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
           title="Rehber Daveti"
           className="bg-slate-100"
         >
-          <Text size="sm" className="text-slate-900" mb="md">
-            Bu turun rehberi olmaya davet edildiniz!
-          </Text>
-          <Group>
-            <Button
-              leftSection={<IconCheck size={16} />}
-              variant="filled"
-              color="blue"
-              onClick={handleAcceptInvite}
-              loading={isLoading}
-            >
-              Kabul Et
-            </Button>
-            <Button
-              leftSection={<IconX size={16} />}
-              variant="subtle"
-              color="slate"
-              onClick={handleRejectInvite}
-              loading={isLoading}
-            >
-              Reddet
-            </Button>
-          </Group>
+          {inviteResponseSuccess ? (
+            <Text size="sm" className="text-green-600 font-medium">
+              Davetiye yanıtınız iletildi!
+            </Text>
+          ) : (
+            <>
+              <Text size="sm" className="text-slate-900" mb="md">
+                Bu turun rehberi olmaya davet edildiniz!
+              </Text>
+              <Group>
+                <Button
+                  leftSection={<IconCheck size={16} />}
+                  variant="filled"
+                  color="blue"
+                  onClick={handleAcceptInvite}
+                  loading={isLoading}
+                >
+                  Kabul Et
+                </Button>
+                <Button
+                  leftSection={<IconX size={16} />}
+                  variant="subtle"
+                  color="slate"
+                  onClick={handleRejectInvite}
+                  loading={isLoading}
+                >
+                  Reddet
+                </Button>
+              </Group>
+            </>
+          )}
         </Alert>
-      )}
-    </Box>
-  );
+      </Box>
+    );
+  }
+
+  return null;
 };
 
 export default GuideStatus;
