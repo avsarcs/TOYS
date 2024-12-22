@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import server.auth.*;
 import server.dbm.Database;
+import server.enums.roles.UserRole;
 import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
@@ -26,10 +27,7 @@ import server.models.time.ZTime;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EventService {
@@ -106,11 +104,17 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Tour not found!");
         }
 
-        if (!tour.getTourStatus().equals(TourStatus.CONFIRMED)) {
+        boolean isAdvisor = !JWTService.getSimpleton().getUserRole(auth).equals(UserRole.GUIDE);
+
+        if (List.of(TourStatus.ONGOING, TourStatus.FINISHED).contains(tour.getTourStatus()) && !isAdvisor) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have the permission to do this!");
+        } else if (!tour.getTourStatus().equals(TourStatus.CONFIRMED) && !isAdvisor) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour is not confirmed!");
         }
 
-        tour.setTour_status(TourStatus.ONGOING);
+        if (tour.getTourStatus().equals(TourStatus.CONFIRMED)) {
+            tour.setTour_status(TourStatus.ONGOING);
+        }
         if (startTime.isEmpty()) {
             tour.setStarted_at(new ZTime(ZonedDateTime.now()));
         } else {
@@ -133,7 +137,9 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Tour not found!");
         }
 
-        if (!tour.getTourStatus().equals(TourStatus.ONGOING)) {
+        boolean isAdvisor = !JWTService.getSimpleton().getUserRole(auth).equals(UserRole.GUIDE);
+
+        if (!tour.getTourStatus().equals(TourStatus.ONGOING) && !isAdvisor) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour has not started, you cannot end it !");
         }
 

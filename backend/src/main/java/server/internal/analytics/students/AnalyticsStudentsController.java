@@ -14,17 +14,17 @@ public class AnalyticsStudentsController {
     AnalyticsStudentsService service;
 
     @GetMapping("/internal/analytics/students/all")
-    public Map<String, Object> getAll(@RequestParam String auth_token) {
-        return service.getAll(auth_token);
+    public Map<String, Object> getAll(@RequestParam String auth) {
+        return service.getAll(auth);
     }
 
     @GetMapping("/internal/analytics/students/departments")
-    public Map<String, Object> getDepartments(@RequestParam String auth_token, @RequestParam String department) {
-        return service.getDepartments(auth_token, department);
+    public Map<String, Object> getDepartments(@RequestParam String auth, @RequestParam String department) {
+        return service.getDepartments(auth, department);
     }
 
     @GetMapping("/internal/analytics/students/department_high_schools")
-    public Map<String, Object> getDepartmentHighSchools(@RequestParam String auth_token, @RequestParam String department, @RequestParam String year) {
-        return service.getDepartmentHighSchools(auth_token, department, year);
+    public Map<String, Object> getDepartmentHighSchools(@RequestParam String auth, @RequestParam String department, @RequestParam String year) {
+        return service.getDepartmentHighSchools(auth, department, year);
     }
 }
