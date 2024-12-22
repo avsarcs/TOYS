@@ -22,15 +22,18 @@ import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
 import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/FairList/ListItem.tsx";
-import { SimpleEventData } from "../../types/data";
+import { SimpleEventData, FairData } from "../../types/data";
+import { EventType } from "../../types/enum";
 
 const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair/search");
 const PENDING_FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard");
+type CombinedFairData = FairData | (SimpleEventData & { event_type: EventType.FAIR });
+
 
 const FairsList: React.FC = () => {
   const userContext = useContext(UserContext);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [fairs, setFairs] = useState<SimpleEventData[]>([]);
+  const [fairs, setFairs] = useState<CombinedFairData[]>([]);
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
@@ -56,7 +59,7 @@ const FairsList: React.FC = () => {
       // Fetch fairs from the main endpoint
       const fairsRes = await fetch(fairsUrl, { method: "GET" });
       if (!fairsRes.ok) throw new Error("Failed to fetch fairs");
-      const fairsData = await fairsRes.json();
+      const fairsData: FairData[] = await fairsRes.json();
   
       // Prepare URL for fetching pending applications
       const pendingUrl = new URL(PENDING_FAIRS_URL);
@@ -66,14 +69,17 @@ const FairsList: React.FC = () => {
       // Fetch pending applications
       const pendingRes = await fetch(pendingUrl, { method: "GET" });
       if (!pendingRes.ok) throw new Error("Failed to fetch pending applications");
-      const pendingData = await pendingRes.json();
+      const pendingData: SimpleEventData[] = await pendingRes.json();
   
-      // Filter pending applications by event_type
-      const filteredPending = pendingData.filter((application: any) => application.event_type === "FAIR");
-  
-      // Combine the fairs and filtered pending applications
-      const combinedFairs = [...fairsData, ...filteredPending];
-      setFairs(combinedFairs);
+      const normalizedFairs = [
+        ...fairsData,
+        ...pendingData.map((fair) => ({
+          ...fair,
+          event_type: EventType.FAIR as EventType.FAIR, // Ensure event_type is explicitly EventType.FAIR
+        })),
+      ];
+
+      setFairs(normalizedFairs);
       setPage(1);
     } catch (error) {
       console.error("Error fetching fairs or pending applications:", error);
