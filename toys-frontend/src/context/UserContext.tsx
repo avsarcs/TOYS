@@ -190,6 +190,8 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   }, [cookies.auth, setCookie]);
 
   const setAuthToken = useCallback((auth: string) => {
+    setIsLoggedIn(false);
+    setProfileFetchStatus(FetchingStatus.NONE);
     setCookie("auth", auth);
   }, [setCookie]);
 

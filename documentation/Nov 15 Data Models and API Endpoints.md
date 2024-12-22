@@ -418,7 +418,6 @@ Tag can be provided for individual endpoints as well.
 
 ```
 API endpoints:
-API endpoints:
 /auth
     /login #
         method: post

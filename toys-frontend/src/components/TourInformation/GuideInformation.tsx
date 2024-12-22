@@ -83,17 +83,6 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
           }
           </Text>
           <Space h="sm" />
-          {
-            !userAssignedToTour && missingGuides > 0
-              ?
-              <Button size="md" leftSection={<IconUserPlus />} onClick={enrollInTour}>
-                {
-                  //TODO ADD WORKING ANIMATION TO ENROLL BUTTON
-                }
-                Rehber Ol
-              </Button>
-              : null
-          }
         </Box>
         <Box>
           {userContext.user.role === UserRole.ADVISOR && props.tour.status === TourStatus.CONFIRMED && (

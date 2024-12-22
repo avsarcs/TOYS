@@ -20,7 +20,7 @@ const TourStatusText = {
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
   const userContext = useContext(UserContext);
-  
+
   const statusColorClass = useMemo(() => {
     switch (props.tour.status) {
       case "CONFIRMED":
@@ -53,8 +53,10 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         </Stack>
         <TourStatusActions tour={props.tour} onRefresh={props.refreshTour} />
       </Group>
-      
-      <GuideStatus tour={props.tour} refreshTour={props.refreshTour} />
+
+      {
+        props.tour.status == "CONFIRMED" && <GuideStatus tour={props.tour} refreshTour={props.refreshTour} />
+      }
     </Stack>
   );
 };
