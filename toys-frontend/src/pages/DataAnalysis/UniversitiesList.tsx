@@ -77,8 +77,6 @@ const UniversitiesList: React.FC = () => {
 
         const resText = await res.text();
 
-        console.log(resText);
-
         if(resText.length === 0) {
             throw new Error("No university found.");
         }
@@ -98,23 +96,12 @@ const UniversitiesList: React.FC = () => {
             });
 
             if(res.ok) {
-                const token = await res.text();
-
-                if(token.length > 0) {
-                    notifications.show({
-                        color: "green",
-                        title: "Rakiplik güncellendi!",
-                        message: "Üniversite " + (isRival ? "rakip" : "rakip değil") + " olarak işaretlendi."
-                    });
-                    window.location.reload();
-                }
-                else {
-                    notifications.show({
-                        color: "red",
-                        title: "Hay aksi!",
-                        message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
-                    });
-                }
+                notifications.show({
+                    color: "green",
+                    title: "Rakiplik güncellendi!",
+                    message: "Üniversite " + (isRival ? "rakip" : "rakip değil") + " olarak işaretlendi."
+                });
+                window.location.reload();
             }
             else {
                 notifications.show({
