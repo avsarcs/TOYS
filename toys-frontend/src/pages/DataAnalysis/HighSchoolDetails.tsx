@@ -76,7 +76,6 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
         const resText = await res.text();
 
-        console.log("resText= " + resText);
         if(resText.length === 0) {
             throw new Error("No high school found.");
         }

@@ -62,7 +62,7 @@ function sortData(
 ) {
     const { sortBy } = payload;
 
-    if (!sortBy) {
+    if (!sortBy || data.length == 0) {
         return data
     }
 
