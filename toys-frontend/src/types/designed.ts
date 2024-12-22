@@ -50,9 +50,9 @@ export interface FairApplicationModel {
 		email: string;
     role: string;
 		phone: string;
-		school: HighschoolData;
     notes: string;
 	};
+  highschool: HighschoolData;
 	start_time: string;
   end_time: string;
   fair_name: string;
@@ -170,6 +170,13 @@ export interface ManageGuidesWindowProps {
   tour: TourData; // ISO 8601 time
   totalGuidesNeeded: number; // Total number of guides needed for the tour
 }
+
+export interface ManageGuidesWindowPropsFair {
+  opened: boolean; // Controls modal visibility
+  onClose: () => void; // Closes the modal
+  fair: FairData; // ISO 8601 time
+}
+
 export interface TourListItemProps {
   tour: SimpleEventData
 }

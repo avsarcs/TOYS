@@ -5,6 +5,7 @@ import { TextInput, Autocomplete } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconSearch } from '@tabler/icons-react';
 import { HighschoolData } from '../../types/data';
+import { City } from '../../types/enum';
 
 const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
   // Store complete highschool objects
@@ -150,26 +151,23 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
             placeholder="Okulunuzun adını giriniz"
             data={schoolNames}
             limit={5}
-            value={applicationInfo.applicant.school.name}
+            value={applicationInfo.highschool.name}
             onChange={(value) => {
               const selectedSchool = findSchoolByName(value);
-              setApplicationInfo((prev) => ({
-                ...prev,
-                applicant: {
-                  ...prev.applicant,
-                  school: selectedSchool || {
-                    id: "",
-                    name: value,
-                    location: "",
-                    priority: 1,
-                    ranking: 0
-                  }
-                }
-              }));
+              setApplicationInfo({
+                ...applicationInfo,
+                highschool: selectedSchool || {
+                  id: "",
+                  name: value,
+                  location: "" as City,
+                  priority: 1,
+                  ranking: 0
+                } as HighschoolData
+              });
             }}
             leftSection={<IconSearch size={16} />}
             withAsterisk
-            error={warnings.empty_fields && isEmpty(applicationInfo.applicant.school.name) ? "Bu alanı boş bırakamazsınız." : false}
+            error={warnings.empty_fields && isEmpty(applicationInfo.highschool.name) ? "Bu alanı boş bırakamazsınız." : false}
           />
         </div>
       </form>

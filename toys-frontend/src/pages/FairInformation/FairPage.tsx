@@ -22,6 +22,7 @@ const FairPage: React.FC = () => {
   if (!params.fairId) throw new Error("Fair ID is required");
 
   const getFair = useCallback(async (fairId: string) => {
+    console.log(fairId);
     const fairUrl = new URL(FAIR_URL);
     fairUrl.searchParams.append("fid", fairId);
     fairUrl.searchParams.append("auth", userContext.authToken);
@@ -57,6 +58,7 @@ const FairPage: React.FC = () => {
   }
 
   const refreshFair = () => { getFair(params.fairId as string).catch(console.error); }
+  console.log(fair);
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
