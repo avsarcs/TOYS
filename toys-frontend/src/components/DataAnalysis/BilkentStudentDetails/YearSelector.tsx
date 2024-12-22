@@ -18,7 +18,7 @@ interface YearSelectorProps {
 const YearSelector: React.FC<YearSelectorProps> = ({years, onYearChange}) => {
     return <Select
         label = "Bir Yıl Seçin"
-        defaultValue = {years[years.length-1]}
+        placeholder = "Yıl seçmek için tıklayın."
         data = {years.map((year) => ({ value: year, label: year }))}
         searchable = {false}
         allowDeselect = {false}

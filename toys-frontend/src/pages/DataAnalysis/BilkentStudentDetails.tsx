@@ -149,7 +149,7 @@ const BilkentStudentDetails: React.FC = () => {
 
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
-        if(selectedDepartment && selectedYear)
+        if(selectedDepartment && selectedYear && selectedYear !== "Yükleniyor...")
             getDepartmentData(selectedDepartment, selectedYear).catch((reason) => {
                 console.error(reason);
             });
@@ -225,7 +225,13 @@ const BilkentStudentDetails: React.FC = () => {
                     </div>
                 </div>
                 <Space h="md"/>
+                {selectedYear === "Yükleniyor..." ? (
+                    <Text style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 'large' }}>
+                        Lütfen yıl seçin.
+                    </Text>
+                ) : (
                 <HighSchoolsTable data={dataForTable(departmentData)} search={selectedSearch}/>
+                )}
             </div>
         </Stack>
     }
