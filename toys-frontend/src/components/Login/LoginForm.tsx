@@ -1,5 +1,5 @@
 import {Button, PasswordInput, TextInput} from "@mantine/core";
-import {Link, useNavigate, useSearchParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import { LoginFormProps } from "../../types/designed.ts";
 import { LoginData } from "../../types/data.ts";
 import { FormEvent, useContext, useState } from "react";
@@ -8,8 +8,6 @@ import { notifications } from "@mantine/notifications";
 import { UserContext } from "../../context/UserContext.tsx";
 
 const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const userContext = useContext(UserContext);
   const [loggingIn, setLoggingIn] = useState(false);
 
@@ -58,8 +56,6 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
             message: "Başarıyle giriş yapıldı. Ana sayfaya yönlendiriliyorsunuz."
           });
           userContext.setAuthToken(token);
-          navigate(searchParams.get("redirect") ?? "/dashboard");
-          setLoggingIn(false);
         }
         else {
           notifications.show({

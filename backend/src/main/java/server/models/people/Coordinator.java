@@ -14,6 +14,10 @@ public class Coordinator extends User {
 
     }
 
+    public static Coordinator nonnull() {
+        return new Coordinator(Guide.nonnull());
+    }
+
     public static Coordinator getDefault() {
         Coordinator coordinator = new Coordinator();
         coordinator.profile = Profile.getDefault();
@@ -28,6 +32,19 @@ public class Coordinator extends User {
 
     protected Coordinator(Map<String, Object> map) {
         super(map);
+    }
+
+    public Coordinator modifyWithDto(Map<String, Object> map) {
+        super.modifyWithDTO(map);
+        return this;
+    }
+
+    public Coordinator(Guide guide) {
+        super(guide);
+    }
+
+    public Coordinator(Director director) {
+        super(director);
     }
 
     public static Coordinator fromMap(Map<String, Object> map) {

@@ -4,7 +4,8 @@ public enum UserRole {
     GUIDE,
     ADVISOR,
     COORDINATOR,
-    DIRECTOR
+    DIRECTOR,
+    ADMIN
 }
 
 

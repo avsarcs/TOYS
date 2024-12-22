@@ -5,6 +5,7 @@ import {UserContext} from "../../../context/UserContext";
 import {HighschoolData, HighschoolDataForProfile} from "../../../types/data";
 import {DayOfTheWeek, UserRole} from "../../../types/enum.ts";
 import {notifications} from "@mantine/notifications";
+import {EMPTY_USER} from "../../../context/UserContext";
 
 const UpdateProfile: React.FC = () => {
     const userContext = useContext(UserContext);
@@ -93,8 +94,8 @@ const UpdateProfile: React.FC = () => {
         setIsLoading(true);
         setError(null);
 
-        if (!selectedHighSchool) {
-            setError("Please select a valid high school.");
+        if (!selectedHighSchool && userContext.user.role !== UserRole.DIRECTOR && userContext.user.role !== UserRole.COORDINATOR) {
+            setError("Lütfen geçerli bir lise seçin.");
             setIsLoading(false);
             return;
         }
@@ -103,18 +104,32 @@ const UpdateProfile: React.FC = () => {
         if (profilePicture && profilePicture instanceof File) {
             profilePictureBase64 = await convertFileToBase64(profilePicture);
         }
-        
-        const updatedProfile = {
-            ...userContext.user.profile,
-            profile_picture: profilePictureBase64|| "", // Add profile picture
-            fullname: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            profile_description: formData.description,
-            highschool: selectedHighSchool, // Use the full high school data
-            responsible_days: formData.responsible_days, // Add responsible_days
-        };
-
+        console.log(userContext.user.profile);
+        let updatedProfile;
+        if (userContext.user.role !== UserRole.DIRECTOR && userContext.user.role !== UserRole.COORDINATOR) {
+            updatedProfile = {
+                ...userContext.user.profile,
+                profile_picture: profilePictureBase64 || "", // Add profile picture
+                fullname: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                profile_description: formData.description,
+                highschool: selectedHighSchool, // Use the full high school data
+                responsible_days: formData.responsible_days, // Add responsible_days
+            };
+        }
+        else {
+            updatedProfile = {
+                ...EMPTY_USER.profile,
+                profile_picture: profilePictureBase64 || "", // Add profile picture
+                fullname: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                profile_description: formData.description,
+                role: userContext.user.role,
+                major: "MANAGEMENT"
+            };
+        }
         try {
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
             url.searchParams.append("id", userContext.user.id);
@@ -201,7 +216,7 @@ const UpdateProfile: React.FC = () => {
                 onChange={(value) => handleInputChange("description", value)}
                 editable
             />
-            <Select
+            {(userContext.user.role !== UserRole.DIRECTOR && userContext.user.role !== UserRole.COORDINATOR) ? <Select
                 label="Lise"
                 limit={7}
                 value={selectedHighSchool?.name || ""}
@@ -210,7 +225,7 @@ const UpdateProfile: React.FC = () => {
                 searchable
                 placeholder="Lise seçin"
                 className="mb-4"
-            />
+            /> : null}
 
             {/* Responsible Days */}
             {userContext.user.role === UserRole.ADVISOR ? <MultiSelect

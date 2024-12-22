@@ -17,7 +17,7 @@ interface UserContextType {
 const AUTH_VALID_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/isvalid");
 const USER_PROFILE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile");
 
-const EMPTY_USER: User = {
+export const EMPTY_USER: User = {
   id: "",
   role: UserRole.NONE,
   profile: {
@@ -190,6 +190,8 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   }, [cookies.auth, setCookie]);
 
   const setAuthToken = useCallback((auth: string) => {
+    setIsLoggedIn(false);
+    setProfileFetchStatus(FetchingStatus.NONE);
     setCookie("auth", auth);
   }, [setCookie]);
 

@@ -26,4 +26,6 @@ public enum Permission {
 
     AR_REVIEWS,
     MANAGE_TIMESHEET,
+
+    ADMINISTRATOR
 }

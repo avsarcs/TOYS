@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DashboardCategoryControlProps } from "../../types/designed.ts";
-import { Text, FloatingIndicator, UnstyledButton, Group } from "@mantine/core";
+import {Text, FloatingIndicator, UnstyledButton, Group, Box} from "@mantine/core";
 
 const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: DashboardCategoryControlProps) => {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -13,24 +13,25 @@ const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: Dashboa
   };
 
   const controls = props.categories.map((item, index) => (
-    <UnstyledButton
-      className="z-10 data-[selected]:text-white p-2 pl-4 pr-4 pb-1 mb-1"
-      bd="sm"
-      key={index}
-      ref={setControlRef(index)}
-      onClick={() => { setSelectedCategory(index); props.setCategory(item.value);}}
-      mod={{ selected: selectedCategory === index }}
-    >
-      <Text className="transition-color duration-200" size="lg" fw={500}>{item.label}</Text>
-    </UnstyledButton>
+    <Box className="border border-gray-300 rounded-lg shadow-sm" key={index}>
+      <UnstyledButton
+        className="data-[selected]:text-white p-2 relative z-50"
+        key={index}
+        ref={setControlRef(index)}
+        onClick={() => { setSelectedCategory(index); props.setCategory(item.value); }}
+        mod={{ selected: selectedCategory === index }}
+      >
+        <Text className="z-50 transition-color duration-200" size="lg" fw={500}>{item.label}</Text>
+      </UnstyledButton>
+    </Box>
   ));
 
   return (
-    <Group ref={setRootRef} gap="0" className="w-fit border-2 border-b-1 pr-1 border-gray-100 bg-gray-100 relative">
+    <Group ref={setRootRef} gap="0" className="max-w-fit border-2 border-b-1 border-gray-100 bg-gray-100">
       {controls}
 
       <FloatingIndicator
-        className="bg-blue-500 rounded-md"
+        className="-z-5 bg-blue-500 rounded-md border-2 border-blue-700 shadow-md"
         target={buttonRefs[selectedCategory]}
         parent={rootRef}
       />

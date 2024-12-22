@@ -14,20 +14,29 @@ import {
   Button,
   Modal,
   Select,
-  Notification
+  Notification,
 } from '@mantine/core';
 import { UserContext } from '../../context/UserContext';
-import { IconSearch, IconUser, IconStarFilled, IconBriefcase, IconPlus, IconTrash, IconEdit } from '@tabler/icons-react';
-import { SimpleUserData} from '../../types/data';
+import {
+  IconSearch,
+  IconUser,
+  IconStarFilled,
+  IconBriefcase,
+  IconPlus,
+  IconTrash,
+  IconEdit,
+} from '@tabler/icons-react';
+import { SimpleUserData } from '../../types/data';
 import { UserRole } from '../../types/enum';
 
-const ALL_USERS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/admin/all-users");
-const CHANGE_ROLE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/admin/change-role");
-const ADD_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/admin/add-user");
-const REMOVE_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/admin/remove-user");
+const ALL_USERS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/all-users');
+const CHANGE_ROLE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/change-role');
+const ADD_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/add-user');
+const REMOVE_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/remove-user');
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();
+  const [userId, setId] = useState('');
   const userContext = useContext(UserContext);
   const [users, setUsers] = useState<SimpleUserData[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,13 +47,20 @@ const Admin: React.FC = () => {
   const [isChangeRoleModalOpen, setIsChangeRoleModalOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
+  // Redirect non-admin users
+  useEffect(() => {
+    if (userContext.user.role !== UserRole.ADMIN) {
+      navigate('/dashboard');
+    }
+  }, [userContext.user.role, navigate]);
+
   const fetchUsers = useCallback(async () => {
     const usersUrl = new URL(ALL_USERS_URL);
-    usersUrl.searchParams.append("auth", await userContext.getAuthToken());
-    usersUrl.searchParams.append("name", searchQuery);
+    usersUrl.searchParams.append('auth', await userContext.getAuthToken());
+    usersUrl.searchParams.append('name', searchQuery);
 
     const res = await fetch(usersUrl, {
-      method: "GET"
+      method: 'GET',
     });
 
     if (res.ok) {
@@ -57,14 +73,16 @@ const Admin: React.FC = () => {
     fetchUsers().catch(console.error);
   }, [fetchUsers]);
 
+
   const handleAddUser = async () => {
     const addUserUrl = new URL(ADD_USER_URL);
-    addUserUrl.searchParams.append("auth", await userContext.getAuthToken());
-    addUserUrl.searchParams.append("name", newUserName);
-    addUserUrl.searchParams.append("role", newUserRole || '');
+    addUserUrl.searchParams.append('auth', await userContext.getAuthToken());
+    addUserUrl.searchParams.append('name', newUserName);
+    addUserUrl.searchParams.append('id', userId);
+    addUserUrl.searchParams.append('role', newUserRole || '');
 
     const res = await fetch(addUserUrl, {
-      method: "POST"
+      method: 'POST',
     });
 
     if (res.ok) {
@@ -78,11 +96,11 @@ const Admin: React.FC = () => {
 
   const handleRemoveUser = async (id: string) => {
     const removeUserUrl = new URL(REMOVE_USER_URL);
-    removeUserUrl.searchParams.append("auth", await userContext.getAuthToken());
-    removeUserUrl.searchParams.append("id", id);
+    removeUserUrl.searchParams.append('auth', await userContext.getAuthToken());
+    removeUserUrl.searchParams.append('id', id);
 
     const res = await fetch(removeUserUrl, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     if (res.ok) {
@@ -97,12 +115,12 @@ const Admin: React.FC = () => {
     if (!selectedUser) return;
 
     const changeRoleUrl = new URL(CHANGE_ROLE_URL);
-    changeRoleUrl.searchParams.append("auth", await userContext.getAuthToken());
-    changeRoleUrl.searchParams.append("id", selectedUser.id);
-    changeRoleUrl.searchParams.append("new_role", newUserRole || '');
+    changeRoleUrl.searchParams.append('auth', await userContext.getAuthToken());
+    changeRoleUrl.searchParams.append('id', selectedUser.id);
+    changeRoleUrl.searchParams.append('new_role', newUserRole || '');
 
     const res = await fetch(changeRoleUrl, {
-      method: "POST"
+      method: 'POST',
     });
 
     if (res.ok) {
@@ -156,7 +174,7 @@ const Admin: React.FC = () => {
   return (
     <Container size="xl" p="md">
       <Title order={1} className="text-blue-700 font-bold mb-6">
-        Admin Paneli
+        TOYS Admin Paneli
       </Title>
 
       <Card shadow="sm" p="lg" radius="md" withBorder className="mb-6">
@@ -167,7 +185,8 @@ const Admin: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Button icon={<IconPlus size={16} />} onClick={() => setIsAddUserModalOpen(true)}>
+          <Button onClick={() => setIsAddUserModalOpen(true)}>
+            <IconPlus size={16} style={{ marginRight: 8 }} />
             Kullanıcı Ekle
           </Button>
         </Stack>
@@ -185,9 +204,7 @@ const Admin: React.FC = () => {
           >
             <Group wrap="nowrap" justify="space-between">
               <Group wrap="nowrap" gap="md">
-                <Box>
-                  {getRoleIcon(user.role)}
-                </Box>
+                <Box>{getRoleIcon(user.role)}</Box>
                 <Stack gap="xs">
                   <Group gap="sm">
                     <Text fw={700}>{user.name}</Text>
@@ -199,10 +216,17 @@ const Admin: React.FC = () => {
               </Group>
 
               <Group>
-                <Button icon={<IconEdit size={16} />} onClick={() => { setSelectedUser(user); setIsChangeRoleModalOpen(true); }}>
+                <Button
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setIsChangeRoleModalOpen(true);
+                  }}
+                >
+                  <IconEdit size={16} style={{ marginRight: 8 }} />
                   Rol Değiştir
                 </Button>
-                <Button icon={<IconTrash size={16} />} color="red" onClick={() => handleRemoveUser(user.id)}>
+                <Button color="red" onClick={() => handleRemoveUser(user.id)}>
+                  <IconTrash size={16} style={{ marginRight: 8 }} />
                   Sil
                 </Button>
               </Group>
@@ -222,6 +246,11 @@ const Admin: React.FC = () => {
             placeholder="İsim"
             value={newUserName}
             onChange={(e) => setNewUserName(e.target.value)}
+          />
+          <TextInput
+            placeholder="ID"
+            value={userId}
+            onChange={(e) => setId(e.target.value)}
           />
           <Select
             placeholder="Rol"

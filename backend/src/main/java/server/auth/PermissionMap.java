@@ -20,9 +20,15 @@ public class PermissionMap {
 
                 if (role != UserRole.COORDINATOR && !hasPermission) {
                     hasPermission = table.get(UserRole.DIRECTOR).contains(permission);
+
+                    if (role != UserRole.DIRECTOR && !hasPermission) {
+                        hasPermission = table.get(UserRole.ADMIN).contains(permission);
+                    }
                 }
             }
         }
+
+
         return hasPermission;
     }
 
@@ -58,6 +64,10 @@ public class PermissionMap {
 
             table.put(UserRole.DIRECTOR, List.of(
                     Permission.TOTAL_ANALYTICS_ACCESS
+            ));
+
+            table.put(UserRole.ADMIN, List.of(
+                    Permission.ADMINISTRATOR
             ));
 
         }

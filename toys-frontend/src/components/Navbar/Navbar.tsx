@@ -16,7 +16,8 @@ import {
   IconBrandSafari,
   IconCreditCard,
   IconLayoutDashboard,
-  IconMessage
+  IconMessage,
+  IconQuestionMark
 
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
@@ -71,6 +72,7 @@ export const Navbar: React.FC = () => {
       ],
     });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
   else if (user.role === UserRole.COORDINATOR) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -82,6 +84,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });
     links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '/manage-personnel' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
   else if (user.role === UserRole.ADVISOR) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -90,6 +93,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
     links.push({ label: 'Rehberler', icon: IconUsers, link: '/guides' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
   else if (user.role === UserRole.GUIDE) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -97,6 +101,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
   else if (user.role === UserRole.TRAINEE) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -104,9 +109,11 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
   else {
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
 
   const toggleSubMenu = (label: string) => {

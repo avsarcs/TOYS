@@ -418,7 +418,6 @@ Tag can be provided for individual endpoints as well.
 
 ```
 API endpoints:
-API endpoints:
 /auth
     /login #
         method: post
@@ -627,7 +626,14 @@ response_type:json
      /event
         @ DEPRECATED, USE /event/tour/simple instead!
         /simple-tour
-        
+
+	/soon // gets events that have started or will start in ~ 1 hour
+            parameters:
+                auth: auth_token
+            method: get
+            response: SimpleEvent[]
+
+
         /enroll # NEEDS TEST
             parameters:
                 event_id=event_id // which event to enroll for (Can only enroll in tours, don't make a mistake)

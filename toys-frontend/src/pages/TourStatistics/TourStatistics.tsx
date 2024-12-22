@@ -91,6 +91,7 @@ const BilkentStudentDetails: React.FC = () => {
         setDays(orderedDaysData);
         setStatuses(orderedStatusData)
         setCities(orderedCitiesData);
+
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {

@@ -1,4 +1,4 @@
-import {Divider, Grid, LoadingOverlay, ScrollArea, Stack, useMatches} from "@mantine/core";
+import {Box, Divider, Grid, LoadingOverlay, ScrollArea, Stack, useMatches} from "@mantine/core";
 import {DashboardItemListProps, DashboardItemProps} from "../../types/designed.ts";
 import CategoryControl from "./CategoryControl.tsx";
 import Item from "./Item.tsx";
@@ -22,19 +22,26 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
   });
 
   return (
-    <Stack className="h-full" pos="relative">
+    <Stack pos="relative">
       <CategoryControl categories={props.categories} setCategory={props.setCategory}/>
       <Divider />
-      <ScrollArea scrollbars="y" mah="60%" h={props.loading ? "60%" : ""}>
-        <LoadingOverlay className="rounded-md"
-                        visible={props.loading} zIndex={10}
-                        overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
-        <Grid p="sm">
-          {
-            gridElements
-          }
-        </Grid>
-      </ScrollArea>
+      {
+        props.loading
+          ?
+          <Box pos="relative">
+            <LoadingOverlay className="rounded-md" h="50vh"
+                            visible zIndex={10}
+                            overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
+          </Box>
+          :
+          <ScrollArea.Autosize scrollbars="y" mah="50vh">
+            <Grid p="sm">
+              {
+                gridElements
+              }
+            </Grid>
+          </ScrollArea.Autosize>
+      }
     </Stack>
   );
 }

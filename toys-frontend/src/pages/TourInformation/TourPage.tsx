@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { TourData } from "../../types/data.ts";
 import StatusInformation from "../../components/TourInformation/StatusInformation.tsx";
 import GeneralInformation from "../../components/TourInformation/GeneralInformation.tsx";
-import ApplicantInformation from "../../components/TourInformation/ApplicantInformation.tsx";
 import GuideInformation from "../../components/TourInformation/GuideInformation.tsx";
 import TimeInformation from "../../components/TourInformation/TimeInformation.tsx";
 import { UserContext } from "../../context/UserContext.tsx";
@@ -24,7 +23,7 @@ const TourPage: React.FC = () => {
 
   const getTour = useCallback(async (tourId: string) => {
     const tourUrl = new URL(TOUR_URL);
-    tourUrl.searchParams.append("tid", tourId);
+    tourUrl.searchParams.append("tour_id", tourId);
     tourUrl.searchParams.append("auth", await userContext.getAuthToken());
 
     const res = await fetch(tourUrl, {
@@ -78,8 +77,6 @@ const TourPage: React.FC = () => {
               <Divider className="border-gray-300" />
               <Stack gap="0" className="bg-gray-50">
                 <GeneralInformation tour={tour} refreshTour={refreshTour} />
-                <Divider className="border-gray-200" />
-                <ApplicantInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
                 {
                   tour.status === TourStatus.CONFIRMED || tour.status === TourStatus.FINISHED
