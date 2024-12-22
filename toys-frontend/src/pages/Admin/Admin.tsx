@@ -36,6 +36,7 @@ const REMOVE_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/adm
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();
+  const [userId, setId] = useState('');
   const userContext = useContext(UserContext);
   const [users, setUsers] = useState<SimpleUserData[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,10 +73,12 @@ const Admin: React.FC = () => {
     fetchUsers().catch(console.error);
   }, [fetchUsers]);
 
+
   const handleAddUser = async () => {
     const addUserUrl = new URL(ADD_USER_URL);
     addUserUrl.searchParams.append('auth', await userContext.getAuthToken());
     addUserUrl.searchParams.append('name', newUserName);
+    addUserUrl.searchParams.append('id', userId);
     addUserUrl.searchParams.append('role', newUserRole || '');
 
     const res = await fetch(addUserUrl, {
@@ -243,6 +246,11 @@ const Admin: React.FC = () => {
             placeholder="İsim"
             value={newUserName}
             onChange={(e) => setNewUserName(e.target.value)}
+          />
+          <TextInput
+            placeholder="ID"
+            value={userId}
+            onChange={(e) => setId(e.target.value)}
           />
           <Select
             placeholder="Rol"
