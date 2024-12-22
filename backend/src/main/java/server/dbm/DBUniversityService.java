@@ -69,7 +69,7 @@ public class DBUniversityService {
             if (!data.containsKey(uid)) {
                 throw new RuntimeException("University with id " + uid + " not found.");
             }
-            return mapper.convertValue(data.get(uid), University.class);
+            return University.fromSource((Map<String, Object>) data.get(uid));
 
         } catch (Exception e) {
             e.printStackTrace();

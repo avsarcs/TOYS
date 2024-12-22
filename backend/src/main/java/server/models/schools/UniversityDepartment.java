@@ -22,6 +22,8 @@ public class UniversityDepartment {
         try {
             years = ((List<Map<String, Object>>) map.get("years")).stream().map(UniversityDepartmentYear::fromMap).toList();
         } catch (Exception E) {
+            System.out.println(E.getMessage());
+            System.out.println(E.getCause());
             E.printStackTrace();
             System.out.println("Error in UniversityDepartment.java");
         }

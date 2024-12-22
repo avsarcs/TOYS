@@ -37,7 +37,12 @@ public class University {
         uni.university_type = (String) map.get("university_type");
         uni.name = (String) map.get("name");
         uni.id = (String) map.get("id");
-        uni.departments = (List<UniversityDepartment>) map.get("departments");
+        uni.departments = new ArrayList<>();
+        ((List<Map<String, Object>>) map.get("departments")).forEach(
+                m -> {
+                    uni.departments.add(UniversityDepartment.fromMap(m));
+                }
+        );
         uni.url = (String) map.get("url");
         uni.city = (String) map.get("city");
         return uni;

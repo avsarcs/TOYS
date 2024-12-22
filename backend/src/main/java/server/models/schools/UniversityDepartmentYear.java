@@ -21,7 +21,11 @@ public class UniversityDepartmentYear {
     }
 
     protected UniversityDepartmentYear(Map<String, Object> map) {
-        this.year = (String) map.get("year");
+        try {
+            this.year = (String) map.get("year");
+        } catch (Exception E) {
+            this.year = map.get("year") + "";
+        }
         this.id = (String) map.get("id");
         this.highschool_attendee_count = new ArrayList<>();
         try {

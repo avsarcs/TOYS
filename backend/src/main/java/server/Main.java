@@ -1,5 +1,6 @@
 package server;
 
+import info.debatty.java.stringsimilarity.SorensenDice;
 import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.status.ApplicationStatus;
@@ -14,9 +15,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import server.models.schools.Highschool;
+import server.models.schools.HighschoolRecord;
+import server.models.schools.University;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @SpringBootApplication
         //(scanBasePackages = {"auth", "server", "server/dbm", "server/apply", "server/respond", "server/internal", "server/mailService"})
@@ -67,5 +73,40 @@ public class Main implements CommandLineRunner {
         tour.setTour_id("tour_-8");
         tour.setTour_status(TourStatus.PENDING_MODIFICATION);
         db.tours.addTour(tour);
+    }
+
+    private static void setRankings(Database db) {
+        List<HighschoolRecord> highschools = db.schools.getHighschools();
+
+        University university = db.universities.getUniversity("bilkent");
+
+        SorensenDice alg = new SorensenDice();
+        for (HighschoolRecord hs : highschools) {
+            try {
+                int priority = 0;
+                if (!hs.getLocation().toLowerCase().contains("ankara")) {
+                    priority += 1;
+                }
+                priority += Double.valueOf(hs.getDetails().getPuan().replaceAll(",",".")) / 250;
+
+                AtomicLong stud = new AtomicLong(0);
+                university.departments.stream().forEach(
+                        d -> d.getYears().stream().forEach(y -> y.getHighschool_attendee_count().stream().filter(h -> alg.similarity(h.getSchool_name().toLowerCase(), hs.getTitle().toLowerCase()) > 0.8).findFirst().ifPresent(
+                                s -> stud.addAndGet(s.getTotal())
+                        ))
+                );
+                priority += stud.get() / 1000;
+                if (priority > 4) {
+                    priority = 4;
+                }
+                if (priority < 1) {
+                    priority = 1;
+                }
+                hs.setPriority(String.valueOf(priority));
+            } catch (Exception e) {
+                hs.setPriority("1");
+            }
+        }
+        db.schools.setHighschools(highschools);
     }
 }
