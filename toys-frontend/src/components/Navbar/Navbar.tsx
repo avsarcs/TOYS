@@ -111,9 +111,12 @@ export const Navbar: React.FC = () => {
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
     links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
-  else {
+  else if (user.role === UserRole.NONE) {
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
     links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+  }
+  else if (user.role === UserRole.ADMIN) {
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
   }
 
   const toggleSubMenu = (label: string) => {
