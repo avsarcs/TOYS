@@ -53,7 +53,7 @@ const UniversitiesList: React.FC = () => {
 
     const getUniversities = useCallback(async () => {
         const url = new URL(TOUR_URL + "internal/analytics/universities/all");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
 
         console.log("Sent request for universities list.");
 
@@ -86,12 +86,12 @@ const UniversitiesList: React.FC = () => {
         }
 
         setUniversities(fetched);
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     const updateRival = useCallback(async (isRival: boolean, universityID: string) => {
         try {
             const url = new URL(TOUR_URL + "internal/analytics/universities/set-rivalry");
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             url.searchParams.append("university_id", universityID);
             url.searchParams.append("value_to_set", isRival ? "true" : "false");
 
@@ -122,7 +122,7 @@ const UniversitiesList: React.FC = () => {
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getCities().catch((reason) => {
