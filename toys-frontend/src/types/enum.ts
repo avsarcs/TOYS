@@ -19,7 +19,8 @@ export enum UserRole {
   GUIDE = "GUIDE",
   ADVISOR = "ADVISOR",
   COORDINATOR = "COORDINATOR",
-  DIRECTOR = "DIRECTOR"
+  DIRECTOR = "DIRECTOR",
+  ADMIN = "ADMIN"
 }
 
 export enum UserRoleText {
