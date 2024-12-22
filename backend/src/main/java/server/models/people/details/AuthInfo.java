@@ -9,6 +9,13 @@ public class AuthInfo {
         return new AuthInfo()
             .setPassword((String) map.get("password"));
     }
+
+    public AuthInfo() {
+    }
+
+    public AuthInfo(AuthInfo other) {
+        this.password = other.getPassword();
+    }
     
 
     public static AuthInfo getDefault() {

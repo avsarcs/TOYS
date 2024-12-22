@@ -38,6 +38,21 @@ public class JWTService {
 
     private List<AuthEntry> validTokens;
 
+    public boolean check(String token, Permission permission) {
+        if (token.equals(testToken)) {
+            return true;
+        }
+        if (!isValid(token)) {
+            return false;
+        }
+
+        if (!PermissionMap.hasPermission(getUserRole(token), permission)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean isValid(String token) {
         if (token == testToken) {
             return true;

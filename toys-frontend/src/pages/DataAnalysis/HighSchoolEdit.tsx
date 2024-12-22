@@ -1,8 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/InputSelector.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";
+import {notifications} from "@mantine/notifications";
+import {UserContext} from "../../context/UserContext.tsx";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -16,20 +19,21 @@ const defaultContainerStyle = {
 };
 
 //test data
-const cities = ["Ankara", "İstanbul", "İzmir", "Eskişehir", "Adana", "Antalya", "Erzurum", "Konya", "Bursa", "Denizli", "Kayseri", "Kütahya", "Malatya", "Muğla", "Nevşehir", "Niğde", "Samsun", "Ordu", "Osmaniye", "Isparta", "Edirne", "Uşak"];
 const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolEditProps {
     opened: boolean;
     currentName: string;
-    currentCity: string;
+    currentCity: City;
     currentPriority: string;
     onClose: () => void;
 }
 
+const HIGHSCHOOL_EDIT_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/edit");
 const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, currentName, currentCity, currentPriority}) => {
+    const userContext = useContext(UserContext);
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
-    const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
+    const [selectedCity, setSelectedCity] = React.useState<City | null>(currentCity);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(currentPriority);
 
     React.useEffect(() => {
@@ -40,7 +44,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
         }
     }, [opened, currentName, currentCity, currentPriority]);
 
-    const handleEditButtonClick = () => {
+    const handleEditButtonClick = async () => {
         console.log(selectedName)
         console.log(selectedCity)
         console.log(selectedPriority)
@@ -53,7 +57,35 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
             return;
         }
 
-        // TODO: Edit the high school in the database
+        const editUrl = new URL(HIGHSCHOOL_EDIT_URL);
+        editUrl.searchParams.append("auth", await userContext.getAuthToken());
+
+        const editRes = await fetch(editUrl, {
+            method: "POST",
+            headers: new Headers({"Content-Type": "application/json"}),
+            body: JSON.stringify({
+                id: "",
+                name: selectedName,
+                location: selectedCity,
+                priority: currentPriority,
+                ranking: -1,
+            })
+        });
+
+        if(editRes.ok) {
+            notifications.show({
+                color: "green",
+                title: "İşlem başarılı.",
+                message: "Lise eklendi."
+            });
+        }
+        else {
+            notifications.show({
+                color: "red",
+                title: "Hay aksi!",
+                message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
+            });
+        }
 
         window.location.reload();
     };
@@ -70,7 +102,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector priorities={priorities} currentName={currentName} currentCity={currentCity} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 

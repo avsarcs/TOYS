@@ -1,13 +1,10 @@
 package server.internal.user.tours;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import server.models.DTO.DTO_SimpleEvent;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserToursController {
@@ -15,12 +12,28 @@ public class UserToursController {
     @Autowired
     UserTourService tourService;
 
-    // TODO: this needs to be moved to the proper path, "user" tags need to be removed
     @GetMapping("/internal/tours")
-    public List<DTO_SimpleEvent> getTours(@RequestParam(name = "auth") String authToken) {
-        return tourService.getTours(authToken);
+    public List<Map<String, Object>> getTours(
+            @RequestParam String auth,
+            @RequestParam String school_name,
+            @RequestParam List<String> status,
+            @RequestParam String from_date,
+            @RequestParam String to_date,
+            @RequestParam boolean filter_guide_missing,
+            @RequestParam boolean filter_trainee_missing,
+            @RequestParam boolean am_enrolled,
+            @RequestParam boolean am_invited
+    ) {
+
+        return tourService.getTours(auth, school_name, status, from_date, to_date, filter_guide_missing, filter_trainee_missing, am_enrolled, am_invited);
     }
 
+    @PostMapping("/internal/tours/remove")
+    public void getTours(@RequestParam String auth, @RequestParam String tid, @RequestParam List<String> guides) {
+        tourService.removeGuides(auth, tid, guides);
+    }
+
+    @Deprecated
     // this endpoint is used for stating the start and end of a tour
     @PostMapping("/internal/tours/status-update")
     public void updateTourStatus(@RequestParam String tid, @RequestParam String status, @RequestParam String auth) {
@@ -38,12 +51,12 @@ public class UserToursController {
     }
 
     @PostMapping("/internal/tours/invite")
-    public void inviteToTour(@RequestParam String tid, @RequestParam String guid, @RequestParam String auth) {
-        tourService.inviteToTour(auth, tid, guid);
+    public void inviteToTour(@RequestParam String tid, @RequestParam List<String> guides, @RequestParam String auth) {
+        tourService.inviteGuidesToTour(auth, tid, guides);
     }
 
     @PostMapping("/internal/tours/respond")
-    public void respondToTourInvite(@RequestParam String idt, @RequestParam String response, @RequestParam String auth) {
-        tourService.respondToTourInvite(auth, idt, response);
+    public void respondToTourInvite(@RequestParam String application_id, @RequestParam String response, @RequestParam String auth) {
+        tourService.respondToTourInvite(auth, application_id, response);
     }
 }

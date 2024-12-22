@@ -6,7 +6,6 @@ import { CookiesProvider } from "react-cookie";
 import { UserProvider } from "./context/UserContext.tsx";
 import { MantineProvider } from "@mantine/core";
 import ErrorPage from "./pages/Error/ErrorPage.tsx";
-import { DatesProvider } from '@mantine/dates';
 
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"

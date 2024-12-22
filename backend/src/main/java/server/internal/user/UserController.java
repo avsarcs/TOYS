@@ -10,6 +10,7 @@ import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.DTO_UserType;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -18,24 +19,40 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/internal/user/available_guides")
-    public List<DTO_SimpleGuide> getAvailableGuides(@RequestParam String auth, @RequestParam DTO_UserType type, @RequestParam String time) {
+    // TODO: guide recommendation algo here
+    @GetMapping("/internal/user/available-guides")
+    public List<Map<String, Object>> getAvailableGuides(@RequestParam String auth, @RequestParam DTO_UserType type, @RequestParam String time) {
         return userService.getAvailableGuides(auth, type, time);
     }
 
     @GetMapping("/internal/user/guides")
-    public List<DTO_SimpleGuide> searchGuides(@RequestParam String auth, @RequestParam String name, @RequestParam String type) {
+    public List<Map<String, Object>> searchGuides(@RequestParam String auth, @RequestParam String name, @RequestParam String type) {
         return userService.searchGuides(auth, name, type);
     }
 
-    @GetMapping("/internal/user/advisor_offer")
-    public List<DTO_AdvisorOffer> getAdvisorOffers(@RequestParam String auth, @RequestParam String name, @RequestParam String type, @RequestParam String from_date, @RequestParam String to_date) {
+    @GetMapping("/internal/user/advisor-offer")
+    public List<Map<String, Object>> getAdvisorOffers(@RequestParam String auth, @RequestParam String name, @RequestParam String type, @RequestParam String from_date, @RequestParam String to_date) {
         return userService.getAdvisorOffers(auth, name, type, from_date, to_date);
     }
 
     @GetMapping("/internal/user/dashboard")
-    public List<DTO_SimpleEvent> getDashboardEvents(@RequestParam String auth, @RequestParam String category) {
-        return userService.getDashboardEvents(auth, category);
+    public List<Map<String, Object>> getDashboardEvents(@RequestParam String auth, @RequestParam String dashboard_category) {
+        return userService.getDashboardEvents(auth, dashboard_category);
+    }
+
+    @GetMapping("/internal/user/am-enrolled")
+    public boolean amEnrolled(@RequestParam String auth, @RequestParam String event_id) {
+        return userService.amEnrolled(auth, event_id);
+    }
+
+    @GetMapping("/internal/user/am-invited")
+    public boolean amInvited(@RequestParam String auth, @RequestParam String event_id) {
+        return userService.amInvited(auth, event_id);
+    }
+
+    @GetMapping("/internal/user/invitations")
+    public List<Map<String, Object>> getInvitations(@RequestParam String auth, @RequestParam String my_invitations) {
+        return userService.getInvitations(auth, my_invitations);
     }
 
 }
