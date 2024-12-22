@@ -6,7 +6,6 @@ import StatusInformation from "../../components/FairInformation/StatusInformatio
 import GeneralInformation from "../../components/FairInformation/GeneralInformation.tsx";
 import ApplicantInformation from "../../components/FairInformation/ApplicantInformation.tsx";
 import GuideInformation from "../../components/FairInformation/GuideInformation.tsx";
-import TimeInformation from "../../components/FairInformation/TimeInformation.tsx";
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
 import {FairStatus} from "../../types/enum.ts";
@@ -23,9 +22,10 @@ const FairPage: React.FC = () => {
   if (!params.fairId) throw new Error("Fair ID is required");
 
   const getFair = useCallback(async (fairId: string) => {
+    console.log(fairId);
     const fairUrl = new URL(FAIR_URL);
     fairUrl.searchParams.append("fid", fairId);
-    fairUrl.searchParams.append("auth", userContext.authToken);
+    fairUrl.searchParams.append("auth", await userContext.getAuthToken());
 
     const res = await fetch(fairUrl, {
       method: "GET",
@@ -41,7 +41,7 @@ const FairPage: React.FC = () => {
     }
 
     setFair(JSON.parse(fairText));
-  }, [userContext.authToken]);
+  }, []);
 
   useEffect(() => {
     getFair(params.fairId as string).catch((reason) => {
@@ -58,6 +58,7 @@ const FairPage: React.FC = () => {
   }
 
   const refreshFair = () => { getFair(params.fairId as string).catch(console.error); }
+  console.log(fair);
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
@@ -90,7 +91,6 @@ const FairPage: React.FC = () => {
                   : null
                 }
                 <Divider className="border-gray-200" />
-                <TimeInformation fair={fair} refreshFair={refreshFair} />
                 <Divider className="border-gray-200" />
               </Stack>
             </>

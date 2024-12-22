@@ -54,7 +54,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
 
         try {
             const url = new URL(TOUR_URL + "internal/analytics/high-schools/add");
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth",await userContext.getAuthToken());
 
             const res = await fetch(url, {
                 method: "POST",

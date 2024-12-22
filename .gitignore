@@ -3,3 +3,4 @@
 .env
 .idea
 .DS_Store
+backend/src/main/resources/email-perm.json

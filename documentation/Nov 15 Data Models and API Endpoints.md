@@ -323,6 +323,17 @@
 }
 ```
 
+// THIS IS NEW
+# Simple User Model
+```
+{
+	"name": "Orhun Ege Çelik",
+	"id": 12345678,
+	"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR"
+}
+```
+
+
 # Money for Guide Model
 ```
 {
@@ -405,525 +416,523 @@ Tag can be provided for individual endpoints as well.
 
 ```
 API endpoints:
+API endpoints:
 /auth
-	/login #
-		method: post
-		body: loginInfoModel
-		response: jwt_string
-		response_type: string
-	/isvalid #
+    /login #
+        method: post
+        body: loginInfoModel
+        response: jwt_string
+        response_type: string
+
+    /isvalid #
+        parameters:
+            auth=token // token to check for validity
+        method: get
+        response: true/false
+        response_type: string
+
+!!! NEW ADMIN ENDPOINT !!! 
+/admin
+	/all-users
 		parameters:
-			auth=token // token to check for validity
+			auth: auth_token
 		method: get
-		response: true/false
-		response_type: string
+		response: SimpleUserModel[]
+
+	/change-role
+		parameters:
+			auth: auth_token
+			id: 12345678
+			new_role: "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR"
+
+	/add-user
+		parameters:
+			auth: auth_token
+			name: "Orhun Ege Çelik"
+			role: "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR"
+
+	/remove-user
+		parameters:
+			auth: auth_token
+			id: 12345678
 
 /apply
+    /guide #
+        method: post
+        body: guideApplicationModel
+        response: -
 
-	/guide #
-		method: post
-		body: guideApplicationModel
-		response: -
+    /tour #
+        method: post
+        body: groupTourApplicationModel | individualTourApplicationModel
+        response: -
 
-	/tour #
-		method: post
-		body: groupTourApplicationModel | individualTourApplicationModel
-		response: -
+        /isfree 
+            parameters:
+                start=start_time
+                end=end_time
+            method: get
 
-		/isfree 
-			parameters:
-				start=start_time
-				end=end_time
-			method: get
+        /gettype #
+            parameters:
+                uuid=uuid of the application
+            method: get
+            response: type of application
 
-		/gettype #
-			parameters:
-				uuid=uuid of the application
-			method: get
-			response: type of application
+        /request_changes 
+            method: post
+            parameters:
+                tour_id: tourID
+                auth: passkey | auth token 
+            body: groupTourApplicationModel | individualTourApplicationModel
+            response: -
 
-		/request_changes #NEEDS TEST
-			method: post
-			parameters:
-				tour_id: tourID
-				auth: passkey | auth token 
-			body: groupTourApplicationModel | individualTourApplicationModel
-			response: -
+        ### DEPRECATED ###
+        # Use respond/tour/modification for modificaiton change responses
+        /respond_changes
 
-		/// DEPRECATED
-		/// USE respond/tour/modification for modificaiton change responses
-		/respond_changes
+    /fair #
+        method: post
+        body: fairApplicationModel
+        response: -
 
-	/fair #
-		method: post
-		body: fairApplicationModel
-		response: -
-	/cancel #
-		method: post
-		parameters:
-			auth: jwt_token //if applicant is cancelling, they provide passkey
-			event_id: string
-		body:
-			{
-				reason: string
-			}
+    /cancel #
+        method: post
+        parameters:
+            auth: token //if applicant is cancelling, they provide passkey
+            event_id: string
+        body:
+            {
+                reason: string
+            }
 
 /review
 !!!! NEW
 parameters:
-	review_id=id of the review
+    review_id=id of the review
 method: get
 response: ReviewModel
 response_type:json
 
-	/tour
-		parameters:
-			reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE
-		method: post
-		body:
-			ReviewCreateModel[] // one for the tour, one for the guide, and another one for the other guide if applicable
-	
-	/tour_details
-		parameters:
-			reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email
-		method: get
-		response: TourToReviewModel
-		response_type: json
-	
-	/delete (Requires Auth as Coordinator)
-		parameters:
-			review_id=12354asd654
-			auth= auth_token
-		method: post
-		response: 200 or 400
-		response_type: status code
+    /tour
+        parameters:
+            reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email that can be used to submit a review ONCE
+        method: post
+        body:
+            ReviewCreateModel[] // one for the tour, one for the guide, and another one for the other guide if applicable
+    
+    /tour_details
+        parameters:
+            reviewer_id=12354asd654 // Unique ID attached to the link in the participant's email
+        method: get
+        response: TourToReviewModel
+        response_type: json
+    
+    /delete (Requires Auth as Coordinator)
+        parameters:
+            review_id=12354asd654
+            auth= auth_token
+        method: post
+        response: 200 or 400
+        response_type: status code
 
-!!!! CHANGED # Implemented Dec 22, 01:51
-	/of_tour (Requires Auth)
-		parameters:
-			tour_id=2590545wdge
-			auth = auth_token
-		method: get
-		response: ReviewModel[]
-		description: Send multiple review models, one for the tour and the others
-		for the reviews of the guides on the same tour.
 
-	/of_guide (Requires Auth)
-		parameters:
-			guide_id=2590545wdge
-		method: get
-		response: {
-			"average": 5.67,
-			"count": 25
-			"reviews": ReviewModel[]
-		}
-		description: Only return reviews with status ACCEPTED and non-empty bodies.
-		If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
+    /of_tour (Requires Auth)
+        parameters:
+            tour_id=2590545wdge
+            auth = auth_token
+        method: get
+        response: ReviewModel[]
+        description: Send multiple review models, one for the tour and the others
+        for the reviews of the guides on the same tour.
+
+    /of_guide (Requires Auth)
+        parameters:
+            guide_id=2590545wdge
+        method: get
+        response: {
+            "average": 5.67,
+            "count": 25
+            "reviews": ReviewModel[]
+        }
+        description: Only return reviews with status ACCEPTED and non-empty bodies.
+        If there are no such reviews, still return "average" and "count". Take into account REJECTED reviews in calculating "average" and "count".
 
 /respond
-	/application
-		/guide #
-		method: post
-		parameters:
-			auth: auth_token
-			applicant_id: "bilkent id of the applicant"
-			response: true/false (accept / reject relatively)
-		/tour #
-		method: post
-		parameters:
-			auth: auth_token
-			application_id: "id of the application"
-			timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
+    /application
+        /guide #
+        method: post
+        parameters:
+            auth: auth_token
+            applicant_id: "bilkent id of the applicant"
+            response: true/false (accept / reject relatively)
 
-!!!! CHANGED # Implemented, Dec 21
-			/modification
-				method: post
-				parameters:
-					auth: auth_token // passkey if an applicant is using this
-					tour_id: id of the tour
-					accepted_time: "" (ISO8601 accepted time, empty string means rejection)
-				response: 200 or 400
-				response_type: status code
-				description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
+        /tour #
+        method: post
+        parameters:
+            auth: auth_token
+            application_id: "id of the application"
+            timeslot: "" (ISO8601 accepted time if tour is accepted, empty string otherwise)
 
-		/fair #
-		method: post
-		parameters:
-			auth: auth_token
-			application_id: "id of the applicaiton"
-			response: true/false (accept / reject)
 
-	/guide
-		/fair-invite
-		method: post
-		parameters:
-			auth: auth_token
-			request_id: "id of the assignment request"
-			response: true/false (accept/reject)
-!!!! CHANGED # Implemented, Dec 21
-		/tour-invite
-		method: post
-		parameters:
-			auth: auth_token
-			request_id: "id of the assignment request OR the tour for the guide"
-			response: true/false (accept/reject)
+            /modification
+                method: post
+                parameters:
+                    auth: auth_token // passkey if an applicant is using this
+                    tour_id: id of the tour
+                    accepted_time: "" (ISO8601 accepted time, empty string means rejection)
+                response: 200 or 400
+                response_type: status code
+                description: Both an Applicant or an Advisor can use this endpoint. An Applicant can use this endpoint to respond to "TOYS_WANTS_CHANGE"--where Advisor has offered 3 times and the Applicant picks one and the Tour becomes accepted. Vice versa for the Advisor.
 
-		/promotion
-		method: post
-		parameters:
-			auth: auth_token
-			request_id: "id of the assignment request"
-			response: true/false (accept/reject)
+        /fair #
+        method: post
+        parameters:
+            auth: auth_token
+            application_id: "id of the applicaiton"
+            response: true/false (accept / reject)
+
+    /guide
+        /fair-invite
+        method: post
+        parameters:
+            auth: auth_token
+            request_id: "id of the assignment request"
+            response: true/false (accept/reject)
+
+        /tour-invite
+        method: post
+        parameters:
+            auth: auth_token
+            request_id: "id of the assignment request OR the tour for the guide"
+            response: true/false (accept/reject)
+
+        /promotion
+        method: post
+        parameters:
+            auth: auth_token
+            request_id: "id of the promotion request"
+            response: true/false (accept/reject)
 
 
 /internal (Requires Auth)
-	@Deprecated! Frontend and Backend share a set of constant enums, please use them	
-	/majors
-		method: get
-		response: string array of the Major enums
-		response_type:json
-		
-	/user
-		/guides
-			parameters:
-				auth: auth token
-				name (OPTIONAL) = "Orhun Eg" // optional name search string
-				type (OPTIONAL)  = "TRAINEE" | "GUIDE" | "ADVISOR" // optional parameter to filter by type 
-			method: get
-			response: SimpleGuideModel[]
-			response_type: json
-			
-		/available-guides
-			parameters:
-				time=time in ISO 8601 format
-				type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
-			method: post
-			response: SimpleGuideModel[]
-			response_type: json
+    @Deprecated! Frontend and Backend share a set of constant enums, please use them    
+    /majors
+        method: get
+        response: string array of the Major enums
+        response_type:json
+        
+     /event
+        @ DEPRECATED, USE /event/tour/simple instead!
+        /simple-tour
+        
+        /enroll # NEEDS TEST
+            parameters:
+                event_id=event_id // which event to enroll for (Can only enroll in tours, don't make a mistake)
+                auth: auth_token
+            method: post
+            response: -
 
-		/advisor-offer (Requires Auth as Coordinator)
-			parameters:
-				name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
-				type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
-				from_date (OPTIONAL) = time in ISO 8601 format
-				to_date (OPTIONAL) = time in ISO 8601 format
-				// from_date & to_date should be provided together, never only one
-			method: get
-			response: AdvisorOfferModel[]
-			response_type: json
+        /withdraw
+            parameters:
+                event_id=event_id // which event to withdraw from (can be both fair and tour)
+                auth: auth_token
+            method: post
+            response: - 
 
+        /invite 
+            parameters:
+                event_id=event_id // which event to invite to (Advisors can only invite to tours, Coordinators & above can invite to fairs as well)
+                guid=guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
+                auth: auth_token
+            method: post
+            response: -
 
-			/accept (Requires Auth as Guide who has pending Advisor Offer)
-				method: post
-				body: empty
-				response: 403 if has no Auth as Guide who has pending Advisor Offer, 200 otherwise
-				response_type: status code
-			
-			/reject (Requires Auth as Guide who has pending Advisor Offer)
-				method: post
-				body: {
-					"reason": "Yappi yap yap"
-				}
-				response: 403 if has no Auth as Guide who has pending Advisor Offer
-				response_type: status code
-!!!! NEW # Implemented Dec 22 01:51
-		/am-enrolled
-			params:
-				auth: auth token
-				event_id: fair or tour id
-			method: get
-			response: true/false
-			response_type: boolean
-			description: returns whether the requesting Guide is enrolled in the event
+        /remove 
+            parameters:
+                event_id=event_id // which event to remove from
+                guid=guide_id[] // MULTIPLE GUIDES CAN BE REMOVED AT ONCE
+                auth: auth_token
+            method: post
+            response: -
 
-!!!! NEW # Implemented Dec 22 01:51
-		/am-invited
-			params:
-				auth: auth token
-				event_id: fair or tour id
-			method: get
-			response: true / false
-			response_type: boolean
-			description: returns whether the requesting Guide is invited to the event
+        /fair
+            parametes:
+                auth=jwt token
+                fid=fair_id
+            method: get
+            response: FairModel
 
-!!!! NEW # Implemented Dec 22 01:51
-		/invitations (Requires auth as Advisor or up)
-			params:
-				auth: auth token
-				my_invitations: "true" / "false" (OPTIONAL)
-			method: get
-			response: InvitationModel[]
-			response_type: json
-			description: my_invitaitons = true returns the invitations sent by the requester
+            /search
+                method: get
+                parameters:
+                    auth: authentication token
+                    status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
+                    guide_not_assigned (OPTIONAL): bool
+                    enrolled_in_fair (OPTIONAL):
+                    school_name: string
+                    to_date: iso date string
+                    from_date: iso date string
+                    filter_guide_missing: bool
+                    filter_trainee_missing: bool 
+                response: list of fairs
+                response_type: json
 
+                ### DEPRECATED ###
+                use /respond/applications/fair instead!
+                /respond
 
-		/profile #
-			parameters:
-				id=id // user bilkent id / empty to get logged in user
-			method: get
-			response: GuideModel | CoordinatorModel
-			response_type: json
+        /tour
+            parameters:
+                auth= jwt token
+                tid=tour_id
+            method: get
+            response: TourModel
+            
+            /simple
+            parameters:
+                auth=jwt token // passkey if Applicant is making this request
+                tid=tour_id
+            method: get
+            response: SimpleEventModel
 
-			/update #
-			    parameters:
-					id= id // user bilkent id
-				method: post
-				body: GuideModel
-				response: -
-
-			/simple
-				parameters:
-					id=id // user bilkent id / empty to get logged in user
-					auth= jwt token
-				method: get
-				response: simpleGuideModel
-				response_type: json
-		
-		/requests 
-			method: get
-			parameters:
+            /search
+            parameters:
                 authToken= jwt token
-			response: List of Requests (List<RequestBase>)
-			response_type: json
+                school_name = "BİLKENT ER" // OPTIONAL filter by highschool string
+                status=string[] // OPTIONAL tour status filtering string ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
+                from_date=ISO 8601 string // OPTIONAL
+                to_date=ISO 8601 string // OPTIONAL
+                filter_guide_missing="true"/"false" // if False, include both guide missing and not missing.
+                filter_trainee_missing="true"/"false" // if False, include both guide missing and not missing
+                am_enrolled="true"/"false" // if False, include both enrolled and not enrolled
+                am_invited="true"/"false" // if False, include both invited and not invited
+                // from_date & to_date can be sent isolated or both. to_date will not be earlier than from_date 
 
-			# DEPRECATED
-			/respond
+            method: get
+            response: List of tours (List<SimpleEventModel>)
+                // REQUEST: Returned tours should be ordered with "ONGOING" first, then "APPLICANT_WANTS_CHANGE", then "RECEIVED",
+                // then "CONFIRMED", then "TOYS_WANTS_CHANGE", then the rest
 
-		# DOC MISSING
-		/is-invited
+            /start-tour
+                method: post
+                parameters:
+                    auth: jwt token
+                    tour_id: id of the tour to start
+                    start_time: iso8601 time of tour start // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
 
-		/dashboard
-			parameters:
-				authToken: auth_token
-				dashboard_category: DashboardCategory
-			method: get
-			response: SimpleEventModel[]
-			
-	/event
+            /end-tour
+                method: post
+                parameters:
+                    auth: jwt token
+                    tour_id: id of the tour to stop
+                    end_time: iso8601 time of tour end // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
+            
 
-!!!! NEW # # Implemented Dec 22 01:51
-		/simple-tour
-			parameters:
-				auth=jwt token // passkey if Applicant is making this request
-				tid=tour_id
-			method: get
-			response: SimpleEventModel
-			response_type:json
-		
-		/fair
-			parametes:
-				auth=jwt token
-				fid=fair_id
-			method: get
-			response: FairModel
-			response_type: json
 
-		/tour
-			parameters:
-				auth= jwt token
-				tid=tour_id
-			method: get
-			response: TourModel
-			response_type: json
-			
+    /user
+        /guides
+            parameters:
+                auth: auth token
+                name (OPTIONAL) = "Orhun Eg" // optional name search string
+                type (OPTIONAL)  = "TRAINEE" | "GUIDE" | "ADVISOR" // optional parameter to filter by type 
+            method: get
+            response: SimpleGuideModel[]
+            response_type: json
+            
+        /available-guides
+            parameters:
+                auth : authentication token // Requires auth as 
+                time=time in ISO 8601 format
+                type="TRAINEE" | "GUIDE" // GUIDE option includes Advisors as well
+            method: post
+            response: SimpleGuideModel[]
+            response_type: json
 
-			// When a guide starts a tour, they use this endpoint
-			/start-tour
-				method: post
-				parameters:
-					auth: jwt token
-					tour_id: id of the tour to start
-					start_time: iso8601 time of tour start // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
+        ### DEPRECATED 
+        /advisor-offer (Requires Auth as Coordinator)
+            parameters:
+                name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
+                type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
+                from_date (OPTIONAL) = time in ISO 8601 format
+                to_date (OPTIONAL) = time in ISO 8601 format
+                // from_date & to_date should be provided together, never only one
+            method: get
+            response: AdvisorOfferModel[]
+            response_type: json
 
-			/end-tour
-				method: post
-				parameters:
-					auth: jwt token
-					tour_id: id of the tour to stop
-					end_time: iso8601 time of tour end // only advisor and above can set this, if guide provides it, it is simply ignored, but it must be given, even if its only an empty string, in which case it just does current time
-			
-			/modifications
-				method: get
-				parameters:
-					auth=jwt_token
-					tour_id=tour_id
-				response:
-				[{
-					"id": "mod id",
-					"mod": group/ind tourApplicationModel
-				}]
 
-!!!! CHANGED # Implemented Dec 22 01:51
-	/tours # NEEDS TEST
-		parameters:
-			authToken= jwt token
-			school_name = "BİLKENT ER" // OPTIONAL filter by highschool string
-			status=string[] // OPTIONAL tour status filtering string ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
-			from_date=ISO 8601 string // OPTIONAL
-			to_date=ISO 8601 string // OPTIONAL
-			filter_guide_missing="true"/"false" // if False, include both guide missing and not missing.
-			filter_trainee_missing="true"/"false" // if False, include both guide missing and not missing
-			am_enrolled="true"/"false" // if False, include both enrolled and not enrolled
-			am_invited="true"/"false" // if False, include both invited and not invited
-			// from_date & to_date can be sent isolated or both. to_date will not be earlier than from_date	
-		method: get
-		response: List of tours (List<SimpleEventModel>)
-		response_type: json
-		// REQUEST: Returned tours should be ordered with "ONGOING" first, then "APPLICANT_WANTS_CHANGE", then "RECEIVED",
-		// then "CONFIRMED", then "TOYS_WANTS_CHANGE", then the rest
+            /accept (Requires Auth as Guide who has pending Advisor Offer)
+                method: post
+                body: empty
+                response: 403 if has no Auth as Guide who has pending Advisor Offer, 200 otherwise
+                response_type: status code
+            
+            /reject (Requires Auth as Guide who has pending Advisor Offer)
+                method: post
+                body: {
+                    "reason": "Yappi yap yap"
+                }
+                response: 403 if has no Auth as Guide who has pending Advisor Offer
+                response_type: status code
 
-		### DEPRECATED ###
-		### ALL STATUS UPDATES ARE DONE BY THE BACKEND, USE ALTERNATIVES ###
-		/status_update 
+        /am-enrolled
+            params:
+                auth: auth token
+                event_id: fair or tour id
+            method: get
+            response: true/false
+            response_type: boolean
+            description: returns whether the requesting Guide is enrolled in the event
 
-		# Just realized we are missing un-enroll
-		/enroll # NEEDS TEST
-			parameters:
-				tid=tour_id // which tour to enroll for
-				auth: auth_token
-			method: post
-			response: -
+        /am-invited
+            params:
+                auth: auth token
+                event_id: fair or tour id
+            method: get
+            response: true / false
+            response_type: boolean
+            description: returns whether the requesting Guide is invited to the event
 
-		/withdraw
-			parameters:
-				tid=tour_id // which tour to withdraw from
-				auth: auth_token
-			method: post
-			response: -	
+        /invitations (Requires auth as Advisor or up)
+            params:
+                auth: auth token
+                my_invitations: "true" / "false" (OPTIONAL)
+            method: get
+            response: InvitationModel[]
+            response_type: json
+            description: my_invitaitons = true returns the invitations sent by the requester
 
-		/invite # NEEDS TEST
-			parameters:
-				tid=tour_id // which tour to invite to
-				guid=guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
-				auth: auth_token
-			method: post
-			response: -
 
- !!!! ADDED REMOVING GUIDES # # Implemented
-		/remove # NEEDS TEST
-			parameters:
-				tid=tour_id // which tour to remove to
-				guid=guide_id[] // MULTIPLE GUIDES CAN BE REMOVED AT ONCE
-				auth: auth_token
-			method: post
-			response: -
-	/management
-		/timesheet (Requires Auth as Coordinator)
-			/hourly_rate
-				method: post
-				body: HourlyRateModel
-				response: 200 or 400
-				response_type: status code
-				description: If the time interval of the provided HourlyRateModel overlaps with a previously existing HourlyRateModel,
-				you do the following:
-					- If the time interval of the NEW HourlyRateModel is a subset of a previous HourlyRateModel, you delete the previous HourlyRateModel, add the new HourlyRateModel, and adjust the time interval of the remaining chronologically following AND / OR preceding HourlyRateModels so that there is no date remaining for which there is no corresponding hourly rate
-					- If the time interval of the NEW HourlyRateModel is both overlapping with the time interval of a previous HourlyRateModel and NOT a subset of the previous HourlyRateModel's time interval, REJECT the request and send status code 400 
-			
-				method: get // different method request to the same endpoint
-				response: HourlyRateModel[]
-				response_type: json
+        /profile #
+            parameters:
+                id=id // user bilkent id / empty to get logged in user
+            method: get
+            response: GuideModel | CoordinatorModel
+            response_type: json
 
-			/payment_state
-				/guides
-					parameters:
-						auth: authToken
-						name (OPTIONAL)="Orhun Eg" // optional filter by name string
-					method: get
-					response: MoneyForGuideModel[]
-					response_type: json
+            /update #
+                parameters:
+                    id= id // user bilkent id
+                method: post
+                body: GuideModel
+                response: -
 
-				/guide
-					parameters:
-						auth: authToken
-						guide_id="bilko Id of the guide. Advisor is also guide"
-					method: get
-					response: MoneyForGuideModel
-					response_type: json
+            /simple
+                parameters:
+                    id=id // user bilkent id / empty to get logged in user
+                    auth= jwt token
+                method: get
+                response: simpleGuideModel
+                response_type: json
+        
+        ### DEPRECATED ###
+        /requests 
 
-				/event
-					parameters:
-						auth: authToken
-						guide_id="bilko Id of the guide. Advisor is also guide"
-					method: get
-					response: MoneyForEventModel[]
-					response_type: json
+            # DEPRECATED
+            /respond
 
-			/pay
-				/guide
-					parameters:
-						auth: authToken
-						guide_id="bilko Id of the guide. Advisor is also guide"
-					method: post
-					response: 200
-					response_type: status code
-			## DEPRECATED
-			/unpay 
-		/people
-			method: get
-			body: auth_token
-			response: Simple
-			response_type: json
+        # DOC MISSING
+        /is-invited
 
-			/invite-advisor
+        /dashboard
+            parameters:
+                authToken: auth_token
+                dashboard_category: DashboardCategory
+            method: get
+            response: SimpleEventModel[]
+            
+
+
+    /management
+        /timesheet (Requires Auth as Coordinator)
+            /hourly_rate
+                method: post
+                body: HourlyRateModel
+                response: 200 or 400
+                response_type: status code
+                description: If the time interval of the provided HourlyRateModel overlaps with a previously existing HourlyRateModel,
+                you do the following:
+                    - If the time interval of the NEW HourlyRateModel is a subset of a previous HourlyRateModel, you delete the previous HourlyRateModel, add the new HourlyRateModel, and adjust the time interval of the remaining chronologically following AND / OR preceding HourlyRateModels so that there is no date remaining for which there is no corresponding hourly rate
+                    - If the time interval of the NEW HourlyRateModel is both overlapping with the time interval of a previous HourlyRateModel and NOT a subset of the previous HourlyRateModel's time interval, REJECT the request and send status code 400 
+            
+                method: get // different method request to the same endpoint
+                response: HourlyRateModel[]
+                response_type: json
+
+            /payment_state
+                /guides
+                    parameters:
+                        auth: authToken
+                        name (OPTIONAL)="Orhun Eg" // optional filter by name string
+                    method: get
+                    response: MoneyForGuideModel[]
+                    response_type: json
+
+                /guide
+                    parameters:
+                        auth: authToken
+                        guide_id="bilko Id of the guide. Advisor is also guide"
+                    method: get
+                    response: MoneyForGuideModel
+                    response_type: json
+
+                /event
+                    parameters:
+                        auth: authToken
+                        guide_id="bilko Id of the guide. Advisor is also guide"
+                    method: get
+                    response: MoneyForEventModel[]
+                    response_type: json
+
+            /pay
+                /guide
+                    parameters:
+                        auth: authToken
+                        guide_id="bilko Id of the guide. Advisor is also guide"
+                    method: post
+                    response: 200
+                    response_type: status code
+            ## DEPRECATED
+            /unpay 
+
+        /people
+            # I Don't Know Who Wrote this but if this doc isn't fixed, I'm nuking the server
+            method: get
+            body: auth_token
+            response: Simple
+            response_type: json
+
+            ## Refactored, (invite-advisor) -> (promote)
+            /promote
                 parameters:
                     auth: auth_token
-                    guide_id=id // who to invite
+                    user_id=id // who to promote
                 method: post
-                response: -
 
-			/applications
-				parameters:
-					type: "ADVISOR" | "TRAINEE"
-				method: get
-				body: auth_token
-				response: list of people applications
-				response_type: SimpleGuideModel[]
+            ### DEPRECATED ###
+            # USE /internal/user/dashboard with category "PENDING_APPLICATIONS"
+            /applications
 
-				/respond
-					parameters:
-						id=id // id of the applicant
-						response=response // accepted or rejected etc
-					method: post
-					body: auth_token
-					response: -
+            /fire
+                parameters:
+                    id=fireeid // id of the person to fire
+                    auth: authentication token
+                method: post
+                body: -
 
-			/invite
-				parameters:
-					fid=fair_id // which fair to invite to
-					id=id // who to invite
-				method: post
-				body: auth_token
-				response: -
+                ### DEPRECATED ###
+                # Use /respond/applications instead!
+                /respond
 
-			/fire
-				parameters:
-					id=fireeid // id of the person to fire
-				method: post
-				body: auth_token
-				response: -
+            ### DEPRECATED ###
+            /invite
 
-			### DEPRECATED ###
-			use /respond/applications/guide instead!
-			/respond
+            ### DEPRECATED ###
+            use /respond/applications/guide instead!
+            /respond
 
-		/fairs
-			method: get
-			parameters:
-				status (OPTIONAL): "RECEIVED" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "ONGOING" | "FINISHED"
-				guide_not_assigned (OPTIONAL): bool
-				enrolled_in_fair (OPTIONAL):
-		#CHANGED # Implemented Dec 21
-				school_name: string
-				to_date: iso date string
-				from_date: iso date string
-				filter_guide_missing: bool
-				filter_trainee_missing: bool 
-			body: auth_token
-			response: list of fairs
-			response_type: json
 
-			### DEPRECATED ###
-			use /respond/applications/fair instead!
-			/respond
+
 
 ```

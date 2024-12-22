@@ -108,7 +108,7 @@ public class AnalyticsHighschoolService {
                         boolean added = false;
                         for (Map<String, Object> count : counts_map) {
                             if (count.get("year").equals(year.year)) {
-                                count.put("count", (int) count.get("count") + data.getTotal());
+                                count.put("count", ((Number) count.get("count")).longValue() + data.getTotal());
                                 added = true;
                                 break;
                             }
@@ -141,11 +141,10 @@ public class AnalyticsHighschoolService {
         ).map(e -> e.getValue()).toList();
 
 
-        Map<String, Object> HSTours = new HashMap<>();
+        List<Map<String, Object>> HSTours = new ArrayList<>();
         for (ReviewRecord reviewRecord : relatedReviews) {
             try {
-                HSTours.putIfAbsent(
-                        reviewRecord.getEvent_id(),
+                HSTours.add(
                         Map.of(
                                 "date", database.tours.fetchTour(reviewRecord.getEvent_id()).getStarted_at(),
                                 "attendance", database.tours.fetchTour(reviewRecord.getEvent_id()).getExpected_souls(),

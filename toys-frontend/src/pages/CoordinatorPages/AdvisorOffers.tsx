@@ -42,7 +42,7 @@ const AdvisorOffers = () => {
   const fetchOffers = async () => {
     try {
       const url = new URL(ADVISOR_OFFERS_URL);
-      url.searchParams.append('auth', userContext.authToken);
+      url.searchParams.append('auth', await userContext.getAuthToken());
       
       // Always send name parameter, empty string if not used
       url.searchParams.append('name', searchTerm || '');
@@ -72,7 +72,7 @@ const AdvisorOffers = () => {
 
   useEffect(() => {
     fetchOffers();
-  }, [userContext.authToken, searchTerm, selectedStatuses, startDate, endDate]);
+  }, [searchTerm, selectedStatuses, startDate, endDate]);
 
   const handleStatusToggle = (status: string) => {
     setSelectedStatuses(prev => 

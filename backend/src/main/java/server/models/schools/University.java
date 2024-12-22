@@ -30,6 +30,7 @@ public class University {
         }
         this.url = (String) map.get("url");
         this.city = (String) map.get("city");
+        this.is_rival = (boolean) map.get("is_rival");
     }
 
     public static University fromSource(Map<String, Object> map) {
@@ -45,6 +46,12 @@ public class University {
         );
         uni.url = (String) map.get("url");
         uni.city = (String) map.get("city");
+        try {
+            uni.is_rival = (boolean) map.get("is_rival");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error in University.java");
+        }
         return uni;
     }
 

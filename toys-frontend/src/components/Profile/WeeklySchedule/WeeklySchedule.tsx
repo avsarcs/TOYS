@@ -108,7 +108,7 @@ const WeeklySchedule: React.FC<ProfileComponentProps> = (props: ProfileComponent
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
 
             // Add query parameters
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             console.log(updatedProfile);
 
             const response = await fetch(url.toString(), {

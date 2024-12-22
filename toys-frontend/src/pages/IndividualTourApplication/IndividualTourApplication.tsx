@@ -212,7 +212,7 @@ const IndividualTourApplication: React.FC = () => {
     const attemptSubmitForm = async () => {
         if (validateStage4()) {
             const applicationUrl = new URL(TOUR_APPLICATION_URL);
-            // applicationUrl.searchParams.append("auth", userContext.authToken);
+            // applicationUrl.searchParams.append("auth", await userContext.getAuthToken());
 
             try {
                 const res = await fetch(applicationUrl, {

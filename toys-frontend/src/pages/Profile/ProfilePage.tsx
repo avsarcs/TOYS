@@ -28,7 +28,7 @@ const ProfilePage: React.FC = () => {
         setProfile({} as ProfileData);
         const profileUrl = new URL(PROFILE_URL);
         profileUrl.searchParams.append("id", profileId);
-        profileUrl.searchParams.append("auth", userContext.authToken);
+        profileUrl.searchParams.append("auth", await userContext.getAuthToken());
 
         const res = await fetch(profileUrl, {
             method: "GET",
@@ -44,7 +44,7 @@ const ProfilePage: React.FC = () => {
         }
 
         setProfile(JSON.parse(profileText));
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     useEffect(() => {
         if (profileId === undefined) {

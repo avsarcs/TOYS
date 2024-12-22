@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import {
-  Container,
-  Paper,
-  Title,
-  Text,
-  Button,
-  Stack,
-  Group,
-  NumberInput,
   Alert,
-  Modal,
   Box,
+  Button,
+  Container,
+  Group,
+  Modal,
   MultiSelect,
+  NumberInput,
+  Paper,
+  Stack,
+  Text,
+  Title,
 } from '@mantine/core';
-import { DatePicker } from '@mantine/dates';
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import {DatePicker} from '@mantine/dates';
+import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
 import 'dayjs/locale/tr';
-import { SimpleEventData } from '../../types/data';
-import { Department } from '../../types/enum';
+import {SimpleEventData} from '../../types/data';
+import {Department, TourType} from '../../types/enum';
 
 const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/simple-tour");
 const REQUEST_CHANGES_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
@@ -158,7 +158,7 @@ const ApplicantRequest: React.FC = () => {
       return;
     }
 
-    if (tourData.event_subtype === "individual" && selectedMajors.length !== 3) {
+    if (tourData.event_subtype === TourType.INDIVIDUAL && selectedMajors.length !== 3) {
       setError('Lütfen tam olarak 3 bölüm seçiniz');
       return;
     }
@@ -173,7 +173,7 @@ const ApplicantRequest: React.FC = () => {
         visitor_count: visitorCount
       };
       
-      const applicationModel = tourData.event_subtype === "individual"
+      const applicationModel = tourData.event_subtype === TourType.INDIVIDUAL
         ? {
             ...baseApplication,
             requested_majors: selectedMajors
@@ -292,7 +292,7 @@ const ApplicantRequest: React.FC = () => {
             required
           />
 
-          {tourData.event_subtype === "individual" && (
+          {tourData.event_subtype === TourType.INDIVIDUAL && (
             <Box>
               <MultiSelect
                 label="Rehber Bölüm Tercihleri (Tercih sırasıyla 3 bölüm seçiniz)"
@@ -374,7 +374,7 @@ const ApplicantRequest: React.FC = () => {
               disabled={
                 selectedTimes.length === 0 || 
                 !visitorCount || 
-                (tourData.event_subtype === "individual" && selectedMajors.length !== 3)
+                (tourData.event_subtype === TourType.INDIVIDUAL && selectedMajors.length !== 3)
               }
               fullWidth
               className="sm:w-auto"
