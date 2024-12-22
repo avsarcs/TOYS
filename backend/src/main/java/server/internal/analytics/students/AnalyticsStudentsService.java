@@ -159,6 +159,16 @@ public class AnalyticsStudentsService {
                     });
                 });
 
+        // Filter out scholarships and years where all ranking values are 0
+        rankings.entrySet().removeIf(entry -> {
+            Map<String, Integer> scholarshipMap = entry.getValue();
+            boolean allZero = scholarshipMap.values().stream().allMatch(value -> value == 0);
+            if (allZero) {
+                yearsSet.remove(entry.getKey());
+            }
+            return allZero;
+        });
+
         List<String> years = new ArrayList<>(yearsSet);
         Collections.sort(years);
 
