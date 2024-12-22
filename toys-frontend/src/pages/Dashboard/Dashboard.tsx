@@ -6,6 +6,7 @@ import {UserContext} from "../../context/UserContext.tsx";
 import {DashboardCategory, DashboardCategoryText, UserRole} from "../../types/enum.ts";
 import {SimpleEventData} from "../../types/data.ts";
 import {notifications} from "@mantine/notifications";
+import SoonBar from "../../components/Dashboard/SoonBar.tsx";
 
 const DASHBOARD_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard";
 const Dashboard: React.FC = () => {
@@ -96,6 +97,8 @@ const Dashboard: React.FC = () => {
       </Box>
       <Flex p="xl" direction="row" gap="xl" justify="center" wrap="wrap" className="flex-grow flex-shrink">
         <Box className="basis-1 flex-grow flex-shrink">
+          <SoonBar setItem={setItem} setCategory={setCategory} />
+          <Space h="sm" />
           <ItemList loading={loading} categories={categories} category={category} setCategory={setCategory} items={items} setItem={setItem}/>
         </Box>
         <Box className="min-w-96 flex-shrink-0 flex-grow-0">

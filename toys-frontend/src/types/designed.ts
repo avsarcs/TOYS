@@ -116,6 +116,11 @@ export interface RegisterFormProps {
   setRegistering: Dispatch<SetStateAction<boolean>>
 }
 
+export interface DashboardUrgentBarProps {
+  setItem: Dispatch<SetStateAction<SimpleEventData | null>>
+  setCategory: Dispatch<SetStateAction<DashboardCategory>>
+}
+
 export interface DashboardCategoryControlProps {
   categories: { value: DashboardCategory, label: DashboardCategoryText }[],
   setCategory: Dispatch<SetStateAction<DashboardCategory>>,
