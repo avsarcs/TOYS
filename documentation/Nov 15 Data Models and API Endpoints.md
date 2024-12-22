@@ -702,6 +702,13 @@ response_type:json
 	/event
 
 !!!! NEW # # Implemented Dec 22 01:51
+		/remove-guide
+			parameters:
+					event_id=id // which event to remove from 
+					ids=[id] // who to remove -- array of guide ids
+				method: post
+				body: auth_token
+				response: -
 		/simple-tour
 			parameters:
 				auth=jwt token // passkey if Applicant is making this request
@@ -894,7 +901,7 @@ response_type:json
 				method: post
 				body: auth_token
 				response: -
-
+		
 			/fire
 				parameters:
 					id=fireeid // id of the person to fire
