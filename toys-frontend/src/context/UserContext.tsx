@@ -151,7 +151,9 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
 
   const checkAuth = useCallback(async () => {
     if (!cookies.auth || cookies.auth.length === 0) {
+      setUser(EMPTY_USER);
       setProfileFetchStatus(FetchingStatus.DONE);
+      setIsLoggedIn(false);
       return false;
     }
 
@@ -165,7 +167,9 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     );
 
     if (!validRes.ok) {
+      setUser(EMPTY_USER);
       setProfileFetchStatus(FetchingStatus.DONE);
+      setIsLoggedIn(false);
       return false;
     }
 
@@ -173,6 +177,7 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
 
     if (isValid !== true) {
       setCookie("auth", "");
+      setUser(EMPTY_USER);
       setIsLoggedIn(false);
       setProfileFetchStatus(FetchingStatus.DONE);
       return false;
@@ -244,9 +249,12 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
         if(result) {
           return getUser()
         }
+        else {
+          setUser(EMPTY_USER);
+        }
       })
       .catch(console.error);
-  }, [cookies.auth, checkAuth, getUser]);
+  }, [cookies.auth]);
 
   return (
     <UserContext.Provider value={userContextValue}>

@@ -60,9 +60,7 @@ const Dashboard: React.FC = () => {
       });
     }
     else {
-      const t = await dashboardRes.text();
-      console.log(t);
-      setItems(JSON.parse(t));
+      setItems(await dashboardRes.json());
     }
     setLoading(false);
   }

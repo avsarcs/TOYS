@@ -31,8 +31,6 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
     }
   }, [props, userContext.isLoggedIn, userContext.profileFetchStatus, userContext.user.role])
 
-  console.log(userContext);
-
   return (
     rendering
     ? (
