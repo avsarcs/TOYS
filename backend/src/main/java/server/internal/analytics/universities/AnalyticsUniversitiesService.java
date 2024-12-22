@@ -1,5 +1,6 @@
 package server.internal.analytics.universities;
 
+import info.debatty.java.stringsimilarity.SorensenDice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -110,29 +111,37 @@ public class AnalyticsUniversitiesService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
+
+        // TODO: FIX
         // get university
         University university = database.universities.getUniversity(university_id);
         Map<String, Object> response = new HashMap<>();
-        
+
+        SorensenDice alg = new SorensenDice();
 
         // return department details
         university.getDepartments().stream()
-            .filter(department -> department.getName().equals(department_name))
-            .forEach(department -> {
-                department.getYears().forEach(year -> {
-                    List<Map<String, String>> yearDetails = year.getTable_data().entrySet().stream()
-                        .map(entry -> {
-                            UniversityTableData tableData = (UniversityTableData) entry.getValue();
-                            Map<String, String> detailMap = new HashMap<>();
-                            detailMap.put("title", department.getScholarship());
-                            detailMap.put("min", tableData.getBase_lastguy_rank());
-                            detailMap.put("max", tableData.getBest_rank());
-                            return detailMap;
-                        })
-                        .collect(Collectors.toList());
-                    response.put(year.getYear(), yearDetails);
+            .filter(department -> alg.similarity(department.getName().toLowerCase(), department_name.toLowerCase()) > 0.8)
+                .forEach( dep -> {
+                    dep.getYears().forEach(
+                            year -> {
+                                if (!response.containsKey(year.getYear())) {
+                                    response.put(year.getYear(), new ArrayList<Map<String, Object>>());
+                                }
+
+                                List<Map<String,Object>> data = (List<Map<String, Object>>) response.get(year.getYear());
+                                data.add(
+                                    Map.of(
+                                        "title", dep.getScholarship(),
+                                        "min", year.getTable_data().getBest_rank(),
+                                        "max", year.getTable_data().getBase_lastguy_rank()
+                                    )
+                                );
+
+                                response.put(year.getYear(), data);
+                            }
+                    );
                 });
-            });
 
         return response;
     }
