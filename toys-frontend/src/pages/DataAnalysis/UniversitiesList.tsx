@@ -32,7 +32,7 @@ const defaultUniversities = [
     {
         name: "Yükleniyor...",
         city: "Yükleniyor...",
-        isRival: "true",
+        is_rival: true,
         id: ""
     }
 ];
@@ -44,7 +44,7 @@ const UniversitiesList: React.FC = () => {
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
     const [cities, setCities] = React.useState<string[]>(defaultCities);
-    const [universities, setUniversities] = React.useState<{name: string; city: string; isRival: string; id: string}[]>(defaultUniversities);
+    const [universities, setUniversities] = React.useState<{name: string; city: string; is_rival: boolean; id: string}[]>(defaultUniversities);
 
     const getCities = useCallback(async () => {
         const cityNames = Object.values(City);
@@ -150,7 +150,6 @@ const UniversitiesList: React.FC = () => {
         <UniversitiesTable data={universities} search={selectedSearch} cities={selectedCities} changeIsRival={updateRival}/>
         <Space h="xs" />
     </Container>
-
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         {HeaderTextContainer}
