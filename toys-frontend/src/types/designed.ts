@@ -4,7 +4,7 @@ import {
   DashboardCategoryText,
   UserRole
 } from "./enum.ts";
-import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import { HighschoolData, ProfileData, SimpleEventData, TourData, FairData } from "./data.ts";
 import {OnlyChildrenProps} from "./generic.ts";
 
 export interface User {
@@ -152,6 +152,11 @@ export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButto
 export interface TourSectionProps {
   tour: TourData,
   refreshTour: () => void
+}
+
+export interface FairSectionProps {
+  fair: FairData,
+  refreshFair: () => void
 }
 
 export interface TourButtonProps {
