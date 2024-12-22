@@ -47,7 +47,8 @@ public class University {
         uni.url = (String) map.get("url");
         uni.city = (String) map.get("city");
         try {
-            uni.is_rival = (boolean) map.get("is_rival");
+            String isRivalStr = (String) map.get("is_rival");
+            uni.is_rival = Boolean.parseBoolean(isRivalStr);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error in University.java");
