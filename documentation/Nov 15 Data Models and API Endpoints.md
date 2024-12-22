@@ -775,10 +775,14 @@ response_type:json
             response_type: boolean
             description: returns whether the requesting Guide is invited to the event
 
+!!!! CHANGED
         /invitations (Requires auth as Advisor or up)
             params:
                 auth: auth token
                 my_invitations: "true" / "false" (OPTIONAL)
+                invited_name="ORHUN EG" // OPTIONAL SEARCH STRING
+                page=1
+                per_page=5
             method: get
             response: InvitationModel[]
             response_type: json
