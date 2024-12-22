@@ -709,6 +709,14 @@ response_type:json
 			method: get
 			response: SimpleEventModel
 			response_type:json
+		
+		/fair
+			parametes:
+				auth=jwt token
+				fid=fair_id
+			method: get
+			response: FairModel
+			response_type: json
 
 		/tour
 			parameters:
