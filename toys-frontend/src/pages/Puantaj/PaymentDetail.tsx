@@ -52,7 +52,7 @@ const PaymentDetail: React.FC = () => {
             if (guideId) {
                 url.searchParams.append("id", guideId);
             }
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             const res = await fetch(url, {
                 method: "GET",
             });
@@ -79,7 +79,7 @@ const PaymentDetail: React.FC = () => {
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    },[userContext.authToken]);
+    },[userContext.getAuthToken]);
 
     const getPayments = useCallback(async () => {
         setLoading(true);
@@ -90,7 +90,7 @@ const PaymentDetail: React.FC = () => {
             if (guideId) {
                 url.searchParams.append("guide_id", guideId);
             }
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             const res = await fetch(url, {
                 method: "GET",
             });
@@ -121,7 +121,7 @@ const PaymentDetail: React.FC = () => {
         {
             setLoading(false);
         }
-    },[userContext.authToken]);
+    },[userContext.getAuthToken]);
 
     const filteredPayments = tourPayments.filter((payment) => {
         if (filter === "all") return true;

@@ -42,7 +42,11 @@ public class AnalyticsUniversitiesService {
         
         // return universities
         response.addAll(
-                universities.entrySet().stream().map(uni -> dto.university(uni.getValue())).toList()
+                universities.entrySet().stream().map(uni -> {
+                    Map<String, Object> data = dto.university(uni.getValue());
+                    data.put("id", uni.getKey());
+                    return data;
+                }).toList()
         );
         return response;
     }
@@ -169,6 +173,9 @@ public class AnalyticsUniversitiesService {
 
         // get university
         University university = database.universities.getUniversity(university_id);
+        if (university == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "University not found!");
+        }
         
         // set rival
         boolean is_rival = false;
@@ -177,7 +184,7 @@ public class AnalyticsUniversitiesService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        university.setIs_rival(is_rival);
+        System.out.println("Setting rivalry status of " + university_id + " to " + is_rival);
         database.universities.updateUniversityRivalry(university_id, is_rival);
     }
 }

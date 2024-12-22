@@ -108,7 +108,7 @@ public class AnalyticsHighschoolService {
                         boolean added = false;
                         for (Map<String, Object> count : counts_map) {
                             if (count.get("year").equals(year.year)) {
-                                count.put("count", (int) count.get("count") + data.getTotal());
+                                count.put("count", ((Number) count.get("count")).longValue() + data.getTotal());
                                 added = true;
                                 break;
                             }

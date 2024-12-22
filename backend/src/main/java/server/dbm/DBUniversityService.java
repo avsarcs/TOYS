@@ -52,7 +52,7 @@ public class DBUniversityService {
             Map<String, Object> data = local.loadMap(universityFilePath);
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
-                universities.putIfAbsent(entry.getKey(), University.fromMap((Map<String, Object>)entry.getValue()));
+                universities.putIfAbsent(entry.getKey(), University.fromSource((Map<String, Object>)entry.getValue()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,9 +63,12 @@ public class DBUniversityService {
 
     public University getUniversity(String uid) {
 
+        System.out.println("Cache check");
         if (MemCache.isValid("uni_" + uid)) {
+            System.out.println("Cache valid");
             return (University) MemCache.load("uni_" + uid);
         }
+        System.out.println("Cache invalid");
 
         try {
 
@@ -78,6 +81,7 @@ public class DBUniversityService {
             University university = null;
             try {
                 university = University.fromSource((Map<String, Object>) data.get(uid));
+                System.out.println("found uni, saving to cache.");
                 MemCache.save("uni_" + uid, university);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -102,8 +106,12 @@ public class DBUniversityService {
                 throw new RuntimeException("University with id " + uid + " not found.");
             }
 
+            Map<String, Object> relatedUni = (Map<String, Object>) data.get(uid);
 
-            ((Map<String, Object>) data.get(uid)).put("is_rival", isRival);
+            relatedUni.put("is_rival", isRival);
+            data.put(uid, relatedUni);
+
+            System.out.println(":::" + ((Map<?, ?>) data.get(uid)).get("is_rival"));
 
             if (local.saveMap(universityFilePath, data)) {
                 System.out.println("University rivalry status updated successfully.");

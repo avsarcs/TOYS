@@ -41,7 +41,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
         }
 
         const addUrl = new URL(HIGHSCHOOL_ADD_URL);
-        addUrl.searchParams.append("auth", userContext.authToken);
+        addUrl.searchParams.append("auth", await userContext.getAuthToken());
 
         const addRes = await fetch(addUrl, {
             method: "POST",

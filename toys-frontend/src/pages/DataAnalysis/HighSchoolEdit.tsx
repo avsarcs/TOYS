@@ -58,7 +58,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
         }
 
         const editUrl = new URL(HIGHSCHOOL_EDIT_URL);
-        editUrl.searchParams.append("auth", userContext.authToken);
+        editUrl.searchParams.append("auth", await userContext.getAuthToken());
 
         const editRes = await fetch(editUrl, {
             method: "POST",
@@ -87,7 +87,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
             });
         }
 
-        //window.location.reload();
+        window.location.reload();
     };
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>

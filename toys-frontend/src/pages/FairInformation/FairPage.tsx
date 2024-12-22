@@ -25,7 +25,7 @@ const FairPage: React.FC = () => {
     console.log(fairId);
     const fairUrl = new URL(FAIR_URL);
     fairUrl.searchParams.append("fid", fairId);
-    fairUrl.searchParams.append("auth", userContext.authToken);
+    fairUrl.searchParams.append("auth", await userContext.getAuthToken());
 
     const res = await fetch(fairUrl, {
       method: "GET",
@@ -41,7 +41,7 @@ const FairPage: React.FC = () => {
     }
 
     setFair(JSON.parse(fairText));
-  }, [userContext.authToken]);
+  }, []);
 
   useEffect(() => {
     getFair(params.fairId as string).catch((reason) => {

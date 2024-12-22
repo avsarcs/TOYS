@@ -33,7 +33,7 @@ const HighSchoolsList: React.FC = () => {
 
     const fetchHighschools = async () => {
         const highSchoolURL = new URL(HIGHSCHOOL_URL);
-        highSchoolURL.searchParams.append("auth", userContext.authToken);
+        highSchoolURL.searchParams.append("auth", await userContext.getAuthToken());
 
         const highSchoolRes = await fetch(highSchoolURL, {
             method: "GET",

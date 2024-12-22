@@ -58,7 +58,7 @@ const UpdateProfile: React.FC = () => {
 
                 // Fetch high schools
                 const highSchoolUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/all");
-                highSchoolUrl.searchParams.append("auth", userContext.authToken);
+                highSchoolUrl.searchParams.append("auth", await userContext.getAuthToken());
 
                 const highSchoolResponse = await fetch(highSchoolUrl);
                 if (!highSchoolResponse.ok) {
@@ -75,7 +75,7 @@ const UpdateProfile: React.FC = () => {
         };
 
         fetchProfileAndHighSchools();
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prevData) => ({
@@ -118,7 +118,7 @@ const UpdateProfile: React.FC = () => {
         try {
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
             url.searchParams.append("id", userContext.user.id);
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             
             const response = await fetch(url.toString(), {
                 method: "POST",

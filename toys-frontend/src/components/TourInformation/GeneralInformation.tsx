@@ -1,7 +1,8 @@
 import React from "react";
-import { TourSectionProps } from "../../types/designed.ts";
-import { Box, Text, Group, Badge } from "@mantine/core";
+import {TourSectionProps} from "../../types/designed.ts";
+import {Badge, Box, Group, Text} from "@mantine/core";
 import dayjs from "dayjs";
+import {TourType} from "../../types/enum.ts";
 
 const GeneralInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
   const date = dayjs(props.tour.accepted_time);
@@ -14,7 +15,7 @@ const GeneralInformation: React.FC<TourSectionProps> = (props: TourSectionProps)
       {props.tour.classroom && (
         <Text size="md" fw={700}>Soru-Cevap Odası: <Text span>{props.tour.classroom}</Text></Text>
       )}
-      {props.tour.type === "individual" && props.tour.requested_majors && props.tour.requested_majors.length > 0 && (
+      {props.tour.type === TourType.INDIVIDUAL && props.tour.requested_majors && props.tour.requested_majors.length > 0 && (
         <Box mt="md">
           <Text size="md" fw={700} mb="xs">İstenen Bölümler:</Text>
           <Group gap="xs">

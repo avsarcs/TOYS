@@ -20,6 +20,7 @@ import server.models.schools.University;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -73,13 +74,19 @@ public class Main implements CommandLineRunner {
         tour.setTour_id("tour_-8");
         tour.setTour_status(TourStatus.PENDING_MODIFICATION);
         db.tours.addTour(tour);
+
     }
 
     private static void setRankings(Database db) {
+        System.out.println("Setting rankings");
+        System.out.println("Fetcing hs");
         List<HighschoolRecord> highschools = db.schools.getHighschools();
 
+        System.out.println("Fetcing uni");
         University university = db.universities.getUniversity("bilkent");
 
+        System.out.println("FETCHED");
+        List<HighschoolRecord> finalHighschools = new ArrayList<>();
         SorensenDice alg = new SorensenDice();
         for (HighschoolRecord hs : highschools) {
             try {
@@ -106,7 +113,10 @@ public class Main implements CommandLineRunner {
             } catch (Exception e) {
                 hs.setPriority("1");
             }
+            finalHighschools.add(hs);
         }
-        db.schools.setHighschools(highschools);
+
+        System.out.println("Setting highschools : " + finalHighschools.size());
+        db.schools.setHighschools(finalHighschools);
     }
 }

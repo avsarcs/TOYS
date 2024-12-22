@@ -29,7 +29,7 @@ const ManagePersonnel: React.FC = () => {
 
   const fetchGuides = useCallback(async () => {
     const guidesUrl = new URL(GUIDES_URL);
-    guidesUrl.searchParams.append("auth", userContext.authToken);
+    guidesUrl.searchParams.append("auth", await userContext.getAuthToken());
     guidesUrl.searchParams.append("name", searchQuery);
     
     // Always send type parameter, but as empty if nothing selected
@@ -51,7 +51,7 @@ const ManagePersonnel: React.FC = () => {
     }
 
     setGuides(MockSimpleGuides)
-  }, [userContext.authToken, searchQuery, selectedTypes]);
+  }, [searchQuery, selectedTypes]);
 
   useEffect(() => {
     fetchGuides().catch(console.error);
