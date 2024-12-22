@@ -33,6 +33,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
 
     const [selectedName, setSelectedName] = React.useState<string | null>(null);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(null);
+    const [selectedRanking, setSelectedRanking] = React.useState<string | null>(null);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
     const [cities, setCities] = React.useState(defaultCities);
 
@@ -42,7 +43,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
     }, []);
 
     const handleAddButtonClick = useCallback(async () => {
-        if (!selectedName || !selectedCity || !selectedPriority) {
+        if (!selectedName || !selectedCity || !selectedRanking || !selectedPriority) {
             notifications.show({
                 color: "red",
                 title: "Tüm bilgiler verilmedi!",
@@ -52,34 +53,28 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
         }
 
         try {
-            const url = new URL(TOUR_URL + "/internal/analytics/high-schools/add");
+            const url = new URL(TOUR_URL + "internal/analytics/high-schools/add");
             url.searchParams.append("auth", userContext.authToken);
-            url.searchParams.append("name", selectedName);
-            url.searchParams.append("priority", selectedPriority);
-            url.searchParams.append("city", selectedCity);
 
             const res = await fetch(url, {
                 method: "POST",
+                headers: new Headers({"Content-Type": "application/json"}),
+                body: JSON.stringify({
+                    id: "",
+                    name: selectedName,
+                    location: selectedCity,
+                    ranking: selectedRanking,
+                    priority: selectedPriority
+                })
             });
 
             if(res.ok) {
-                const token = await res.text();
-
-                if(token.length > 0) {
-                    notifications.show({
-                        color: "green",
-                        title: "Lise eklendi!",
-                        message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
-                    });
-                    window.location.reload();
-                }
-                else {
-                    notifications.show({
-                        color: "red",
-                        title: "Hay aksi!",
-                        message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
-                    });
-                }
+                notifications.show({
+                    color: "green",
+                    title: "Lise eklendi!",
+                    message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
+                });
+                window.location.reload();
             }
             else {
                 notifications.show({
@@ -96,7 +91,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    }, [selectedName, selectedCity, selectedPriority, userContext.authToken]);
+    }, [selectedName, selectedCity, selectedRanking, selectedPriority, userContext.authToken]);
 
     React.useEffect(() => {
         getCities().catch((reason) => {
@@ -116,7 +111,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector cities={cities} priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector cities={cities} priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedRanking={setSelectedRanking} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 
@@ -143,7 +138,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

@@ -36,14 +36,18 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string, year: number) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/high-schools/students");
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/students");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("high_school_id", high_school_id);
         url.searchParams.append("year", year.toString());
 
+        console.log("Sent request for high school student details.");
+
         const res = await fetch(url, {
             method: "GET",
         });
+
+        console.log("Received response for high school student details.");
 
         if (!res.ok) {
             throw new Error("Response not OK.");
@@ -119,7 +123,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

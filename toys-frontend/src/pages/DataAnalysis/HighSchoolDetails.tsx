@@ -58,19 +58,25 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/high-schools/details");
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/details");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("high_school_id", high_school_id);
+
+        console.log("Sent request for high school details.");
 
         const res = await fetch(url, {
             method: "GET",
         });
+
+        console.log("Received response for high school details.");
 
         if (!res.ok) {
             throw new Error("Response not OK.");
         }
 
         const resText = await res.text();
+
+        console.log("resText= " + resText);
         if(resText.length === 0) {
             throw new Error("No high school found.");
         }
@@ -147,31 +153,32 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                         </Container>
                     </Group>
 
-                    <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
-                    <ScrollArea.Autosize mah="75vh" mx="auto">
-                        <Space h="xl"/>
-                        {DetailsTableContainer}
-                        <Space h="xl"/>
-                        {ToursTableContainer}
-                        <Space h="xl"/>
-                        {StudentsTableContainer}
-                        <Space h="xl"/>
-                    </ScrollArea.Autosize>
+                <ScrollArea.Autosize mah="75vh" mx="auto">
+                    <Space h="xl"/>
+                    {DetailsTableContainer}
+                    <Space h="xl"/>
+                    {ToursTableContainer}
+                    <Space h="xl"/>
+                    {StudentsTableContainer}
+                    <Space h="xl"/>
+                </ScrollArea.Autosize>
 
             </Modal.Body>
         </Modal.Content>
-        {
+        {editModalOpened && (
             <HighSchoolEdit
                 opened={editModalOpened}
                 highSchoolID={highSchoolID}
                 onClose={() => setEditModalOpened(false)}
                 currentName={highSchoolName}
                 currentCity={data.city}
+                currentRanking={data.ranking.toString()}
                 currentPriority={data.priority.toString()}
             />
-        }
-        {
+        )}
+        {studentDetailsModalOpened && (
             <HighSchoolStudentDetails
                 opened={studentDetailsModalOpened}
                 onClose={() => setStudentDetailsModalOpened(false)}
@@ -179,8 +186,8 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 highSchoolName={highSchoolName}
                 highSchoolID={highSchoolID}
             />
-        }
-        {
+        )}
+        {tourReviewDetailsModalOpened && (
             <HighSchoolTourReviewDetails
                 opened={tourReviewDetailsModalOpened}
                 onClose={() => setTourReviewDetailsModalOpened(false)}
@@ -188,7 +195,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 highSchoolName={highSchoolName}
                 highSchoolID={highSchoolID}
             />
-        }
+        )}
     </Modal.Root>
 
 }

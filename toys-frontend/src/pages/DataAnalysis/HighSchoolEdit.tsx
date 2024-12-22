@@ -27,16 +27,18 @@ interface HighSchoolEditProps {
     highSchoolID: string;
     currentName: string;
     currentCity: string;
+    currentRanking: string;
     currentPriority: string;
     onClose: () => void;
 }
 
-const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, onClose, currentName, currentCity, currentPriority}) => {
+const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, onClose, currentName, currentCity, currentRanking, currentPriority}) => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
+    const [selectedRanking, setSelectedRanking] = React.useState<string | null>(currentRanking);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(currentPriority);
     const [cities, setCities] = React.useState(defaultCities);
 
@@ -55,20 +57,13 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
         if (opened) {
             setSelectedName(currentName);
             setSelectedCity(currentCity);
+            setSelectedPriority(currentRanking)
             setSelectedPriority(currentPriority);
         }
-    }, [opened, currentName, currentCity, currentPriority]);
+    }, [opened, currentName, currentCity, currentRanking, currentPriority]);
 
     const handleEditButtonClick = useCallback(async () => {
-        if (!selectedName || !selectedCity || !selectedPriority) {
-            notifications.show({
-                color: "red",
-                title: "Tüm bilgiler verilmedi!",
-                message: "Liseyi düzenleyebilmek için lütfen tüm bilgileri doldurun."
-            });
-            return;
-        }
-        if (selectedName === currentName && selectedCity === currentCity && selectedPriority === currentPriority) {
+        if (selectedName === currentName && selectedCity === currentCity && selectedRanking === currentRanking && selectedPriority === currentPriority) {
             notifications.show({
                 color: "red",
                 title: "Değişiklik yapılmadı!",
@@ -76,7 +71,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
             });
             return;
         }
-        if (!selectedName || !selectedCity || !selectedPriority) {
+        if (!selectedName || !selectedCity || !selectedRanking || !selectedPriority) {
             notifications.show({
                 color: "red",
                 title: "Tüm bilgiler verilmedi!",
@@ -86,35 +81,28 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
         }
 
         try {
-            const url = new URL(TOUR_URL + "/internal/analytics/high-schools/add");
-            url.searchParams.append("high_school_id", highSchoolID);
+            const url = new URL(TOUR_URL + "internal/analytics/high-schools/edit");
             url.searchParams.append("auth", userContext.authToken);
-            url.searchParams.append("name", selectedName);
-            url.searchParams.append("priority", selectedPriority);
-            url.searchParams.append("city", selectedCity);
 
             const res = await fetch(url, {
                 method: "POST",
+                headers: new Headers({"Content-Type": "application/json"}),
+                body: JSON.stringify({
+                    id: highSchoolID,
+                    name: selectedName,
+                    location: selectedCity,
+                    ranking: selectedRanking,
+                    priority: selectedPriority,
+                })
             });
 
             if(res.ok) {
-                const token = await res.text();
-
-                if(token.length > 0) {
-                    notifications.show({
-                        color: "green",
-                        title: "Lise eklendi!",
-                        message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
-                    });
-                    window.location.reload();
-                }
-                else {
-                    notifications.show({
-                        color: "red",
-                        title: "Hay aksi!",
-                        message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
-                    });
-                }
+                notifications.show({
+                    color: "green",
+                    title: "Lise eklendi!",
+                    message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
+                });
+                window.location.reload();
             }
             else {
                 notifications.show({
@@ -131,7 +119,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    }, [highSchoolID, selectedName, selectedCity, selectedPriority, userContext.authToken]);
+    }, [highSchoolID, selectedName, selectedCity, selectedRanking, selectedPriority, userContext.authToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
@@ -145,7 +133,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity} currentRanking={currentRanking} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedRanking={setSelectedRanking} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 
@@ -172,7 +160,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

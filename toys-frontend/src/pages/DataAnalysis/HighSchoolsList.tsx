@@ -131,7 +131,7 @@ const HighSchoolsList: React.FC = () => {
         {HighSchoolsTableContainer}
         <Space h="xl"/>
         <Space h="xl" />
-        {selectedHighSchoolID && (
+        {selectedHighSchoolID && selectedHighSchoolID != "" && (
             <HighSchoolDetails
                 opened={detailsModalOpened}
                 onClose={() => setDetailsModalOpened(false)}
