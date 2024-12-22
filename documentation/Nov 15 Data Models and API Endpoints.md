@@ -903,9 +903,11 @@ response_type:json
                     user_id=id // who to promote
                 method: post
 
-            ### DEPRECATED ###
-            # USE /internal/user/dashboard with category "PENDING_APPLICATIONS"
             /applications
+		method: get
+		parameters:
+			auth: auth_token
+		response: Guide Applications[]
 
             /fire
                 parameters:
