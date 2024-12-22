@@ -8,6 +8,10 @@ import java.util.Map;
 public class ContactInfo {
     private String email, phone, address;
 
+    public static ContactInfo nonnull() {
+        return new ContactInfo().setEmail("").setAddress("").setPhone("");
+    }
+
     public ContactInfo() {
     }
 

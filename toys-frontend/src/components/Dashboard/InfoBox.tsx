@@ -69,8 +69,6 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
     }
   }, [props.item.event_type, props.item.event_subtype]);
 
-  console.log(props.item);
-
   return (
     <Stack justify="flex-start" align="center">
       <Title order={2} fw={700} className="text-blue-700 font-main">
@@ -89,8 +87,8 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
         <Title order={3} fw={700} className="font-main">{ TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type] }</Title>
         <Space h="sm"/>
         <Card.Section inheritPadding ta="start">
-          <Text size="lg" className="text-gray-600">
-            <Text span fw={700}>Lise:</Text> {props.item.highschool.name}
+          <Text size="lg" className="text-gray-600 max-w-72 break-all break-words whitespace-break-spaces">
+            <Text span fw={700} className="">Lise:</Text> {props.item.highschool.name}
           </Text>
           <Text size="lg" className="text-gray-600">
             <Text span fw={700}>Katılımcı Sayısı:</Text> {props.item.visitor_count}

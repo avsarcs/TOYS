@@ -13,8 +13,26 @@ public class Director extends User {
     public Director() {
         super();
     }
+
+    public static Director nonnull() {
+        return new Director(Guide.nonnull());
+    }
+
     protected Director(Map<String, Object> map) {
         super(map);
+    }
+
+    public Director(Guide guide) {
+        super(guide);
+    }
+
+    public Director(Coordinator coordinator) {
+        super(coordinator);
+    }
+
+    public Director modifyWithDto(Map<String, Object> map) {
+        super.modifyWithDTO(map);
+        return this;
     }
     public static Director fromMap(Map<String, Object> map) {
         return new Director(map);

@@ -15,8 +15,8 @@ public class DDTO_Highschool {
         dto.setName(highschool.getTitle());
         dto.setCity(highschool.getLocation());
         dto.setCity(highschool.getCity());
-        dto.setRanking(highschool.getRanking());
-        dto.setPriority(highschool.getPriority());
+        //dto.setRanking(highschool.getRanking());
+        //dto.setPriority(highschool.getPriority());
         dto.setId(highschool.getId());
         return dto;
     }

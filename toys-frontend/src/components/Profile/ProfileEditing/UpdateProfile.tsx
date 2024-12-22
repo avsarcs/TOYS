@@ -93,8 +93,8 @@ const UpdateProfile: React.FC = () => {
         setIsLoading(true);
         setError(null);
 
-        if (!selectedHighSchool) {
-            setError("Please select a valid high school.");
+        if (!selectedHighSchool && userContext.user.role !== UserRole.DIRECTOR) {
+            setError("Lütfen geçerli bir lise seçin.");
             setIsLoading(false);
             return;
         }
@@ -201,7 +201,7 @@ const UpdateProfile: React.FC = () => {
                 onChange={(value) => handleInputChange("description", value)}
                 editable
             />
-            <Select
+            {userContext.user.role !== UserRole.DIRECTOR ? <Select
                 label="Lise"
                 limit={7}
                 value={selectedHighSchool?.name || ""}
@@ -210,7 +210,7 @@ const UpdateProfile: React.FC = () => {
                 searchable
                 placeholder="Lise seçin"
                 className="mb-4"
-            />
+            /> : null}
 
             {/* Responsible Days */}
             {userContext.user.role === UserRole.ADVISOR ? <MultiSelect

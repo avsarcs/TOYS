@@ -148,7 +148,7 @@ public class AnalyticsStudentsService {
                         yearsSet.add(yearStr);
                         UniversityTableData tableData = year.getTable_data();
                         String scholarship = dept.getScholarship();
-                        String bestRank = tableData.getBest_rank();
+                        String bestRank = tableData.getBest_rank().replace(".", ""); // Remove the dot
 
                         rankings.computeIfAbsent(yearStr, k -> new HashMap<>())
                                 .put(scholarship, Integer.parseInt(bestRank));
