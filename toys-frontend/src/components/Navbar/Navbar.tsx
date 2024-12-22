@@ -88,7 +88,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
-    links.push({ label: 'Rehberler', icon: IconUsers, link: '#' });
+    links.push({ label: 'Rehberler', icon: IconUsers, link: '/guides' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
   }
   else if (user.role === UserRole.GUIDE) {

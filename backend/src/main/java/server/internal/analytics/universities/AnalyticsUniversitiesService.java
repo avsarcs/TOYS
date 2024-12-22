@@ -46,7 +46,7 @@ public class AnalyticsUniversitiesService {
                     Map<String, Object> data = dto.university(uni.getValue());
                     data.put("id", uni.getKey());
                     return data;
-                }).toList()
+                }).collect(Collectors.toSet())
         );
         return response;
     }
@@ -63,7 +63,7 @@ public class AnalyticsUniversitiesService {
         
         // return universities
         response.addAll(
-                universities.entrySet().stream().map(uni -> dto.simpleUniversity(uni.getValue())).toList()
+                universities.entrySet().stream().map(uni -> dto.simpleUniversity(uni.getValue().setId(uni.getKey()))).toList()
         );
         return response;
     }

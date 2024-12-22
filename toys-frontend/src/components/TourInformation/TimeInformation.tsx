@@ -99,7 +99,7 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
 
     if (finalStartTime) {
       const startUrl = new URL(TOUR_START_URL);
-      startUrl.searchParams.append("auth", userContext.authToken);
+      startUrl.searchParams.append("auth", await userContext.getAuthToken());
       startUrl.searchParams.append("tour_id", props.tour.tour_id);
       startUrl.searchParams.append("start_time", finalStartTime);
 
@@ -111,7 +111,7 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
 
     if (finalEndTime) {
       const endUrl = new URL(TOUR_END_URL);
-      endUrl.searchParams.append("auth", userContext.authToken);
+      endUrl.searchParams.append("auth", await userContext.getAuthToken());
       endUrl.searchParams.append("tour_id", props.tour.tour_id);
       endUrl.searchParams.append("end_time", finalEndTime);
 

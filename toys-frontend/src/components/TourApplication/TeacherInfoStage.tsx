@@ -41,7 +41,6 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         const resText = await res.text();
         const resJson: HighschoolData[] = JSON.parse(resText);
 
-        console.log(resJson);
         setSchools(resJson);
         
         // Create unique display names for schools

@@ -260,11 +260,18 @@ public class AnalyticsHighschoolService {
         }
 
         HighschoolRecord hs = database.schools.getHighschoolByID((String) highschool.get("id"));
-
         hs.setPriority((String) highschool.get("priority"));
         hs.setRanking((String) highschool.get("ranking"));
-        hs.setLocation((String) highschool.get("location"));
-        hs.setTitle((String) highschool.get("name"));
+        String location = (String) highschool.get("location");
+        hs.setLocation(location);
+
+        if (location != null && location.contains(" / ")) {
+            String[] locationParts = location.split(" / ");
+            String formattedLocation = locationParts[0] + " - " + locationParts[1];
+            hs.setTitle(highschool.get("name") + " (" + formattedLocation + ")");
+        } else {
+            hs.setTitle(highschool.get("name") + " (" + location + ")");
+        }
 
         database.schools.updateHighschool(hs);
     }
@@ -278,7 +285,13 @@ public class AnalyticsHighschoolService {
         hs.setLocation((String) highschool.get("location"));
         hs.setRanking((String) highschool.get("ranking"));
         hs.setPriority((String) highschool.get("priority"));
-
+        HighschoolEntranceDetails details = new HighschoolEntranceDetails();
+        details.setPercentile("0");
+        details.setDuration("0");
+        details.setLanguage("Turkish");
+        details.setPuan("0");
+        details.setQuota("0");
+        hs.setDetails(details);
         database.schools.addHighschool(hs);
     }
 }

@@ -26,11 +26,20 @@ import { UserRole } from "../../types/enum";
 import { notifications } from "@mantine/notifications";
 
 const TOURS_PER_PAGE = 7;
-const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
+const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/search");
 
 const TourListPage: React.FC = () => {
   const userContext = useContext(UserContext);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([
+    "RECEIVED",
+    "TOYS_WANTS_CHANGE",
+    "APPLICANT_WANTS_CHANGE", 
+    "CONFIRMED",
+    "REJECTED",
+    "CANCELLED",
+    "ONGOING",
+    "FINISHED"
+  ]);
   const [tours, setTours] = useState<SimpleEventData[]>([]);
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
