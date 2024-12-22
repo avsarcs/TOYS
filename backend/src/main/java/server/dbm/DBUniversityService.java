@@ -62,14 +62,29 @@ public class DBUniversityService {
     }
 
     public University getUniversity(String uid) {
+
+        if (MemCache.isValid("uni_" + uid)) {
+            return (University) MemCache.load("uni_" + uid);
+        }
+
         try {
 
             Map<String, Object> data = local.loadMap(universityFilePath);
 
             if (!data.containsKey(uid)) {
-                throw new RuntimeException("University with id " + uid + " not found.");
+                return null;
             }
-            return University.fromSource((Map<String, Object>) data.get(uid));
+
+            University university = null;
+            try {
+                university = University.fromSource((Map<String, Object>) data.get(uid));
+                MemCache.save("uni_" + uid, university);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error parsing University from source.");
+            }
+
+            return university;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,6 +93,8 @@ public class DBUniversityService {
         return null;
     }
     public void updateUniversityRivalry(String uid, boolean isRival) {
+        MemCache.invalidate("uni_" + uid);
+
         try {
             Map<String, Object> data = local.loadMap(universityFilePath);
 

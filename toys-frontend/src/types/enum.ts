@@ -148,13 +148,13 @@ export enum FairStatusText {
   FINISHED = "Tamamlandı"
 }
 export enum DayOfTheWeek {
-  MONDAY = "Monday",
-  TUESDAY = "Tuesday",
-  WEDNESDAY = "Wednesday",
-  THURSDAY = "Thursday",
-  FRIDAY = "Friday",
-  SATURDAY = "Saturday",
-  SUNDAY = "Sunday"
+  MONDAY = "Pazartesi",
+  TUESDAY = "Salı",
+  WEDNESDAY = "Çarşamba",
+  THURSDAY = "Perşembe",
+  FRIDAY = "Cuma",
+  SATURDAY = "Cumartesi",
+  SUNDAY = "Pazar"
 }
 
 export enum TimeSlotStatus {

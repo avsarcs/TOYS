@@ -32,7 +32,7 @@ public class LocalFileService {
 
     public Map<String, Object> loadMap(String file) {
         // Load the content from the file
-        while (!lock.compareAndSet(false, true)) {}
+        while (lock.get()) {}
         ObjectMapper objectMapper = Database.getObjectMapper();
         Map<String, Object> jsonMap = Map.of();
 
