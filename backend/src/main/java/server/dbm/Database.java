@@ -109,8 +109,6 @@ public class Database {
             //firestoreDatabase.collection("edu").document("universities").set("universities", object);
             firestoreDatabase.collection("edu").document("universities").set(Map.of("universities",object));
 
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

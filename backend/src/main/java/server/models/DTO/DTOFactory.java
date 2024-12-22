@@ -567,6 +567,7 @@ public class DTOFactory {
         dto.put("end_time", fair.getEnds_at());
         dto.put("fair_name", fair.getFair_name());
         dto.put("status", fair.getFair_status().name());
+        dto.put("guides", fair.getGuides());
 
         return dto;
     }
