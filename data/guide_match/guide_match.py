@@ -3,6 +3,8 @@ from models import Guide, Highschool, guide_from_dict
 import re
 
 def find_guide_match(guides, school):
+    # for individual tours, make sure to get the selections for majors and 
+    # give extra points to the guides if their majors match to the preferences.
     guide_points = {}
     for guide in guides:
         experience = 0

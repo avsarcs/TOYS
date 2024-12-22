@@ -3,6 +3,7 @@ package server.models.people;
 import server.enums.status.UserStatus;
 import server.enums.roles.UserRole;
 import server.models.Application;
+import server.models.payment.FiscalState;
 import server.models.people.details.AuthInfo;
 import server.models.people.details.Profile;
 
@@ -16,11 +17,22 @@ public class User {
     protected UserStatus status;
 
     private Application application;
+    private FiscalState fiscalState;
 
     protected Profile profile;
 
     public User() {
 
+    }
+
+    public User(User other) {
+        this.role = other.role;
+        this.authInfo = new AuthInfo(other.authInfo);
+        this.application = new Application(other.application);
+        this.profile = new Profile(other.profile);
+        this.bilkent_id = other.bilkent_id;
+        this.status = other.status;
+        this.fiscalState = new FiscalState(other.fiscalState);
     }
     protected User(Map<String,Object> map) {
         this.role = UserRole.valueOf((String) map.get("role"));
@@ -29,15 +41,19 @@ public class User {
         this.profile = Profile.fromMap((Map<String, Object>) map.get("profile"));
         this.bilkent_id = (String) map.get("bilkent_id");
         this.status = UserStatus.valueOf((String) map.get("status"));
+        this.fiscalState = FiscalState.fromMap((Map<String, Object>) map.get("fiscalState"));
     }
     public static User fromMap(Map<String, Object> map) {
-        return new User()
-            .setRole(UserRole.valueOf((String) map.get("role")))
-            .setAuthInfo(AuthInfo.fromMap((Map<String, Object>) map.get("authInfo")))
-            .setApplication(Application.fromMap((Map<String, Object>) map.get("application")))
-            .setProfile(Profile.fromMap((Map<String, Object>) map.get("profile")))
-            .setBilkent_id((String) map.get("bilkent_id"))
-            .setStatus(UserStatus.valueOf((String) map.get("status")));
+        return new User(map);
+    }
+
+    public FiscalState getFiscalState() {
+        return fiscalState;
+    }
+
+    public User setFiscalState(FiscalState fiscalState) {
+        this.fiscalState = fiscalState;
+        return this;
     }
 
     public UserRole getRole() {

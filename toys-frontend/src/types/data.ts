@@ -1,14 +1,30 @@
-import { ApplicantRole, Department, EventType, TourStatus, TourType, UserRole, DayOfTheWeek, TimeSlotStatus } from "./enum.ts";
+import {
+  ApplicantRole,
+  Department,
+  EventType,
+  TourStatus,
+  TourType,
+  UserRole,
+  DayOfTheWeek,
+  TimeSlotStatus,
+  City,
+  FairStatus
+} from "./enum.ts";
 
 export interface LoginData {
   bilkentID: string,
   password: string
 }
 
-export interface TraineeGuideApplicationData {
-  fullname: string,
+export interface SimpleUserData {
   id: string,
-  highschool: HighschoolData
+  name: string,
+  role: UserRole
+}
+export interface TraineeGuideApplicationData {
+  id: string,
+  fullname: string,
+  highschool: HighschoolData,
   email: string,
   phone: string,
   major: string,
@@ -29,11 +45,13 @@ export interface ApplicantData {
 export interface HighschoolData {
   id: string,
   name: string,
-  location: string,
+  location: City,
   priority: number,
+  ranking: number
 }
 
 export interface TourData {
+  tour_id: string,
   type: TourType,
   highschool: HighschoolData,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
@@ -50,15 +68,31 @@ export interface TourData {
   classroom: string,
 }
 
+export interface FairData {
+  fair_id: string,
+  guides: { id: string; full_name: string, highschool: HighschoolData }[],
+  accepted_time: string,
+  status: FairStatus,
+  notes: string,
+  applicant: {
+    fullname: string,
+    role: ApplicantRole,
+    highschool: HighschoolData,
+    email: string,
+    phone: string,
+    notes: string }
+}
+
 export interface ProfileData{
   experience: string,
   id: string,
+  email: string,
   created_at: string,
   updated_at: string,
   fullname: string,
   phone: string,
-  highschool: HighschoolData,
-  schedule: ScheduleData,
+  highschool: HighschoolDataForProfile,
+  schedule: ScheduleStub,
   iban: string,
   bank: string,
   major: string,
@@ -73,7 +107,13 @@ export interface ProfileData{
   profile_description: string,
   advisor_offer: boolean
 }
-
+export interface HighschoolDataForProfile {
+  id: string,
+  name: string
+}
+export interface ScheduleStub {
+  schedule: ScheduleData
+}
 export interface ScheduleData {
   MONDAY: DailyPlan,
   TUESDAY: DailyPlan,
@@ -94,17 +134,27 @@ export interface DailyPlan {
   _1430_1530: TimeSlotStatus,
   _1530_1630: TimeSlotStatus,
   _1630_1730: TimeSlotStatus,
+  _1730_1830: TimeSlotStatus
 }
 
 export interface SimpleEventData {
   event_type: EventType,
+  event_subtype: TourType | "FAIR",
   event_id: string,
+  event_status: TourStatus | FairStatus, 
   highschool: HighschoolData,
-  visitor_count: number,
+  visitor_count?: number,
   accepted_time: string,
   requested_times: string[],
 }
 
+export interface SimpleGuideData {
+  id: string,
+  name: string,
+  role: string,
+  major: string,
+  experience: string,
+}
 interface Recipient {
   id: string;
   name: string;

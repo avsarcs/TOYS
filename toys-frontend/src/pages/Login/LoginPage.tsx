@@ -1,18 +1,36 @@
-import { Image } from "@mantine/core"
+import {Image} from "@mantine/core"
 import LoginForm from "../../components/Login/LoginForm";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import RegisterForm from "../../components/Login/RegisterForm.tsx";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
+import {UserRole} from "../../types/enum.ts";
 
 const LoginPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [registering, setRegistering] = useState(false);
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
-  if(userContext?.isLoggedIn) {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if(userContext.isLoggedIn) {
+      if(searchParams.has("redirect")) {
+        navigate(searchParams.get("redirect") as string);
+      }
+      else {
+        switch(userContext.user.role) {
+          case UserRole.COORDINATOR:
+            navigate("/tours");
+            break;
+          case UserRole.DIRECTOR:
+            navigate("/universitieslist");
+            break;
+          default:
+            navigate("/dashboard");
+        }
+      }
+    }
+  }, [userContext.user.role]);
 
   return (
     <div className={"w-full min-h-screen grid lg:grid-cols-2 grid-cols-1 lg:grid-rows-1 grid-rows-2"}>

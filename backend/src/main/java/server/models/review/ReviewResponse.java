@@ -4,5 +4,6 @@ public enum ReviewResponse {
     APPROVED,
     PARTIAL,
     REJECTED,
-    PENDING
+    PENDING,
+    RECEIVED
 }
