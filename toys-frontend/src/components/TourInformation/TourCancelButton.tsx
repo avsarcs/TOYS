@@ -50,7 +50,7 @@ const TourCancelButton: React.FC<TourButtonProps> = (props: TourButtonProps) => 
   }
 
   return (
-    <Button className={working ? "brightness-75" : ""} size="md" leftSection={working ? <IconLoader2 /> : <IconCircleX/>} onClick={setStatus}>
+    <Button className={working ? "brightness-75" : ""} disabled={working} size="md" leftSection={working ? <IconLoader2 /> : <IconCircleX/>} onClick={setStatus}>
       İptal Et
     </Button>
   );

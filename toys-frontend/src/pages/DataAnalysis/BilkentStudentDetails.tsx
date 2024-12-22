@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Group, Stack} from '@mantine/core';
 import HighSchoolsGraph from "../../components/DataAnalysis/BilkentStudentDetails/HighSchoolsGraph.tsx";
 import CitiesGraph from "../../components/DataAnalysis/BilkentStudentDetails/CitiesGraph.tsx";
@@ -8,6 +8,7 @@ import YearSelector from "../../components/DataAnalysis/BilkentStudentDetails/Ye
 import SearchBar from "../../components/DataAnalysis/BilkentStudentDetails/SearchBar.tsx";
 import HighSchoolsTable from "../../components/DataAnalysis/BilkentStudentDetails/HighSchoolsTable.tsx";
 import DepartmentRankingGraph from "../../components/DataAnalysis/BilkentStudentDetails/DepartmentRankingGraph.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -19,36 +20,147 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
+const defaultHeaderStyle = {
+    backgroundColor: 'white',
+    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+    width: '100%', // Ensure the container takes the full width of its parent
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center', // Center vertically
+    justifyContent: 'center', // Center horizontally
+};
 
-//test data
-const highSchoolsData = {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300, "Kabataş Erkek Lisesi": 200, "Galatasaray Lisesi": 100, "Bornova Anadolu Lisesi": 50, "Kadıköy Anadolu Lisesi": 25};
-const citiesData = {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Konya": 25};
-const rankingData = {"2020": 1000, "2021": 800, "2022": 600, "2023": 400, "2024": 200};
-const departments = ["CS", "EE", "IE"];
-const years = ["2018", "2019", "2020"];
-const departmentData = {"İzmir Fen Lisesi": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "Ankara Fen Lisesi": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "İstanbul Erkek Lisesi": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "Kabataş Erkek Lisesi": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "Galatasaray Lisesi": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}, "Bornova Anadolu Lisesi": {"%0 Burs": 2, "%50 Burs": 60, "%100 Burs": 50}, "Kadıköy Anadolu Lisesi": {"%0 Burs": 1, "%50 Burs": 70, "%100 Burs": 40}};
-const scholarshipData = {"2020": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "2021": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "2022": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "2023": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "2024": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}};
+// Default data
+const defaultHighSchools = {"Yükleniyor...": 1};
+const defaultCities = {"Yükleniyor...": 1};
+const defaultRankings = {"Yükleniyor...": 1};
+const defaultDepartments = ["Yükleniyor..."];
+const defaultYears = ["Yükleniyor..."];
+const defaultDepartmentData = {"Yükleniyor...": {"Yükleniyor...": 1}}
+const defaultScholarshipData = {"Yükleniyor...": {"Yükleniyor...": 1}};
 
 const BilkentStudentDetails: React.FC = () => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
     const [selectedDepartment, setSelectedDepartment] = React.useState<string | null>(null);
-    const [selectedYear, setSelectedYear] = React.useState<string | null>(years[years.length-1]);
     const [selectedSearch, setSelectedSearch] = React.useState<string>('');
+    const [cities, setCities] = React.useState<Record<string, number>>(defaultCities);
+    const [highSchools, setHighSchools] = React.useState<Record<string, number>>(defaultHighSchools);
+    const [rankings, setRankings] = React.useState<Record<string, number>>(defaultRankings);
+    const [departments, setDepartments] = React.useState<string[]>(defaultDepartments);
+    const [years, setYears] = React.useState<string[]>(defaultYears);
+    const [departmentData, setDepartmentData] = React.useState<Record<string, Record<string, number>>>(defaultDepartmentData);
+    const [scholarshipData, setScholarshipData] = React.useState<Record<string, Record<string, number>>>(defaultScholarshipData);
+    const [selectedYear, setSelectedYear] = React.useState<string | null>(years[years.length-1]);
+
+    const getHighSchoolsAndCitiesAndRankingsAndDepartments = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/students/all");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No data found.");
+        }
+
+        const response = JSON.parse(resText);
+        setHighSchools(response["high_schools"]);
+
+        const fetchedCities = response["cities"];
+        delete fetchedCities["Toplam"]
+
+        setCities(fetchedCities);
+
+        setRankings(response["rankings"]);
+
+        const fetchedDepartments = response["departments"];
+        const uniqueDepartments = fetchedDepartments.filter(function(item: string, pos: number) {
+            return fetchedDepartments.indexOf(item) == pos;
+        })
+        setDepartments(uniqueDepartments);
+
+    }, [userContext.getAuthToken]);
+
+    const getYearsAndScholarshipData = useCallback(async (department: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/students/departments");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("department", department);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No data found.");
+        }
+
+        const response = JSON.parse(resText);
+        setYears(response["years"]);
+        setScholarshipData(response["rankings"]);
+    }, [userContext.getAuthToken]);
+
+    const getDepartmentData = useCallback(async (department: string, year: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/students/department_high_schools");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("department", department);
+        url.searchParams.append("year", year);
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No data found.");
+        }
+
+        setDepartmentData((JSON.parse(resText))["students"]);
+    }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        getHighSchoolsAndCitiesAndRankingsAndDepartments().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+
+    React.useEffect(() => {
+        if(selectedDepartment)
+            getYearsAndScholarshipData(selectedDepartment).catch((reason) => {
+                console.error(reason);
+            });
+        setSelectedYear(null);
+    }, [selectedDepartment]);
 
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
-        requestNewData();
+        if(selectedDepartment && selectedYear != null && selectedYear !== "Yükleniyor...")
+            getDepartmentData(selectedDepartment, selectedYear).catch((reason) => {
+                console.error(reason);
+            });
     }, [selectedDepartment, selectedYear]);
 
-    // Function to run when any state variable changes
-    const requestNewData = () => {
-        // Handle data change
-    };
-
-    const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
+    const HeaderTextContainer = <div style={defaultHeaderStyle}>
         <Text style={{fontSize: 'xx-large'}}>
             Bilkent Öğrenci Verisi
         </Text>
-    </Container>
+    </div>
 
     const GraphsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
@@ -56,36 +168,47 @@ const BilkentStudentDetails: React.FC = () => {
             <Group>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
-                        Öğrencilerin Liseleri
+                        Öğrencilerin Liseleri (Son 5 Yıl)
                     </Text>
                     <Space h="xs" />
-                    <HighSchoolsGraph data={highSchoolsData} style={{ margin: '20px', maxHeight: '400px' }} />
+                    <HighSchoolsGraph data={highSchools} style={{ margin: '20px', maxHeight: '400px' }} />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
-                        Öğrencilerin Şehirleri
+                        Öğrencilerin Şehirleri (Son 5 Yıl)
                     </Text>
                     <Space h="xs" />
-                    <CitiesGraph data={citiesData} style={{ margin: '20px', maxHeight: '400px'}}/>
+                    <CitiesGraph data={cities} style={{ margin: '20px', maxHeight: '400px'}}/>
                 </div>
             </Group>
             <Space h="xl"/>
             <div>
                 <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
-                    İlk 10 Liseden Gelen Öğrenciler
+                    İlk 10 Liseden Gelen Öğrenciler (Son 5 Yıl)
                 </Text>
                 <Space h="xs" />
-                <TopStudentsGraph data={rankingData} style={{ margin: '20px', maxHeight: '400px'}}/>
+                <TopStudentsGraph data={rankings} style={{ margin: '20px', maxHeight: '400px'}}/>
             </div>
         </Stack>
         <Space h="xs" />
     </Container>
 
     const dataForTable = (data: Record<string, Record<string, number>>)=> {
-        return Object.entries(data).map(([highSchool, scholarships]) => ({
+        const uniqueScholarships = new Set<string>();
+        Object.values(data).forEach(scholarships => {
+            Object.keys(scholarships).forEach(scholarship => uniqueScholarships.add(scholarship));
+        });
+
+        return Object.entries(data).map(([highSchool, scholarships]) => {
+            const completeScholarships = Array.from(uniqueScholarships).reduce((acc, scholarship) => {
+                acc[scholarship] = scholarships[scholarship] || 0;
+                return acc;
+            }, {} as Record<string, number>);
+            return {
             highSchool,
-            ...scholarships
-        }));
+                ...completeScholarships
+            };
+        });
     };
 
     let ShownDataContainer: JSX.Element;
@@ -110,11 +233,17 @@ const BilkentStudentDetails: React.FC = () => {
                         <SearchBar onSearchChange={setSelectedSearch}/>
                     </div>
                     <div style={{ flex: 0.25, marginLeft: '10px' }}>
-                        <YearSelector years={years} onYearChange={setSelectedYear}/>
+                        <YearSelector years={years} onYearChange={setSelectedYear} selectedYear={selectedYear}/>
                     </div>
                 </div>
                 <Space h="md"/>
+                {selectedYear === null || selectedYear === "Yükleniyor..." ? (
+                    <Text style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 'large' }}>
+                        Lütfen yıl seçin.
+                    </Text>
+                ) : (
                 <HighSchoolsTable data={dataForTable(departmentData)} search={selectedSearch}/>
+                )}
             </div>
         </Stack>
     }
@@ -138,15 +267,13 @@ const BilkentStudentDetails: React.FC = () => {
 
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Space h="xl"/>
         {HeaderTextContainer}
-        <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
         {GraphsContainer}
         <Space h="xl"/>
         {DepartmentDetailsContainer}
         <Space h="xl"/>
-        <Space h="xl" />
+        <Space h="xl"/>
     </div>
 
 }

@@ -24,7 +24,7 @@ const GuideInformation: React.FC<FairSectionProps> = (props: FairSectionProps) =
 
   return (
     <>
-      <Group p="lg" className="bg-gray-100" justify="space-between" align="flex-start">
+      <Group p="lg" className="bg-gray-100" justify="flex-start" align="flex-start">
         <Box>
           <Text size="md" fw={700}>
             Rehberler:
@@ -33,12 +33,12 @@ const GuideInformation: React.FC<FairSectionProps> = (props: FairSectionProps) =
             </Text>
           </Text>
           <Text size="md" fw={700}>
-          userAssignedToFair ? "Bu turda bir rehbersiniz." :
+            {userAssignedToFair ? "Bu turda bir rehbersiniz." : ""}
           </Text>
           <Space h="sm" />
         </Box>
-        <Box>
-          {userContext.user.role === UserRole.COORDINATOR && props.fair.status === FairStatus.CONFIRMED && (
+        <Box style={{ alignSelf: 'flex-start', marginLeft: 0, paddingLeft: 0 }}>
+          {(userContext.user.role === UserRole.COORDINATOR || userContext.user.role === UserRole.DIRECTOR) && props.fair.status === FairStatus.CONFIRMED && (
             <Button
               size="md"
               leftSection={<IconUsers />}
@@ -54,7 +54,7 @@ const GuideInformation: React.FC<FairSectionProps> = (props: FairSectionProps) =
       <ManageGuidesWindow
         opened={manageGuidesOpen}
         onClose={() => setManageGuidesOpen(false)}
-        fair = {props.fair}
+        fair={props.fair}
       />
     </>
   );

@@ -8,6 +8,7 @@ interface RivalButtonProps {
     isRival: boolean; // Whether the university is a rival.
     setIsRival: (isRival: boolean, universityID: string) => void; // Function that sets the university as a rival or not.
     universityID: string; // ID of the associated university.
+    disabled: boolean;
 }
 
 /**
@@ -15,8 +16,9 @@ interface RivalButtonProps {
  * @param isRival Whether the university is a rival.
  * @param setIsRival Function that sets the university as a rival or not.
  * @param universityID ID of the associated university.
+ * @param disabled Whether the button is disabled.
  */
-const RivalButton: React.FC<RivalButtonProps> = ({isRival, setIsRival, universityID}) => {
+const RivalButton: React.FC<RivalButtonProps> = ({isRival, setIsRival, universityID, disabled}) => {
     const [loading, setLoading] = React.useState(false);
 
     return <Button
@@ -31,6 +33,7 @@ const RivalButton: React.FC<RivalButtonProps> = ({isRival, setIsRival, universit
         }}
         loading={loading}
         style={{width: "60%"}}
+        disabled={disabled}
     >
         {isRival ? "Rakiplikten Çıkar" : "Rakip Olarak Ekle"}
     </Button>

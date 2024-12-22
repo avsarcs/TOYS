@@ -7,6 +7,7 @@ import server.dbm.Database;
 import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
+import server.enums.roles.UserRole;
 import server.enums.status.ApplicationStatus;
 import server.enums.status.RequestStatus;
 import server.enums.types.ApplicationType;
@@ -129,6 +130,9 @@ public class DTOFactory {
     public Map<String, Object> tourGuide(String guideID) {
         try {
             Guide guide = database.people.fetchGuides(guideID).get(0);
+            if (guide == null) {
+                guide = database.people.fetchAdvisors(guideID).get(0);
+            }
             return tourGuide(guide);
         } catch (Exception e) {
             System.out.println("Guide with id [" + guideID + "] not found!");
@@ -209,15 +213,23 @@ public class DTOFactory {
 
         dto.put("highschool", highschool(tour.getApplicant().getSchool()));
         List<Guide> guides = database.people.fetchGuides(null);
+        System.out.println("Guides: " + guides);
 
         dto.put("trainee_guides", guides.stream().filter(
                 guide -> guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
         ).map(this::tourGuide).toList());
 
-        dto.put("guides", guides.stream().filter(
+        dto.put("guides", tour.getGuides().stream().map(this::tourGuide).toList());
+
+       /* dto.put("guides", guides.stream().filter(
                 guide -> !guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
         ).filter( gid -> tour.getGuides().contains(gid.getBilkent_id()))
                 .map(this::tourGuide).toList());
+
+        dto.put("guides", guides.stream().filter(
+                guide -> !guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
+        ).filter( gid -> tour.getGuides().contains(gid.getBilkent_id()))
+                .map(this::tourGuide).toList());*/
 
         dto.put("type", tour.getTour_type().name().toLowerCase());
 
@@ -377,7 +389,7 @@ public class DTOFactory {
     public Map<String,Object> simpleEvent(FairApplication application, String id) {
         Map<String, Object> dto = new HashMap<>();
 
-        dto.put("event_type", "TOUR");
+        dto.put("event_type", "FAIR");
         dto.put("event_id", id);
         dto.put("highschool", highschool(application.getApplicant().getSchool()));
         dto.put("accepted_time", "");
@@ -390,6 +402,16 @@ public class DTOFactory {
         return dto;
     }
 
+    public Map<String, Object> simpleUser(User user) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("id", user.getBilkent_id());
+        dto.put("name", user.getProfile().getName());
+        dto.put("role", user.getRole().name());
+        // TODO: add trainee check
+
+        return dto;
+    }
 
     public Map<String, Object> simpleEvent(FairRegistry tour) {
         Map<String, Object> dto = new HashMap<>();

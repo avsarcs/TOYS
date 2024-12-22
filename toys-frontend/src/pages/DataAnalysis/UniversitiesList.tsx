@@ -26,13 +26,13 @@ const defaultHeaderStyle = {
     justifyContent: 'center', // Center horizontally
 };
 
-//test data
+// Default data
 const defaultCities = ["Yükleniyor..."];
 const defaultUniversities = [
     {
         name: "Yükleniyor...",
         city: "Yükleniyor...",
-        isRival: "true",
+        is_rival: true,
         id: ""
     }
 ];
@@ -44,7 +44,7 @@ const UniversitiesList: React.FC = () => {
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
     const [cities, setCities] = React.useState<string[]>(defaultCities);
-    const [universities, setUniversities] = React.useState<{name: string; city: string; isRival: string; id: string}[]>(defaultUniversities);
+    const [universities, setUniversities] = React.useState<{name: string; city: string; is_rival: boolean; id: string}[]>(defaultUniversities);
 
     const getCities = useCallback(async () => {
         const cityNames = Object.values(City);
@@ -76,9 +76,6 @@ const UniversitiesList: React.FC = () => {
         }
 
         const resText = await res.text();
-
-        console.log(resText);
-
         const fetched = (JSON.parse(resText));
 
         if(fetched.length === 0) {
@@ -93,7 +90,7 @@ const UniversitiesList: React.FC = () => {
             const url = new URL(TOUR_URL + "internal/analytics/universities/set-rivalry");
             url.searchParams.append("auth", await userContext.getAuthToken());
             url.searchParams.append("university_id", universityID);
-            url.searchParams.append("value_to_set", isRival ? "true" : "false");
+            url.searchParams.append("value_to_set", isRival ? "false" : "true");
 
             const res = await fetch(url, {
                 method: "POST",
@@ -153,7 +150,6 @@ const UniversitiesList: React.FC = () => {
         <UniversitiesTable data={universities} search={selectedSearch} cities={selectedCities} changeIsRival={updateRival}/>
         <Space h="xs" />
     </Container>
-
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         {HeaderTextContainer}

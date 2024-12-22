@@ -20,6 +20,19 @@ public class Profile {
 
     private Schedule schedule;
 
+    public static Profile nonnull() {
+        return new Profile()
+                .setName("")
+                .setProfile_picture("")
+                .setProfile_description("")
+                .setHighschool_id("")
+                .setMajor(Department.MANAGEMENT)
+                .setSemester(1)
+                .setContact_info(ContactInfo.nonnull())
+                .setPayment_info(PaymentInfo.nonnull())
+                .setSchedule(Schedule.getDefault());
+    }
+
     public Profile() {
     }
 

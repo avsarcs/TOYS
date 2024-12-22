@@ -21,6 +21,30 @@ public class Advisor extends Guide {
     public Advisor() {
 
     }
+
+    public static Advisor nonnull() {
+        return new Advisor(Guide.nonnull()).setResponsibleFor(List.of());
+    }
+
+    public Advisor(Coordinator other) {
+        super(other);
+        this.responsibleFor = List.of();
+    }
+
+    public Advisor(Director director) {
+        super(director);
+        this.responsibleFor = List.of();
+    }
+
+    public Advisor(Advisor other) {
+        super(other);
+        this.responsibleFor = other.responsibleFor;
+    }
+
+    public Advisor(Guide other) {
+        super(other);
+        this.responsibleFor = List.of();
+    }
     protected Advisor(Map<String, Object> map) {
         super(map);
         this.responsibleFor = ((List<String>) map.get("responsibleFor")).stream().map(DayOfWeek::valueOf).toList();

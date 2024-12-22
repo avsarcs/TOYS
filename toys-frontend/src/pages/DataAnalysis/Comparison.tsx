@@ -224,6 +224,161 @@ const Comparison: React.FC = () => {
         setOtherData(fetched);
     }, [userContext.getAuthToken]);
 
+    React.useEffect(() => {
+        if(otherUniversityID != null && otherUniversity == null && !shownWarning) {
+            notifications.show({
+                color: "red",
+                title: "Üniversite bulunamadı.",
+                message: "Belirtilen üniversite bulunamadı. Lütfen tekrar seçim yapın.",
+            });
+            setShownWarning(true);
+        }
+    }, [otherUniversityID, otherUniversity]);
+
+    const getUniversities = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/all-simple");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("No university found.");
+        }
+
+        const uniqueFetched = fetched.filter((item: { id: string }, pos: number) => {
+            return fetched.indexOf(item) == pos && item.id !== "bilkent";
+        });
+
+        setUniversities(uniqueFetched);
+    }, [userContext.getAuthToken]);
+
+    const getBilkentDepartments = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", "bilkent");
+
+        console.log("Sent request for Bilkent's departments.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for Bilkent's departments.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        const uniqueFetched = fetched.filter(function(item: string, pos: number) {
+            return fetched.indexOf(item) == pos;
+        })
+
+        setBilkentDepartments(uniqueFetched);
+    }, [userContext.getAuthToken]);
+
+    const getOtherUniversityDepartments = useCallback(async (university_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", university_id);
+
+        console.log("Sent request for other's departments.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for other's departments.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        const uniqueFetched = fetched.filter(function(item: string, pos: number) {
+            return fetched.indexOf(item) == pos;
+        })
+
+        setOtherDepartments(uniqueFetched);
+    }, [userContext.getAuthToken]);
+
+    const getBilkentData = useCallback(async (department_name: string, university_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/details");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", university_id);
+        url.searchParams.append("department_name", department_name);
+
+        console.log("Sent request for Bilkent's data.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for Bilkent's data.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setBilkentData(fetched);
+    }, [userContext.getAuthToken]);
+
+    const getOtherData = useCallback(async (department_name: string, university_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/details");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", university_id);
+        url.searchParams.append("department_name", department_name);
+
+        console.log("Sent request for other's data.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for other's data.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = JSON.parse(resText)
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setOtherData(fetched);
+    }, [userContext.getAuthToken]);
+
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
         getUniversities().catch((reason) => {

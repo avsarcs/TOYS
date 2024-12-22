@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Stack} from '@mantine/core';
 import DaysGraph from "../../components/TourStatistics/DaysGraph.tsx";
 import StatusGraph from "../../components/TourStatistics/StatusGraph.tsx";
 import CitiesGraph from "../../components/TourStatistics/CitiesGraph.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -14,18 +15,96 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
+const defaultHeaderStyle = {
+    backgroundColor: 'white',
+    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+    width: '100%', // Ensure the container takes the full width of its parent
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center', // Center vertically
+    justifyContent: 'center', // Center horizontally
+};
 
 //test data
-const daysData = {"Pazartesi": 1000, "Salı": 800, "Çarşamba": 600, "Perşembe": 400, "Cuma": 200, "Cumartesi": 100, "Pazar": 50};
-const statusData = {"Tamamlandı": 1000, "Beklemede": 600, "İptal Edildi": 400};
-const citiesData = {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Konya": 25};
+const defaultDays: { [key: string]: number } = {"Yükleniyor...": 1};
+const defaultStatuses: { [key: string]: number } = {"Yükleniyor...": 1};
+const defaultCities: { [key: string]: number } = {"Yükleniyor...": 1};
 
 const BilkentStudentDetails: React.FC = () => {
-    const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
+    const [days, setDays] = React.useState(defaultDays);
+    const [statuses, setStatuses] = React.useState(defaultStatuses);
+    const [cities, setCities] = React.useState(defaultCities);
+
+    const getDaysAndStatusesAndCities = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/tours");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+
+        console.log("Sent request for tour statistics.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for tour statistics.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No university found.");
+        }
+
+        const response = JSON.parse(resText);
+
+        const unorderedDaysData = response["days"];
+        const orderedDaysData = {
+            "Pazartesi": unorderedDaysData["MONDAY"],
+            "Salı": unorderedDaysData["TUESDAY"],
+            "Çarşamba": unorderedDaysData["WEDNESDAY"],
+            "Perşembe": unorderedDaysData["THURSDAY"],
+            "Cuma": unorderedDaysData["FRIDAY"],
+            "Cumartesi": unorderedDaysData["SATURDAY"],
+            "Pazar": unorderedDaysData["SUNDAY"]
+        };
+
+        const unorderedStatusData = response["statuses"];
+        const orderedStatusData = {
+            "Alındı": unorderedStatusData["RECEIVED"],
+            "Değişiklik Bekliyor": unorderedStatusData["PENDING_MODIFICATION"],
+            "İptal Edildi": unorderedStatusData["CANCELLED"],
+            "Reddedildi": unorderedStatusData["REJECTED"],
+            "Onaylandı": unorderedStatusData["CONFIRMED"],
+            "Devam Ediyor": unorderedStatusData["ONGOING"],
+            "Tamamlandı": unorderedStatusData["FINISHED"],
+        }
+
+        const unorderedCitiesData = response["cities"];
+        const orderedCitiesData: { [key: string]: number } = Object.fromEntries(
+            Object.entries(unorderedCitiesData).map(([key, value]) => [key.split(" ")[0], value as number])
+        );
+
+        setDays(orderedDaysData);
+        setStatuses(orderedStatusData)
+        setCities(orderedCitiesData);
+
+    }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        getDaysAndStatusesAndCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+
+    const HeaderTextContainer = <div style={defaultHeaderStyle}>
         <Text style={{fontSize: 'xx-large'}}>
             Tur İstatistikleri
         </Text>
-    </Container>
+    </div>
 
     const GraphsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
@@ -35,7 +114,7 @@ const BilkentStudentDetails: React.FC = () => {
                     Turların Düzenlendiği Günler
                 </Text>
                 <Space h="xs"/>
-                <DaysGraph data={daysData} style={{margin: '20px', maxHeight: '400px'}}/>
+                <DaysGraph data={days} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
             <Space h="xl"/>
             <div>
@@ -43,7 +122,7 @@ const BilkentStudentDetails: React.FC = () => {
                     Turların Durumları
                 </Text>
                 <Space h="xs"/>
-                <StatusGraph data={statusData} style={{margin: '20px', maxHeight: '400px'}}/>
+                <StatusGraph data={statuses} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
             <Space h="xl"/>
             <div>
@@ -51,16 +130,14 @@ const BilkentStudentDetails: React.FC = () => {
                     Tur Gruplarının Geldiği Şehirler
                 </Text>
                 <Space h="xs"/>
-                <CitiesGraph data={citiesData} style={{margin: '20px', maxHeight: '400px'}}/>
+                <CitiesGraph data={cities} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
         </Stack>
         <Space h="xs" />
     </Container>
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Space h="xl"/>
         {HeaderTextContainer}
-        <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
         {GraphsContainer}
         <Space h="xl"/>
