@@ -296,8 +296,6 @@ const Comparison: React.FC = () => {
         });
 
         setData(combinedData);
-
-        console.log(combinedData);
     }, [bilkentData, otherData]);
 
     const HeaderTextContainer = <div style={defaultHeaderStyle}>
@@ -345,7 +343,6 @@ const Comparison: React.FC = () => {
     let ShownDataContainer: JSX.Element;
 
     if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment && Object.keys(data).length > 0) {
-        console.log(data)
         ShownDataContainer = <div>
             {ComparisonTableContainer}
             <Space h="xl"/>
