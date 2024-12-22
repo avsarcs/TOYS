@@ -170,12 +170,30 @@ public class AnalyticsStudentsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
 
-        Map<String, Object> response = new HashMap<>();
+        University bilkent = database.universities.getUniversity("bilkent");
+        SorensenDice sorensenDice = new SorensenDice();
+        Map<String, Map<String, Integer>> highSchoolCounts = new HashMap<>();
 
-        // Fetch students data
-        Map<String, Map<String, Integer>> students = new HashMap<>();
-        // Add logic to fetch and populate students map
-        response.put("students", students);
+        bilkent.getDepartments().stream()
+                .filter(dept -> sorensenDice.similarity(dept.getName().toLowerCase(), department.toLowerCase()) > 0.9)
+                .forEach(dept -> {
+                    dept.getYears().stream()
+                            .filter(y -> y.getYear().equals(year))
+                            .forEach(y -> {
+                                y.getHighschool_attendee_count().forEach(record -> {
+                                    String highSchoolName = record.getSchool_name();
+                                    String scholarship = dept.getScholarship();
+                                    // MAY CAUSE PROBLEMS
+                                    int total = (int) record.getTotal();
+
+                                    highSchoolCounts.computeIfAbsent(highSchoolName, k -> new HashMap<>())
+                                            .merge(scholarship, total, Integer::sum);
+                                });
+                            });
+                });
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("students", highSchoolCounts);
 
         return response;
     }
