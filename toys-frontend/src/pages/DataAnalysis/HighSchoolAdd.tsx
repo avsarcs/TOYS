@@ -91,7 +91,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    }, [selectedName, selectedCity, selectedRanking, selectedPriority, userContext.authToken]);
+    }, [selectedName, selectedCity, selectedRanking, selectedPriority, userContext.getAuthToken]);
 
     React.useEffect(() => {
         getCities().catch((reason) => {

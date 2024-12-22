@@ -37,7 +37,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
 
     const getData = useCallback(async (high_school_id: string, year: number) => {
         const url = new URL(TOUR_URL + "internal/analytics/high-schools/students");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("high_school_id", high_school_id);
         url.searchParams.append("year", year.toString());
 
@@ -59,7 +59,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
         }
 
         setData(JSON.parse(resText));
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getData(highSchoolID, year).catch((reason) => {

@@ -59,7 +59,7 @@ const HighSchoolsList: React.FC = () => {
 
     const getHighSchools = useCallback(async () => {
         const url = new URL(TOUR_URL + "internal/analytics/high-schools/all-dto");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
 
         console.log("Sent request for high schools list.");
 
@@ -83,7 +83,7 @@ const HighSchoolsList: React.FC = () => {
         }
 
         setHighSchools(fetched);
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getCities().catch((reason) => {

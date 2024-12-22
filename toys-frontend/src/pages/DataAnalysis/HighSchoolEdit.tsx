@@ -82,7 +82,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
 
         try {
             const url = new URL(TOUR_URL + "internal/analytics/high-schools/edit");
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
 
             const res = await fetch(url, {
                 method: "POST",
@@ -119,7 +119,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    }, [highSchoolID, selectedName, selectedCity, selectedRanking, selectedPriority, userContext.authToken]);
+    }, [highSchoolID, selectedName, selectedCity, selectedRanking, selectedPriority, userContext.getAuthToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
