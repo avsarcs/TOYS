@@ -93,7 +93,7 @@ const UniversitiesList: React.FC = () => {
             const url = new URL(TOUR_URL + "internal/analytics/universities/set-rivalry");
             url.searchParams.append("auth", await userContext.getAuthToken());
             url.searchParams.append("university_id", universityID);
-            url.searchParams.append("value_to_set", isRival ? "true" : "false");
+            url.searchParams.append("value_to_set", isRival ? "false" : "true");
 
             const res = await fetch(url, {
                 method: "POST",
