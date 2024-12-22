@@ -1,9 +1,26 @@
 import React, { useContext, useState } from "react";
 import { TourSectionProps } from "../../types/designed.ts";
-import { Box, Button, Group, Space, Text, Modal, TextInput } from "@mantine/core";
+import { 
+  Box, 
+  Button, 
+  Group, 
+  Space, 
+  Text, 
+  Modal,
+  TextInput,
+  Paper,
+  Divider,
+  Alert,
+  Badge
+} from "@mantine/core";
 import { UserContext } from "../../context/UserContext.tsx";
 import { UserRole } from "../../types/enum.ts";
-import { IconClock } from "@tabler/icons-react";
+import { 
+  IconClock, 
+  IconClockPlay, 
+  IconClockStop,
+  IconAlertCircle 
+} from "@tabler/icons-react";
 
 const TOUR_START_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/start-tour");
 const TOUR_END_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/end-tour");
@@ -141,68 +158,114 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
   };
 
   return (
-    <Box p="lg">
-      <Group>
-        <Text size="md" span fw={700}>Başladığı saat:</Text>
-        <Text>
-          {started ? new Date(props.tour.actual_start_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : "--:--"}
-        </Text>
-        {!started && <Text size="md" c="red" span fw={500}>Tur henüz başlamadı.</Text>}
+    <Paper shadow="sm" p="xl" radius="md" withBorder>
+      <Group gap="xl" mb="lg">
+        <Group gap="xs">
+          <IconClockPlay size={24} className="text-blue-600" />
+          <Box>
+            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Başlangıç Saati</Text>
+            <Group gap="md">
+              <Text size="lg" fw={700} className="text-gray-900">
+                {started ? 
+                  new Date(props.tour.actual_start_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) 
+                  : "--:--"}
+              </Text>
+              {!started && (
+                <Badge color="red" variant="light" size="lg">
+                  Başlamadı
+                </Badge>
+              )}
+            </Group>
+          </Box>
+        </Group>
+
+        <Divider orientation="vertical" />
+
+        <Group gap="xs">
+          <IconClockStop size={24} className="text-blue-600" />
+          <Box>
+            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Bitiş Saati</Text>
+            <Group gap="md">
+              <Text size="lg" fw={700} className="text-gray-900">
+                {ended ? 
+                  new Date(props.tour.actual_end_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) 
+                  : "--:--"}
+              </Text>
+              {!ended && (
+                <Badge color="red" variant="light" size="lg">
+                  Bitmedi
+                </Badge>
+              )}
+            </Group>
+          </Box>
+        </Group>
       </Group>
-      <Space h="md"/>
-      <Group>
-        <Text size="md" span fw={700}>Bittiği saat:</Text>
-        <Text>
-          {ended ? new Date(props.tour.actual_end_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : "--:--"}
-        </Text>
-        {!ended && <Text size="md" c="red" span fw={500}>Tur henüz bitmedi.</Text>}
-      </Group>
-      <Space h="md"/>
-      
+
       {isAdvisorOrAbove && (
         <>
-          <Group>
-            <TextInput
-              label="Başlangıç Saati"
-              placeholder="HH:MM"
-              value={startTime}
-              onChange={(e) => handleTimeChange(e.currentTarget.value, true)}
-              onBlur={(e) => setStartTime(handleTimeBlur(e.currentTarget.value))}
-              error={timeError}
-              leftSection={<IconClock size={16} />}
-              w={150}
-            />
-            <TextInput
-              label="Bitiş Saati"
-              placeholder="HH:MM"
-              value={endTime}
-              onChange={(e) => handleTimeChange(e.currentTarget.value, false)}
-              onBlur={(e) => setEndTime(handleTimeBlur(e.currentTarget.value))}
-              error={timeError}
-              leftSection={<IconClock size={16} />}
-              w={150}
-            />
-          </Group>
-          <Space h="md" />
-          <Button
-            size="md"
-            onClick={handleTimeUpdate}
-            disabled={!startTime || !endTime || !!timeError}
-          >
-            Tur Başlangıç ve Bitiş Saatlerini Güncelle
-          </Button>
+          <Divider my="lg" />
+          
+          {timeError && (
+            <Alert 
+              icon={<IconAlertCircle size={16} />}
+              color="red" 
+              variant="light" 
+              mb="md"
+            >
+              {timeError}
+            </Alert>
+          )}
+
+          <Box className="bg-gray-50 p-4 rounded-md">
+            <Text size="sm" fw={600} className="text-gray-800" mb="md">
+              Tur Zamanlarını Güncelle
+            </Text>
+            <Group gap="lg" align="flex-end">
+              <TextInput
+                label={<Text fw={500} className="text-gray-700">Başlangıç</Text>}
+                placeholder="HH:MM"
+                value={startTime}
+                onChange={(e) => handleTimeChange(e.currentTarget.value, true)}
+                onBlur={(e) => setStartTime(handleTimeBlur(e.currentTarget.value))}
+                leftSection={<IconClock size={16} className="text-blue-600" />}
+                w={150}
+                size="md"
+              />
+              <TextInput
+                label={<Text fw={500} className="text-gray-700">Bitiş</Text>}
+                placeholder="HH:MM"
+                value={endTime}
+                onChange={(e) => handleTimeChange(e.currentTarget.value, false)}
+                onBlur={(e) => setEndTime(handleTimeBlur(e.currentTarget.value))}
+                leftSection={<IconClock size={16} className="text-blue-600" />}
+                w={150}
+                size="md"
+              />
+              <Button
+                variant="light"
+                size="md"
+                onClick={handleTimeUpdate}
+                disabled={!startTime || !endTime || !!timeError}
+                leftSection={<IconClock size={16} />}
+                className="bg-blue-50 hover:bg-blue-100"
+              >
+                Zamanları Güncelle
+              </Button>
+            </Group>
+          </Box>
         </>
       )}
 
       <Modal
         opened={showResult}
         onClose={() => setShowResult(false)}
-        title="Güncelleme Sonucu"
+        title={<Text fw={700} className="text-gray-900">Güncelleme Sonucu</Text>}
         centered
+        size="md"
       >
-        <Text>{getResultMessage()}</Text>
+        <Text fw={500} className="text-gray-800">{getResultMessage()}</Text>
       </Modal>
-    </Box>
+    </Paper>
   );
 }
 

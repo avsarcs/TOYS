@@ -79,8 +79,6 @@ const TourPage: React.FC = () => {
               <Stack gap="0" className="bg-gray-50">
                 <GeneralInformation tour={tour} refreshTour={refreshTour} />
                 <Divider className="border-gray-200" />
-                <ApplicantInformation tour={tour} refreshTour={refreshTour} />
-                <Divider className="border-gray-200" />
                 {
                   tour.status === TourStatus.CONFIRMED || tour.status === TourStatus.FINISHED
                   ?

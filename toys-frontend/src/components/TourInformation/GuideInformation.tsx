@@ -1,110 +1,102 @@
-import React, { useContext, useState } from "react";
-import { TourSectionProps } from "../../types/designed.ts";
-import { Box, Button, Group, Space, Text } from "@mantine/core";
-import { IconUserPlus, IconUsers } from "@tabler/icons-react";
-import { UserContext } from "../../context/UserContext.tsx";
-import {TourStatus, UserRole} from "../../types/enum.ts";
-import ManageGuidesWindow from "./ManageGuidesWindow.tsx";
-import {notifications} from "@mantine/notifications";
+import React, { useContext, useState } from 'react';
+import { Box, Card, Text, Group, Title, Divider, Button, Avatar, Tooltip, Stack } from '@mantine/core';
+import { IconUsers, IconUserCheck } from '@tabler/icons-react';
+import { UserContext } from "../../context/UserContext";
+import { TourStatus, UserRole } from "../../types/enum";
+import ManageGuidesWindow from "./ManageGuidesWindow";
+import { TourData } from "../../types/data";
+
+// Define the TourSectionProps interface
+interface TourSectionProps {
+  tour: TourData;
+  refreshTour: () => void;
+}
+
+// Define interface for GuideSection props
+interface GuideSectionProps {
+  title: string;
+  guides: {
+    id: string;
+    full_name: string;
+    highschool: {
+      id: string;
+      name: string;
+    };
+  }[];
+  color?: string;
+}
 
 const VISITOR_PER_GUIDE = 60;
 
-const ENROLL_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours/enroll");
-const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
+export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour }) => {
   const userContext = useContext(UserContext);
   const [manageGuidesOpen, setManageGuidesOpen] = useState(false);
+  const totalGuidesNeeded = Math.ceil(tour.visitor_count / VISITOR_PER_GUIDE);
 
-  const totalGuidesNeeded = Math.ceil(props.tour.visitor_count / VISITOR_PER_GUIDE);
-  const missingGuides = totalGuidesNeeded - props.tour.guides.length;
-  const userAssignedToTour = props.tour.guides.some((value) => value.id === userContext.user.id);
-
-  const guideListText =
-    props.tour.guides.length > 0
-      ? props.tour.guides.map((value) => value.full_name).join(", ")
-      : "Kimse";
-
-  const guideListColor = props.tour.guides.length > 0 ? "dark" : "red";
-
-  const enrollInTour = async () => {
-    const enrollUrl = new URL(ENROLL_URL);
-
-    enrollUrl.searchParams.append("auth", await userContext.getAuthToken());
-    enrollUrl.searchParams.append("tid", props.tour.tour_id);
-
-    try {
-      const enrollRes = await fetch(enrollUrl, {
-        method: "POST",
-      });
-
-      if (!enrollRes.ok) {
-        notifications.show({
-          color: "green",
-          title: "İşlem başarılı.",
-          message: "Başarıyla tura katıldınız."
-        });
-        props.refreshTour();
-      }
-      else {
-        notifications.show({
-          color: "red",
-          title: "Hay aksi!",
-          message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
-        });
-      }
-    }
-    catch (e) {
-      console.error(e);
-      notifications.show({
-        color: "red",
-        title: "Hay aksi!",
-        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
-      });
-    }
-  }
-
-  //TODO CHECK IF USER IS INVITED TO TOUR WITH DASHBOARD
-  //// MOVE THAT STUFF OUTSIDE POSSBLY MAYBBE
+  const GuideSection: React.FC<GuideSectionProps> = ({ title, guides, color = "blue" }) => (
+    <Box>
+      <Text size="sm" fw={600} c="gray.6" mb="xs">{title}</Text>
+      {guides.length > 0 ? (
+        <Group gap="sm">
+          {guides.map((guide, index) => (
+            <Tooltip key={index} label={`${guide.full_name} (${guide.highschool.name})`}>
+              <Card withBorder p="xs" className={`bg-${color}-50`}>
+                <Group gap="sm">
+                  <Avatar size="sm" color={color} radius="xl">
+                    {guide.full_name.charAt(0)}
+                  </Avatar>
+                  <Box>
+                    <Text size="sm" fw={500}>{guide.full_name}</Text>
+                    <Text size="xs" c="gray.6">{guide.highschool.name}</Text>
+                  </Box>
+                </Group>
+              </Card>
+            </Tooltip>
+          ))}
+        </Group>
+      ) : (
+        <Text c="gray.5" fz="sm" fs="italic">Henüz atanmamış</Text>
+      )}
+    </Box>
+  );
 
   return (
-    <>
-      <Group p="lg" className="bg-gray-100" justify="space-between" align="flex-start">
-        <Box>
-          <Text size="md" fw={700}>
-            Rehberler:
-            <Text c={guideListColor} span>
-              &nbsp;{guideListText}
-            </Text>
-          </Text>
-          <Text size="md" fw={700}>
-          {
-            userAssignedToTour ? "Bu turda bir rehbersiniz." :
-              (missingGuides > 0 ? `Bu tura rehber olabilirsiniz.` :
-                "Bu turda rehber olmanız için yer yok.")
-          }
-          </Text>
-          <Space h="sm" />
-        </Box>
-        <Box>
-          {userContext.user.role === UserRole.ADVISOR && props.tour.status === TourStatus.CONFIRMED && (
+    <Card withBorder radius="md" className="bg-white shadow-sm">
+      <Card.Section p="md" className="bg-blue-50">
+        <Group justify="space-between">
+          <Group gap="sm">
+            <IconUsers size={24} className="text-blue-600" />
+            <Title order={3} className="text-blue-800">Rehber Bilgileri</Title>
+          </Group>
+          {userContext.user.role === UserRole.ADVISOR && tour.status === TourStatus.CONFIRMED && (
             <Button
-              size="md"
-              leftSection={<IconUsers />}
+              variant="light"
+              leftSection={<IconUserCheck size={18} />}
               onClick={() => setManageGuidesOpen(true)}
             >
               Rehberleri Yönet
             </Button>
           )}
+        </Group>
+      </Card.Section>
+      <Stack p="md" gap="lg">
+        <GuideSection title="Rehberler" guides={tour.guides} color="blue" />
+        <Divider variant="dashed" />
+        <GuideSection title="Amatör Rehberler" guides={tour.trainee_guides} color="cyan" />
+       
+        <Box>
+          <Text size="sm" c="gray.6">
+            Bu tur için gereken toplam rehber sayısı: {totalGuidesNeeded}
+          </Text>
         </Box>
-      </Group>
-
-      {/* Manage Guides Popup */}
+      </Stack>
       <ManageGuidesWindow
         opened={manageGuidesOpen}
         onClose={() => setManageGuidesOpen(false)}
-        tour = {props.tour}
+        tour={tour}
         totalGuidesNeeded={totalGuidesNeeded}
       />
-    </>
+    </Card>
   );
 };
 
