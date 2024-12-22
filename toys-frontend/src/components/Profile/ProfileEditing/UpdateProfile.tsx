@@ -3,7 +3,7 @@ import {Avatar, Button, FileButton, Loader, MultiSelect, Select} from "@mantine/
 import EditProfileField from "./EditProfileField";
 import {UserContext} from "../../../context/UserContext";
 import {HighschoolData, HighschoolDataForProfile} from "../../../types/data";
-import {UserRole} from "../../../types/enum.ts";
+import {DayOfTheWeek, UserRole} from "../../../types/enum.ts";
 import {notifications} from "@mantine/notifications";
 
 const UpdateProfile: React.FC = () => {
@@ -203,9 +203,10 @@ const UpdateProfile: React.FC = () => {
             />
             <Select
                 label="Lise"
+                limit={7}
                 value={selectedHighSchool?.name || ""}
                 onChange={(value) => handleHighSchoolChange(value || "")}
-                data={highSchoolOptions.map((school) => school.name)}
+                data={[...new Set(highSchoolOptions.map((school) => school.name))]}
                 searchable
                 placeholder="Lise seçin"
                 className="mb-4"
@@ -214,7 +215,7 @@ const UpdateProfile: React.FC = () => {
             {/* Responsible Days */}
             {userContext.user.role === UserRole.ADVISOR ? <MultiSelect
                 label="Sorumlu Günler"
-                data={["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]}
+                data={Object.entries(DayOfTheWeek).map(([key, value]) => ({ label: value, value: key }))}
                 value={formData.responsible_days}
                 onChange={(value) => handleInputChange("responsible_days", value)}
                 placeholder="Sorumlu günler seçin"
