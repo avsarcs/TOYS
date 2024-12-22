@@ -84,7 +84,12 @@ const FairsList: React.FC = () => {
         })),
       ];
   
-      setFairs(normalizedFairs);
+      // Remove duplicates by event_id
+      const uniqueFairs = Array.from(
+        new Map(normalizedFairs.map((fair) => [fair.event_id, fair])).values()
+      );
+  
+      setFairs(uniqueFairs);
       setPage(1);
     } catch (error) {
       console.error("Error fetching fairs or pending applications:", error);
@@ -92,6 +97,7 @@ const FairsList: React.FC = () => {
       setLoading(false);
     }
   };
+  
   
 
   useEffect(() => {
