@@ -27,7 +27,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/available-guides");
       url.searchParams.append("time", tour.accepted_time);
       url.searchParams.append("type", type);
-      url.searchParams.append("auth", await userContext.getAuthToken());
+      url.searchParams.append("auth", userContext.authToken);
 
       const response = await fetch(url, { method: "GET" });
       if (!response.ok)
@@ -56,7 +56,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       fetchGuides("GUIDE");
       setActiveStage("GUIDE");
     }
-  }, [opened, tour.accepted_time]);
+  }, [opened, tour.accepted_time, userContext.authToken]);
 
   // Toggle guide selection
   const toggleGuideSelection = (guide: SimpleGuideData) => {
@@ -98,14 +98,14 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       // Remove previous guides and trainees
       urlRemove.searchParams.append("tid", tour.tour_id);
       urlRemove.searchParams.append("guides", guideIdsToRemove);
-      urlRemove.searchParams.append("auth", await userContext.getAuthToken());
+      urlRemove.searchParams.append("auth", userContext.authToken);
 
       await fetch(urlRemove.toString(), { method: "POST" });
 
       // Add new guides and trainees
       urlInvite.searchParams.append("tid", tour.tour_id);
       urlInvite.searchParams.append("guides", guideIdsToInvite);
-      urlInvite.searchParams.append("auth", await userContext.getAuthToken());
+      urlInvite.searchParams.append("auth", userContext.authToken);
 
       await fetch(urlInvite.toString(), { method: "POST" });
 

@@ -12,10 +12,10 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { UserContext } from '../../context/UserContext';
-import { UserRole } from '../../types/enum';
+import { UserRole, TourStatus } from '../../types/enum';
+import { TourData } from '../../types/data';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
-import { TourData } from '../../types/data';
 
 dayjs.locale('tr');
 
@@ -32,15 +32,19 @@ const TIME_SLOTS: TimeSlot[] = [
   { start: '15:00', end: '17:00' },
 ];
 
-const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () => void}) => {
-  const { user, getAuthToken } = useContext(UserContext);
+interface TourStatusActionsProps {
+  tour: TourData;
+  onRefresh: () => void;
+}
+
+const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }) => {
+  const { user, authToken } = useContext(UserContext);
   const [opened, { open, close }] = useDisclosure(false);
   const [viewTimesOpened, { open: openViewTimes, close: closeViewTimes }] = useDisclosure(false);
   const [modificationOpened, { open: openModification, close: closeModification }] = useDisclosure(false);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedModificationTimes, setSelectedModificationTimes] = useState<string[]>([]);
-
   const [visitorCount, setVisitorCount] = useState<number>(tour.visitor_count);
 
   const canManageTour = user.role === UserRole.ADVISOR ||
@@ -51,13 +55,20 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
     return null;
   }
 
-  const handleConfirm = async () => {
+  const formatTimeDisplay = (timeString: string): string => {
+    const date = dayjs(timeString);
+    const startTime = date.format('HH:mm');
+    const endTime = date.add(2, 'hour').format('HH:mm');
+    return `${date.format('D MMMM YYYY')}, ${startTime} - ${endTime}`;
+  };
+
+  const handleConfirm = () => {
     open();
   };
 
   const handleConfirmWithTime = async () => {
     const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", await getAuthToken());
+    respondUrl.searchParams.append("auth", authToken);
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", selectedTime);
 
@@ -67,14 +78,14 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
 
     if (res.ok) {
       close();
-      closeViewTimes(); // Close the view times modal if open
+      closeViewTimes();
       onRefresh();
     }
   };
 
   const handleReject = async () => {
     const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", await getAuthToken());
+    respondUrl.searchParams.append("auth", authToken);
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", "");
 
@@ -83,7 +94,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
     });
 
     if (res.ok) {
-      closeViewTimes(); // Close the view times modal if open
+      closeViewTimes();
       onRefresh();
     }
   };
@@ -108,21 +119,11 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
     });
   };
 
-  const isTimeSlotSelected = (timeSlot: TimeSlot): boolean => {
-    if (!selectedDate) return false;
-    const year = selectedDate.getFullYear();
-    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(selectedDate.getDate()).padStart(2, '0');
-    const timeString = `${year}-${month}-${day}T${timeSlot.start}:00+03:00`;
-    return selectedModificationTimes.includes(timeString);
-  };
-
-  const handleRequestChange = async () => {
+  const handleRequestChange = () => {
     openModification();
   };
 
   const handleSubmitModification = async () => {
-    // Create the base application model with common fields
     const baseApplication = {
       highschool: tour.highschool,
       requested_times: selectedModificationTimes,
@@ -130,17 +131,15 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
       applicant: tour.applicant
     };
 
-    // Create the specific application model based on tour type
     const applicationModel = tour.type === "INDIVIDUAL"
       ? {
           ...baseApplication,
-          requested_majors: (tour as TourData).requested_majors
+          requested_majors: tour.requested_majors
         }
       : baseApplication;
 
-    // Make request to the new endpoint
     const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
-    modUrl.searchParams.append("auth", await getAuthToken());
+    modUrl.searchParams.append("auth", authToken);
     modUrl.searchParams.append("tour_id", tour.tour_id);
 
     const res = await fetch(modUrl, {
@@ -162,7 +161,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
 
   const handleCancel = async () => {
     const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", await getAuthToken());
+    respondUrl.searchParams.append("auth", authToken);
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", "");
 
@@ -175,12 +174,13 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
     }
   };
 
-  const formatTimeDisplay = (timeString: string): string => {
-    const date = dayjs(timeString);
-    const startTime = date.format('HH:mm');
-    const endTime = date.add(2, 'hour').format('HH:mm');
-
-    return `${date.format('D MMMM YYYY')}, ${startTime} - ${endTime}`;
+  const isTimeSlotSelected = (timeSlot: TimeSlot): boolean => {
+    if (!selectedDate) return false;
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const timeString = `${year}-${month}-${day}T${timeSlot.start}:00+03:00`;
+    return selectedModificationTimes.includes(timeString);
   };
 
   const reapplyMessage = (
@@ -214,11 +214,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
           className="mb-4"
         >
           <Stack gap="md">
-            {[
-              "2024-12-19T14:00:00+03:00",
-              "2024-12-20T09:00:00+03:00",
-              "2024-12-21T13:00:00+03:00"
-            ].map((time: string) => (
+            {tour.requested_times.map((time: string) => (
               <Radio
                 key={time}
                 value={time}
@@ -262,11 +258,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
           className="mb-4"
         >
           <Stack gap="md">
-            {[
-              "2024-12-19T14:00:00+03:00",
-              "2024-12-20T09:00:00+03:00",
-              "2024-12-21T13:00:00+03:00"
-            ].map((time: string) => (
+            {tour.requested_times.map((time: string) => (
               <Radio
                 key={time}
                 value={time}
@@ -388,7 +380,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
   );
 
   switch (tour.status) {
-    case "RECEIVED":
+    case TourStatus.RECEIVED:
       return (
         <>
           {timeSelectionModal}
@@ -407,7 +399,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
         </>
       );
 
-    case "APPLICANT_WANTS_CHANGE":
+    case TourStatus.APPLICANT_WANTS_CHANGE:
       return (
         <>
           {viewProposedTimesModal}
@@ -423,7 +415,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
         </>
       );
 
-    case "CONFIRMED":
+    case TourStatus.CONFIRMED:
       return (
         <Group p="md">
           <Button color="red" onClick={handleCancel} leftSection={<IconBan size={16} />}>
@@ -432,11 +424,11 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
         </Group>
       );
 
-    case "REJECTED":
-    case "CANCELLED":
+    case TourStatus.REJECTED:
+    case TourStatus.CANCELLED:
       return reapplyMessage;
 
-    case "TOYS_WANTS_CHANGE":
+    case TourStatus.TOYS_WANTS_CHANGE:
     default:
       return null;
   }

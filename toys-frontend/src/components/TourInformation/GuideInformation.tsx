@@ -28,7 +28,7 @@ const GuideInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =
   const enrollInTour = async () => {
     const enrollUrl = new URL(ENROLL_URL);
 
-    enrollUrl.searchParams.append("auth", await userContext.getAuthToken());
+    enrollUrl.searchParams.append("auth", userContext.authToken);
     enrollUrl.searchParams.append("tid", props.tour.tour_id);
 
     try {

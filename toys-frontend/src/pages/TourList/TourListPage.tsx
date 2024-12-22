@@ -13,14 +13,17 @@ import {
   Container,
   useMatches,
   ScrollArea,
-  Autocomplete, Pagination, LoadingOverlay
+  Autocomplete, 
+  Pagination, 
+  LoadingOverlay
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
 import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
-import {notifications} from "@mantine/notifications";
+import { UserRole } from "../../types/enum";
+import { notifications } from "@mantine/notifications";
 
 const TOURS_PER_PAGE = 7;
 const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/tours");
@@ -34,81 +37,77 @@ const TourListPage: React.FC = () => {
   const [toDate, setToDate] = useState<Date | null>(null);
   const [guideMissing, setGuideMissing] = useState(false);
   const [traineeMissing, setTraineeMissing] = useState(false);
+  const [amEnrolled, setAmEnrolled] = useState(false);
+  const [amInvited, setAmInvited] = useState(false);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const isGuide = userContext.user.role === UserRole.GUIDE;
 
   const getTours = async () => {
     setLoading(true);
     const toursUrl = new URL(TOURS_URL);
     
-    // Always append required auth token
-    toursUrl.searchParams.append("auth", await userContext.getAuthToken());
-    
-    // Always append optional parameters, even if empty
-    toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
+    // Always append all parameters, using empty strings for unused optional ones
+    toursUrl.searchParams.append("auth", userContext.authToken);
     toursUrl.searchParams.append("school_name", searchSchoolName || '');
-    
-    // Handle dates
+    toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
     toursUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
     toursUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
-    
-    // Handle filter flags
     toursUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
     toursUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
+    toursUrl.searchParams.append("am_enrolled", amEnrolled.toString());
+    toursUrl.searchParams.append("am_invited", amInvited.toString());
 
-    const res = await fetch(toursUrl, {
-      method: "GET"
-    });
+    try {
+      const res = await fetch(toursUrl, {
+        method: "GET"
+      });
 
-    if(res.ok) {
-      setTours(await res.json());
-      setPage(1);
-    }
-    else {
-      setLoading(false);
-      throw new Error("Something went wrong");
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    // Initial load of tours
-    getTours().catch((reason) => {
-      console.error(reason);
+      if (res.ok) {
+        setTours(await res.json());
+        setPage(1);
+      } else {
+        throw new Error("Failed to fetch tours");
+      }
+    } catch (error) {
       notifications.show({
         color: "red",
         title: "Hay aksi!",
         message: "Bir şeyler yanlış gitti. Sayfayı yenileyin veya site yöneticisine durumu haber edin."
       });
-    });
-  }, []); // Empty dependency array as we only want this to run once on mount
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTours();
+  }, []);
 
   const listHeight = useMatches({
     base: "",
     sm: "",
-    md: "35vh",
+    md: "45vh",
   });
 
-  const visibleTours = useMemo(() => tours.slice((page - 1) * TOURS_PER_PAGE, page * (TOURS_PER_PAGE)),
-    [page, tours]);
+  const visibleTours = useMemo(() => 
+    tours.slice((page - 1) * TOURS_PER_PAGE, page * TOURS_PER_PAGE),
+    [page, tours]
+  );
+
   const listItems = useMemo(() =>
     visibleTours.map((tour, index) => <ListItem key={index} tour={tour}/>),
-  [visibleTours]);
+    [visibleTours]
+  );
 
-  const handleSearch = async () => {
-    await getTours().catch((reason) => {
-      console.error(reason);
-      notifications.show({
-        color: "red",
-        title: "Hay aksi!",
-        message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
-      });
-    });
+  const handleSearch = () => {
+    getTours();
   };
 
   const handleFromDateChange = (date: Date | null) => {
     setFromDate(date);
-    // If new fromDate makes current toDate invalid, clear toDate
     if (date && toDate && toDate < date) {
       setToDate(null);
     }
@@ -116,9 +115,20 @@ const TourListPage: React.FC = () => {
 
   const handleToDateChange = (date: Date | null) => {
     if (date && fromDate && date < fromDate) {
-      return; // Don't allow to_date to be earlier than from_date
+      return;
     }
     setToDate(date);
+  };
+
+  const handleClearFilters = () => {
+    setStatusFilter([]);
+    if (isGuide) {
+      setAmEnrolled(false);
+      setAmInvited(false);
+    } else {
+      setGuideMissing(false);
+      setTraineeMissing(false);
+    }
   };
 
   return (
@@ -151,11 +161,11 @@ const TourListPage: React.FC = () => {
           <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
-          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
-            <Group wrap="wrap">
           <Text size="md" fw={700}>
             Durum:
           </Text>
+          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
+            <Group wrap="wrap">
               <Chip color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
               <Chip color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
               <Chip color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
@@ -166,7 +176,7 @@ const TourListPage: React.FC = () => {
               <Chip color="blue" variant="outline" value="FINISHED">Bitti</Chip>
             </Group>
           </Chip.Group>
-          <Button onClick={() => { setStatusFilter([]); }}>Temizle</Button>
+          <Button onClick={handleClearFilters}>Temizle</Button>
         </Group>
         <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100" grow preventGrowOverflow={false} wrap="wrap">
           <Group>
@@ -193,42 +203,67 @@ const TourListPage: React.FC = () => {
             <Text size="md" fw={700}>
               Diğer:
             </Text>
-            <Checkbox 
-              label="Rehber atanmamış." 
-              size="md"
-              checked={guideMissing}
-              onChange={(event) => setGuideMissing(event.currentTarget.checked)}
-            />
-            <Checkbox 
-              label="Acemi rehber atanmamış." 
-              size="md"
-              checked={traineeMissing}
-              onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
-            />
+            {isGuide ? (
+              <>
+                <Checkbox 
+                  label="Davet Edildiğim Turlar" 
+                  size="md"
+                  checked={amInvited}
+                  onChange={(event) => setAmInvited(event.currentTarget.checked)}
+                />
+                <Checkbox 
+                  label="Rehberlik Edeceğim Turlar" 
+                  size="md"
+                  checked={amEnrolled}
+                  onChange={(event) => setAmEnrolled(event.currentTarget.checked)}
+                />
+              </>
+            ) : (
+              <>
+                <Checkbox 
+                  label="Rehber atanmamış." 
+                  size="md"
+                  checked={guideMissing}
+                  onChange={(event) => setGuideMissing(event.currentTarget.checked)}
+                />
+                <Checkbox 
+                  label="Acemi rehber atanmamış." 
+                  size="md"
+                  checked={traineeMissing}
+                  onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
+                />
+              </>
+            )}
           </Group>
         </Group>
         <Space h="md"/>
       </Stack>
       <Divider size="sm" className="border-gray-300"/>
       <Container p="0" fluid bg="white">
-        {
-          loading
-            ?
-            <LoadingOverlay className="rounded-md"
-                            visible={loading} zIndex={10}
-                            overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
-            :
+        {loading ? (
+          <LoadingOverlay 
+            className="rounded-md"
+            visible={true} 
+            zIndex={10}
+            overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}
+          />
+        ) : (
           <ScrollArea.Autosize scrollbars="y" mah={listHeight}>
             <Stack gap="xs" className="overflow-x-clip" mah="20%">
               {listItems}
               <Space h="xs"/>
             </Stack>
           </ScrollArea.Autosize>
-        }
-      <Pagination p="md" value={page} onChange={setPage} total={Math.ceil(tours.length / TOURS_PER_PAGE)} />
+        )}
+        <Pagination 
+          p="md" 
+          value={page} 
+          onChange={setPage} 
+          total={Math.ceil(tours.length / TOURS_PER_PAGE)} 
+        />
       </Container>
     </>
-  )
-}
+  );
+};
 
 export default TourListPage;
