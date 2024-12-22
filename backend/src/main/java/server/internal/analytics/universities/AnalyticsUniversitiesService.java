@@ -43,8 +43,7 @@ public class AnalyticsUniversitiesService {
         // return universities
         response.addAll(
                 universities.entrySet().stream().map(uni -> {
-                    Map<String, Object> data = dto.university(uni.getValue());
-                    data.put("id", uni.getKey());
+                    Map<String, Object> data = dto.university(uni.getValue().setId(uni.getKey()));
                     return data;
                 }).collect(Collectors.toSet())
         );
@@ -82,7 +81,7 @@ public class AnalyticsUniversitiesService {
         response.addAll(
             universities.entrySet().stream()
                 .filter(uni -> uni.getValue().getIs_rival())
-                .map(uni -> dto.university(uni.getValue()))
+                .map(uni -> dto.university(uni.getValue().setId(uni.getKey())))
                 .toList()
         );
 

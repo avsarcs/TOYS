@@ -149,11 +149,25 @@ public class AnalyticsStudentsService {
                         UniversityTableData tableData = year.getTable_data();
                         String scholarship = dept.getScholarship();
                         String bestRank = tableData.getBest_rank().replace(".", ""); // Remove the dot
-
-                        rankings.computeIfAbsent(yearStr, k -> new HashMap<>())
-                                .put(scholarship, Integer.parseInt(bestRank));
+                        if (!bestRank.isEmpty()) {
+                            rankings.computeIfAbsent(yearStr, k -> new HashMap<>())
+                                    .put(scholarship, Integer.parseInt(bestRank));
+                        } else {
+                            // Handle the case where bestRank is empty, if necessary
+                            rankings.computeIfAbsent(yearStr, k -> new HashMap<>()).put(scholarship, 0);
+                        }
                     });
                 });
+
+        // Filter out scholarships and years where all ranking values are 0
+        rankings.entrySet().removeIf(entry -> {
+            Map<String, Integer> scholarshipMap = entry.getValue();
+            boolean allZero = scholarshipMap.values().stream().allMatch(value -> value == 0);
+            if (allZero) {
+                yearsSet.remove(entry.getKey());
+            }
+            return allZero;
+        });
 
         List<String> years = new ArrayList<>(yearsSet);
         Collections.sort(years);

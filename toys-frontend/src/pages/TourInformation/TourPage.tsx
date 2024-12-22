@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { TourData } from "../../types/data.ts";
 import StatusInformation from "../../components/TourInformation/StatusInformation.tsx";
 import GeneralInformation from "../../components/TourInformation/GeneralInformation.tsx";
-import ApplicantInformation from "../../components/TourInformation/ApplicantInformation.tsx";
 import GuideInformation from "../../components/TourInformation/GuideInformation.tsx";
 import TimeInformation from "../../components/TourInformation/TimeInformation.tsx";
 import { UserContext } from "../../context/UserContext.tsx";
