@@ -171,6 +171,9 @@ public class AnalyticsUniversitiesService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
+        if(university_id.equals("bilkent")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot set rivalry status of Bilkent!");
+        }
         // get university
         University university = database.universities.getUniversity(university_id);
         if (university == null) {
