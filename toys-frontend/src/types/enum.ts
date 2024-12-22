@@ -141,7 +141,7 @@ export enum FairStatus {
 
 export enum FairStatusText {
   RECEIVED = "Onay Bekliyor",
-  CONFIRMED = "Kabul Edildi",
+  CONFIRMED = "Onaylandı",
   REJECTED = "Reddedildi",
   CANCELLED = "İptal Edildi",
   ONGOING = "Devam Ediyor",
