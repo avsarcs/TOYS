@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolStudentDetails/BackButton.tsx";
 import DepartmentGraph from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolStudentDetails/DepartmentGraph.tsx";
 import StudentTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolStudentDetails/StudentTable.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -15,32 +16,60 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
-const data = {
-    "CS": {"total_count": 100, "50% scholarship": 75, "100% scholarship": 25},
-    "EE": {"total_count": 150, "50% scholarship": 100, "100% scholarship": 50},
-    "ME": {"total_count": 120, "50% scholarship": 80, "100% scholarship": 40},
-    "CE": {"total_count": 130, "50% scholarship": 90, "100% scholarship": 40},
-    "BIO": {"total_count": 110, "50% scholarship": 70, "100% scholarship": 40},
-    "CHE": {"total_count": 140, "50% scholarship": 90, "100% scholarship": 50},
-    "PHYS": {"total_count": 90, "50% scholarship": 60, "100% scholarship": 30},
-    "MATH": {"total_count": 80, "50% scholarship": 50, "100% scholarship": 30},
-    "STAT": {"total_count": 70, "50% scholarship": 40, "100% scholarship": 30},
-    "ENG": {"total_count": 60, "50% scholarship": 35, "100% scholarship": 25}
+// Default data
+const defaultData = {
+    "Yükleniyor": {"total_count": 100, "50% scholarship": 50, "100% scholarship": 50}
 };
 
 interface HighSchoolStudentDetailsProps {
-    year: number
-    name: string
+    year: number;
+    highSchoolName: string;
+    highSchoolID: string;
     opened: boolean;
     onClose: () => void;
 }
 
-const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year, name, opened, onClose}) => {
+const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year, highSchoolName, highSchoolID, opened, onClose}) => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
+    const [data, setData] = React.useState(defaultData);
+
+    const getData = useCallback(async (high_school_id: string, year: number) => {
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/students");
+        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("high_school_id", high_school_id);
+        url.searchParams.append("year", year.toString());
+
+        console.log("Sent request for high school student details.");
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for high school student details.");
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        if(resText.length === 0) {
+            throw new Error("No high school found.");
+        }
+
+        setData(JSON.parse(resText));
+    }, [userContext.authToken]);
+
+    React.useEffect(() => {
+        getData(highSchoolID, year).catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
-            {year} Mezun Bilgisi: {name}
+            {year} Mezun Bilgisi: {highSchoolName}
         </Text>
     </Container>
 
@@ -94,7 +123,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

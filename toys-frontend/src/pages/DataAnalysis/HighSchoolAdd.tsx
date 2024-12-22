@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolAdd/InputSelector.tsx";
@@ -18,8 +18,8 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
-
+// Default data
+const defaultCities: string[] = ["Yükleniyor..."];
 const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolAddProps {
@@ -27,51 +27,77 @@ interface HighSchoolAddProps {
     onClose: () => void;
 }
 
-const HIGHSCHOOL_ADD_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/add");
 const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
     const userContext = useContext(UserContext);
-    const [selectedName, setSelectedName] = React.useState<string | null>(null);
-    const [selectedCity, setSelectedCity] = React.useState<City | null>(null);
-    const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
-    const handleAddButtonClick = async () => {
-        if (!selectedName || !selectedCity || !selectedPriority) {
-            alert("Lütfen tüm detayları doldurun.");
+    const [selectedName, setSelectedName] = React.useState<string | null>(null);
+    const [selectedCity, setSelectedCity] = React.useState<string | null>(null);
+    const [selectedRanking, setSelectedRanking] = React.useState<string | null>(null);
+    const [selectedPriority, setSelectedPriority] = React.useState<string | null>(null);
+    const [cities, setCities] = React.useState(defaultCities);
+
+    const getCities = useCallback(async () => {
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
+
+    const handleAddButtonClick = useCallback(async () => {
+        if (!selectedName || !selectedCity || !selectedRanking || !selectedPriority) {
+            notifications.show({
+                color: "red",
+                title: "Tüm bilgiler verilmedi!",
+                message: "Lise ekleyebilmek için lütfen tüm bilgileri doldurun."
+            });
             return;
         }
 
-        const addUrl = new URL(HIGHSCHOOL_ADD_URL);
-        addUrl.searchParams.append("auth", userContext.authToken);
+        try {
+            const url = new URL(TOUR_URL + "internal/analytics/high-schools/add");
+            url.searchParams.append("auth", userContext.authToken);
 
-        const addRes = await fetch(addUrl, {
-            method: "POST",
-            headers: new Headers({"Content-Type": "application/json"}),
-            body: JSON.stringify({
-                id: "",
-                name: selectedName,
-                location: selectedCity,
-                priority: selectedPriority,
-                ranking: -1,
-            })
-        });
-
-        if(addRes.ok) {
-            notifications.show({
-                color: "green",
-                title: "İşlem başarılı.",
-                message: "Lise eklendi."
+            const res = await fetch(url, {
+                method: "POST",
+                headers: new Headers({"Content-Type": "application/json"}),
+                body: JSON.stringify({
+                    id: "",
+                    name: selectedName,
+                    location: selectedCity,
+                    ranking: selectedRanking,
+                    priority: selectedPriority
+                })
             });
+
+            if(res.ok) {
+                notifications.show({
+                    color: "green",
+                    title: "Lise eklendi!",
+                    message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
+                });
+                window.location.reload();
+            }
+            else {
+                notifications.show({
+                    color: "red",
+                    title: "Hay aksi!",
+                    message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+                });
+            }
         }
-        else {
+        catch (e) {
             notifications.show({
                 color: "red",
                 title: "Hay aksi!",
-                message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
+    }, [selectedName, selectedCity, selectedRanking, selectedPriority, userContext.authToken]);
 
-        window.location.reload();
-    };
+    React.useEffect(() => {
+        getCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
@@ -85,7 +111,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector cities={cities} priorities={priorities} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedRanking={setSelectedRanking} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 
@@ -112,7 +138,7 @@ const HighSchoolAdd: React.FC<HighSchoolAddProps> = ({opened, onClose}) => {
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

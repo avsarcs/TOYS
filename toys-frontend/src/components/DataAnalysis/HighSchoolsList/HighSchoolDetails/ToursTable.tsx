@@ -3,7 +3,7 @@ import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination,
 import {IconSelector, IconChevronDown, IconChevronUp, IconStarFilled, IconStarHalfFilled, IconStar} from '@tabler/icons-react';
 import ReviewButton from "./ReviewButton.tsx";
 
-function renderStars(rating: number | null, date: string, openDetails: (date: string) => void) {
+function renderStars(rating: number | null, date: string, openDetails: (ID: string) => void) {
     if(rating === null) {
         return <Text>Yok</Text>;
     }
@@ -44,7 +44,7 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
         <Table.Th style={{padding: 0, textAlign: "center"}}>
             <UnstyledButton onClick={onSort}>
                 <Group justify="space-between">
-                    <Text span fw={500} fz="sm">
+                    <Text fw={500} fz="sm">
                         {children}
                     </Text>
                     <Center>
@@ -62,7 +62,7 @@ function sortData(
 ) {
     const { sortBy } = payload;
 
-    if (!sortBy) {
+    if (!sortBy || data.length == 0) {
         return data
     }
 
@@ -71,10 +71,7 @@ function sortData(
             if (sortBy === 'attendance' || sortBy === 'reviewRating') {
                 return Number(b[sortBy]) - Number(a[sortBy]);
             } else if (sortBy === 'date') {
-                const [dayB, monthB, yearB] = b.date.split('/').map(Number);
-                const [dayA, monthA, yearA] = a.date.split('/').map(Number);
-
-                return new Date(yearB, monthB - 1, dayB).getTime() - new Date(yearA, monthA - 1, dayA).getTime();
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
             } else {
                 return b[sortBy].localeCompare(a[sortBy]);
             }
@@ -83,9 +80,7 @@ function sortData(
         if (sortBy === 'attendance' || sortBy === 'reviewRating') {
             return Number(a[sortBy]) - Number(b[sortBy]);
         } else if (sortBy === 'date') {
-            const [dayA, monthA, yearA] = a.date.split('/').map(Number);
-            const [dayB, monthB, yearB] = b.date.split('/').map(Number);
-            return new Date(yearA, monthA - 1, dayA).getTime() - new Date(yearB, monthB - 1, dayB).getTime();
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
         } else {
             return a[sortBy].localeCompare(b[sortBy]);
         }
@@ -121,10 +116,10 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
 
     const rows = paginatedData.map((row) => (
         <Table.Tr key={row.date}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.date}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{new Date(row.date).toLocaleDateString('en-GB')}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.date, openDetails)}</Table.Td>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.reviewID, openDetails)}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
         </Table.Tr>
     ));
@@ -141,7 +136,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('date')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Tarih
                             </Text>
                         </Th>
@@ -150,7 +145,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('attendance')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Katılımcı Sayısı
                             </Text>
                         </Th>
@@ -159,7 +154,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('type')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Tür
                             </Text>
                         </Th>
@@ -168,7 +163,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('reviewRating')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Değerlendirme
                             </Text>
                         </Th>
@@ -177,7 +172,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('contact')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 İletişim
                             </Text>
                         </Th>
@@ -190,7 +185,7 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                     ) : (
                         <Table.Tr>
                             <Table.Td colSpan={Object.keys(data[0]).length}>
-                                <Text span fw={500} ta="center">
+                                <Text fw={500} ta="center">
                                     Tur bulunamadı.
                                 </Text>
                             </Table.Td>
