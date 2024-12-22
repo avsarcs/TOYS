@@ -59,8 +59,6 @@ const BilkentStudentDetails: React.FC = () => {
             throw new Error("No university found.");
         }
 
-        console.log(resText);
-
         const response = JSON.parse(resText);
 
         const unorderedDaysData = response["days"];
