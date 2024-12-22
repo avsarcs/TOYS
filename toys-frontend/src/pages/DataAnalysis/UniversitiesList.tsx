@@ -26,7 +26,7 @@ const defaultHeaderStyle = {
     justifyContent: 'center', // Center horizontally
 };
 
-//test data
+// Default data
 const defaultCities = ["Yükleniyor..."];
 const defaultUniversities = [
     {
