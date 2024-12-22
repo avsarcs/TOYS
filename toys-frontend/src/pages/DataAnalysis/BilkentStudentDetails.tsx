@@ -62,18 +62,26 @@ const BilkentStudentDetails: React.FC = () => {
             throw new Error("No data found.");
         }
 
-        console.log(resText);
-
         const response = JSON.parse(resText);
         setHighSchools(response["high_schools"]);
-        setCities(response["cities"]);
+
+        const fetchedCities = response["cities"];
+        delete fetchedCities["Toplam"]
+
+        setCities(fetchedCities);
+
         setRankings(response["rankings"]);
-        setDepartments(response["departments"]);
+
+        const fetchedDepartments = response["departments"];
+        const uniqueDepartments = fetchedDepartments.filter(function(item: string, pos: number) {
+            return fetchedDepartments.indexOf(item) == pos;
+        })
+        setDepartments(uniqueDepartments);
 
     }, [userContext.authToken]);
 
     const getYearsAndScholarshipData = useCallback(async (department: string) => {
-        const url = new URL(TOUR_URL + "internal/analytics/students/all");
+        const url = new URL(TOUR_URL + "internal/analytics/students/departments");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("department", department);
 
@@ -96,7 +104,7 @@ const BilkentStudentDetails: React.FC = () => {
     }, [userContext.authToken]);
 
     const getDepartmentData = useCallback(async (department: string, year: string) => {
-        const url = new URL(TOUR_URL + "internal/analytics/students/all");
+        const url = new URL(TOUR_URL + "internal/analytics/students/department_high_schools");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("department", department);
         url.searchParams.append("year", year);
@@ -150,14 +158,14 @@ const BilkentStudentDetails: React.FC = () => {
             <Group>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
-                        Öğrencilerin Liseleri
+                        Öğrencilerin Liseleri (Son 5 Yıl)
                     </Text>
                     <Space h="xs" />
                     <HighSchoolsGraph data={highSchools} style={{ margin: '20px', maxHeight: '400px' }} />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
-                        Öğrencilerin Şehirleri
+                        Öğrencilerin Şehirleri (Son 5 Yıl)
                     </Text>
                     <Space h="xs" />
                     <CitiesGraph data={cities} style={{ margin: '20px', maxHeight: '400px'}}/>
@@ -166,7 +174,7 @@ const BilkentStudentDetails: React.FC = () => {
             <Space h="xl"/>
             <div>
                 <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
-                    İlk 10 Liseden Gelen Öğrenciler
+                    İlk 10 Liseden Gelen Öğrenciler (Son 5 Yıl)
                 </Text>
                 <Space h="xs" />
                 <TopStudentsGraph data={rankings} style={{ margin: '20px', maxHeight: '400px'}}/>
