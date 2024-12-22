@@ -1,7 +1,8 @@
 import React from "react";
-import {SimpleGrid, Text} from '@mantine/core';
+import {rem, SimpleGrid, Text} from '@mantine/core';
 import UniversitySelector from "./UniversitySelector.tsx";
 import DepartmentSelector from "./DepartmentSelector.tsx";
+import {IconBuildings} from "@tabler/icons-react";
 
 interface ComparisonSelectorProps {
     universities: { name: string, id: string }[]; // List of universities to display in the dropdown menu.
@@ -15,7 +16,10 @@ interface ComparisonSelectorProps {
 
 const ComparisonSelector: React.FC<ComparisonSelectorProps> = ({universities, bilkentDepartments, otherDepartments, setSelectedBilkentDepartment, setSelectedOtherUniversity, setSelectedOtherDepartment, selectedOtherUniversity}) => {
     return <SimpleGrid cols={3}>
-        <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Bilkent</Text>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconBuildings style={{ width: rem(16), height: rem(16), marginRight: '8px' }} stroke={1.5} />
+            <Text style={{ fontSize: 'x-large' }}>Bilkent</Text>
+        </div>
         <div></div>
         <div><UniversitySelector universities={universities} onUniversityChange={setSelectedOtherUniversity} currentUniversity={selectedOtherUniversity}/></div>
         <div><DepartmentSelector departments={bilkentDepartments} selectedUniversity={"Bilkent"} onDepartmentChange={setSelectedBilkentDepartment}/></div>

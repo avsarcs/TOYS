@@ -1,5 +1,6 @@
 import React from 'react';
-import { Select } from '@mantine/core';
+import {rem, Select} from '@mantine/core';
+import {IconBook2} from "@tabler/icons-react";
 
 /**
  * Properties for department selector dropdown menu.
@@ -26,6 +27,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({departments, sel
         nothingFoundMessage="Bölüm bulunamadı."
         allowDeselect = {false}
         radius = "10"
+        leftSection={<IconBook2 style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         required
         onChange={(selectedValue) => {
             onDepartmentChange(selectedValue);
