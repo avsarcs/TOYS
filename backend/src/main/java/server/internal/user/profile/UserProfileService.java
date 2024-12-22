@@ -8,9 +8,7 @@ import server.enums.ExperienceLevel;
 import server.enums.roles.UserRole;
 import server.models.DTO.DTOFactory;
 import server.models.DTO.DTO_UserType;
-import server.models.people.Advisor;
-import server.models.people.Guide;
-import server.models.people.User;
+import server.models.people.*;
 import server.models.people.details.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -121,6 +119,10 @@ public class UserProfileService {
             ((Guide) user).setHigh_school(profile.getHighschool_id());
         } else if (user.getRole() == UserRole.ADVISOR && user instanceof Advisor) {
             profile = ((Advisor) user).modifyWithDTO(profileMap).getProfile();
+        } else if (user.getRole() == UserRole.COORDINATOR && user instanceof Coordinator) {
+            profile = ((Coordinator) user).modifyWithDTO(profileMap).getProfile();
+        } else if (user.getRole() == UserRole.DIRECTOR && user instanceof Director) {
+            profile = ((Director) user).modifyWithDTO(profileMap).getProfile();
         } else {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid user role");
         }

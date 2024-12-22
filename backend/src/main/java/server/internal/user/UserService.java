@@ -389,7 +389,7 @@ public class UserService {
         try {
             database.requests.getGuideAssignmentRequests().stream()
                     .filter(
-                            r -> !onlyMine || r.getGuide_id().equals(userID)
+                            r -> !onlyMine || r.getRequested_by().getBilkent_id().equals(userID)
                     ).map(dto::eventInvitation).forEach(invitations::add);
         } catch (Exception e) {
             e.printStackTrace();
