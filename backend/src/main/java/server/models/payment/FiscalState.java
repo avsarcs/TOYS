@@ -9,6 +9,10 @@ public class FiscalState {
 
     private List<Payment> payments;
 
+    public static FiscalState nonnull() {
+        return new FiscalState(0, 0, List.of());
+    }
+
     public FiscalState(FiscalState other) {
         this.owed = other.owed;
         this.paid = other.paid;

@@ -20,6 +20,25 @@ public class Guide extends User {
 
     private Experience experience;
 
+    public Guide(Guide other) {
+        super(other);
+        this.high_school = other.high_school;
+        this.department = other.department;
+        this.experience = new Experience(other.experience);
+    }
+
+    static public Guide nonnull() {
+        Guide guide = new Guide(User.nonnull());
+        guide.setHigh_school("");
+        guide.setDepartment(Department.MANAGEMENT);
+        guide.setExperience(Experience.nonnull());
+        return guide;
+    }
+
+    public Guide(User user) {
+        super(user);
+    }
+
     public static Guide fromApplication(GuideApplication application) {
         Guide guide = new Guide();
         guide.setBilkent_id(application.getBilkent_id());
@@ -35,6 +54,7 @@ public class Guide extends User {
         guide.setApplication(application);
         return guide;
     }
+
 
     public static Guide getDefault() {
         Guide guide = new Guide();

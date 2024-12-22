@@ -16,6 +16,11 @@ export interface LoginData {
   password: string
 }
 
+export interface SimpleUserData {
+  id: string,
+  name: string,
+  role: UserRole
+}
 export interface TraineeGuideApplicationData {
   id: string,
   fullname: string,

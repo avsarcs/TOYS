@@ -5,6 +5,10 @@ import java.util.Map;
 public class AuthInfo {
     private String password;
 
+    public static AuthInfo nonnull() {
+        return new AuthInfo().setPassword("");
+    }
+
     public static AuthInfo fromMap(Map<String, Object> map) {
         return new AuthInfo()
             .setPassword((String) map.get("password"));

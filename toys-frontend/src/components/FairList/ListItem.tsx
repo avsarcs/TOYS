@@ -26,9 +26,6 @@ const ListItem: React.FC<FairListItemProps> = (props: FairListItemProps) => {
           <Box className="flex-grow flex-shrink basis-1/2 bg-gray-100" p="lg">
             {props.fair.highschool.name}
           </Box>
-          <Center className="flex-grow flex-shrink basis-1/4 bg-gray-50" p="lg">
-            {props.fair.visitor_count} Kişi
-          </Center>
           <Center className="flex-grow flex-shrink basis-1/4 bg-gray-100" p="lg">
             <Text fw={900} c={statusColor}>
               {FairStatusText[props.fair.event_status as FairStatus]}

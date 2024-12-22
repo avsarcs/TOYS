@@ -20,21 +20,6 @@ public class ApplicationController {
     @Autowired
     RequestService requestService;
 
-    @GetMapping("/apply/tour/isfree")
-    public boolean isTourFree(@RequestParam String start, @RequestParam String end) {
-        return applicationService.isFree(start, end);
-    }
-
-    @GetMapping("/apply/tour/gettype")
-    public String getTourType(@RequestParam String uuid) {
-        return applicationService.getTourType(uuid);
-    }
-
-    @PostMapping("/apply/guide")
-    public void applyGuide(@RequestBody Map<String, Object> guideApplication) {
-        applicationService.applyToBeGuide(dto.traineeGuideApplication(guideApplication));
-    }
-
     @PostMapping("/apply/tour")
     public void applyTour(@RequestBody Map<String, Object> tourApplication) {
 
@@ -45,10 +30,30 @@ public class ApplicationController {
         }
     }
 
-    @Deprecated
-    @PostMapping("/apply/tour/individual")
-    public void applyTourIndividual(@RequestBody Map<String, Object> individualTourApplication) {
-        throw new ResponseStatusException(HttpStatus.GONE, "This endpoint is no longer available, use /apply/tour instead");
+            @GetMapping("/apply/tour/isfree")
+            public boolean isTourFree(@RequestParam String start, @RequestParam String end) {
+                return applicationService.isFree(start, end);
+            }
+
+            @GetMapping("/apply/tour/gettype")
+            public String getTourType(@RequestParam String uuid)
+            {
+                return applicationService.getTourType(uuid);
+            }
+
+            @PostMapping("/apply/tour/request_changes")
+            public void requestChanges(@RequestBody Map<String, Object> changes, @RequestParam("tour_id") String tour_id, @RequestParam String auth) {
+                applicationService.requestChanges(changes, tour_id, auth);
+            }
+
+    @PostMapping("/apply/cancel")
+    public void cancelEvent(@RequestParam String auth, @RequestParam String event_id, @RequestBody Map<String, Object> reasoning) {
+        applicationService.cancelEvent(auth, event_id, reasoning);
+    }
+
+    @PostMapping("/apply/guide")
+    public void applyGuide(@RequestBody Map<String, Object> guideApplication) {
+        applicationService.applyToBeGuide(dto.traineeGuideApplication(guideApplication));
     }
 
     @PostMapping("/apply/fair")
@@ -56,13 +61,12 @@ public class ApplicationController {
         applicationService.applyForAFair(dto.fairApplication(fairApplication));
     }
 
-    @PostMapping("/apply/tour/request_changes")
-    public void requestChanges(@RequestBody Map<String, Object> changes, @RequestParam("tour_id") String tour_id, @RequestParam String auth) {
-        applicationService.requestChanges(changes, tour_id, auth);
-    }
 
-    @PostMapping("/apply/tour/cancel")
-    public void cancelEvent(@RequestParam String auth, @RequestParam String event_id, @RequestBody Map<String, Object> reasoning) {
-        applicationService.cancelEvent(auth, event_id, reasoning);
+    /// DEPRECATED
+
+    @Deprecated
+    @PostMapping("/apply/tour/individual")
+    public void applyTourIndividual(@RequestBody Map<String, Object> individualTourApplication) {
+        throw new ResponseStatusException(HttpStatus.GONE, "This endpoint is no longer available, use /apply/tour instead");
     }
 }

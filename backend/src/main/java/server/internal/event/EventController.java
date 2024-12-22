@@ -7,30 +7,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import server.models.events.TourRegistry;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class EventController {
+
     @Autowired
-    private EventService eventService;
+    EventService eventService;
 
-    @GetMapping("/internal/event/tour")
-    public Object getTour(@RequestParam String auth, @RequestParam String tid) {
-        return eventService.getTour(auth, tid);
+    @PostMapping("/internal/event/enroll")
+    public void enroll(@RequestParam String auth, @RequestParam String event_id) {
+        eventService.enroll(auth, event_id);
     }
 
-    @GetMapping("/internal/event/simple-tour")
-    public Map<String, Object> getSimpletour(@RequestParam String auth, @RequestParam String tid) {
-        return eventService.getSimpleTour(auth, tid);
+    @PostMapping("/internal/event/withdraw")
+    public void withdrawFromEvent(@RequestParam String event_id, @RequestParam String auth) {
+        eventService.withdrawFromEvent(auth, event_id);
     }
 
-    @PostMapping("/internal/event/tour/start-tour")
-    public void startTour(@RequestParam String auth, @RequestParam String tour_id, @RequestParam String start_time) {
-        eventService.startTour(auth, tour_id, start_time);
+    @PostMapping("/internal/event/invite")
+    public void inviteToEvent(@RequestParam String event_id, @RequestParam List<String> guides, @RequestParam String auth) {
+        eventService.inviteGuidesToEvent(auth, event_id, guides);
     }
 
-    @PostMapping("/internal/event/tour/end-tour")
-    public void endTour(@RequestParam String auth, @RequestParam String tour_id, @RequestParam String end_time) {
-        eventService.endTour(auth, tour_id, end_time);
+    @PostMapping("/internal/event/remove")
+    public void removeFromEvent(@RequestParam String auth, @RequestParam String event_id, @RequestParam List<String> guides) {
+        eventService.removeGuides(auth, event_id, guides);
     }
 }

@@ -17,6 +17,15 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
+const defaultHeaderStyle = {
+    backgroundColor: 'white',
+    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+    width: '100%', // Ensure the container takes the full width of its parent
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center', // Center vertically
+    justifyContent: 'center', // Center horizontally
+};
 
 //test data
 const defaultUniversities: {name: string, id: string}[] = [
@@ -58,6 +67,162 @@ const Comparison: React.FC = () => {
     const [selectedBilkentDepartment, setSelectedBilkentDepartment] = React.useState<string | null>(null);
     const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<{ name: string, id: string } | null>(otherUniversity);
     const [selectedOtherDepartment, setSelectedOtherDepartment] = React.useState<string | null>(null);
+    const [shownWarning, setShownWarning] = React.useState(false);
+
+    React.useEffect(() => {
+        if(otherUniversityID != null && otherUniversity == null && !shownWarning) {
+            notifications.show({
+                color: "red",
+                title: "Üniversite bulunamadı.",
+                message: "Belirtilen üniversite bulunamadı. Lütfen tekrar seçim yapın.",
+            });
+            setShownWarning(true);
+        }
+    }, [otherUniversityID, otherUniversity]);
+
+    const getUniversities = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/all-simple");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("No university found.");
+        }
+
+        const uniqueFetched = fetched.filter((item: { id: string }, pos: number) => {
+            return fetched.indexOf(item) == pos && item.id !== "bilkent";
+        });
+
+        setUniversities(uniqueFetched);
+    }, [userContext.getAuthToken]);
+
+    const getBilkentDepartments = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", "bilkent");
+
+        console.log("Sent request for Bilkent's departments.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for Bilkent's departments.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        const uniqueFetched = fetched.filter(function(item: string, pos: number) {
+            return fetched.indexOf(item) == pos;
+        })
+
+        setBilkentDepartments(uniqueFetched);
+    }, [userContext.getAuthToken]);
+
+    const getOtherUniversityDepartments = useCallback(async (university_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", university_id);
+
+        console.log("Sent request for other's departments.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for other's departments.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        const uniqueFetched = fetched.filter(function(item: string, pos: number) {
+            return fetched.indexOf(item) == pos;
+        })
+
+        setOtherDepartments(uniqueFetched);
+    }, [userContext.getAuthToken]);
+
+    const getBilkentData = useCallback(async (department_name: string, university_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/details");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", university_id);
+        url.searchParams.append("department_name", department_name);
+
+        console.log("Sent request for Bilkent's data.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for Bilkent's data.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setBilkentData(fetched);
+    }, [userContext.getAuthToken]);
+
+    const getOtherData = useCallback(async (department_name: string, university_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/universities/details");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("university_id", university_id);
+        url.searchParams.append("department_name", department_name);
+
+        console.log("Sent request for other's data.")
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for other's data.")
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = JSON.parse(resText)
+
+        if(fetched.length === 0) {
+            throw new Error("University not found.");
+        }
+
+        setOtherData(fetched);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         if(otherUniversityID && !otherUniversity) {
@@ -188,6 +353,7 @@ const Comparison: React.FC = () => {
     }, []);
     React.useEffect(() => {
         if (selectedOtherUniversity) {
+            setSelectedOtherDepartment(null)
             getOtherUniversityDepartments(selectedOtherUniversity.id).catch((reason) => {
                 console.error(reason);
             });
@@ -195,7 +361,7 @@ const Comparison: React.FC = () => {
     }, [selectedOtherUniversity]);
     React.useEffect(() => {
         if (selectedBilkentDepartment) {
-            getBilkentData(selectedBilkentDepartment, "1").catch((reason) => {
+            getBilkentData(selectedBilkentDepartment, "bilkent").catch((reason) => {
                 console.error(reason);
             });
         }
@@ -206,8 +372,10 @@ const Comparison: React.FC = () => {
                 console.error(reason);
             });
         }
-    }, [selectedOtherDepartment]);
+
+    }, [selectedOtherUniversity, selectedOtherDepartment]);
     React.useEffect(() => {
+        console.log("Updating data.")
         const commonYears = Object.keys(bilkentData).filter(year => Object.keys(otherData).includes(year));
         setYears(commonYears);
 
@@ -226,25 +394,31 @@ const Comparison: React.FC = () => {
                 const school2Max = otherData[year].find(item => item.title === title)?.max || "-";
 
                 combinedData[year].push({
-                    title,
+                    title: title === "N/A" ? "Ücretsiz" : title,
                     school1Name,
-                    school1Min,
-                    school1Max,
+                    school1Min: school1Min.replace(/[.,]/g, ""),
+                    school1Max: school1Max.replace(/[.,]/g, ""),
                     school2Name,
-                    school2Min,
-                    school2Max
+                    school2Min: school2Min.replace(/[.,]/g, ""),
+                    school2Max: school2Max.replace(/[.,]/g, "")
                 });
+            });
+
+            combinedData[year].sort((a, b) => {
+                const aPercentage = parseInt(a.title.replace(/\D/g, ''));
+                const bPercentage = parseInt(b.title.replace(/\D/g, ''));
+                return aPercentage - bPercentage;
             });
         });
 
         setData(combinedData);
     }, [bilkentData, otherData]);
 
-    const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
+    const HeaderTextContainer = <div style={defaultHeaderStyle}>
         <Text style={{fontSize: 'xx-large'}}>
             Üniversite Karşılaştırma Sistemi
         </Text>
-    </Container>
+    </div>
 
     const ComparisonSelectorContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
@@ -256,6 +430,8 @@ const Comparison: React.FC = () => {
             setSelectedOtherUniversity={setSelectedOtherUniversity}
             setSelectedOtherDepartment={setSelectedOtherDepartment}
             selectedOtherUniversity={selectedOtherUniversity}
+            selectedBilkentDepartment={selectedBilkentDepartment}
+            selectedOtherDepartment={selectedOtherDepartment}
         />
         <Space h="xs" />
     </Container>
@@ -282,11 +458,16 @@ const Comparison: React.FC = () => {
 
     let ShownDataContainer: JSX.Element;
 
-    if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment) {
+    if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment && Object.keys(data).length > 0) {
         ShownDataContainer = <div>
             {ComparisonTableContainer}
             <Space h="xl"/>
             {ComparisonGraphContainer}
+        </div>
+    }
+    else if (selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment) {
+        ShownDataContainer = <div>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Lütfen bekleyin.</Text>
         </div>
     }
     else {
@@ -296,9 +477,7 @@ const Comparison: React.FC = () => {
     }
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Space h="xl"/>
         {HeaderTextContainer}
-        <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
         {ComparisonSelectorContainer}
         <Space h="xl"/>

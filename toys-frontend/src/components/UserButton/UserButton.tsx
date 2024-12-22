@@ -3,11 +3,12 @@ import classes from './UserButton.module.css';
 import { UserContext } from '../../context/UserContext';
 import { useContext } from 'react';
 import {UserRoleText} from "../../types/enum.ts";
+import {Link} from "react-router-dom";
 
 export function UserButton() {
   const userContext = useContext(UserContext);
   return (
-    <UnstyledButton className={classes.user}>
+    <Link className={classes.user} component={UnstyledButton} to={'/profile'}>
       <Group>
         <Avatar
           src={userContext.user.profile.profile_picture}
@@ -29,6 +30,6 @@ export function UserButton() {
 
         
       </Group>
-    </UnstyledButton>
+    </Link>
   );
 }
