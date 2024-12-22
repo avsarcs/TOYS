@@ -40,6 +40,8 @@ const FairsList: React.FC = () => {
   const [guideMissing, setGuideMissing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
+
   const getFairs = async () => {
     setLoading(true);
   
@@ -71,14 +73,17 @@ const FairsList: React.FC = () => {
       if (!pendingRes.ok) throw new Error("Failed to fetch pending applications");
       const pendingData: SimpleEventData[] = await pendingRes.json();
   
+      // Filter pending applications to only include events with event_type: FAIR
+      const filteredPendingData = pendingData.filter((fair) => fair.event_type === EventType.FAIR);
+  
       const normalizedFairs = [
         ...fairsData,
-        ...pendingData.map((fair) => ({
+        ...filteredPendingData.map((fair) => ({
           ...fair,
-          event_type: EventType.FAIR as EventType.FAIR, // Ensure event_type is explicitly EventType.FAIR
+          event_type: EventType.FAIR, // Ensure event_type is explicitly EventType.FAIR
         })),
       ];
-
+  
       setFairs(normalizedFairs);
       setPage(1);
     } catch (error) {
@@ -86,7 +91,7 @@ const FairsList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
   
 
   useEffect(() => {
@@ -100,10 +105,16 @@ const FairsList: React.FC = () => {
     md: "50vh",
   });
 
-  const listItems = useMemo(() =>
-    fairs ? fairs.map((fair, index) => <ListItem key={index} fair={fair}/>) : null,
-  [fairs]);
+    const paginatedFairs = useMemo(() => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return fairs.slice(startIndex, endIndex);
+  }, [fairs, page]);
 
+  const listItems = useMemo(
+    () => paginatedFairs.map((fair, index) => <ListItem key={index} fair={fair} />),
+    [paginatedFairs]
+  );
   const handleSearch = async () => {
     await getFairs().catch(console.error);
   };
@@ -122,6 +133,7 @@ const FairsList: React.FC = () => {
     }
     setToDate(date);
   };
+  
 
 
   return (
