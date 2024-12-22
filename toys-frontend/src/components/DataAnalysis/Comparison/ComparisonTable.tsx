@@ -21,8 +21,8 @@ const ComparisonNestedTable: React.FC<ComparisonNestedTableProps> = ({school1Nam
         </Table.Thead>
         <Table.Tbody>
             <Table.Tr key={"rankings"}>
-                <Table.Td>{school1Min + " - " + school1Max}</Table.Td>
-                <Table.Td>{school2Min + " - " + school2Max}</Table.Td>
+                <Table.Td>{(school1Min === "-" && (school1Max === "-" || school1Max === "Dolmadı")) ? "Yok" : school1Min + " - " + (school1Max === "Dolmadı" ? "Dolmadı" : school1Max)}</Table.Td>
+                <Table.Td>{(school2Min === "-" && (school2Max === "-" || school2Max === "Dolmadı")) ? "Yok" : school2Min + " - " + (school2Max === "Dolmadı" ? "Dolmadı" : school2Max)}</Table.Td>
             </Table.Tr>
         </Table.Tbody>
     </Table>

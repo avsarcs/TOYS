@@ -9,6 +9,7 @@ interface DepartmentSelectorProps {
     departments: string[]; // List of departments to display in the dropdown menu.
     selectedUniversity: string | null; // Selected university to display in the placeholder.
     onDepartmentChange: (selectedDepartment: string | null) => void;
+    selectedDepartment: string | null;
 }
 
 /**
@@ -16,8 +17,9 @@ interface DepartmentSelectorProps {
  * @param departments List of departments to display in the dropdown menu.
  * @param selectedUniversity Selected university to display in the placeholder.
  * @param onDepartmentChange Function that sets the selected department.
+ * @param selectedDepartment Selected department to display in the dropdown menu.
  */
-const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({departments, selectedUniversity, onDepartmentChange}) => {
+const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({departments, selectedUniversity, onDepartmentChange, selectedDepartment}) => {
     return <Select
         disabled = {selectedUniversity == null}
         label = "Bölüm Seçin"
@@ -29,6 +31,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({departments, sel
         radius = "10"
         leftSection={<IconBook2 style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         required
+        value = {selectedDepartment}
         onChange={(selectedValue) => {
             onDepartmentChange(selectedValue);
         }}

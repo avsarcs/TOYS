@@ -67,16 +67,18 @@ const Comparison: React.FC = () => {
     const [selectedBilkentDepartment, setSelectedBilkentDepartment] = React.useState<string | null>(null);
     const [selectedOtherUniversity, setSelectedOtherUniversity] = React.useState<{ name: string, id: string } | null>(otherUniversity);
     const [selectedOtherDepartment, setSelectedOtherDepartment] = React.useState<string | null>(null);
+    const [shownWarning, setShownWarning] = React.useState(false);
 
     React.useEffect(() => {
-        if(otherUniversityID && !otherUniversity) {
+        if(otherUniversityID != null && otherUniversity == null && !shownWarning) {
             notifications.show({
                 color: "red",
                 title: "Üniversite bulunamadı.",
                 message: "Belirtilen üniversite bulunamadı. Lütfen tekrar seçim yapın.",
             });
+            setShownWarning(true);
         }
-    }, [otherUniversityID]);
+    }, [otherUniversityID, otherUniversity]);
 
     const getUniversities = useCallback(async () => {
         const url = new URL(TOUR_URL + "internal/analytics/universities/all-simple");
@@ -100,8 +102,6 @@ const Comparison: React.FC = () => {
         const uniqueFetched = fetched.filter((item: { id: string }, pos: number) => {
             return fetched.indexOf(item) == pos && item.id !== "bilkent";
         });
-        
-        console.log("Universities: " + resText);
 
         setUniversities(uniqueFetched);
     }, [userContext.getAuthToken]);
@@ -134,14 +134,12 @@ const Comparison: React.FC = () => {
             return fetched.indexOf(item) == pos;
         })
 
-        console.log("Bilkent's departments: " + resText);
-
         setBilkentDepartments(uniqueFetched);
     }, [userContext.getAuthToken]);
 
     const getOtherUniversityDepartments = useCallback(async (university_id: string) => {
         const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
-        url.searchParams.append("auth_token", await userContext.getAuthToken());
+        url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", university_id);
 
         console.log("Sent request for other's departments.")
@@ -167,14 +165,12 @@ const Comparison: React.FC = () => {
             return fetched.indexOf(item) == pos;
         })
 
-        console.log("Other's departments: " + resText)
-
         setOtherDepartments(uniqueFetched);
     }, [userContext.getAuthToken]);
 
     const getBilkentData = useCallback(async (department_name: string, university_id: string) => {
         const url = new URL(TOUR_URL + "internal/analytics/universities/details");
-        url.searchParams.append("auth_token", await userContext.getAuthToken());
+        url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", university_id);
         url.searchParams.append("department_name", department_name);
 
@@ -201,8 +197,8 @@ const Comparison: React.FC = () => {
     }, [userContext.getAuthToken]);
 
     const getOtherData = useCallback(async (department_name: string, university_id: string) => {
-        const url = new URL(TOUR_URL + "internal/analytics/details");
-        url.searchParams.append("auth_token", await userContext.getAuthToken());
+        const url = new URL(TOUR_URL + "internal/analytics/universities/details");
+        url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", university_id);
         url.searchParams.append("department_name", department_name);
 
@@ -241,6 +237,7 @@ const Comparison: React.FC = () => {
     }, []);
     React.useEffect(() => {
         if (selectedOtherUniversity) {
+            setSelectedOtherDepartment(null)
             getOtherUniversityDepartments(selectedOtherUniversity.id).catch((reason) => {
                 console.error(reason);
             });
@@ -259,8 +256,10 @@ const Comparison: React.FC = () => {
                 console.error(reason);
             });
         }
-    }, [selectedOtherDepartment]);
+
+    }, [selectedOtherUniversity, selectedOtherDepartment]);
     React.useEffect(() => {
+        console.log("Updating data.")
         const commonYears = Object.keys(bilkentData).filter(year => Object.keys(otherData).includes(year));
         setYears(commonYears);
 
@@ -279,18 +278,26 @@ const Comparison: React.FC = () => {
                 const school2Max = otherData[year].find(item => item.title === title)?.max || "-";
 
                 combinedData[year].push({
-                    title,
+                    title: title === "N/A" ? "Ücretsiz" : title,
                     school1Name,
-                    school1Min,
-                    school1Max,
+                    school1Min: school1Min.replace(/[.,]/g, ""),
+                    school1Max: school1Max.replace(/[.,]/g, ""),
                     school2Name,
-                    school2Min,
-                    school2Max
+                    school2Min: school2Min.replace(/[.,]/g, ""),
+                    school2Max: school2Max.replace(/[.,]/g, "")
                 });
+            });
+
+            combinedData[year].sort((a, b) => {
+                const aPercentage = parseInt(a.title.replace(/\D/g, ''));
+                const bPercentage = parseInt(b.title.replace(/\D/g, ''));
+                return aPercentage - bPercentage;
             });
         });
 
         setData(combinedData);
+
+        console.log(combinedData);
     }, [bilkentData, otherData]);
 
     const HeaderTextContainer = <div style={defaultHeaderStyle}>
@@ -309,6 +316,8 @@ const Comparison: React.FC = () => {
             setSelectedOtherUniversity={setSelectedOtherUniversity}
             setSelectedOtherDepartment={setSelectedOtherDepartment}
             selectedOtherUniversity={selectedOtherUniversity}
+            selectedBilkentDepartment={selectedBilkentDepartment}
+            selectedOtherDepartment={selectedOtherDepartment}
         />
         <Space h="xs" />
     </Container>
@@ -335,11 +344,17 @@ const Comparison: React.FC = () => {
 
     let ShownDataContainer: JSX.Element;
 
-    if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment) {
+    if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment && Object.keys(data).length > 0) {
+        console.log(data)
         ShownDataContainer = <div>
             {ComparisonTableContainer}
             <Space h="xl"/>
             {ComparisonGraphContainer}
+        </div>
+    }
+    else if (selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment) {
+        ShownDataContainer = <div>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>Lütfen bekleyin.</Text>
         </div>
     }
     else {

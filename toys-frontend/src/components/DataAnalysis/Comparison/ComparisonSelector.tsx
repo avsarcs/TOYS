@@ -12,9 +12,11 @@ interface ComparisonSelectorProps {
     setSelectedOtherUniversity: (university: { name: string, id: string } | null) => void; // Function to set the selected other university.
     setSelectedOtherDepartment: (department: string | null) => void; // Function to set the selected other department.
     selectedOtherUniversity: { name: string, id: string } | null; // Selected other university to display in the placeholder.
+    selectedBilkentDepartment: string | null; // Selected Bilkent department to display in the dropdown menu.
+    selectedOtherDepartment: string | null; // Selected other department to display in the dropdown menu.
 }
 
-const ComparisonSelector: React.FC<ComparisonSelectorProps> = ({universities, bilkentDepartments, otherDepartments, setSelectedBilkentDepartment, setSelectedOtherUniversity, setSelectedOtherDepartment, selectedOtherUniversity}) => {
+const ComparisonSelector: React.FC<ComparisonSelectorProps> = ({universities, bilkentDepartments, otherDepartments, setSelectedBilkentDepartment, setSelectedOtherUniversity, setSelectedOtherDepartment, selectedOtherUniversity, selectedBilkentDepartment, selectedOtherDepartment}) => {
     return <SimpleGrid cols={3}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
             <IconBuildings style={{ width: rem(16), height: rem(16), marginRight: '8px' }} stroke={1.5} />
@@ -22,9 +24,9 @@ const ComparisonSelector: React.FC<ComparisonSelectorProps> = ({universities, bi
         </div>
         <div></div>
         <div><UniversitySelector universities={universities} onUniversityChange={setSelectedOtherUniversity} currentUniversity={selectedOtherUniversity}/></div>
-        <div><DepartmentSelector departments={bilkentDepartments} selectedUniversity={"Bilkent"} onDepartmentChange={setSelectedBilkentDepartment}/></div>
+        <div><DepartmentSelector departments={bilkentDepartments} selectedUniversity={"Bilkent"} onDepartmentChange={setSelectedBilkentDepartment} selectedDepartment={selectedBilkentDepartment}/></div>
         <div></div>
-        <div><DepartmentSelector departments={selectedOtherUniversity ? otherDepartments : []} selectedUniversity={selectedOtherUniversity?.name ?? null} onDepartmentChange={setSelectedOtherDepartment}/></div>
+        <div><DepartmentSelector departments={selectedOtherUniversity ? otherDepartments : []} selectedUniversity={selectedOtherUniversity?.name ?? null} onDepartmentChange={setSelectedOtherDepartment} selectedDepartment={selectedOtherDepartment}/></div>
     </SimpleGrid>
 }
 
