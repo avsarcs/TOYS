@@ -643,7 +643,7 @@ response_type:json
         /invite 
             parameters:
                 event_id=event_id // which event to invite to (Advisors can only invite to tours, Coordinators & above can invite to fairs as well)
-                guid=guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
+                guides: guide_id[] // MULTIPLE GUIDES CAN BE INVITED AT ONCE
                 auth: auth_token
             method: post
             response: -
@@ -651,7 +651,7 @@ response_type:json
         /remove 
             parameters:
                 event_id=event_id // which event to remove from
-                guid=guide_id[] // MULTIPLE GUIDES CAN BE REMOVED AT ONCE
+                guides: guide_id[] // MULTIPLE GUIDES CAN BE REMOVED AT ONCE
                 auth: auth_token
             method: post
             response: -
@@ -659,7 +659,7 @@ response_type:json
         /fair
             parametes:
                 auth=jwt token
-                fid=fair_id
+                fair_id=fair_id
             method: get
             response: FairModel
 
@@ -685,20 +685,20 @@ response_type:json
         /tour
             parameters:
                 auth= jwt token
-                tid=tour_id
+                tour_id=tour_id
             method: get
             response: TourModel
             
             /simple
             parameters:
                 auth=jwt token // passkey if Applicant is making this request
-                tid=tour_id
+                tour_id=tour_id
             method: get
             response: SimpleEventModel
 
             /search
             parameters:
-                authToken= jwt token
+                auth= jwt token
                 school_name = "BİLKENT ER" // OPTIONAL filter by highschool string
                 status=string[] // OPTIONAL tour status filtering string ("RECEIVED", "TOYS_WANTS_CHANGE", "APPLICANT_WANTS_CHANGE", "CONFIRMED", "REJECTED", "CANCELLED", "ONGOING", "FINISHED")
                 from_date=ISO 8601 string // OPTIONAL
@@ -749,32 +749,11 @@ response_type:json
             response: SimpleGuideModel[]
             response_type: json
 
-        ### DEPRECATED 
+        ### DEPRECATED
+	# User /respond endpoints instead
         /advisor-offer (Requires Auth as Coordinator)
-            parameters:
-                name (OPTIONAL) = "Orhun Eg" // optional filter by name search string
-                type (OPTIONAL) = "ACCEPTED" | "REJECTED" | "PENDING" [] // optional filtering by type, multiple selections are possible
-                from_date (OPTIONAL) = time in ISO 8601 format
-                to_date (OPTIONAL) = time in ISO 8601 format
-                // from_date & to_date should be provided together, never only one
-            method: get
-            response: AdvisorOfferModel[]
-            response_type: json
-
-
             /accept (Requires Auth as Guide who has pending Advisor Offer)
-                method: post
-                body: empty
-                response: 403 if has no Auth as Guide who has pending Advisor Offer, 200 otherwise
-                response_type: status code
-            
             /reject (Requires Auth as Guide who has pending Advisor Offer)
-                method: post
-                body: {
-                    "reason": "Yappi yap yap"
-                }
-                response: 403 if has no Auth as Guide who has pending Advisor Offer
-                response_type: status code
 
         /am-enrolled
             params:
@@ -806,6 +785,7 @@ response_type:json
 
         /profile #
             parameters:
+		auth: auth token
                 id=id // user bilkent id / empty to get logged in user
             method: get
             response: GuideModel | CoordinatorModel
@@ -813,6 +793,7 @@ response_type:json
 
             /update #
                 parameters:
+		    auth: auth token
                     id= id // user bilkent id
                 method: post
                 body: GuideModel
@@ -837,7 +818,7 @@ response_type:json
 
         /dashboard
             parameters:
-                authToken: auth_token
+                auth: auth_token
                 dashboard_category: DashboardCategory
             method: get
             response: SimpleEventModel[]
