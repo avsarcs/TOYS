@@ -2,6 +2,7 @@ package server.internal.analytics.students;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import info.debatty.java.stringsimilarity.SorensenDice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import server.models.schools.University;
 import server.auth.AuthService;
 import server.auth.Permission;
 import server.dbm.Database;
+import server.models.schools.UniversityTableData;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -133,17 +135,32 @@ public class AnalyticsStudentsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
 
-        Map<String, Object> response = new HashMap<>();
-
-        // Fetch years data
-        List<String> years = new ArrayList<>();
-        // Add logic to fetch and populate years list
-        response.put("years", years);
-
-        // Fetch rankings data
+        University bilkent = database.universities.getUniversity("bilkent");
+        SorensenDice sorensenDice = new SorensenDice();
         Map<String, Map<String, Integer>> rankings = new HashMap<>();
-        // Add logic to fetch and populate rankings map
+        Set<String> yearsSet = new HashSet<>();
+
+        bilkent.getDepartments().stream()
+                .filter(dept -> sorensenDice.similarity(dept.getName().toLowerCase(), department.toLowerCase()) > 0.9)
+                .forEach(dept -> {
+                    dept.getYears().forEach(year -> {
+                        String yearStr = year.getYear();
+                        yearsSet.add(yearStr);
+                        UniversityTableData tableData = year.getTable_data();
+                        String scholarship = dept.getScholarship();
+                        String bestRank = tableData.getBest_rank();
+
+                        rankings.computeIfAbsent(yearStr, k -> new HashMap<>())
+                                .put(scholarship, Integer.parseInt(bestRank));
+                    });
+                });
+
+        List<String> years = new ArrayList<>(yearsSet);
+        Collections.sort(years);
+
+        Map<String, Object> response = new HashMap<>();
         response.put("rankings", rankings);
+        response.put("years", years);
 
         return response;
     }
