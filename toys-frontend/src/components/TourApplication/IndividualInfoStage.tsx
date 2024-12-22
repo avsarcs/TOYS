@@ -1,32 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { GroupApplicationStageProps, IndividualApplication, IndividualApplicationStageProps } from '../../types/designed';
-import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
+import React, { useCallback, useEffect, useState } from 'react';
+import { IndividualApplicationStageProps } from '../../types/designed';
 import isEmpty from 'validator/lib/isEmpty';
-import { TextInput } from '@mantine/core';
+import { TextInput, Autocomplete } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconSearch } from '@tabler/icons-react';
+import { HighschoolData } from '../../types/data';
 
 const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
+  const [schools, setSchools] = useState<HighschoolData[]>([]);
+  
+  const getSchools = useCallback(async () => {
+    const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+    const url = new URL(apiURL + "internal/analytics/high-schools/all");
+  
+    try {
+      url.searchParams.append("auth", "");
+  
+      const res = await fetch(url, {
+        method: "GET",
+      });
+  
+      if (!res.ok) {
+        notifications.show({
+          color: "red",
+          title: "Error",
+          message: "Unable to fetch high schools.",
+        });
+      } else {
+        const resText = await res.text();
+        const resJson = JSON.parse(resText);
+        
+        const schoolsByName = resJson.reduce((acc: { [key: string]: HighschoolData }, school: HighschoolData) => {
+          if (!acc[school.name]) {
+            acc[school.name] = school;
+          }
+          return acc;
+        }, {});
 
-  const [schoolName, setSchoolName] = useState<string | null>(null)
-
-  const schools = ["Hüseyin Avni Ulaş Anadolu Lisesi", "Bilkent Erzurum Laboratuvar Lisesi", "Arı Okulları", "Zart Zurt Okulları"]
+        const uniqueSchools = Object.values(schoolsByName);
+        
+        if (uniqueSchools.length === 0) {
+          notifications.show({
+            color: "yellow",
+            title: "No Schools Found",
+            message: "No high schools are available at the moment.",
+          });
+        }
+  
+        setSchools(uniqueSchools);
+      }
+    } catch (e) {
+      console.error("Error fetching schools:", e);
+      notifications.show({
+        color: "red",
+        title: "Oops!",
+        message: "Something went wrong. Please contact the site administrator.",
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    if (typeof schoolName == "string") {
-      setApplicationInfo((appInfo) => ({
-        ...appInfo,
-          highschool_name: schoolName
-        }
-      ))
-    }
-  }, [schoolName])
+    getSchools();
+  }, [getSchools]);
 
+  const schoolNames = schools.map(school => school.name);
+
+  const findSchoolByName = (name: string): HighschoolData | undefined => {
+    return schools.find(school => school.name === name);
+  };
 
   return (
     <>
       <h1 className='header text-3xl font-semibold mb-2'>Öğrenci Bilgileri<br/></h1>
       <h2 className='subheader mb-4'>Tura katılacak öğrenci hakkındaki bilgileri giriniz.</h2>
       <form className="p-6 rounded-md teacher-info">
-
         <div className="mb-4">
           <TextInput
             type="text"
@@ -35,17 +82,14 @@ const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({ applic
             id="name"
             name="name"
             placeholder="Adınız ve Soyadınız"
-            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.fullname)) ? "Bu alanı boş bırakamazsınız." : false}
+            error={warnings.empty_fields && isEmpty(applicationInfo.applicant.fullname) ? "Bu alanı boş bırakamazsınız." : false}
             maxLength={100}
-            value={applicationInfo.applicant["fullname"]}
+            value={applicationInfo.applicant.fullname}
             onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                applicant: {
-                  ...appInfo.applicant,
-                  fullname: e.target.value
-                }
-              }))
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: { ...prev.applicant, fullname: e.target.value },
+              }));
             }}
             required
           />
@@ -59,17 +103,14 @@ const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({ applic
             id="email"
             name="email"
             placeholder="E-postanız"
-            error={warnings["not_email"] ? "Geçerli bir e-posta adresi girin." : false}
+            error={warnings.not_email ? "Geçerli bir e-posta adresi girin." : false}
             maxLength={100}
-            value={applicationInfo.applicant["email"]}
+            value={applicationInfo.applicant.email}
             onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                applicant: {
-                  ...appInfo.applicant,
-                  email: e.target.value
-                }
-              }))
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: { ...prev.applicant, email: e.target.value },
+              }));
             }}
             required
           />
@@ -83,28 +124,43 @@ const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({ applic
             id="phone"
             name="phone"
             placeholder="İletişim numaranız"
-            error={warnings["not_phone_no"] ? "Geçerli bir telefon numarası girin." : false}
+            error={warnings.not_phone_no ? "Geçerli bir telefon numarası girin." : false}
             maxLength={60}
-            value={applicationInfo.applicant["phone"]}
+            value={applicationInfo.applicant.phone}
             onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                applicant: {
-                  ...appInfo.applicant,
-                  phone: e.target.value
-                }
-              }))
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: { ...prev.applicant, phone: e.target.value },
+              }));
             }}
             required
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="school" className="block font-medium mb-2">Okul <span className='text-red-400'>*</span></label>
-          <div className={`${(warnings["empty_fields"] && isEmpty(applicationInfo.highschool_name)) ? 'border-red-600 border-2 rounded-md' : 'border-gray-300'}`}>
-            {applicationInfo.highschool_name && `Şu anki seçiminiz: ${applicationInfo.highschool_name}`}
-            <SearchableSelect available_options={schools} value={schoolName} setValue={setSchoolName} placeholder='Okulunuzun adını giriniz' />
-          </div>
+          <Autocomplete
+            label="Okul"
+            placeholder="Okulunuzun adını giriniz"
+            data={schoolNames}
+            limit={5}
+            value={applicationInfo.highschool.name}
+            onChange={(value) => {
+              const selectedSchool = findSchoolByName(value);
+              setApplicationInfo((prev) => ({
+                ...prev,
+                highschool: selectedSchool || {
+                  id: "",
+                  name: value,
+                  location: "",
+                  priority: 1,
+                  ranking: 0
+                }
+              }));
+            }}
+            leftSection={<IconSearch size={16} />}
+            withAsterisk
+            error={warnings.empty_fields && isEmpty(applicationInfo.highschool.name) ? "Bu alanı boş bırakamazsınız." : false}
+          />
         </div>
       </form>
     </>

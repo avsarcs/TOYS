@@ -24,10 +24,11 @@ public class Application {
             .setStatus(ApplicationStatus.valueOf((String) map.get("status")));
     }
 
-    protected Application(Application application) {
+    public Application(Application application) {
         this.type = application.getType();
         this.status = application.getStatus();
     }
+
 
     public boolean isValid() {
         boolean valid = true;

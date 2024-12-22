@@ -4,7 +4,8 @@ import {IconSelector, IconChevronDown, IconChevronUp} from '@tabler/icons-react'
 import ComparisonButton from "./ComparisonButton.tsx";
 
 interface RowData {
-    university: string;
+    name: string;
+    id: string;
     city: string;
 }
 
@@ -45,7 +46,7 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
 function filterData(data: RowData[], search: string, cities: string[]) {
     const query = normalizeString(search.trim());
     return data.filter((item) =>
-        normalizeString(item["university"]).includes(query) &&
+        normalizeString(item["name"]).includes(query) &&
         (cities.length === 0 || cities.includes(item["city"]))
     );
 }
@@ -102,12 +103,12 @@ const RivalsTable: React.FC<RivalsTableProps> = ({data, search, cities}) => {
     const paginatedData = sortedData.slice(startIndex, endIndex);
 
     const rows = paginatedData.map((row) => (
-        <Table.Tr key={row.university}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.university}</Table.Td>
+        <Table.Tr key={row.name}>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.name}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.city}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
                 <ComparisonButton
-                    university={row.university}
+                    universityID={row.id}
                 />
             </Table.Td>
         </Table.Tr>
@@ -121,9 +122,9 @@ const RivalsTable: React.FC<RivalsTableProps> = ({data, search, cities}) => {
                 <Table.Tbody>
                     <Table.Tr>
                         <Th
-                            sorted={sortBy === 'university'}
+                            sorted={sortBy === 'name'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('university')}
+                            onSort={() => setSorting('name')}
                         >
                             <Text size={"xl"}>
                                 Üniversite
@@ -139,9 +140,11 @@ const RivalsTable: React.FC<RivalsTableProps> = ({data, search, cities}) => {
                             </Text>
                         </Th>
                         <Table.Th style={{padding: 0, textAlign: "center"}}>
-                            <Text size={"xl"}>
-                                Karşılaştır
-                            </Text>
+                            <Group justify="space-between">
+                                <Text fw={500} fz="sm">
+                                    {""}
+                                </Text>
+                            </Group>
                         </Table.Th>
                     </Table.Tr>
                 </Table.Tbody>

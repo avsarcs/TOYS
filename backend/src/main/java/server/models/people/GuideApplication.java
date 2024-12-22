@@ -21,12 +21,21 @@ public class GuideApplication extends Application {
         Guide defaultGuide = Guide.getDefault();
         guideApplication.setBilkent_id(defaultGuide.getBilkent_id());
         guideApplication.setProfile(Profile.getDefault());
-        guideApplication.setStatus(ApplicationStatus.RECIEVED);
+        guideApplication.setStatus(ApplicationStatus.RECEIVED);
         guideApplication.setType(ApplicationType.GUIDE);
         guideApplication.setApplicationReason("Application reason");
         guideApplication.setHeardFrom("heard from");
         guideApplication.setFutureExchange(false);
         return guideApplication;
+    }
+
+    public GuideApplication(GuideApplication other) {
+        super(other);
+        this.bilkent_id = other.bilkent_id;
+        this.profile = new Profile(other.profile);
+        this.heardFrom = other.heardFrom;
+        this.applicationReason = other.applicationReason;
+        this.futureExchange = other.futureExchange;
     }
 
     public GuideApplication() {
@@ -63,7 +72,7 @@ public class GuideApplication extends Application {
 
         guideApplication.setBilkent_id(dto.getId());
         guideApplication.setProfile(Profile.fromDTO_GuideApplication(dto));
-        guideApplication.setStatus(ApplicationStatus.RECIEVED);
+        guideApplication.setStatus(ApplicationStatus.RECEIVED);
         guideApplication.setType(ApplicationType.GUIDE);
         guideApplication.setApplicationReason(dto.getWhyapply());
         guideApplication.setHeardFrom(dto.getHowdidyouhear());

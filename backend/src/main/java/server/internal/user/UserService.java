@@ -5,97 +5,212 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import server.auth.AuthService;
 import server.auth.JWTService;
+import server.auth.Permission;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
 import server.enums.roles.UserRole;
+import server.enums.status.ApplicationStatus;
 import server.enums.status.FairStatus;
+import server.enums.status.RequestStatus;
 import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.DashboardCategory;
-import server.models.DTO.DTO_AdvisorOffer;
-import server.models.DTO.DTO_SimpleEvent;
-import server.models.DTO.DTO_SimpleGuide;
-import server.models.DTO.DTO_UserType;
+import server.enums.types.RequestType;
+import server.models.DTO.*;
 import server.models.events.FairApplication;
 import server.models.events.FairRegistry;
+import server.models.events.TourApplication;
 import server.models.events.TourRegistry;
+import server.models.people.Advisor;
 import server.models.people.Guide;
+import server.models.people.User;
+import server.models.requests.AdvisorPromotionRequest;
+import server.models.requests.GuideAssignmentRequest;
+import server.models.requests.Request;
+import server.models.requests.TourModificationRequest;
 import server.models.time.ZTime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserService {
 
+    @Autowired
+    DTOFactory dto;
 
     @Autowired
     Database database;
 
-    public List<DTO_SimpleEvent> getDashboardEvents(String auth, String category_s) {
-        if (!JWTService.getSimpleton().isValid(auth)) {
+    @Autowired
+    AuthService authService;
+
+    public List<Map<String, Object>> getDashboardEvents(String auth, String category_s) {
+
+        if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
+
         String userID = JWTService.getSimpleton().decodeUserID(auth);
 
-        DashboardCategory category = DashboardCategory.EVENT_INVITATION;
+        DashboardCategory category = null;
         try {
             category = DashboardCategory.valueOf(category_s);
         } catch (Exception E) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category!");
         }
-        List<DTO_SimpleEvent> response = new ArrayList<>();
-        if (category == DashboardCategory.GUIDELESS) {
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        User user = database.people.fetchUser(userID);
+
+        if (category.equals(DashboardCategory.OWN_EVENT)) {
             response.addAll(
-                    database.tours.fetchTours()
-                            .entrySet().stream().map(
-                                    e -> DTO_SimpleEvent.fromEvent(e.getValue()))
-                            .toList());
+                    database.tours.fetchTours().entrySet().stream().filter(
+                            e -> e.getValue().getGuides().contains(userID)
+                    ).map(
+                            e -> dto.simpleEvent(e.getValue())
+                    ).toList()
+            );
             response.addAll(
-                    database.fairs.fetchFairs()
-                            .entrySet().stream().map(
-                                    e -> DTO_SimpleEvent.fromEvent(e.getValue()))
-                            .toList());
-        } else if (category == DashboardCategory.EVENT_INVITATION) {
+                    database.fairs.fetchFairs().entrySet().stream().filter(
+                            e -> e.getValue().getGuides().contains(userID)
+                    ).map(
+                            e -> dto.simpleEvent(e.getValue())
+                    ).toList()
+            );
+        }
+        if (category.equals(DashboardCategory.EVENT_INVITATION)) {
+            response.addAll(
+                    database.requests.getGuideAssignmentRequests()
+                                    .stream().map(
+                                            r -> {
+                                                try {
+                                                    return dto.simpleEvent(database.tours.fetchTour(r.getEvent_id()));
+                                                } catch (Exception e) {
+                                                    try {
+                                                        return dto.simpleEvent(database.fairs.fetchFairs().get(r.getEvent_id()));
+                                                    } catch (Exception e2) {
+                                                        return null;
+                                                    }
+                                                }
+                                            }
+                            ).toList());
         }
 
-        return response;
+        if (category.equals(DashboardCategory.GUIDELESS)) {
+            if (user.getRole().equals(UserRole.ADVISOR)) {
+                response.addAll(
+                        database.tours.fetchTours().entrySet().stream().filter(
+                                e -> e.getValue().getGuides().isEmpty() && e.getValue().getStarted_at().getDate().getDayOfWeek().equals(((Advisor) user).getResponsibleFor())
+                        ).map(
+                                e -> dto.simpleEvent(e.getValue())
+                        ).toList()
+                );
+            }
+        }
+
+        if (category.equals(DashboardCategory.PENDING_APPLICATION)) {
+            response.addAll(
+                    database.applications.getAppicationsOfType(ApplicationType.TOUR).entrySet().stream()
+                            .filter(
+                                    e -> e.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
+                            )
+                            .map(e -> {
+                                if (e.getValue() instanceof TourApplication) {
+                                    return dto.simpleEvent((TourApplication) e.getValue(), e.getKey());
+                                }
+                                System.out.println("Invalid tour application");
+                                return null;
+                            }
+                    ).toList()
+            );
+
+            response.addAll(
+                    database.applications.getAppicationsOfType(ApplicationType.FAIR).entrySet().stream()
+                            .filter(
+                                    e -> e.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
+                            )
+                            .map(e -> {
+                                        if (e.getValue() instanceof FairApplication) {
+                                            return dto.simpleEvent((FairApplication) e.getValue(), e.getKey());
+                                        }
+                                        return null;
+                                    }
+                            ).toList()
+            );
+        }
+
+        if (category.equals(DashboardCategory.PENDING_MODIFICATION)) {
+            response.addAll(
+                    database.requests.getRequestsOfType(RequestType.TOUR_MODIFICATION, null)
+                            .stream()
+                            .filter(r -> r.getStatus().equals(RequestStatus.PENDING))
+                            .filter(r -> {
+                                try {
+                                    return database.tours.fetchTour(((TourModificationRequest) r).getTour_id()).getAccepted_time().getDate().getDayOfWeek().equals(((Advisor) user).getResponsibleFor());
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            })
+                            .map(r -> dto.simpleEvent((TourModificationRequest) r, r.getRequest_id())).toList()
+            );
+        }
+
+        return response.stream().filter(Objects::nonNull).toList();
     }
 
-    private DTO_SimpleEvent mapFairInviteToSimpleEvent(FairApplication application) {
-        DTO_SimpleEvent event = new DTO_SimpleEvent();
-
-        return event;
-    }
-
-    public List<DTO_AdvisorOffer> getAdvisorOffers(String auth, String guide_name, String type, String from_date_s, String to_date_s) {
-        if (!JWTService.getSimpleton().isValid(auth)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authorization!");
-        }
-
-        if (!List.of(UserRole.COORDINATOR, UserRole.DIRECTOR).contains(JWTService.getSimpleton().getUserRole(auth))) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unsatisfactory permissions!");
-        }
-
-        List<DTO_AdvisorOffer> offers = new ArrayList<>();
-
-        // TODO : structure the dbs for the offers, add response endpoint for it
-
-        return offers;
-    }
-
-    public List<DTO_SimpleGuide> searchGuides(String auth, String name, String type) {
-        if (name.isEmpty() && type.isEmpty()) {
-            return getSimpleGuides(auth, DTO_UserType.GUIDE);
-        }
-
-        if (!JWTService.getSimpleton().isValid(auth)) {
+    public List<Map<String, Object>> getAdvisorOffers(String auth, String guide_name, String type, String from_date_s, String to_date_s) {
+        if (!authService.check(auth, Permission.AR_GUIDE_APPLICATIONS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
-        List<DTO_SimpleGuide> guides = new ArrayList<>();
+        List<Request> offers = database.requests.getRequestsOfType(RequestType.PROMOTION, null);
+        List<User> users = database.people.fetchUsers();
+        SorensenDice alg = new SorensenDice();
+        if (!guide_name.isEmpty()) {
+            offers = offers.stream().filter(
+                    r -> alg.similarity(database.people.fetchUser(r.getRequested_by().getBilkent_id()).getProfile().getName().toLowerCase(), guide_name.toLowerCase()) > 0.6
+            ).toList();
+        }
+
+        if (!type.isEmpty()) {
+            offers = offers.stream().filter(
+                    r -> {
+                        try {
+                            return r.getStatus().equals(RequestStatus.valueOf(type));
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    }
+            ).toList();
+        }
+
+        offers = offers.stream().filter( r -> r instanceof AdvisorPromotionRequest).toList();
+
+
+        return offers.stream().map( o -> {
+            try {
+                return dto.advisorOffer((AdvisorPromotionRequest) o, database.people.fetchUser(((AdvisorPromotionRequest) o).getGuide_id()).getProfile().getName());
+            } catch (Exception e) {
+                return null;
+            }
+        }).toList();
+    }
+
+    public List<Map<String, Object>> searchGuides(String auth, String name, String type) {
+        /*if (name.isEmpty() && type.isEmpty()) {
+            getSimpleGuides(auth, DTO_UserType.GUIDE);
+        }*/
+
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Insufficent authorization!");
+        }
+
+        List<Map<String, Object>> guides = new ArrayList<>();
         if (type.isEmpty()) {
             guides.addAll(
                     getSimpleGuides(auth, DTO_UserType.GUIDE)
@@ -106,7 +221,9 @@ public class UserService {
             guides.addAll(
                     getSimpleGuides(auth, DTO_UserType.ADVISOR)
             );
+
         } else {
+            System.out.println("Type is " + type);
             DTO_UserType userType ;
             try {
                 userType = DTO_UserType.valueOf(type);
@@ -118,39 +235,39 @@ public class UserService {
             );
         }
 
-        SorensenDice alg = new SorensenDice();
-
         if (!name.isEmpty()) {
+            SorensenDice alg = new SorensenDice();
             guides = guides.stream().filter(
-                    g -> alg.similarity(g.getName().toLowerCase(), name.toLowerCase()) > 0.6
+                    g -> alg.similarity(((String) g.get("name")).toLowerCase(), name.toLowerCase()) > 0.6
             ).toList();
         }
         return guides;
     }
 
-    public List<DTO_SimpleGuide> getSimpleGuides(String authToken, DTO_UserType type) {
-        List<DTO_SimpleGuide> guides = new ArrayList<>();
+    public List<Map<String, Object>> getSimpleGuides(String auth, DTO_UserType type) {
         // validate jwt token
-        if (!JWTService.getSimpleton().isValid(authToken)) {
+        if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
+
+        List<Map<String, Object>> guides = new ArrayList<>();
 
         List<Guide> people = database.people.fetchGuides(null);
         people.addAll(database.people.fetchAdvisors(null));
         for (Guide guide : people) {
             if (type == DTO_UserType.TRAINEE) {
                 if (guide.getExperience().getExperienceLevel_level() == ExperienceLevel.TRAINEE) {
-                    guides.add(DTO_SimpleGuide.fromGuide(guide));
+                    guides.add(dto.simpleGuide(guide));
                 }
             } else if (type == DTO_UserType.GUIDE) {
                 if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
                     if (guide.getRole() == UserRole.GUIDE) {
-                        guides.add(DTO_SimpleGuide.fromGuide(guide));
+                        guides.add(dto.simpleGuide(guide));
                     }
                 }
             } else if (type == DTO_UserType.ADVISOR){
                 if (guide.getRole() == UserRole.ADVISOR) {
-                    guides.add(DTO_SimpleGuide.fromGuide(guide));
+                    guides.add(dto.simpleGuide(guide));
                 }
             }
         }
@@ -158,10 +275,10 @@ public class UserService {
         return guides;
     }
 
-    public List<DTO_SimpleGuide> getAvailableGuides(String authToken, DTO_UserType type, String timeString) {
-        List<DTO_SimpleGuide> guides = new ArrayList<>();
+    public List<Map<String,Object>> getAvailableGuides(String auth, DTO_UserType type, String timeString) {
+        List<Map<String, Object>> guides = new ArrayList<>();
         // validate jwt token
-        if (!JWTService.getSimpleton().isValid(authToken)) {
+        if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
 
@@ -171,11 +288,11 @@ public class UserService {
         for (Guide guide : people) {
             if (type == DTO_UserType.TRAINEE) {
                 if (guide.getExperience().getExperienceLevel_level() == ExperienceLevel.TRAINEE) {
-                    guides.add(DTO_SimpleGuide.fromGuide(guide));
+                    guides.add(dto.simpleGuide(guide));
                 }
             } else if (type == DTO_UserType.GUIDE) {
                 if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
-                    guides.add(DTO_SimpleGuide.fromGuide(guide));
+                    guides.add(dto.simpleGuide(guide));
                 }
             }
         }
@@ -190,7 +307,7 @@ public class UserService {
 
                     if (tour.getGuides().contains(guide.getBilkent_id())) {
                         if (tour.getAccepted_time().inRange(time, 1)) {
-                            guides.remove(DTO_SimpleGuide.fromGuide(guide));
+                            guides.remove(dto.simpleGuide(guide));
                         }
                     }
                 }
@@ -199,11 +316,11 @@ public class UserService {
 
         Map<String, FairRegistry> fairs = database.fairs.fetchFairs();
         for (FairRegistry fair : fairs.values()) {
-            if (fair.getFair_status() == FairStatus.ACCEPTED) {
+            if (fair.getFair_status() == FairStatus.CONFIRMED) {
                 for (Guide guide : people) {
                     if (fair.getGuides().contains(guide.getBilkent_id())) {
                         if (fair.getStarts_at().inRange(time, 24)) {
-                            guides.remove(DTO_SimpleGuide.fromGuide(guide));
+                            guides.remove(dto.simpleGuide(guide));
                         }
                     }
                 }
@@ -211,5 +328,74 @@ public class UserService {
         }
 
         return guides;
+    }
+
+    public boolean amEnrolled(String auth, String event_id) {
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
+        try {
+            TourRegistry tour = database.tours.fetchTour(event_id);
+            return tour.getGuides().contains(userID);
+        } catch (Exception e) {
+            try {
+                FairRegistry fair = database.fairs.fetchFairs().get(event_id);
+                return fair.getGuides().contains(userID);
+            } catch (Exception e2) {
+                return false;
+            }
+        }
+    }
+
+    public boolean amInvited(String auth, String event_id) {
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+
+        try {
+            return database.requests.getGuideAssignmentRequests().stream().anyMatch(
+                    r -> r.getEvent_id().equals(event_id) && r.getGuide_id().equals(userID)
+            );
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public List<Map<String, Object>> getInvitations(String auth, String my_invitations) {
+        if (!authService.check(auth)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+        }
+
+        if (!authService.check(auth, Permission.ASSIGN_OTHER_GUIDE) && !my_invitations.isEmpty()) {
+            if (!Boolean.valueOf(my_invitations)) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "You do not have permission to view other people's invitations!");
+            }
+        }
+        final boolean onlyMine;
+        try {
+            onlyMine = my_invitations.isEmpty() ? true : Boolean.parseBoolean(my_invitations);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid parameter!");
+        }
+
+        String userID = JWTService.getSimpleton().decodeUserID(auth);
+        List<Map<String, Object>> invitations = new ArrayList<>();
+
+        try {
+            database.requests.getGuideAssignmentRequests().stream()
+                    .filter(
+                            r -> !onlyMine || r.getGuide_id().equals(userID)
+                    ).map(dto::eventInvitation).forEach(invitations::add);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while fetching / parsing invitations!");
+        }
+
+        return invitations;
     }
 }

@@ -4,11 +4,11 @@ import server.models.schools.Highschool;
 import server.models.schools.HighschoolRecord;
 
 public class DDTO_Highschool {
+    private String id;
     private String name;
     private String city;
     private long ranking;
     private long priority;
-    private String id;
 
     public static DDTO_Highschool fromHighscholl(Highschool highschool) {
         DDTO_Highschool dto = new DDTO_Highschool();

@@ -21,7 +21,7 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
         <Table.Th style={{padding: 0, textAlign: "center"}}>
             <UnstyledButton onClick={onSort}>
                 <Group justify="space-between">
-                    <Text fw={500} fz="sm">
+                    <Text span fw={500} fz="sm">
                         {children}
                     </Text>
                     <Center>
@@ -101,7 +101,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('year')}
                         >
-                            <Text size={"xl"}>
+                            <Text span size={"xl"}>
                                 Yıl
                             </Text>
                         </Th>
@@ -110,13 +110,13 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('count')}
                         >
-                            <Text size={"xl"}>
+                            <Text span size={"xl"}>
                                 Öğrenci Sayısı
                             </Text>
                         </Th>
                         <Table.Th style={{padding: 0, textAlign: "center"}}>
                             <Group justify="space-between">
-                                <Text fw={500} fz="sm">
+                                <Text span fw={500} fz="sm">
                                     {""}
                                 </Text>
                             </Group>
@@ -130,7 +130,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                     ) : (
                         <Table.Tr>
                             <Table.Td colSpan={Object.keys(data[0]).length}>
-                                <Text fw={500} ta="center">
+                                <Text span fw={500} ta="center">
                                     Öğrenci bulunamadı.
                                 </Text>
                             </Table.Td>

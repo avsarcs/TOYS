@@ -2,8 +2,9 @@ package server.mailService.mailTypes;
 
 public enum Status {
     ERROR,
-    SENT,
+    PENDING,
     RECIEVED,
     REJECTION,
-    APPROVAL
+    APPROVAL,
+    CANCELLED
 }

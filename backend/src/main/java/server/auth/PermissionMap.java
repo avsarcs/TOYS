@@ -10,7 +10,8 @@ public class PermissionMap {
 
     public static boolean hasPermission(UserRole role, Permission permission) {
         initializeEntries();
-        boolean hasPermission = table.get(role).contains(permission);
+        boolean hasPermission = table.get(UserRole.GUIDE).contains(permission);
+
         if (role != UserRole.GUIDE && !hasPermission) {
             hasPermission = table.get(UserRole.ADVISOR).contains(permission);
 
@@ -41,7 +42,8 @@ public class PermissionMap {
                     Permission.AR_TOUR_CHANGES,
                     Permission.REQUEST_TOUR_CHANGES,
                     Permission.ASSIGN_OTHER_GUIDE,
-                    Permission.MANAGE_GUIDE_EXPERIENCE
+                    Permission.MANAGE_GUIDE_EXPERIENCE,
+                    Permission.EDIT_TOUR_SS_TIME
             ));
 
             table.put(UserRole.COORDINATOR, List.of(
@@ -49,6 +51,7 @@ public class PermissionMap {
                     Permission.INVITE_GUIDE_TO_FAIR,
                     Permission.FIRE_GUIDE_OR_ADVISOR,
                     Permission.AR_FAIR_INVITATIONS,
+                    Permission.MANAGE_TIMESHEET,
                     Permission.VIEW_WORK_DONE_BY_GUIDE,
                     Permission.AR_REVIEWS
             ));

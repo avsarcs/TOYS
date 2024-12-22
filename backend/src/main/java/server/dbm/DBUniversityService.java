@@ -16,35 +16,27 @@ import java.util.Map;
 
 @Service
 public class DBUniversityService {
-    private final Firestore firestore;
+    private static final String universityFilePath = "data/universities.json";
+    private final LocalFileService local;
     private final ObjectMapper mapper;
 
     public DBUniversityService() {
-        this.firestore = Database.getFirestoreDatabase();
+        this.local = Database.getLocalFileService();
         this.mapper = Database.getObjectMapper();
     }
     // Adding may be useless, but it is still here if needed
     public boolean addUniversity(University university) {
 
-        DocumentReference reference = firestore.collection("universities").document("universities");
-
         try {
-            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
-            if (data == null) {
-                data = new HashMap<>();
-            }
+            Map<String, Object> data = local.loadMap(universityFilePath);
+
             data.putIfAbsent(
                     university.getUid(),
                     mapper.convertValue(university, new TypeReference<HashMap<String, Object>>() {})
             );
-            // Not sure about this line
-            ApiFuture<WriteResult> result = reference.set(
-                    mapper.convertValue(
-                            Collections.singletonMap("universities", data),
-                            new TypeReference<HashMap<String, Object>>() {}
-                    )
-            );
-            System.out.println("University added to database." + result.get().getUpdateTime());
+            if (local.saveMap(universityFilePath, data)) {
+                System.out.println("University added to database.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to add university to database.");
@@ -57,13 +49,10 @@ public class DBUniversityService {
     public Map<String, University> getUniversities() {
         Map<String, University> universities = new HashMap<>();
         try {
-            DocumentReference reference = firestore.collection("universities").document("universities");
-
-            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
+            Map<String, Object> data = local.loadMap(universityFilePath);
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
-                universities.putIfAbsent(entry.getKey(), University.fromMap((Map<String, Object>)entry.getValue()));
-                //universities.putIfAbsent(entry.getKey(), mapper.convertValue(entry.getValue(), University.class));
+                universities.putIfAbsent(entry.getKey(), University.fromSource((Map<String, Object>)entry.getValue()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,21 +61,65 @@ public class DBUniversityService {
         return universities;
     }
 
-    public University fetchUniversity(String uid) {
-        try {
-            DocumentReference reference = firestore.collection("universities").document("universities");
+    public University getUniversity(String uid) {
 
-            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("universities");
+        System.out.println("Cache check");
+        if (MemCache.isValid("uni_" + uid)) {
+            System.out.println("Cache valid");
+            return (University) MemCache.load("uni_" + uid);
+        }
+        System.out.println("Cache invalid");
+
+        try {
+
+            Map<String, Object> data = local.loadMap(universityFilePath);
 
             if (!data.containsKey(uid)) {
-                throw new RuntimeException("University with id " + uid + " not found.");
+                return null;
             }
-            return mapper.convertValue(data.get(uid), University.class);
+
+            University university = null;
+            try {
+                university = University.fromSource((Map<String, Object>) data.get(uid));
+                System.out.println("found uni, saving to cache.");
+                MemCache.save("uni_" + uid, university);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error parsing University from source.");
+            }
+
+            return university;
 
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to fetch university from database.");
         }
         return null;
+    }
+    public void updateUniversityRivalry(String uid, boolean isRival) {
+        MemCache.invalidate("uni_" + uid);
+
+        try {
+            Map<String, Object> data = local.loadMap(universityFilePath);
+
+            if (!data.containsKey(uid)) {
+                throw new RuntimeException("University with id " + uid + " not found.");
+            }
+
+            Map<String, Object> relatedUni = (Map<String, Object>) data.get(uid);
+
+            relatedUni.put("is_rival", isRival);
+            data.put(uid, relatedUni);
+
+            System.out.println(":::" + ((Map<?, ?>) data.get(uid)).get("is_rival"));
+
+            if (local.saveMap(universityFilePath, data)) {
+                System.out.println("University rivalry status updated successfully.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to update university rivalry status.");
+        }
     }
 }
