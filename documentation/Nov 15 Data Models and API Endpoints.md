@@ -688,7 +688,7 @@ response_type:json
                 tid=tour_id
             method: get
             response: TourModel
-            
+
             /simple
             parameters:
                 auth=jwt token // passkey if Applicant is making this request
