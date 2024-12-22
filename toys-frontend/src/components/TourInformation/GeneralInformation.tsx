@@ -1,4 +1,5 @@
 import React from 'react';
+import { Department } from '../../types/enum';
 import { TourSectionProps } from "../../types/designed";
 import { Box, Card, Text, Group, Badge, Title, Divider, Grid, Stack, Popover, Button } from '@mantine/core';
 import { IconCalendarTime, IconSchool, IconNotebook, IconMapPin, IconCalendarDue, IconUsers, IconUser, IconMail, IconPhone, IconCopy } from '@tabler/icons-react';
@@ -9,8 +10,11 @@ import { parsePhoneNumber } from "libphonenumber-js/max";
 const GeneralInformation: React.FC<TourSectionProps> = ({ tour }) => {
   const formatTimeRange = (startTime: string) => {
     const start = dayjs(startTime);
-    const end = start.add(1, "hour");
     return `${start.format("DD MMMM YYYY")} ${start.format("HH:mm")}`;
+  };
+
+  const getTurkishMajorName = (major: string): string => {
+    return Department[major as keyof typeof Department] || major;
   };
 
   const handleCopy = (text: string) => {
@@ -106,9 +110,9 @@ const GeneralInformation: React.FC<TourSectionProps> = ({ tour }) => {
                     <Group gap="xs">
                       <IconMail size={18} />
                       <Text fw={500}>{tour.applicant.email}</Text>
-                      <Button 
-                        variant="subtle" 
-                        size="xs" 
+                      <Button
+                        variant="subtle"
+                        size="xs"
                         onClick={() => handleCopy(tour.applicant.email)}
                         p={4}
                       >
@@ -120,9 +124,9 @@ const GeneralInformation: React.FC<TourSectionProps> = ({ tour }) => {
                       <Text fw={500}>
                         {parsePhoneNumber(tour.applicant.phone, "TR").formatInternational()}
                       </Text>
-                      <Button 
-                        variant="subtle" 
-                        size="xs" 
+                      <Button
+                        variant="subtle"
+                        size="xs"
                         onClick={() => handleCopy(tour.applicant.phone)}
                         p={4}
                       >
@@ -137,16 +141,16 @@ const GeneralInformation: React.FC<TourSectionProps> = ({ tour }) => {
 
           <TimeDisplay />
         </Grid>
-        
+
         {tour.type === "INDIVIDUAL" && tour.requested_majors && tour.requested_majors.length > 0 && (
           <>
             <Divider />
             <Box>
-              <Text fw={600} mb="xs">İstenen Bölümler:</Text>
+              <Text fw={600} mb="xs">İstenen Rehber Bölümleri:</Text>
               <Group gap="xs">
                 {tour.requested_majors.map((major, index) => (
                   <Badge key={index} color="blue" variant="light" size="lg">
-                    {major}
+                    {getTurkishMajorName(major)}
                   </Badge>
                 ))}
               </Group>

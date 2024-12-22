@@ -163,7 +163,7 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
         <Group gap="xs">
           <IconClockPlay size={24} className="text-blue-600" />
           <Box>
-            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Başlangıç Saati</Text>
+            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Turun Asıl Başladığı Saat</Text>
             <Group gap="md">
               <Text size="lg" fw={700} className="text-gray-900">
                 {started ? 
@@ -184,7 +184,7 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
         <Group gap="xs">
           <IconClockStop size={24} className="text-blue-600" />
           <Box>
-            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Bitiş Saati</Text>
+            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Turun Asıl Bittiği Saat</Text>
             <Group gap="md">
               <Text size="lg" fw={700} className="text-gray-900">
                 {ended ? 
@@ -217,6 +217,9 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
           )}
 
           <Box className="bg-gray-50 p-4 rounded-md">
+            <Text size="sm" fw={400}>
+              Bir hata mı var?
+            </Text>
             <Text size="sm" fw={600} className="text-gray-800" mb="md">
               Tur Zamanlarını Güncelle
             </Text>
