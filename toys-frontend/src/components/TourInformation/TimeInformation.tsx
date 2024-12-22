@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import { TourSectionProps } from "../../types/designed.ts";
-import { 
-  Box, 
-  Button, 
-  Group, 
-  Space, 
-  Text, 
+import {
+  Box,
+  Button,
+  Group,
+  Space,
+  Text,
   Modal,
   TextInput,
   Paper,
@@ -14,12 +14,12 @@ import {
   Badge
 } from "@mantine/core";
 import { UserContext } from "../../context/UserContext.tsx";
-import { UserRole } from "../../types/enum.ts";
-import { 
-  IconClock, 
-  IconClockPlay, 
+import { UserRole, TourStatus } from "../../types/enum.ts";
+import {
+  IconClock,
+  IconClockPlay,
   IconClockStop,
-  IconAlertCircle 
+  IconAlertCircle
 } from "@tabler/icons-react";
 
 const TOUR_START_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/start-tour");
@@ -28,20 +28,22 @@ const TOUR_END_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/intern
 const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
   const userContext = useContext(UserContext);
   const tourDate = props.tour.accepted_time ? new Date(props.tour.accepted_time) : new Date();
-  
+
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
   const [showResult, setShowResult] = useState(false);
   const [updateResult, setUpdateResult] = useState({ start: false, end: false });
   const [timeError, setTimeError] = useState<string | null>(null);
-  
-  if (userContext.user.role === UserRole.GUIDE) {
+
+  if (userContext.user.role === UserRole.GUIDE ||
+    (props.tour.status !== TourStatus.FINISHED && props.tour.status !== TourStatus.ONGOING)) {
     return null;
   }
 
   const isAdvisorOrAbove = [UserRole.ADVISOR, UserRole.COORDINATOR, UserRole.DIRECTOR].includes(userContext.user.role);
   const started = props.tour.actual_start_time.length !== 0;
   const ended = props.tour.actual_end_time.length !== 0;
+  const isOngoing = props.tour.status === TourStatus.ONGOING;
 
   const parseTimeString = (timeStr: string): string | null => {
     if (!timeStr.match(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)) {
@@ -54,33 +56,45 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
     date.setMinutes(minutes);
     date.setSeconds(0);
     date.setMilliseconds(0);
-    
+
     // Format as YYYY-MM-DDTHH:mm:ss+03:00
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const hour = String(hours).padStart(2, '0');
     const minute = String(minutes).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}T${hour}:${minute}:00+03:00`;
   };
 
   const validateTimes = () => {
-    const startDate = parseTimeString(startTime);
-    const endDate = parseTimeString(endTime);
+    if (isOngoing) {
+      // For ongoing tours, only validate start time
+      const startDate = parseTimeString(startTime);
+      if (startTime && !startDate) {
+        setTimeError("Lütfen geçerli bir saat girin (HH:MM)");
+        return false;
+      }
+      setTimeError(null);
+      return true;
+    } else {
+      // Existing validation for finished tours
+      const startDate = parseTimeString(startTime);
+      const endDate = parseTimeString(endTime);
 
-    if ((startTime && !startDate) || (endTime && !endDate)) {
-      setTimeError("Lütfen geçerli bir saat girin (HH:MM)");
-      return false;
+      if ((startTime && !startDate) || (endTime && !endDate)) {
+        setTimeError("Lütfen geçerli bir saat girin (HH:MM)");
+        return false;
+      }
+
+      if (startDate && endDate && startDate >= endDate) {
+        setTimeError("Bitiş saati başlangıç saatinden sonra olmalıdır!");
+        return false;
+      }
+
+      setTimeError(null);
+      return true;
     }
-
-    if (startDate && endDate && startDate >= endDate) {
-      setTimeError("Bitiş saati başlangıç saatinden sonra olmalıdır!");
-      return false;
-    }
-
-    setTimeError(null);
-    return true;
   };
 
   const handleTimeChange = (value: string, isStart: boolean) => {
@@ -126,7 +140,8 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
       startSuccess = startRes.ok;
     }
 
-    if (finalEndTime) {
+    // Only handle end time if not ongoing
+    if (finalEndTime && !isOngoing) {
       const endUrl = new URL(TOUR_END_URL);
       endUrl.searchParams.append("auth", await userContext.getAuthToken());
       endUrl.searchParams.append("tour_id", props.tour.tour_id);
@@ -179,26 +194,29 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
           </Box>
         </Group>
 
-        <Divider orientation="vertical" />
-
-        <Group gap="xs">
-          <IconClockStop size={24} className="text-blue-600" />
-          <Box>
-            <Text size="sm" fw={500} className="text-gray-700" mb={4}>Turun Asıl Bittiği Saat</Text>
-            <Group gap="md">
-              <Text size="lg" fw={700} className="text-gray-900">
-                {ended ? 
-                  new Date(props.tour.actual_end_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) 
-                  : "--:--"}
-              </Text>
-              {!ended && (
-                <Badge color="red" variant="light" size="lg">
-                  Bitmedi
-                </Badge>
-              )}
+        {!isOngoing && (
+          <>
+            <Divider orientation="vertical" />
+            <Group gap="xs">
+              <IconClockStop size={24} className="text-blue-600" />
+              <Box>
+                <Text size="sm" fw={500} className="text-gray-700" mb={4}>Turun Asıl Bittiği Saat</Text>
+                <Group gap="md">
+                  <Text size="lg" fw={700} className="text-gray-900">
+                    {ended ? 
+                      new Date(props.tour.actual_end_time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) 
+                      : "--:--"}
+                  </Text>
+                  {!ended && (
+                    <Badge color="red" variant="light" size="lg">
+                      Bitmedi
+                    </Badge>
+                  )}
+                </Group>
+              </Box>
             </Group>
-          </Box>
-        </Group>
+          </>
+        )}
       </Group>
 
       {isAdvisorOrAbove && (
@@ -234,21 +252,23 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
                 w={150}
                 size="md"
               />
-              <TextInput
-                label={<Text fw={500} className="text-gray-700">Bitiş</Text>}
-                placeholder="HH:MM"
-                value={endTime}
-                onChange={(e) => handleTimeChange(e.currentTarget.value, false)}
-                onBlur={(e) => setEndTime(handleTimeBlur(e.currentTarget.value))}
-                leftSection={<IconClock size={16} className="text-blue-600" />}
-                w={150}
-                size="md"
-              />
+              {!isOngoing && (
+                <TextInput
+                  label={<Text fw={500} className="text-gray-700">Bitiş</Text>}
+                  placeholder="HH:MM"
+                  value={endTime}
+                  onChange={(e) => handleTimeChange(e.currentTarget.value, false)}
+                  onBlur={(e) => setEndTime(handleTimeBlur(e.currentTarget.value))}
+                  leftSection={<IconClock size={16} className="text-blue-600" />}
+                  w={150}
+                  size="md"
+                />
+              )}
               <Button
                 variant="light"
                 size="md"
                 onClick={handleTimeUpdate}
-                disabled={!startTime || !endTime || !!timeError}
+                disabled={!startTime || (!isOngoing && !endTime) || !!timeError}
                 leftSection={<IconClock size={16} />}
                 className="bg-blue-50 hover:bg-blue-100"
               >
