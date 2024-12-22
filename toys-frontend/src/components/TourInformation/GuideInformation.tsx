@@ -6,16 +6,14 @@ import { TourStatus, UserRole } from "../../types/enum";
 import ManageGuidesWindow from "./ManageGuidesWindow";
 import { TourData } from "../../types/data";
 
-// Define the TourSectionProps interface
 interface TourSectionProps {
   tour: TourData;
   refreshTour: () => void;
 }
 
-// Define interface for GuideSection props
 interface GuideSectionProps {
   title: string;
-  guides: {
+  guides?: {
     id: string;
     full_name: string;
     highschool: {
@@ -33,13 +31,16 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour
   const [manageGuidesOpen, setManageGuidesOpen] = useState(false);
   const totalGuidesNeeded = Math.ceil(tour.visitor_count / VISITOR_PER_GUIDE);
 
-  const GuideSection: React.FC<GuideSectionProps> = ({ title, guides, color = "blue" }) => (
+  const GuideSection: React.FC<GuideSectionProps> = ({ title, guides = [], color = "blue" }) => (
     <Box>
       <Text size="sm" fw={600} c="gray.6" mb="xs">{title}</Text>
-      {guides.length > 0 ? (
+      {guides && guides.length > 0 && guides[0]?.full_name ? (
         <Group gap="sm">
           {guides.map((guide, index) => (
-            <Tooltip key={index} label={`${guide.full_name} (${guide.highschool.name})`}>
+            <Tooltip 
+              key={index} 
+              label={guide?.highschool?.name ? `${guide.full_name} (${guide.highschool.name})` : guide.full_name}
+            >
               <Card withBorder p="xs" className={`bg-${color}-50`}>
                 <Group gap="sm">
                   <Avatar size="sm" color={color} radius="xl">
@@ -47,7 +48,7 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour
                   </Avatar>
                   <Box>
                     <Text size="sm" fw={500}>{guide.full_name}</Text>
-                    <Text size="xs" c="gray.6">{guide.highschool.name}</Text>
+                    <Text size="xs" c="gray.6">{guide.highschool?.name || ''}</Text>
                   </Box>
                 </Group>
               </Card>
@@ -80,22 +81,32 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour
         </Group>
       </Card.Section>
       <Stack p="md" gap="lg">
-        <GuideSection title="Rehberler" guides={tour.guides} color="blue" />
+        <GuideSection 
+          title="Rehberler" 
+          guides={tour?.guides || []} 
+          color="blue" 
+        />
         <Divider variant="dashed" />
-        <GuideSection title="Amatör Rehberler" guides={tour.trainee_guides} color="cyan" />
-       
+        <GuideSection 
+          title="Amatör Rehberler" 
+          guides={tour?.trainee_guides || []} 
+          color="cyan" 
+        />
+        
         <Box>
           <Text size="sm" c="gray.6">
             Bu tur için gereken toplam rehber sayısı: {totalGuidesNeeded}
           </Text>
         </Box>
       </Stack>
-      <ManageGuidesWindow
-        opened={manageGuidesOpen}
-        onClose={() => setManageGuidesOpen(false)}
-        tour={tour}
-        totalGuidesNeeded={totalGuidesNeeded}
-      />
+      {tour && (
+        <ManageGuidesWindow
+          opened={manageGuidesOpen}
+          onClose={() => setManageGuidesOpen(false)}
+          tour={tour}
+          totalGuidesNeeded={totalGuidesNeeded}
+        />
+      )}
     </Card>
   );
 };

@@ -19,7 +19,6 @@ const TourStatusText = {
 } as const;
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
-  const userContext = useContext(UserContext);
 
   const statusColorClass = useMemo(() => {
     switch (props.tour.status) {

@@ -24,9 +24,13 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
   const [enrollSuccess, setEnrollSuccess] = useState<boolean>(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState<boolean>(false);
   const [inviteResponseSuccess, setInviteResponseSuccess] = useState<boolean>(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState<boolean>(true);
 
   const checkEnrollmentStatus = useCallback(async () => {
-    if (userContext.user.role !== UserRole.GUIDE && userContext.user.role !== UserRole.ADVISOR) return;
+    if (userContext.user.role !== UserRole.GUIDE && userContext.user.role !== UserRole.ADVISOR) {
+      setIsCheckingStatus(false);
+      return;
+    }
 
     try {
       const enrolledUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/am-enrolled");
@@ -52,6 +56,8 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
       }
     } catch (error) {
       console.error('Error checking enrollment status:', error);
+    } finally {
+      setIsCheckingStatus(false);
     }
   }, [userContext.user.role, tour.tour_id]);
 
@@ -276,6 +282,10 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
   }, [checkEnrollmentStatus]);
 
   if (userContext.user.role !== UserRole.GUIDE && userContext.user.role !== UserRole.ADVISOR) {
+    return null;
+  }
+
+  if (isCheckingStatus) {
     return null;
   }
 
