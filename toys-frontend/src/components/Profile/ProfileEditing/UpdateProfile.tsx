@@ -1,11 +1,43 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Avatar, Button, FileButton, Loader, MultiSelect, Select} from "@mantine/core";
 import EditProfileField from "./EditProfileField";
-import {UserContext} from "../../../context/UserContext";
+import {EMPTY_USER, UserContext} from "../../../context/UserContext";
 import {HighschoolData, HighschoolDataForProfile} from "../../../types/data";
-import {DayOfTheWeek, UserRole} from "../../../types/enum.ts";
+import {BackendDepartment, DayOfTheWeek, Department, UserRole} from "../../../types/enum.ts";
 import {notifications} from "@mantine/notifications";
-import {EMPTY_USER} from "../../../context/UserContext";
+
+// Mapping between Department and BackendDepartment
+const departmentMapping: { [key in BackendDepartment]: Department } = {
+    [BackendDepartment.ARCHITECTURE]: Department.ARCHITECTURE,
+    [BackendDepartment.COMMUNICATION_AND_DESIGN]: Department.COMMUNICATION_AND_DESIGN,
+    [BackendDepartment.FINE_ARTS]: Department.FINE_ARTS,
+    [BackendDepartment.GRAPHIC_DESIGN]: Department.GRAPHIC_DESIGN,
+    [BackendDepartment.INTERIOR_ARCHITECTURE_AND_ENVIRONMENTAL_DESIGN]: Department.INTERIOR_ARCHITECTURE_AND_ENVIRONMENTAL_DESIGN,
+    [BackendDepartment.URBAN_DESIGN_AND_LANDSCAPE_ARCHITECTURE]: Department.URBAN_DESIGN_AND_LANDSCAPE_ARCHITECTURE,
+    [BackendDepartment.MANAGEMENT]: Department.MANAGEMENT,
+    [BackendDepartment.ECONOMICS]: Department.ECONOMICS,
+    [BackendDepartment.INTERNATIONAL_RELATIONS]: Department.INTERNATIONAL_RELATIONS,
+    [BackendDepartment.POLITICAL_SCIENCE_AND_PUBLIC_ADMINISTRATION]: Department.POLITICAL_SCIENCE_AND_PUBLIC_ADMINISTRATION,
+    [BackendDepartment.PSYCHOLOGY]: Department.PSYCHOLOGY,
+    [BackendDepartment.COMPUTER_ENGINEERING]: Department.COMPUTER_ENGINEERING,
+    [BackendDepartment.ELECTRICAL_AND_ELECTRONICS_ENGINEERING]: Department.ELECTRICAL_AND_ELECTRONICS_ENGINEERING,
+    [BackendDepartment.INDUSTRIAL_ENGINEERING]: Department.INDUSTRIAL_ENGINEERING,
+    [BackendDepartment.MECHANICAL_ENGINEERING]: Department.MECHANICAL_ENGINEERING,
+    [BackendDepartment.AMERICAN_CULTURE_AND_LITERATURE]: Department.AMERICAN_CULTURE_AND_LITERATURE,
+    [BackendDepartment.ARCHAEOLOGY]: Department.ARCHAEOLOGY,
+    [BackendDepartment.ENGLISH_LANGUAGE_AND_LITERATURE]: Department.ENGLISH_LANGUAGE_AND_LITERATURE,
+    [BackendDepartment.PHILOSOPHY]: Department.PHILOSOPHY,
+    [BackendDepartment.CHEMISTRY]: Department.CHEMISTRY,
+    [BackendDepartment.MATHEMATICS]: Department.MATHEMATICS,
+    [BackendDepartment.MOLECULAR_BIOLOGY_AND_GENETICS]: Department.MOLECULAR_BIOLOGY_AND_GENETICS,
+    [BackendDepartment.PHYSICS]: Department.PHYSICS,
+    [BackendDepartment.MUSIC]: Department.MUSIC,
+    [BackendDepartment.INFORMATION_SYSTEMS_AND_TECHNOLOGIES]: Department.INFORMATION_SYSTEMS_AND_TECHNOLOGIES,
+    [BackendDepartment.TOURISM_AND_HOTEL_MANAGEMENT]: Department.TOURISM_AND_HOTEL_MANAGEMENT,
+    [BackendDepartment.HISTORY]: Department.HISTORY,
+    [BackendDepartment.TRANSLATION_AND_INTERPRETATION]: Department.TRANSLATION_AND_INTERPRETATION,
+    [BackendDepartment.TURKISH_LITERATURE]: Department.TURKISH_LITERATURE,
+};
 
 const UpdateProfile: React.FC = () => {
     const userContext = useContext(UserContext);
@@ -19,6 +51,8 @@ const UpdateProfile: React.FC = () => {
         description: "",
         responsible_days: [] as string[], // Add responsible_days field
         profile_picture: "",
+        iban: "", // Add iban field
+        major: "", // Add major field
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -48,6 +82,8 @@ const UpdateProfile: React.FC = () => {
                     description: profileData.profile_description || "",
                     responsible_days: profileData.responsible_days || [], // Set responsible_days
                     profile_picture: profileData.profile_picture || "",
+                    iban: profileData.iban || "", // Set iban
+                    major: profileData.major || "", // Set major
                 });
 
                 setSelectedHighSchool(profileData.highschool); // Set the high school
@@ -104,7 +140,10 @@ const UpdateProfile: React.FC = () => {
         if (profilePicture && profilePicture instanceof File) {
             profilePictureBase64 = await convertFileToBase64(profilePicture);
         }
-        console.log(userContext.user.profile);
+
+        // Convert displayed major to backend major
+        const backendMajor = Object.keys(departmentMapping).find(key => departmentMapping[key as BackendDepartment] === formData.major) || "";
+
         let updatedProfile;
         if (userContext.user.role !== UserRole.DIRECTOR && userContext.user.role !== UserRole.COORDINATOR) {
             updatedProfile = {
@@ -116,25 +155,24 @@ const UpdateProfile: React.FC = () => {
                 profile_description: formData.description,
                 highschool: selectedHighSchool, // Use the full high school data
                 responsible_days: formData.responsible_days, // Add responsible_days
+                iban: formData.iban, // Add iban
+                major: backendMajor, // Use backend major
             };
         }
         else {
             updatedProfile = {
                 ...EMPTY_USER.profile,
-                profile_picture: profilePictureBase64 || "", // Add profile picture
                 fullname: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                profile_description: formData.description,
                 role: userContext.user.role,
-                major: "MANAGEMENT"
+                major: "MANAGEMENT",
+                id: userContext.user.id,
             };
         }
         try {
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
             url.searchParams.append("id", userContext.user.id);
             url.searchParams.append("auth", await userContext.getAuthToken());
-            
+
             const response = await fetch(url.toString(), {
                 method: "POST",
                 body: JSON.stringify(updatedProfile),
@@ -170,7 +208,7 @@ const UpdateProfile: React.FC = () => {
             )}
 
             {/* Profile Picture */}
-            <div className="flex items-center gap-4 mb-6">
+            {(userContext.user.role !== UserRole.COORDINATOR && userContext.user.role !== UserRole.DIRECTOR) ? <div className="flex items-center gap-4 mb-6">
                 <Avatar
                     src={
                         profilePicture instanceof File
@@ -189,7 +227,7 @@ const UpdateProfile: React.FC = () => {
                         </Button>
                     )}
                 </FileButton>
-            </div>
+            </div> : null}
 
             {/* Profile Fields */}
             <EditProfileField
@@ -198,24 +236,24 @@ const UpdateProfile: React.FC = () => {
                 onChange={(value) => handleInputChange("name", value)}
                 editable
             />
-            <EditProfileField
+            {(userContext.user.role !== UserRole.COORDINATOR && userContext.user.role !== UserRole.DIRECTOR) ? <EditProfileField
                 label="E-mail"
                 value={formData.email}
                 onChange={(value) => handleInputChange("email", value)}
                 editable
-            />
-            <EditProfileField
+            /> : null}
+            {(userContext.user.role !== UserRole.COORDINATOR && userContext.user.role !== UserRole.DIRECTOR) ? <EditProfileField
                 label="Telefon"
                 value={formData.phone}
                 onChange={(value) => handleInputChange("phone", value)}
                 editable
-            />
-            <EditProfileField
+            />: null}
+            {(userContext.user.role !== UserRole.COORDINATOR && userContext.user.role !== UserRole.DIRECTOR) ? <EditProfileField
                 label="Açıklama"
                 value={formData.description}
                 onChange={(value) => handleInputChange("description", value)}
                 editable
-            />
+            />: null}
             {(userContext.user.role !== UserRole.DIRECTOR && userContext.user.role !== UserRole.COORDINATOR) ? <Select
                 label="Lise"
                 limit={7}
@@ -236,6 +274,26 @@ const UpdateProfile: React.FC = () => {
                 placeholder="Sorumlu günler seçin"
                 className="mb-4"
             /> : null}
+
+            {/* IBAN and Major Fields */}
+            {(userContext.user.role === UserRole.TRAINEE || userContext.user.role === UserRole.GUIDE || userContext.user.role === UserRole.ADVISOR) ?
+                <>
+                    <EditProfileField
+                        label="IBAN"
+                        value={formData.iban}
+                        onChange={(value) => handleInputChange("iban", value)}
+                        editable
+                    />
+                    <Select
+                        label="Bölüm"
+                        value={formData.major}
+                        onChange={(value) => handleInputChange("major", value || "")}
+                        data={Object.values(Department).map((dept) => ({ value: dept, label: dept }))}
+                        placeholder="Bölüm seçin"
+                        className="mb-4"
+                    />
+                </>
+            : null}
 
             {/* Save Button */}
             <Button
