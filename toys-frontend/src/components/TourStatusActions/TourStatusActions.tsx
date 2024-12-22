@@ -1,3 +1,4 @@
+import { notifications } from '@mantine/notifications';
 import { useContext, useState } from 'react';
 import { Group, Button, Alert, Modal, Radio, Stack, Text, Box, NumberInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -65,39 +66,73 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
   const handleConfirm = () => {
     open();
   };
-
   const handleConfirmWithTime = async () => {
-    const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", await getAuthToken());
-    respondUrl.searchParams.append("application_id", tour.tour_id);
-    respondUrl.searchParams.append("timeslot", selectedTime);
-
-    const res = await fetch(respondUrl, {
-      method: "POST",
-    });
-
-    if (res.ok) {
-      close();
-      closeViewTimes();
-      onRefresh();
+    try {
+      const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
+      respondUrl.searchParams.append("auth", await getAuthToken());
+      respondUrl.searchParams.append("application_id", tour.tour_id);
+      respondUrl.searchParams.append("timeslot", selectedTime);
+  
+      const res = await fetch(respondUrl, {
+        method: "POST",
+      });
+  
+      if (res.ok) {
+        notifications.show({
+          title: 'Başarılı!',
+          message: 'Tur başarıyla onaylandı.',
+          color: 'green',
+          icon: <IconCheck size={16} />,
+        });
+        close();
+        closeViewTimes();
+        onRefresh();
+      } else {
+        throw new Error('Tur onaylanırken bir hata oluştu.');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Hata!',
+        message: 'Tur onaylanırken bir hata oluştu. Lütfen tekrar deneyin.',
+        color: 'red',
+        icon: <IconX size={16} />,
+      });
     }
   };
-
+  
   const handleReject = async () => {
-    const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", await getAuthToken());
-    respondUrl.searchParams.append("application_id", tour.tour_id);
-    respondUrl.searchParams.append("timeslot", "");
-
-    const res = await fetch(respondUrl, {
-      method: "POST",
-    });
-
-    if (res.ok) {
-      closeViewTimes();
-      onRefresh();
+    try {
+      const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
+      respondUrl.searchParams.append("auth", await getAuthToken());
+      respondUrl.searchParams.append("application_id", tour.tour_id);
+      respondUrl.searchParams.append("timeslot", "");
+  
+      const res = await fetch(respondUrl, {
+        method: "POST",
+      });
+  
+      if (res.ok) {
+        notifications.show({
+          title: 'Başarılı!',
+          message: 'Tur başarıyla reddedildi.',
+          color: 'red',
+          icon: <IconX size={16} />,
+        });
+        closeViewTimes();
+        onRefresh();
+      } else {
+        throw new Error('Tur reddedilirken bir hata oluştu.');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Hata!',
+        message: 'Tur reddedilirken bir hata oluştu. Lütfen tekrar deneyin.',
+        color: 'red',
+        icon: <IconX size={16} />,
+      });
     }
   };
+  
 
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     if (!selectedDate) return;
@@ -124,53 +159,87 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
   };
 
   const handleSubmitModification = async () => {
-    const baseApplication = {
-      highschool: tour.highschool,
-      requested_times: selectedModificationTimes,
-      visitor_count: visitorCount,
-      applicant: tour.applicant
-    };
-
-    const applicationModel = tour.type === "INDIVIDUAL"
-      ? {
-          ...baseApplication,
-          requested_majors: tour.requested_majors
-        }
-      : baseApplication;
-
-    const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
-    modUrl.searchParams.append("auth", await getAuthToken());
-    modUrl.searchParams.append("tour_id", tour.tour_id);
-
-    const res = await fetch(modUrl, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(applicationModel)
-    });
-
-    if (res.ok) {
-      closeModification();
-      setSelectedModificationTimes([]);
-      setSelectedDate(null);
-      setVisitorCount(tour.visitor_count);
-      onRefresh();
+    try {
+      const baseApplication = {
+        highschool: tour.highschool,
+        requested_times: selectedModificationTimes,
+        visitor_count: visitorCount,
+        applicant: tour.applicant
+      };
+  
+      const applicationModel = tour.type === "INDIVIDUAL"
+        ? {
+            ...baseApplication,
+            requested_majors: tour.requested_majors
+          }
+        : baseApplication;
+  
+      const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
+      modUrl.searchParams.append("auth", await getAuthToken());
+      modUrl.searchParams.append("tour_id", tour.tour_id);
+  
+      const res = await fetch(modUrl, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(applicationModel)
+      });
+  
+      if (res.ok) {
+        notifications.show({
+          title: 'Başarılı!',
+          message: 'Değişiklik isteği başarıyla gönderildi.',
+          color: 'blue',
+          icon: <IconClockEdit size={16} />,
+        });
+        closeModification();
+        setSelectedModificationTimes([]);
+        setSelectedDate(null);
+        setVisitorCount(tour.visitor_count);
+        onRefresh();
+      } else {
+        throw new Error('Değişiklik isteği gönderilirken bir hata oluştu.');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Hata!',
+        message: 'Değişiklik isteği gönderilirken bir hata oluştu. Lütfen tekrar deneyin.',
+        color: 'red',
+        icon: <IconX size={16} />,
+      });
     }
   };
 
   const handleCancel = async () => {
-    const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", await getAuthToken());
-    respondUrl.searchParams.append("application_id", tour.tour_id);
-    respondUrl.searchParams.append("timeslot", "");
-
-    const res = await fetch(respondUrl, {
-      method: "POST",
-    });
-
-    if (res.ok) {
-      onRefresh();
+    try {
+      const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
+      respondUrl.searchParams.append("auth", await getAuthToken());
+      respondUrl.searchParams.append("application_id", tour.tour_id);
+      respondUrl.searchParams.append("timeslot", "");
+  
+      const res = await fetch(respondUrl, {
+        method: "POST",
+      });
+  
+      if (res.ok) {
+        notifications.show({
+          title: 'Başarılı!',
+          message: 'Tur başarıyla iptal edildi.',
+          color: 'orange',
+          icon: <IconBan size={16} />,
+        });
+        onRefresh();
+      } else {
+        throw new Error('Tur iptal edilirken bir hata oluştu.');
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Hata!',
+        message: 'Tur iptal edilirken bir hata oluştu. Lütfen tekrar deneyin.',
+        color: 'red',
+        icon: <IconX size={16} />,
+      });
     }
   };
 
@@ -300,7 +369,7 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
     >
       <Stack>
         <Text size="sm" c="dimmed">
-          Lütfen alternatif zaman aralıklarını ve ziyaretçi sayısını seçiniz:
+          Tanıtım Ofisine uygun vakitleri giriniz.
         </Text>
 
         <Group align="flex-start" gap="xl">
@@ -398,7 +467,7 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
           </Group>
         </>
       );
-
+  
     case TourStatus.APPLICANT_WANTS_CHANGE:
       return (
         <>
@@ -414,20 +483,26 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
           </Group>
         </>
       );
-
+  
     case TourStatus.CONFIRMED:
       return (
-        <Group p="md">
-          <Button color="red" onClick={handleCancel} leftSection={<IconBan size={16} />}>
-            Turu İptal Et
-          </Button>
-        </Group>
+        <>
+          {modificationModal}
+          <Group p="md">
+            <Button color="red" onClick={handleCancel} leftSection={<IconBan size={16} />}>
+              Turu İptal Et
+            </Button>
+            <Button color="blue" onClick={handleRequestChange} leftSection={<IconClockEdit size={16} />}>
+              Başvuruda Değişiklik İste
+            </Button>
+          </Group>
+        </>
       );
-
+  
     case TourStatus.REJECTED:
     case TourStatus.CANCELLED:
       return reapplyMessage;
-
+  
     case TourStatus.TOYS_WANTS_CHANGE:
     default:
       return null;
