@@ -4,6 +4,7 @@ import UniversitiesTable from "../../components/DataAnalysis/UniversitiesList/Un
 import TableFilter from "../../components/DataAnalysis/UniversitiesList/TableFilter.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 import {notifications} from "@mantine/notifications";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -29,10 +30,10 @@ const defaultHeaderStyle = {
 const defaultCities = ["Yükleniyor..."];
 const defaultUniversities = [
     {
-        university: "Yükleniyor...",
+        name: "Yükleniyor...",
         city: "Yükleniyor...",
         isRival: "true",
-        id: "1"
+        id: ""
     }
 ];
 
@@ -43,35 +44,24 @@ const UniversitiesList: React.FC = () => {
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
     const [cities, setCities] = React.useState<string[]>(defaultCities);
-    const [universities, setUniversities] = React.useState<{ university: string; city: string; isRival: string; id: string }[]>(defaultUniversities);
+    const [universities, setUniversities] = React.useState<{name: string; city: string; isRival: string; id: string}[]>(defaultUniversities);
 
     const getCities = useCallback(async () => {
-        const url = new URL(TOUR_URL + "internal/analytics/cities");
-        url.searchParams.append("auth", userContext.authToken);
-
-        const res = await fetch(url, {
-            method: "GET",
-        });
-
-        if (!res.ok) {
-            throw new Error("Response not OK.");
-        }
-
-        const resText = await res.text();
-        if(resText.length === 0) {
-            throw new Error("No city found.");
-        }
-
-        setCities(JSON.parse(resText));
-    }, [userContext.authToken]);
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
 
     const getUniversities = useCallback(async () => {
         const url = new URL(TOUR_URL + "internal/analytics/universities/all");
         url.searchParams.append("auth", userContext.authToken);
 
+        console.log("Sent request for universities list.");
+
         const res = await fetch(url, {
             method: "GET",
         });
+
+        console.log("Received response for universities list.");
 
         if (!res.ok) {
             throw new Error("Response not OK.");
@@ -86,16 +76,19 @@ const UniversitiesList: React.FC = () => {
         }
 
         const resText = await res.text();
+
+        console.log(resText);
+
         if(resText.length === 0) {
             throw new Error("No university found.");
         }
 
-        setUniversities((JSON.parse(resText))["universities"]);
+        setUniversities((JSON.parse(resText)));
     }, [userContext.authToken]);
 
     const updateRival = useCallback(async (isRival: boolean, universityID: string) => {
         try {
-            const url = new URL(TOUR_URL + "internal/analytics/universities/set_rivalry");
+            const url = new URL(TOUR_URL + "internal/analytics/universities/set-rivalry");
             url.searchParams.append("auth", userContext.authToken);
             url.searchParams.append("university_id", universityID);
             url.searchParams.append("value_to_set", isRival ? "true" : "false");
