@@ -141,11 +141,10 @@ public class AnalyticsHighschoolService {
         ).map(e -> e.getValue()).toList();
 
 
-        Map<String, Object> HSTours = new HashMap<>();
+        List<Map<String, Object>> HSTours = new ArrayList<>();
         for (ReviewRecord reviewRecord : relatedReviews) {
             try {
-                HSTours.putIfAbsent(
-                        reviewRecord.getEvent_id(),
+                HSTours.add(
                         Map.of(
                                 "date", database.tours.fetchTour(reviewRecord.getEvent_id()).getStarted_at(),
                                 "attendance", database.tours.fetchTour(reviewRecord.getEvent_id()).getExpected_souls(),
