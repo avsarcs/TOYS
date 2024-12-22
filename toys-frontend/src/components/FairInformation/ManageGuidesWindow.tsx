@@ -11,16 +11,14 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowPropsFair> = ({
   fair,
 }) => {
   const [guides, setGuides] = useState<SimpleGuideData[]>([]);
-  const [trainees, setTrainees] = useState<SimpleGuideData[]>([]);
   const [selectedGuides, setSelectedGuides] = useState<SimpleGuideData[]>([]);
-  const [selectedTrainees, setSelectedTrainees] = useState<SimpleGuideData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeStage, setActiveStage] = useState<"GUIDE" | "TRAINEE">("GUIDE");
+  const [activeStage, setActiveStage] = useState<"GUIDE">("GUIDE");
   const userContext = useContext(UserContext);
 
-  // Fetch available guides or trainees
-  const fetchGuides = async (type: "GUIDE" | "TRAINEE") => {
+  // Fetch available guides
+  const fetchGuides = async (type: "GUIDE") => {
     setLoading(true);
     try {
       const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/available-guides");
@@ -37,12 +35,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowPropsFair> = ({
       if (type === "GUIDE") {
         setGuides(data);
         setSelectedGuides(fair.guides.map((guide) => ({ id: guide.id, name: guide.full_name } as SimpleGuideData)));
-      } else {
-        setTrainees(data);
-        setSelectedTrainees(
-          fair.trainee_guides.map((trainee) => ({ id: trainee.id, name: trainee.full_name } as SimpleGuideData))
-        );
-      }
+      } 
     } catch (err) {
       setError("Unable to fetch available guides.");
     } finally {
@@ -68,14 +61,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowPropsFair> = ({
     });
   };
 
-  // Toggle trainee selection
-  const toggleTraineeSelection = (trainee: SimpleGuideData) => {
-    setSelectedTrainees((prev) =>
-      prev.some((t) => t.id === trainee.id)
-        ? prev.filter((t) => t.id !== trainee.id) // Deselect trainee
-        : [...prev, trainee] // Select trainee
-    );
-  };
 
   // Handle save
   const handleSave = async () => {
@@ -84,23 +69,21 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowPropsFair> = ({
       const urlRemove = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/people/invite");
       const urlInvite = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/people/invite");
       console.log(fair);
-      const guideIdsToRemove = [...fair.guides
-          .map((g) => g.id)
-          .filter((g) => !selectedGuides.some((s) => s.id === g)),
-        ...fair.trainee_guides
-            .map((g) => g.id)
-            .filter((g) => !selectedGuides.some((s) => s.id === g)),].join(",");
+    const guideIdsToRemove = fair.guides
+      .map((g) => g.id)
+      .filter((g) => !selectedGuides.some((s) => s.id === g))
+      .join(",");
       console.log("GUIDE IDS: ", guideIdsToRemove);
-      const guideIdsToInvite = [...selectedGuides.map((g) => g.id), ...selectedTrainees.map((t) => t.id)].join(",");
+      const guideIdsToInvite = [...selectedGuides.map((g) => g.id)].join(",");
 
-      // Remove previous guides and trainees
+      // Remove previous guides
       urlRemove.searchParams.append("fid", fair.fair_id);
       urlRemove.searchParams.append("guides", guideIdsToRemove);
       urlRemove.searchParams.append("auth", await userContext.getAuthToken());
 
       await fetch(urlRemove.toString(), { method: "POST" });
 
-      // Add new guides and trainees
+      // Add new guides
       urlInvite.searchParams.append("tid", fair.fair_id);
       urlInvite.searchParams.append("guides", guideIdsToInvite);
       urlInvite.searchParams.append("auth", await userContext.getAuthToken());
@@ -115,7 +98,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowPropsFair> = ({
     }
   };
 
-  console.log("ManageGuidesWindow", { guides, trainees, selectedGuides, selectedTrainees });
+  console.log("ManageGuidesWindow", { guides, selectedGuides });
   console.log("tour_id", fair.fair_id);
   return (
     <Modal opened={opened} onClose={onClose} title="Rehberleri Yönet" centered size="md">
@@ -132,62 +115,38 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowPropsFair> = ({
         <Text c="red">{error}</Text>
       ) : (
         <ScrollArea h={400}>
-          {activeStage === "GUIDE"
-            ? guides.map((guide) => (
-                <Button
-                  key={guide.id}
-                  variant={selectedGuides.some((g) => g.id === guide.id) ? "filled" : "light"}
-                  fullWidth
-                  justify="start"
-                  onClick={() => toggleGuideSelection(guide)}
-                  mb="xs"
-                  disabled={
-                    selectedGuides.length >= 1 &&
-                    !selectedGuides.some((g) => g.id === guide.id)
-                  }
-                >
-                  <Group justify="space-between" w="100%">
-                    <Text fw={500}>
-                      {guide.name} {guide.id === userContext.user.id && "(You)"}
-                    </Text>
-                  </Group>
-                </Button>
-              ))
-            : trainees.map((trainee) => (
-                <Button
-                  key={trainee.id}
-                  variant={selectedTrainees.some((t) => t.id === trainee.id) ? "filled" : "light"}
-                  fullWidth
-                  justify="start"
-                  onClick={() => toggleTraineeSelection(trainee)}
-                  mb="xs"
-                >
-                  <Text fw={500}>{trainee.name}</Text>
-                </Button>
-              ))}
+          {guides.map((guide) => (
+            <Button
+              key={guide.id}
+              variant={selectedGuides.some((g) => g.id === guide.id) ? "filled" : "light"}
+              fullWidth
+              justify="start"
+              onClick={() => toggleGuideSelection(guide)}
+              mb="xs"
+              disabled={
+            selectedGuides.length >= 1 &&
+            !selectedGuides.some((g) => g.id === guide.id)
+              }
+            >
+              <Group justify="space-between" w="100%">
+            <Text fw={500}>
+              {guide.name} {guide.id === userContext.user.id && "(You)"}
+            </Text>
+              </Group>
+            </Button>
+          ))}
         </ScrollArea>
-      )}
+    )}
 
-      <Divider my="sm" />
+    <Divider my="sm" />
 
-      {activeStage === "GUIDE" ? (
-        <Button
-          fullWidth
-          onClick={() => setActiveStage("TRAINEE")}
-          color="violet"
-          disabled={selectedGuides.length < 1}
-        >
-          Sonraki Aşama
-        </Button>
-      ) : (
-        <Button
-          fullWidth
-          onClick={handleSave}
-          color="violet"
-        >
-          Kaydet
-        </Button>
-      )}
+    <Button
+      fullWidth
+      onClick={handleSave}
+      color="violet"
+    >
+      Kaydet
+    </Button>
     </Modal>
   );
 };
