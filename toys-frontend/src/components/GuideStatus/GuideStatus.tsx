@@ -25,7 +25,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
 
     try {
       const enrolledUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/am-enrolled");
-      enrolledUrl.searchParams.append("auth", userContext.authToken);
+      enrolledUrl.searchParams.append("auth", await userContext.getAuthToken());
       enrolledUrl.searchParams.append("event_id", tour.tour_id);
 
       const enrolledRes = await fetch(enrolledUrl);
@@ -35,7 +35,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
 
         if (!enrolled) {
           const invitedUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/am-invited");
-          invitedUrl.searchParams.append("auth", userContext.authToken);
+          invitedUrl.searchParams.append("auth", await userContext.getAuthToken());
           invitedUrl.searchParams.append("event_id", tour.tour_id);
 
           const invitedRes = await fetch(invitedUrl);
@@ -48,13 +48,13 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
     } catch (error) {
       console.error('Error checking enrollment status:', error);
     }
-  }, [userContext.authToken, userContext.user.role, tour.tour_id]);
+  }, [userContext.user.role, tour.tour_id]);
 
   const handleStartTour = useCallback(async () => {
     setIsLoading(true);
     try {
       const startUrl = new URL(TOUR_START_URL);
-      startUrl.searchParams.append("auth", userContext.authToken);
+      startUrl.searchParams.append("auth", await userContext.getAuthToken());
       startUrl.searchParams.append("tour_id", tour.tour_id);
       startUrl.searchParams.append("start_time", "");
 
@@ -86,13 +86,13 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [userContext.authToken, tour.tour_id, refreshTour]);
+  }, [tour.tour_id, refreshTour]);
 
   const handleEndTour = useCallback(async () => {
     setIsLoading(true);
     try {
       const endUrl = new URL(TOUR_END_URL);
-      endUrl.searchParams.append("auth", userContext.authToken);
+      endUrl.searchParams.append("auth", await userContext.getAuthToken());
       endUrl.searchParams.append("tour_id", tour.tour_id);
       endUrl.searchParams.append("end_time", "");
 
@@ -124,13 +124,13 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [userContext.authToken, tour.tour_id, refreshTour]);
+  }, [tour.tour_id, refreshTour]);
 
   const handleAcceptInvite = async () => {
     setIsLoading(true);
     try {
       const acceptUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/tour-invite");
-      acceptUrl.searchParams.append("auth", userContext.authToken);
+      acceptUrl.searchParams.append("auth", await userContext.getAuthToken());
       acceptUrl.searchParams.append("request_id", tour.tour_id);
       acceptUrl.searchParams.append("response", "true");
 
@@ -153,7 +153,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
     setIsLoading(true);
     try {
       const rejectUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/tour-invite");
-      rejectUrl.searchParams.append("auth", userContext.authToken);
+      rejectUrl.searchParams.append("auth", await userContext.getAuthToken());
       rejectUrl.searchParams.append("request_id", tour.tour_id);
       rejectUrl.searchParams.append("response", "false");
 

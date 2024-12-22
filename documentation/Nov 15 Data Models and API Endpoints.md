@@ -387,7 +387,9 @@ If a tour or fair is cancelled / rejected, delete all Invitation models related 
 		"id": "id of the invited guide",
 		"name": "name of the invited guide"
 	}
-	"event_id": fair or tour id
+
+!!!! CHANGED
+	"event": SimpleEventModel,
 	"status": "WAITING_RESPONSE" | "ACCEPTED" | "REJECTED"
 }
 ```
