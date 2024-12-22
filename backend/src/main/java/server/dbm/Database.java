@@ -28,12 +28,18 @@ public class Database {
 
     private static ObjectMapper objectMapper;
 
+    private static LocalFileService local;
+
     public static ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
     public static Firestore getFirestoreDatabase() {
         return firestoreDatabase;
+    }
+
+    public static LocalFileService getLocalFileService() {
+        return local;
     }
 
     private static Database instance;
@@ -53,12 +59,16 @@ public class Database {
     public DBReviewService reviews;
     public DBUniversityService universities;
     public DBPaymentService payments;
+    public DBAuthService auth;
 
     private Database() {
 
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        MemCache.init();
+        local = new LocalFileService();
 
         if (this.firestoreDatabase == null) {
             try {
@@ -89,6 +99,7 @@ public class Database {
         reviews = new DBReviewService();
         universities = new DBUniversityService();
         payments = new DBPaymentService();
+        auth = new DBAuthService();
     }
 
     public void pushString(String string) {
@@ -97,8 +108,6 @@ public class Database {
             Object object = objectMapper.readValue(string, Map.class);
             //firestoreDatabase.collection("edu").document("universities").set("universities", object);
             firestoreDatabase.collection("edu").document("universities").set(Map.of("universities",object));
-
-
 
         } catch (Exception e) {
             e.printStackTrace();

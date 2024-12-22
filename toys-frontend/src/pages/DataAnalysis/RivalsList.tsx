@@ -3,6 +3,7 @@ import {Space, Container, Text} from '@mantine/core';
 import TableFilter from "../../components/DataAnalysis/RivalsList/TableFilter.tsx";
 import RivalsTable from "../../components/DataAnalysis/RivalsList/RivalsTable.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -19,9 +20,9 @@ const defaultContainerStyle = {
 const defaultCities = ["Yükleniyor..."];
 const defaultUniversities = [
     {
-        university: "Yükleniyor...",
+        name: "Yükleniyor...",
         city: "Yükleniyor...",
-        id: "1",
+        id: "",
     }
 ];
 
@@ -35,44 +36,38 @@ const RivalsList: React.FC = () => {
     const [universities, setUniversities] = React.useState(defaultUniversities);
 
     const getCities = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/cities");
-        url.searchParams.append("auth", userContext.authToken);
-
-        const res = await fetch(url, {
-            method: "GET",
-        });
-
-        if (!res.ok) {
-            throw new Error("Response not OK.");
-        }
-
-        const resText = await res.text();
-        if(resText.length === 0) {
-            throw new Error("No city found.");
-        }
-
-        setCities(JSON.parse(resText));
-    }, [userContext.authToken]);
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
 
     const getUniversities = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/universities/all");
-        url.searchParams.append("auth", userContext.authToken);
+        const url = new URL(TOUR_URL + "internal/analytics/universities/rivals");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+
+        console.log("Sent request for rivals list.");
 
         const res = await fetch(url, {
             method: "GET",
         });
+
+        console.log("Received response for rivals list.");
 
         if (!res.ok) {
             throw new Error("Response not OK.");
         }
 
         const resText = await res.text();
-        if(resText.length === 0) {
+
+        console.log(resText);
+
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
             throw new Error("No university found.");
         }
 
-        setUniversities((JSON.parse(resText))["universities"]);
-    }, [userContext.authToken]);
+        setUniversities(fetched);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getCities().catch((reason) => {

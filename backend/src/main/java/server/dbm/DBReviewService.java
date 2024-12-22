@@ -9,14 +9,10 @@ import com.google.cloud.firestore.WriteResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import server.enums.roles.Reviewee;
-import server.models.review.DTO_GuideReview;
-import server.models.review.DTO_ReviewCreate;
+import server.models.review.EventReview;
 import server.models.review.ReviewRecord;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class DBReviewService {
 
@@ -28,31 +24,38 @@ public class DBReviewService {
         this.firestore = Database.getFirestoreDatabase();
         this.mapper = Database.getObjectMapper();
     }
-    public DTO_ReviewCreate getReview(String reviewID, Reviewee reviewType) {
-        if (reviewType == null) {
-            DTO_ReviewCreate review = null;
-            for (Reviewee type : Reviewee.values()) {
-                review = getReview(reviewID, type);
-                if (review != null) {
-                    return review;
-                }
+
+    public void deleteReview(String reviewID) {
+        try {
+            DocumentReference reference = firestore.collection("reviews").document("reviews");
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("reviews");
+            if (!data.containsKey(reviewID)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No review with this id!");
             }
+            data.remove(reviewID);
+            reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("reviews", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    ));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete review from database.");
         }
-        String documentPath = reviewType.toString().toLowerCase() + "s";
-        DTO_ReviewCreate review = null;
+    }
+
+    public EventReview getReview(String reviewID) {
+        EventReview review = null;
 
         try {
-            DocumentReference reference = firestore.collection("reviews").document(documentPath);
+            DocumentReference reference = firestore.collection("reviews").document("reviews");
 
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("reviews");
             if (!data.containsKey(reviewID)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review not found.");
             }
-            if (reviewType == Reviewee.GUIDE) {
-                review = DTO_GuideReview.fromMap((Map<String, Object>) data.get(reviewID));
-            } else if (reviewType == Reviewee.TOUR) {
-                review = DTO_ReviewCreate.fromMap((Map<String, Object>) data.get(reviewID));
-            }
+            review = EventReview.fromMap((Map<String, Object>) data.get(reviewID));
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to fetch review from database.");
@@ -62,10 +65,15 @@ public class DBReviewService {
     }
 
     public Map<String, ReviewRecord> getReviewRecords() {
-        Map<String, ReviewRecord> records = null;
+        Map<String, ReviewRecord> records = new HashMap<>();
         try {
             DocumentReference reference = firestore.collection("reviews").document("records");
-            records = (Map<String, ReviewRecord>) reference.get().get().getData().get("records");
+            List<Map.Entry<String, ReviewRecord>> entries = ((Map<String, Object>) reference.get().get().getData().get("records")).entrySet().stream().map(
+                    e -> Map.entry(e.getKey(), ReviewRecord.fromMap((Map<String, Object>) e.getValue()))
+            ).toList();
+            for (Map.Entry<String, ReviewRecord> entry : entries) {
+                records.put(entry.getKey(), entry.getValue());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to fetch review records from database.");
@@ -90,10 +98,9 @@ public class DBReviewService {
         }
     }
 
-    public void addReview(DTO_ReviewCreate review) {
-        String documentPath = review.getReviewee().name().toLowerCase() + "s";
+    public void addReview(EventReview review) {
         try {
-            DocumentReference reference = firestore.collection("reviews").document(documentPath);
+            DocumentReference reference = firestore.collection("reviews").document("reviews");
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("reviews");
 
             String uuid = UUID.randomUUID().toString();

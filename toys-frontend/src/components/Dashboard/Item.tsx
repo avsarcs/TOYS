@@ -1,13 +1,14 @@
 import { Card, Divider, Text } from "@mantine/core";
 import { DashboardItemProps } from "../../types/designed.ts";
-import { EventTypeText } from "../../types/enum.ts";
+import {EventTypeText, TourTypeText} from "../../types/enum.ts";
 import dayjs from "dayjs";
+import React from "react";
 
 const Item: React.FC<DashboardItemProps> = (props: DashboardItemProps) => {
   return (
     <Card onClick={() => props.setItem(props.item)} withBorder shadow="sm" radius="md"
           className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200">
-      <Text fw={700}>{EventTypeText[props.item.event_type]}</Text>
+      <Text fw={700}>{TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type]}</Text>
       <Divider h="md"/>
       <Text>
         <Text span fw={700}>Lise:</Text> &nbsp;{props.item.highschool.name}
