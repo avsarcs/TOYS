@@ -22,13 +22,13 @@ const defaultContainerStyle = {
 };
 
 //test data
-const defaultHighSchools = {"İzmir Fen Lisesi": 500, "Ankara Fen Lisesi": 400, "İstanbul Erkek Lisesi": 300, "Kabataş Erkek Lisesi": 200, "Galatasaray Lisesi": 100, "Bornova Anadolu Lisesi": 50, "Kadıköy Anadolu Lisesi": 25};
-const defaultCities = {"Ankara": 1000, "İstanbul": 800, "İzmir": 600, "Eskişehir": 400, "Adana": 200, "Antalya": 100, "Erzurum": 50, "Konya": 25};
-const defaultRankings = {"2020": 1000, "2021": 800, "2022": 600, "2023": 400, "2024": 200};
-const defaultDepartments = ["CS", "EE", "IE"];
-const defaultYears = ["2018", "2019", "2020"];
-const defaultDepartmentData = {"İzmir Fen Lisesi": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "Ankara Fen Lisesi": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "İstanbul Erkek Lisesi": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "Kabataş Erkek Lisesi": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "Galatasaray Lisesi": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}, "Bornova Anadolu Lisesi": {"%0 Burs": 2, "%50 Burs": 60, "%100 Burs": 50}, "Kadıköy Anadolu Lisesi": {"%0 Burs": 1, "%50 Burs": 70, "%100 Burs": 40}};
-const defaultScholarshipData = {"2020": {"%0 Burs": 40, "%50 Burs": 10, "%100 Burs": 100}, "2021": {"%0 Burs": 30, "%50 Burs": 20, "%100 Burs": 90}, "2022": {"%0 Burs": 20, "%50 Burs": 30, "%100 Burs": 80}, "2023": {"%0 Burs": 10, "%50 Burs": 40, "%100 Burs": 70}, "2024": {"%0 Burs": 5, "%50 Burs": 50, "%100 Burs": 60}};
+const defaultHighSchools = {"Yükleniyor...": 1};
+const defaultCities = {"Yükleniyor...": 1};
+const defaultRankings = {"Yükleniyor...": 1};
+const defaultDepartments = ["Yükleniyor..."];
+const defaultYears = ["Yükleniyor..."];
+const defaultDepartmentData = {"Yükleniyor...": {"Yükleniyor...": 1}}
+const defaultScholarshipData = {"Yükleniyor...": {"Yükleniyor...": 1}};
 
 const BilkentStudentDetails: React.FC = () => {
     const userContext = useContext(UserContext);
@@ -46,7 +46,7 @@ const BilkentStudentDetails: React.FC = () => {
     const [selectedYear, setSelectedYear] = React.useState<string | null>(years[years.length-1]);
 
     const getHighSchoolsAndCitiesAndRankingsAndDepartments = useCallback(async () => {
-        const url = new URL(TOUR_URL + "/internal/analytics/students/all");
+        const url = new URL(TOUR_URL + "internal/analytics/students/all");
         url.searchParams.append("auth", userContext.authToken);
 
         const res = await fetch(url, {
@@ -62,6 +62,8 @@ const BilkentStudentDetails: React.FC = () => {
             throw new Error("No data found.");
         }
 
+        console.log(resText);
+
         const response = JSON.parse(resText);
         setHighSchools(response["high_schools"]);
         setCities(response["cities"]);
@@ -71,7 +73,7 @@ const BilkentStudentDetails: React.FC = () => {
     }, [userContext.authToken]);
 
     const getYearsAndScholarshipData = useCallback(async (department: string) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/students/all");
+        const url = new URL(TOUR_URL + "internal/analytics/students/all");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("department", department);
 
@@ -94,7 +96,7 @@ const BilkentStudentDetails: React.FC = () => {
     }, [userContext.authToken]);
 
     const getDepartmentData = useCallback(async (department: string, year: string) => {
-        const url = new URL(TOUR_URL + "/internal/analytics/students/all");
+        const url = new URL(TOUR_URL + "internal/analytics/students/all");
         url.searchParams.append("auth", userContext.authToken);
         url.searchParams.append("department", department);
         url.searchParams.append("year", year);
