@@ -97,10 +97,10 @@ const Comparison: React.FC = () => {
             throw new Error("No university found.");
         }
 
-        const uniqueFetched = fetched.filter(function(item: string, pos: number) {
-            return fetched.indexOf(item) == pos;
-        })
-
+        const uniqueFetched = fetched.filter((item: { id: string }, pos: number) => {
+            return fetched.indexOf(item) == pos && item.id !== "bilkent";
+        });
+        
         console.log("Universities: " + resText);
 
         setUniversities(uniqueFetched);
