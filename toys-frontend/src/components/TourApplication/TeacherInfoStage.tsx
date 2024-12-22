@@ -15,7 +15,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
   const createSchoolDisplayName = (school: HighschoolData, allSchools: HighschoolData[]): string => {
     const duplicateNames = allSchools.filter(s => s.name === school.name);
     if (duplicateNames.length > 1) {
-      return `${school.name} (${school.location})`;
+      return `${school.name}`;
     }
     return school.name;
   };
@@ -41,6 +41,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         const resText = await res.text();
         const resJson: HighschoolData[] = JSON.parse(resText);
 
+        console.log(resJson);
         setSchools(resJson);
         
         // Create unique display names for schools
