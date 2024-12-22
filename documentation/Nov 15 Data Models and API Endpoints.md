@@ -323,6 +323,17 @@
 }
 ```
 
+// THIS IS NEW
+# Simple User Model
+```
+{
+	"name": "Orhun Ege Çelik",
+	"id": 12345678,
+	"role": "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR"
+}
+```
+
+
 # Money for Guide Model
 ```
 {
@@ -419,6 +430,31 @@ API endpoints:
         method: get
         response: true/false
         response_type: string
+
+!!! NEW ADMIN ENDPOINT !!! 
+/admin
+	/all-users
+		parameters:
+			auth: auth_token
+		method: get
+		response: SimpleUserModel[]
+
+	/change-role
+		parameters:
+			auth: auth_token
+			id: 12345678
+			new_role: "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR"
+
+	/add-user
+		parameters:
+			auth: auth_token
+			name: "Orhun Ege Çelik"
+			role: "COORDINATOR" | "ADVISOR" | "GUIDE" | "TRAINEE | DIRECTOR"
+
+	/remove-user
+		parameters:
+			auth: auth_token
+			id: 12345678
 
 /apply
     /guide #
