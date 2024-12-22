@@ -1,12 +1,12 @@
-import { Button, Title } from "@mantine/core";
+import {Button, Title} from "@mantine/core";
 import "./ProfileInfo.css";
 
-import { UserRole, UserRoleText } from "../../../types/enum.ts";
-import { UserContext } from "../../../context/UserContext.tsx";
-import { useCallback, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ProfileComponentProps } from "../../../types/designed.ts";
-import { notifications } from "@mantine/notifications";
+import {UserRole, UserRoleText} from "../../../types/enum.ts";
+import {UserContext} from "../../../context/UserContext.tsx";
+import {useCallback, useContext} from "react";
+import {Link, useParams} from "react-router-dom";
+import {ProfileComponentProps} from "../../../types/designed.ts";
+import {notifications} from "@mantine/notifications";
 
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
@@ -74,12 +74,12 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                     Kişisel Bilgiler
                 </Title>
                 <p><strong>İsim: </strong> {profile.fullname} </p>
-                <p><strong>E-Mail: </strong> {profile.email} </p>
+                {(profile.role !== UserRole.COORDINATOR && profile.role !== UserRole.DIRECTOR) ? <p><strong>E-Mail: </strong> {profile.email} </p> : null}
                 <p><strong>ID: </strong> {profile.id}</p>
-                {( profile.role !== UserRole.COORDINATOR &&
-                (<><p><strong>Telefon: </strong>{profile.phone}</p>
-                <p><strong>Açıklama: </strong> {profile.profile_description}</p></>)
-                )}
+                {( profile.role !== UserRole.COORDINATOR && profile.role !== UserRole.DIRECTOR) ?
+                <><p><strong>Telefon: </strong>{profile.phone}</p>
+                <p><strong>Açıklama: </strong> {profile.profile_description}</p></>
+                : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
             </div>

@@ -24,7 +24,7 @@ interface GuideSectionProps {
   color?: string;
 }
 
-const VISITOR_PER_GUIDE = 60;
+export const VISITOR_PER_GUIDE = 60;
 
 export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour }) => {
   const userContext = useContext(UserContext);
