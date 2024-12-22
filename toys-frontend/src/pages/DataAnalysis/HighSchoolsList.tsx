@@ -75,11 +75,14 @@ const HighSchoolsList: React.FC = () => {
         }
 
         const resText = await res.text();
-        if(resText.length === 0) {
-            throw new Error("No high school found.");
+
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("No university found.");
         }
 
-        setHighSchools((JSON.parse(resText)));
+        setHighSchools(fetched);
     }, [userContext.authToken]);
 
     React.useEffect(() => {
