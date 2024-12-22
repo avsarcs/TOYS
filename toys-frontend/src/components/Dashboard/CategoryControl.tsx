@@ -13,7 +13,7 @@ const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: Dashboa
   };
 
   const controls = props.categories.map((item, index) => (
-    <Box className="border border-gray-300 rounded-lg shadow-sm">
+    <Box className="border border-gray-300 rounded-lg shadow-sm" key={index}>
       <UnstyledButton
         className="data-[selected]:text-white p-2 relative z-50"
         key={index}
