@@ -54,6 +54,9 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
         }
 
         const resText = await res.text();
+
+        console.log(resText);
+
         if(resText.length === 0) {
             throw new Error("No high school found.");
         }
@@ -65,7 +68,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
         getData(highSchoolID, year).catch((reason) => {
             console.error(reason);
         });
-    }, []);
+    }, [opened]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>

@@ -87,7 +87,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
         getData(highSchoolID).catch((reason) => {
             console.error(reason);
         });
-    }, []);
+    }, [opened]);
 
     function editHighSchool() {
         setEditModalOpened(true);
@@ -177,7 +177,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 currentPriority={data.priority.toString()}
             />
         )}
-        {studentDetailsModalOpened && (
+        {studentDetailsModalOpened && studentDetailsModalYear != 0 && (
             <HighSchoolStudentDetails
                 opened={studentDetailsModalOpened}
                 onClose={() => setStudentDetailsModalOpened(false)}

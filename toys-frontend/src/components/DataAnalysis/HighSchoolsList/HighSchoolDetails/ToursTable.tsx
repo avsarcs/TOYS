@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import {Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container} from '@mantine/core';
-import {IconSelector, IconChevronDown, IconChevronUp, IconStarFilled, IconStarHalfFilled, IconStar} from '@tabler/icons-react';
+import { Table, ScrollArea, UnstyledButton, Group, Text, Center, rem, Pagination, Space, Container } from '@mantine/core';
+import { IconSelector, IconChevronDown, IconChevronUp, IconStarFilled, IconStarHalfFilled, IconStar } from '@tabler/icons-react';
 import ReviewButton from "./ReviewButton.tsx";
 
 function renderStars(rating: number | null, date: string, openDetails: (ID: string) => void) {
-    if(rating === null) {
+    if (rating === null) {
         return <Text>Yok</Text>;
     }
 
@@ -38,10 +38,10 @@ interface ThProps {
     onSort(): void;
 }
 
-function Th({children, reversed, sorted, onSort}: ThProps) {
+function Th({ children, reversed, sorted, onSort }: ThProps) {
     const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
     return (
-        <Table.Th style={{padding: 0, textAlign: "center"}}>
+        <Table.Th style={{ padding: 0, textAlign: "center" }}>
             <UnstyledButton onClick={onSort}>
                 <Group justify="space-between">
                     <Text fw={500} fz="sm">
@@ -58,12 +58,12 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
 
 function sortData(
     data: RowData[],
-    payload: {sortBy: keyof RowData | null; reversed: boolean}
+    payload: { sortBy: keyof RowData | null; reversed: boolean }
 ) {
     const { sortBy } = payload;
 
     if (!sortBy || data.length == 0) {
-        return data
+        return data;
     }
 
     return [...data].sort((a, b) => {
@@ -84,7 +84,7 @@ function sortData(
         } else {
             return a[sortBy].localeCompare(b[sortBy]);
         }
-    })
+    });
 }
 
 interface ToursTableProps {
@@ -92,7 +92,7 @@ interface ToursTableProps {
     openDetails: (date: string) => void;
 }
 
-const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
+const ToursTable: React.FC<ToursTableProps> = ({ data, openDetails }) => {
     const [sortBy, setSortBy] = useState<keyof RowData>('date');
     const [reverseSortDirection, setReverseSortDirection] = useState(true);
     const [sortedData, setSortedData] = useState(() => sortData(data, { sortBy: 'date', reversed: true }));
@@ -103,11 +103,11 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        setSortedData(sortData(data, { sortBy: field, reversed}));
+        setSortedData(sortData(data, { sortBy: field, reversed }));
     };
 
     React.useEffect(() => {
-        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection}));
+        setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection }));
     }, [data, reverseSortDirection, sortBy]);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -116,11 +116,11 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
 
     const rows = paginatedData.map((row) => (
         <Table.Tr key={row.date}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{new Date(row.date).toLocaleDateString('en-GB')}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.reviewID, openDetails)}</Table.Td>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
+            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{new Date(row.date).toLocaleDateString('en-GB')}</Table.Td>
+            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
+            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
+            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.reviewID, openDetails)}</Table.Td>
+            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
         </Table.Tr>
     ));
 
@@ -178,13 +178,13 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                         </Th>
                     </Table.Tr>
                 </Table.Tbody>
-                <Space h="md"/>
+                <Space h="md" />
                 <Table.Tbody>
                     {rows.length > 0 ? (
                         rows
                     ) : (
                         <Table.Tr>
-                            <Table.Td colSpan={Object.keys(data[0]).length}>
+                            <Table.Td colSpan={5}>
                                 <Text fw={500} ta="center">
                                     Tur bulunamadı.
                                 </Text>
@@ -193,8 +193,8 @@ const ToursTable: React.FC<ToursTableProps> = ({data, openDetails}) => {
                     )}
                 </Table.Tbody>
             </Table>
-            <Space h="xl"/>
-            <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
+            <Space h="xl" />
+            <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
                 <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} />
             </Container>
         </ScrollArea>

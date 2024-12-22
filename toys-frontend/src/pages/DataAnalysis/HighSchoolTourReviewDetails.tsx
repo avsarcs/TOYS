@@ -64,13 +64,13 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
         }
 
         setData(JSON.parse(resText));
-    }, [userContext.getAuthToken()]);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getData(highSchoolID, tourID).catch((reason) => {
             console.error(reason);
         });
-    }, []);
+    }, [opened]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
