@@ -63,7 +63,7 @@ public class AnalyticsUniversitiesController {
         return service.getDetails(auth, university_id, depertment_id);
     }
 
-    @PutMapping("internal/analytics/universities/set_rivalry")
+    @PostMapping("internal/analytics/universities/set-rivalry")
     public void setRival(
             @RequestParam String university_id,
             @RequestParam String value_to_set,
