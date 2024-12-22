@@ -1,4 +1,4 @@
-/*package server.models.schools;
+package server.models.schools;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -62,4 +62,4 @@ public class UniversityTableDataDeserializer extends JsonDeserializer<University
 
         return universityTableData;
     }
-}*/
+}

@@ -18,7 +18,7 @@ const ReviewDetailsPage = () => {
   const [tourData, setTourData] = useState<any>(null);
 
   useEffect(() => {
-    const fetchReviewAndTour = async () => {
+    const fetchReviewAndTour = async (authToken: string) => {
       try {
         setIsLoading(true);
         setError(null);
@@ -26,7 +26,7 @@ const ReviewDetailsPage = () => {
         // Fetch review details
         const reviewUrl = new URL(REVIEW_URL);
         reviewUrl.searchParams.append('review_id', review_id || '');
-        reviewUrl.searchParams.append('auth', userContext.authToken);
+        reviewUrl.searchParams.append('auth', authToken);
 
         const reviewRes = await fetch(reviewUrl);
         if (!reviewRes.ok) {
@@ -37,7 +37,7 @@ const ReviewDetailsPage = () => {
 
         // Fetch tour details
         const tourUrl = new URL(TOUR_URL);
-        tourUrl.searchParams.append('auth', userContext.authToken);
+        tourUrl.searchParams.append('auth', authToken);
         tourUrl.searchParams.append('tid', reviewData.tour_id);
 
         const tourRes = await fetch(tourUrl);
@@ -54,10 +54,12 @@ const ReviewDetailsPage = () => {
       }
     };
 
-    if (review_id && userContext.authToken) {
-      fetchReviewAndTour();
-    }
-  }, [review_id, userContext.authToken]);
+    userContext.getAuthToken().then((authToken) => {
+      if (review_id && authToken) {
+        fetchReviewAndTour(authToken);
+      }
+    });
+  }, [review_id, userContext.getAuthToken]);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleString('tr-TR', {

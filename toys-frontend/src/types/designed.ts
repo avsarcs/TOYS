@@ -4,7 +4,7 @@ import {
   DashboardCategoryText,
   UserRole
 } from "./enum.ts";
-import { HighschoolData, ProfileData, SimpleEventData, TourData } from "./data.ts";
+import { HighschoolData, ProfileData, SimpleEventData, TourData, FairData } from "./data.ts";
 import {OnlyChildrenProps} from "./generic.ts";
 
 export interface User {
@@ -50,9 +50,9 @@ export interface FairApplicationModel {
 		email: string;
     role: string;
 		phone: string;
-		school: HighschoolData;
     notes: string;
 	};
+  highschool: HighschoolData;
 	start_time: string;
   end_time: string;
   fair_name: string;
@@ -154,6 +154,11 @@ export interface TourSectionProps {
   refreshTour: () => void
 }
 
+export interface FairSectionProps {
+  fair: FairData,
+  refreshFair: () => void
+}
+
 export interface TourButtonProps {
   tour: TourData,
   refreshTour: () => void
@@ -165,8 +170,18 @@ export interface ManageGuidesWindowProps {
   tour: TourData; // ISO 8601 time
   totalGuidesNeeded: number; // Total number of guides needed for the tour
 }
+
+export interface ManageGuidesWindowPropsFair {
+  opened: boolean; // Controls modal visibility
+  onClose: () => void; // Closes the modal
+  fair: FairData; // ISO 8601 time
+}
+
 export interface TourListItemProps {
   tour: SimpleEventData
+}
+export interface FairListItemProps {
+  fair: SimpleEventData
 }
 
 export interface ProfileComponentProps {

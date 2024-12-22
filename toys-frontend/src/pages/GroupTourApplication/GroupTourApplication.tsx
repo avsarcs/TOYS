@@ -166,7 +166,7 @@ export const GroupTourApplication: React.FC = () => {
   const attemptSubmitForm = async () => {
     if (validateStage3()) {
       const applicationUrl = new URL(TOUR_APPLICATION_URL)
-      applicationUrl.searchParams.append("auth", userContext.authToken)
+      applicationUrl.searchParams.append("auth", await userContext.getAuthToken())
       
       try {
         const res = await fetch(applicationUrl, {
@@ -202,6 +202,9 @@ export const GroupTourApplication: React.FC = () => {
           <IconCircleCheck size={48} className="text-green-500 mx-auto mb-4" />
           <Text size="xl" fw={700} className="text-green-700">
             Tur Başvurunuz Başarıyla İletildi!
+          </Text>
+          <Text className='text-green-600'>
+            Size geri dönüş yapacağız.
           </Text>
         </div>
       </Modal>

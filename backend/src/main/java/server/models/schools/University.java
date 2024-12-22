@@ -30,6 +30,7 @@ public class University {
         }
         this.url = (String) map.get("url");
         this.city = (String) map.get("city");
+        this.is_rival = (boolean) map.get("is_rival");
     }
 
     public static University fromSource(Map<String, Object> map) {
@@ -37,9 +38,20 @@ public class University {
         uni.university_type = (String) map.get("university_type");
         uni.name = (String) map.get("name");
         uni.id = (String) map.get("id");
-        uni.departments = (List<UniversityDepartment>) map.get("departments");
+        uni.departments = new ArrayList<>();
+        ((List<Map<String, Object>>) map.get("departments")).forEach(
+                m -> {
+                    uni.departments.add(UniversityDepartment.fromSource(m));
+                }
+        );
         uni.url = (String) map.get("url");
         uni.city = (String) map.get("city");
+        try {
+            uni.is_rival = (boolean) map.get("is_rival");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error in University.java");
+        }
         return uni;
     }
 

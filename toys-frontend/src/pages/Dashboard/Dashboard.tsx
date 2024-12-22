@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
 
     setLoading(true);
     const dashboardUrl = new URL(DASHBOARD_URL);
-    dashboardUrl.searchParams.append("auth", userContext.authToken);
+    dashboardUrl.searchParams.append("auth", await userContext.getAuthToken());
     dashboardUrl.searchParams.append("dashboard_category", category);
 
     const dashboardRes = await fetch(dashboardUrl, {
@@ -60,9 +60,7 @@ const Dashboard: React.FC = () => {
       });
     }
     else {
-      const t = await dashboardRes.text();
-      console.log(t);
-      setItems(JSON.parse(t));
+      setItems(await dashboardRes.json());
     }
     setLoading(false);
   }

@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
     links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
-    links.push({ label: 'Tüm Fuarlar', icon: IconBuildingCircus, link: '#' });
+    links.push({ label: 'Tüm Fuarlar', icon: IconBuildingCircus, link: '/fairs' });
     links.push({ label: 'Rehber Başvuruları', icon: IconBrandSafari, link: '/toys-applications' });
     links.push({ label: 'Danışman Teklifleri', icon: IconUserUp, link: '/advisor-offers' });
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });
@@ -76,7 +76,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
     links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
-    links.push({ label: 'Tüm Fuarlar', icon: IconBuildingCircus, link: '#' });
+    links.push({ label: 'Tüm Fuarlar', icon: IconBuildingCircus, link: '/fairs' });
     links.push({ label: 'Rehber Başvuruları', icon: IconBrandSafari, link: '/toys-applications' });
     links.push({ label: 'Danışman Teklifleri', icon: IconUserUp, link: '/advisor-offers' });
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });

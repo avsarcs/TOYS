@@ -33,7 +33,7 @@ public class ReviewController {
     }
 
     @GetMapping("/review/of_tour")
-    public Map<String,Object> getReviewOfTour(@RequestParam String auth, @RequestParam String tour_id) {
+    public List<Map<String,Object>> getReviewOfTour(@RequestParam String auth, @RequestParam String tour_id) {
         return reviewService.getReviewOfTour(auth, tour_id);
     }
 

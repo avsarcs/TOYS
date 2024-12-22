@@ -21,10 +21,7 @@ import server.models.events.TourRegistry;
 import server.models.people.Guide;
 import server.models.review.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ReviewService {
@@ -137,7 +134,7 @@ public class ReviewService {
         );
     }
 
-    public Map<String,Object> getReviewOfTour(String auth, String tour_id) {
+    public List<Map<String,Object>> getReviewOfTour(String auth, String tour_id) {
         if (!authService.check(auth, Permission.VIEW_TOUR_REVIEW)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to view review");
         }
@@ -152,13 +149,27 @@ public class ReviewService {
                 e -> e.getValue()
                         .getEvent_id()
                         .equals(tour_id)
-        ).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No review for this tour!"));
+        ).findFirst().orElse(null);
+        if (reviewEntry == null) {
+            return new ArrayList<>();
+        }
         ReviewRecord reviewRecord = reviewEntry.getValue();
 
         EventReview review = database.reviews.getReview(reviewRecord.getReview_id());
 
         TourRegistry tour = database.tours.fetchTour(tour_id);
-        return dto.reviewOfTour(tour, review);
+        List<Map<String, Object>> reviews = new ArrayList<>();
+        reviews.add(dto.reviewOfTour(tour, review));
+        reviews.addAll(review.getGuide_reviews().entrySet().stream().map(
+                e -> {
+                    try {
+                        return dto.reviewOfGuide(database.people.fetchGuides(e.getKey()).get(0), tour, review);
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                }
+        ).toList());
+        return reviews.stream().filter(Objects::nonNull).toList();
     }
 
     public Map<String,Object> getReviewOfGuide(String auth, String guide_id) {

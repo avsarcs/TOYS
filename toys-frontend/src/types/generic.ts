@@ -6,7 +6,6 @@ export interface OnlyChildrenProps {
 }
 
 export interface CheckLoginProps extends OnlyChildrenProps {
-  dontRerender?: boolean,
   redirect?: boolean,
   required?: boolean,
   acceptedRoles?: UserRole[]

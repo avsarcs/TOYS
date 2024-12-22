@@ -29,6 +29,8 @@ const ChangeHourlyRate: React.FC = () => {
       const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
       const url = new URL(apiURL + "internal/management/timesheet/hourly-rate");
 
+      url.searchParams.append("auth", await userContext.getAuthToken());
+
       const hourlyRateModel = {
         rate,
         applied_from: appliedFrom ? formatToTurkishISO(appliedFrom) : null,
@@ -39,7 +41,6 @@ const ChangeHourlyRate: React.FC = () => {
         const res = await fetch(url, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${userContext.authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(hourlyRateModel),
@@ -71,7 +72,7 @@ const ChangeHourlyRate: React.FC = () => {
         setLoading(false);
       }
     },
-    [userContext.authToken, navigate]
+    [userContext.getAuthToken, navigate]
   );
 
   const handleUpdateHourlyRate = () => {

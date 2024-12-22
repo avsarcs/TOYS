@@ -13,9 +13,12 @@ public class UniHighschoolRecord {
 
     protected UniHighschoolRecord(Map<String, Object> map) {
         this.school_name = (String) map.get("school");
-        this.total = (long) map.get("total");
-        this.new_graduates = (long) map.get("new_graduates");
-        this.previous_graduates = (long) map.get("previous_graduates");
+        this.total = ((Number) map.get("total")).longValue();
+        this.new_graduates = ((Number) map.get("new_graduates")).longValue();
+        this.previous_graduates = ((Number) map.get("previous_graduates")).longValue();
+    }
+
+    public UniHighschoolRecord() {
     }
 
     public static UniHighschoolRecord fromMap(Map<String, Object> map) {

@@ -10,7 +10,7 @@ import TimeInformation from "../../components/TourInformation/TimeInformation.ts
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
 import TourReviews from "../../components/TourReviews/TourReviews.tsx";
-import {TourStatus} from "../../types/enum.ts";
+import { TourStatus } from "../../types/enum.ts";
 
 const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
 
@@ -18,7 +18,6 @@ const TourPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const [error, setError] = useState<Error | undefined>(undefined);
   const params = useParams();
-
   const [tour, setTour] = useState<TourData>({} as TourData);
 
   if (!params.tourId) throw new Error("Tour ID is required");
@@ -26,7 +25,7 @@ const TourPage: React.FC = () => {
   const getTour = useCallback(async (tourId: string) => {
     const tourUrl = new URL(TOUR_URL);
     tourUrl.searchParams.append("tid", tourId);
-    tourUrl.searchParams.append("auth", userContext.authToken);
+    tourUrl.searchParams.append("auth", await userContext.getAuthToken());
 
     const res = await fetch(tourUrl, {
       method: "GET",
@@ -40,15 +39,13 @@ const TourPage: React.FC = () => {
     if (tourText.length === 0) {
       throw new Error("Tour not found");
     }
-
     setTour(JSON.parse(tourText));
-  }, [userContext.authToken]);
+  }, []);
 
   useEffect(() => {
     getTour(params.tourId as string).catch((reason) => {
       setError(reason);
     });
-
     return () => {
       setTour({} as TourData);
     }
@@ -103,5 +100,4 @@ const TourPage: React.FC = () => {
     </Flex>
   );
 }
-
 export default TourPage;

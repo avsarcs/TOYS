@@ -8,6 +8,7 @@ import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
 import server.enums.status.ApplicationStatus;
+import server.enums.status.RequestStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.models.events.*;
@@ -21,6 +22,7 @@ import server.models.people.details.PaymentInfo;
 import server.models.people.details.Profile;
 import server.models.people.details.Schedule;
 import server.models.requests.AdvisorPromotionRequest;
+import server.models.requests.GuideAssignmentRequest;
 import server.models.requests.TourModificationRequest;
 import server.models.review.EventReview;
 import server.models.review.Review;
@@ -56,13 +58,28 @@ public class DTOFactory {
 
         dto.put("id", highschool.getId());
         dto.put("name", highschool.getTitle());
-        dto.put("location", highschool.getLocation());
+        dto.put("city", highschool.getLocation());
         dto.put("priority", highschool.getPriority());
         dto.put("ranking", highschool.getRanking());
 
         return dto;
     }
 
+    public Map<String, Object> highschoolNoLocation(HighschoolRecord highschool) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("id", highschool.getId());
+        String title = highschool.getTitle();
+        if (title.contains("(")){
+            title = title.substring(0, title.indexOf("("));
+        }
+        dto.put("name", title);
+        dto.put("city", highschool.getLocation());
+        dto.put("priority", highschool.getPriority());
+        dto.put("ranking", highschool.getRanking());
+
+        return dto;
+    }
     public Highschool highschool(Map<String, Object> map) {
         Highschool highschool = new Highschool();
 
@@ -137,11 +154,39 @@ public class DTOFactory {
         dto.put("email", applicant.getContact_info().getEmail());
         dto.put("phone", applicant.getContact_info().getPhone());
         dto.put("notes", applicant.getNotes());
+        dto.put("highschool", highschool(applicant.getSchool()));
 
         return dto;
     }
 
-    public Applicant tourApplicant(Map<String, Object> map) {
+    public Map<String, Object> eventInvitation(GuideAssignmentRequest request) {
+        Map<String, Object> dto = new HashMap<>();
+
+        String inviterName = database.people.fetchUser(request.getRequested_by().getBilkent_id()).getProfile().getName();
+
+        dto.put("inviter", Map.of(
+                "id", request.getRequested_by().getBilkent_id(),
+                "name", inviterName
+        ));
+
+        String inviteeName = database.people.fetchUser(request.getGuide_id()).getProfile().getName();
+
+        dto.put("invited", Map.of(
+                "id", request.getGuide_id(),
+                "name", inviteeName
+        ));
+
+        dto.put("event_id", request.getEvent_id());
+        switch (request.getStatus()) {
+            case APPROVED -> dto.put("status", "ACCEPTED");
+            case REJECTED -> dto.put("status", "REJECTED");
+            case PENDING -> dto.put("status", "WAITING_RESPONSE");
+        }
+
+        return dto;
+    }
+
+    public Applicant tourApplicant(Map<String, Object> map, String hsid) {
         Applicant applicant = new Applicant();
 
         applicant.setName((String) map.get("fullname"));
@@ -155,7 +200,7 @@ public class DTOFactory {
 
         // TODO
         // This is extremely important, as we use this value to fetch the highschool object in serialization
-        applicant.setSchool("-");
+        applicant.setSchool(hsid);
         return applicant;
     }
 
@@ -204,7 +249,7 @@ public class DTOFactory {
     public TourApplication groupTourApplication(Map<String, Object> map) {
         TourApplication application = new TourApplication();
 
-        application.setApplicant(tourApplicant((Map<String, Object>) map.get("applicant")));
+        application.setApplicant(tourApplicant((Map<String, Object>) map.get("applicant"), (String) ((Map<String, Object>) map.get("highschool")).get("id")));
         application.setRequested_hours(((List<String>) map.get("requested_times")).stream().map(
                 ZTime::new
         ).toList());
@@ -222,7 +267,7 @@ public class DTOFactory {
     public TourApplication individualTourApplication(Map<String, Object> map) {
         TourApplication application = new TourApplication();
 
-        application.setApplicant(tourApplicant((Map<String, Object>) map.get("applicant")));
+        application.setApplicant(tourApplicant((Map<String, Object>) map.get("applicant"), (String) ((Map<String, Object>) map.get("highschool")).get("id")));
         application.setRequested_hours(((List<String>) map.get("requested_times")).stream().map(
                 ZTime::new
         ).toList());
@@ -336,7 +381,7 @@ public class DTOFactory {
         dto.put("event_id", id);
         dto.put("highschool", highschool(application.getApplicant().getSchool()));
         dto.put("accepted_time", "");
-        dto.put("requested_times", application.getStarts_at());
+        dto.put("requested_times", List.of(application.getStarts_at()));
         dto.put("visitor_count", 0);
         dto.put("guides", List.of());
         dto.put("event_status", application.getStatus().name());
@@ -522,6 +567,7 @@ public class DTOFactory {
         dto.put("end_time", fair.getEnds_at());
         dto.put("fair_name", fair.getFair_name());
         dto.put("status", fair.getFair_status().name());
+        dto.put("guides", fair.getGuides());
 
         return dto;
     }
@@ -543,7 +589,7 @@ public class DTOFactory {
 
         application.setStatus(ApplicationStatus.RECEIVED);
         application.setType(ApplicationType.FAIR);
-        application.setApplicant(tourApplicant((Map<String, Object>) dto.get("applicant")));
+        application.setApplicant(tourApplicant((Map<String, Object>) dto.get("applicant"), (String) ((Map<String, Object>) dto.get("highschool")).get("id")));
         application.setStarts_at(new ZTime((String) dto.get("start_time")));
         application.setEnds_at(new ZTime((String) dto.get("end_time")));
         application.setFair_name((String) dto.get("fair_name"));
@@ -657,6 +703,13 @@ public class DTOFactory {
             highschool_obj = database.schools.getHighschoolByID(tour.getApplicant().getSchool());
         } catch (Exception E) {
             System.out.println("There was an error when parsing MoneyForEventModel when getting highschool");
+        }
+
+        if (highschool_obj == null) {
+            System.out.println("Highschool with id [" + tour.getApplicant().getSchool() + "] not found!");
+            dto.put("event_highschool", Map.of());
+            dto.put("money_paid", moneyPaid.doubleValue());
+            return dto;
         }
 
         dto.put("event_highschool", highschool(highschool_obj));

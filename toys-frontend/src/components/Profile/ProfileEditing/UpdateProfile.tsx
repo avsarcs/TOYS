@@ -3,7 +3,7 @@ import {Avatar, Button, FileButton, Loader, MultiSelect, Select} from "@mantine/
 import EditProfileField from "./EditProfileField";
 import {UserContext} from "../../../context/UserContext";
 import {HighschoolData, HighschoolDataForProfile} from "../../../types/data";
-import {UserRole} from "../../../types/enum.ts";
+import {DayOfTheWeek, UserRole} from "../../../types/enum.ts";
 import {notifications} from "@mantine/notifications";
 
 const UpdateProfile: React.FC = () => {
@@ -58,7 +58,7 @@ const UpdateProfile: React.FC = () => {
 
                 // Fetch high schools
                 const highSchoolUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/all");
-                highSchoolUrl.searchParams.append("auth", userContext.authToken);
+                highSchoolUrl.searchParams.append("auth", await userContext.getAuthToken());
 
                 const highSchoolResponse = await fetch(highSchoolUrl);
                 if (!highSchoolResponse.ok) {
@@ -75,7 +75,7 @@ const UpdateProfile: React.FC = () => {
         };
 
         fetchProfileAndHighSchools();
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prevData) => ({
@@ -118,7 +118,7 @@ const UpdateProfile: React.FC = () => {
         try {
             const url = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/profile/update");
             url.searchParams.append("id", userContext.user.id);
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             
             const response = await fetch(url.toString(), {
                 method: "POST",
@@ -203,9 +203,10 @@ const UpdateProfile: React.FC = () => {
             />
             <Select
                 label="Lise"
+                limit={7}
                 value={selectedHighSchool?.name || ""}
                 onChange={(value) => handleHighSchoolChange(value || "")}
-                data={highSchoolOptions.map((school) => school.name)}
+                data={[...new Set(highSchoolOptions.map((school) => school.name))]}
                 searchable
                 placeholder="Lise seçin"
                 className="mb-4"
@@ -214,7 +215,7 @@ const UpdateProfile: React.FC = () => {
             {/* Responsible Days */}
             {userContext.user.role === UserRole.ADVISOR ? <MultiSelect
                 label="Sorumlu Günler"
-                data={["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]}
+                data={Object.entries(DayOfTheWeek).map(([key, value]) => ({ label: value, value: key }))}
                 value={formData.responsible_days}
                 onChange={(value) => handleInputChange("responsible_days", value)}
                 placeholder="Sorumlu günler seçin"

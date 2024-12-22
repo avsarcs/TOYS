@@ -25,14 +25,14 @@ export const FairApplication: React.FC = () => {
             email: "",
             phone: "",
             role: "",
-            school: {
-                id: "",
-                name: "",
-                location: "",
-                priority: 1,
-                ranking: 1,
-            },
             notes: "",
+        },
+        highschool: {
+            id: "",
+            name: "",
+            location: "",
+            priority: 1,
+            ranking: 1,
         },
         start_time: "",
         end_time: "",
@@ -114,7 +114,7 @@ export const FairApplication: React.FC = () => {
             }
         }
 
-        if (isEmpty(applicationInfo.applicant.school.name)) {
+        if (isEmpty(applicationInfo.highschool.name)) {
             stagePass = false;
             setWarnings((warnings) => ({
                 ...warnings,

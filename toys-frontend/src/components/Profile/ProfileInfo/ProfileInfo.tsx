@@ -43,7 +43,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
         try {
             const fireUrl = new URL(FIRE_URL);
             fireUrl.searchParams.append("id", profileId);
-            fireUrl.searchParams.append("auth", userContext.authToken);
+            fireUrl.searchParams.append("auth", await userContext.getAuthToken());
 
             const res = await fetch(fireUrl, {
                 method: "GET",
@@ -61,7 +61,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 alert("An unknown error occurred.");
             }
         }
-    }, [profileId, userContext.authToken]);
+    }, [userContext.getAuthToken, profileId]);
 
 
     return (

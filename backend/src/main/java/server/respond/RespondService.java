@@ -254,18 +254,42 @@ public class RespondService {
         database.requests.updateRequest(request);
     }
 
+    private GuideAssignmentRequest findInviteFor(String guid, String tourID) throws Exception {
+        List<Request> requests = database.requests.getRequestsOfType(RequestType.ASSIGNMENT, null);
+        return (GuideAssignmentRequest) requests.stream().filter(
+                r -> ((GuideAssignmentRequest) r).getEvent_id().equals(tourID) && ((GuideAssignmentRequest) r).getGuide_id().equals(guid)
+        ).findFirst().orElseThrow(
+                () -> new Exception()
+        );
+    }
+
     public void respondToTourGuideInvite(String auth, String application_id, boolean response) {
         if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this application!");
         }
 
-        List<Request> requests = database.requests.getRequestsOfType(RequestType.ASSIGNMENT, application_id);
-        GuideAssignmentRequest request = (GuideAssignmentRequest) requests.stream().filter(
-                r -> r.getRequest_id().equals(application_id)
-        ).findFirst().orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
-        );
+        GuideAssignmentRequest request = null;
 
+        if (database.tours.fetchTour(application_id) == null) {
+            List<Request> requests = database.requests.getRequestsOfType(RequestType.ASSIGNMENT, application_id);
+            request = (GuideAssignmentRequest) requests.stream().filter(
+                    r -> r.getRequest_id().equals(application_id)
+            ).findFirst().orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
+            );
+        } else {
+            // accept with tour, not application
+            try {
+                request = findInviteFor(JWTService.getSimpleton().decodeUserID(auth), application_id);
+            } catch (Exception E) {
+                E.printStackTrace();
+                System.out.println("Could not find an invite for!");
+            }
+        }
+
+        if (request == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!");
+        }
 
         String userID = JWTService.getSimpleton().decodeUserID(auth);
         if (!request.getGuide_id().equals(userID)) {

@@ -31,9 +31,13 @@ public class DBSchoolService {
             DocumentReference reference = firestore.collection("edu").document("highschools");
 
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("highschools");
-
+            String uuid = UUID.randomUUID().toString();
+            while (data.containsKey(uuid)) {
+                uuid = UUID.randomUUID().toString();
+            }
+            highschool.setId(uuid);
             data.put(
-                    highschool.getId(),
+                    uuid,
                     highschool
             );
 
@@ -61,8 +65,14 @@ public class DBSchoolService {
 
             schools.addAll(
                     data.entrySet().stream().map(
-                            entry -> HighschoolRecord.fromMap((Map<String, Object>) entry.getValue()).setId(entry.getKey())
-                    ).toList()
+                            entry -> {
+                                try {
+                                    return HighschoolRecord.fromMap((Map<String, Object>) entry.getValue()).setId(entry.getKey());
+                                } catch (Exception e) {
+                                    return null;
+                                }
+                            }
+                    ).filter(Objects::nonNull).toList()
             );
 
 
@@ -95,6 +105,32 @@ public class DBSchoolService {
             System.out.println("Failed to fetch tours from database.");
         }
         return null;
+    }
+
+    public void setHighschools(List<HighschoolRecord> highschools) {
+        try {
+            DocumentReference reference = firestore.collection("edu").document("highschools");
+
+            Map<String, Object> data = new HashMap<>();
+            highschools.forEach(
+                    highschool -> data.put(
+                            highschool.getId(),
+                            highschool
+                    )
+            );
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("highschools", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+
+            System.out.println("Highschools updated in database." + result.get().getUpdateTime());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to update highschools in the database.");
+        }
     }
 
     public void updateHighschool(HighschoolRecord highschool) {

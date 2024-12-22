@@ -1,5 +1,6 @@
 package server.internal.analytics.universities;
 
+import info.debatty.java.stringsimilarity.SorensenDice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,11 @@ public class AnalyticsUniversitiesService {
         
         // return universities
         response.addAll(
-                universities.entrySet().stream().map(uni -> dto.university(uni.getValue())).toList()
+                universities.entrySet().stream().map(uni -> {
+                    Map<String, Object> data = dto.university(uni.getValue());
+                    data.put("id", uni.getKey());
+                    return data;
+                }).toList()
         );
         return response;
     }
@@ -110,29 +115,52 @@ public class AnalyticsUniversitiesService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
+
+        // TODO: FIX
         // get university
         University university = database.universities.getUniversity(university_id);
         Map<String, Object> response = new HashMap<>();
-        
+
+        SorensenDice alg = new SorensenDice();
 
         // return department details
         university.getDepartments().stream()
-            .filter(department -> department.getName().equals(department_name))
-            .forEach(department -> {
-                department.getYears().forEach(year -> {
-                    List<Map<String, String>> yearDetails = year.getTable_data().entrySet().stream()
-                        .map(entry -> {
-                            UniversityTableData tableData = (UniversityTableData) entry.getValue();
-                            Map<String, String> detailMap = new HashMap<>();
-                            detailMap.put("title", department.getScholarship());
-                            detailMap.put("min", tableData.getBase_lastguy_rank());
-                            detailMap.put("max", tableData.getBest_rank());
-                            return detailMap;
-                        })
-                        .collect(Collectors.toList());
-                    response.put(year.getYear(), yearDetails);
+            .filter(department -> alg.similarity(department.getName().toLowerCase(), department_name.toLowerCase()) > 0.8)
+                .forEach( dep -> {
+                    dep.getYears().forEach(
+                            year -> {
+                                if (!response.containsKey(year.getYear())) {
+                                    response.put(year.getYear(), new ArrayList<Map<String, Object>>());
+                                }
+
+                                List<Map<String,Object>> data = (List<Map<String, Object>>) response.get(year.getYear());
+                                if (data == null) {
+                                    data = new ArrayList<>();
+                                }
+                                if (dep.getScholarship() == null) {
+                                    System.out.println("scholarship is null");
+                                }
+                                if (year.getTable_data() == null) {
+                                    System.out.println("table data is null");
+                                }
+                                if (year.getTable_data().getBest_rank() == null) {
+                                    System.out.println("best rank is null");
+                                }
+                                if (year.getTable_data().getBase_lastguy_rank() == null) {
+                                    System.out.println("base last guy rank is null");
+                                }
+                                data.add(
+                                    Map.of(
+                                        "title", dep.getScholarship(),
+                                        "min", year.getTable_data().getBest_rank(),
+                                        "max", year.getTable_data().getBase_lastguy_rank()
+                                    )
+                                );
+
+                                response.put(year.getYear(), data);
+                            }
+                    );
                 });
-            });
 
         return response;
     }
@@ -145,6 +173,9 @@ public class AnalyticsUniversitiesService {
 
         // get university
         University university = database.universities.getUniversity(university_id);
+        if (university == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "University not found!");
+        }
         
         // set rival
         boolean is_rival = false;
@@ -153,7 +184,7 @@ public class AnalyticsUniversitiesService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        university.setIs_rival(is_rival);
+        System.out.println("Setting rivalry status of " + university_id + " to " + is_rival);
         database.universities.updateUniversityRivalry(university_id, is_rival);
     }
 }

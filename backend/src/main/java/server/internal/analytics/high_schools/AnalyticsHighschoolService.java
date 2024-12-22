@@ -59,6 +59,26 @@ public class AnalyticsHighschoolService {
         return response;
     }
 
+    public List<Map<String, Object>> getAllDto(String auth) {
+        List<HighschoolRecord> highschools =  database.schools.getHighschools();
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        response.addAll(
+                highschools.stream().map(hs -> dto.highschoolNoLocation(hs)).toList()
+        );
+
+        if (!authService.check(auth)) {
+            response.forEach(
+                    map -> {
+                        map.put("ranking", -1);
+                        map.put("priority", -1);
+                    }
+            );
+        }
+
+        return response;
+    }
+
     public Map<String, Object> getDetails(String auth, String high_school_id) {
         if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
@@ -88,7 +108,7 @@ public class AnalyticsHighschoolService {
                         boolean added = false;
                         for (Map<String, Object> count : counts_map) {
                             if (count.get("year").equals(year.year)) {
-                                count.put("count", (int) count.get("count") + data.getTotal());
+                                count.put("count", ((Number) count.get("count")).longValue() + data.getTotal());
                                 added = true;
                                 break;
                             }
@@ -121,11 +141,10 @@ public class AnalyticsHighschoolService {
         ).map(e -> e.getValue()).toList();
 
 
-        Map<String, Object> HSTours = new HashMap<>();
+        List<Map<String, Object>> HSTours = new ArrayList<>();
         for (ReviewRecord reviewRecord : relatedReviews) {
             try {
-                HSTours.putIfAbsent(
-                        reviewRecord.getEvent_id(),
+                HSTours.add(
                         Map.of(
                                 "date", database.tours.fetchTour(reviewRecord.getEvent_id()).getStarted_at(),
                                 "attendance", database.tours.fetchTour(reviewRecord.getEvent_id()).getExpected_souls(),
@@ -166,7 +185,13 @@ public class AnalyticsHighschoolService {
         if (response == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No review for this tour!");
         }
-        response = reviewService.getReviewOfTour(auth, tour_id);
+
+        // This had to be done because the method signature of getReviewOfTour was changed
+
+        response = reviewService.getReviewOfTour(auth, tour_id).stream().filter(
+                e -> !e.containsKey("guide_id")
+        ).findFirst().orElse(Map.of());
+        //response = reviewService.getReviewOfTour(auth, tour_id);
         return response;
     }
 
@@ -233,12 +258,13 @@ public class AnalyticsHighschoolService {
         if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
-        HighschoolRecord hs = new HighschoolRecord();
-        hs.setId((String) highschool.get("id"));
-        hs.setTitle((String) highschool.get("name"));
-        hs.setLocation((String) highschool.get("location"));
-        hs.setRanking((String) highschool.get("ranking"));
+
+        HighschoolRecord hs = database.schools.getHighschoolByID((String) highschool.get("id"));
+
         hs.setPriority((String) highschool.get("priority"));
+        hs.setRanking((String) highschool.get("ranking"));
+        hs.setLocation((String) highschool.get("location"));
+        hs.setTitle((String) highschool.get("name"));
 
         database.schools.updateHighschool(hs);
     }
@@ -248,7 +274,6 @@ public class AnalyticsHighschoolService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
         HighschoolRecord hs = new HighschoolRecord();
-        hs.setId((String) highschool.get("id"));
         hs.setTitle((String) highschool.get("name"));
         hs.setLocation((String) highschool.get("location"));
         hs.setRanking((String) highschool.get("ranking"));

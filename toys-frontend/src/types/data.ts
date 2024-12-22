@@ -7,7 +7,8 @@ import {
   UserRole,
   DayOfTheWeek,
   TimeSlotStatus,
-  City
+  City,
+  FairStatus
 } from "./enum.ts";
 
 export interface LoginData {
@@ -60,6 +61,21 @@ export interface TourData {
   actual_start_time: string,
   actual_end_time: string,
   classroom: string,
+}
+
+export interface FairData {
+  fair_id: string,
+  guides: { id: string; full_name: string, highschool: HighschoolData }[],
+  accepted_time: string,
+  status: FairStatus,
+  notes: string,
+  applicant: {
+    fullname: string,
+    role: ApplicantRole,
+    highschool: HighschoolData,
+    email: string,
+    phone: string,
+    notes: string }
 }
 
 export interface ProfileData{
@@ -118,11 +134,11 @@ export interface DailyPlan {
 
 export interface SimpleEventData {
   event_type: EventType,
-  event_subtype: TourType,
+  event_subtype: TourType | "FAIR",
   event_id: string,
-  event_status: TourStatus,
+  event_status: TourStatus | FairStatus, 
   highschool: HighschoolData,
-  visitor_count: number,
+  visitor_count?: number,
   accepted_time: string,
   requested_times: string[],
 }

@@ -35,6 +35,8 @@ import TourStatistics from "./pages/TourStatistics/TourStatistics.tsx";
 import TourListPage from "./pages/TourList/TourListPage.tsx";
 import CheckLogin from "./components/CheckLogin.tsx";
 import ManagePersonnel from "./pages/ManagePersonnel/ManagePersonnel.tsx";
+import FairsList from "./pages/FairsList/FairsList.tsx";
+import FairPage from "./pages/FairInformation/FairPage.tsx";
 
 function App() {
   dayjs.locale("tr");
@@ -43,7 +45,7 @@ function App() {
   return (
     <>
       <div className="app-container">
-        {hasNavbar(location) && <CheckLogin dontRerender redirect children={<Navbar />}/>}
+        {hasNavbar(location) && <CheckLogin redirect children={<Navbar />}/>}
         <main className="flex-1 max-h-screen overflow-y-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -53,6 +55,8 @@ function App() {
             <Route path="/dashboard" element={<CheckLogin redirect required children={<Dashboard />}/>} />
             <Route path="/tour/:tourId" element={<CheckLogin children={<TourPage />}/>} />
             <Route path="/tours" element={<CheckLogin redirect required children={<TourListPage />}/>}/>
+            <Route path="/fair/:fairId" element={<CheckLogin children={<FairPage />}/>} />
+            <Route path="/fairs" element={<CheckLogin redirect required children={<FairsList />}/>}/>
             <Route path="/universitieslist" element={<CheckLogin redirect children={<UniversitiesList />}/>}/>
             <Route path="/rivalslist" element={<CheckLogin redirect children={<RivalsList />}/>} />
             <Route path="/highschoolslist" element={<CheckLogin redirect children={<HighSchoolsList />}/>} />
@@ -68,7 +72,7 @@ function App() {
             <Route path="/payment-detail/:guideId" element={<CheckLogin required redirect children={<PaymentDetail />}/>} />
             <Route path="/profile/:profileId" element={<CheckLogin required redirect children={<ProfilePage />}/>}/>
             <Route path="/profile" element={<CheckLogin required redirect children={<ProfilePage />}/>}/>
-            <Route path="/edit-profile" element={<CheckLogin required redirect dontRerender children={<EditProfilePage />}/>}/>
+            <Route path="/edit-profile" element={<CheckLogin required redirect children={<EditProfilePage />}/>}/>
             <Route path="/review-tour/:reviewer-id" element={<TourReviewPage />}/>
             <Route path="/review/:review-id" element={<CheckLogin required redirect children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<CheckLogin required redirect children={<TourStatistics />}/>}/>

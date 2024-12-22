@@ -20,9 +20,12 @@ public class UserToursController {
             @RequestParam String from_date,
             @RequestParam String to_date,
             @RequestParam boolean filter_guide_missing,
-            @RequestParam boolean filter_trainee_missing) {
+            @RequestParam boolean filter_trainee_missing,
+            @RequestParam boolean am_enrolled,
+            @RequestParam boolean am_invited
+    ) {
 
-        return tourService.getTours(auth, school_name, status, from_date, to_date, filter_guide_missing, filter_trainee_missing);
+        return tourService.getTours(auth, school_name, status, from_date, to_date, filter_guide_missing, filter_trainee_missing, am_enrolled, am_invited);
     }
 
     @PostMapping("/internal/tours/remove")

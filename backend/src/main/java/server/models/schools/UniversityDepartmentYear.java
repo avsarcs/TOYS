@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,14 +14,36 @@ public class UniversityDepartmentYear {
     @JsonProperty("hs_data")
     public List<UniHighschoolRecord> highschool_attendee_count;
     public UniversityTableData table_data;
-    public CityData city_data;
+    public Map<String, CityData> city_data;
 
     public static UniversityDepartmentYear fromMap(Map<String, Object> map) {
         return new UniversityDepartmentYear(map);
     }
 
+    public static UniversityDepartmentYear fromSource(Map<String, Object> map) {
+        UniversityDepartmentYear uni = new UniversityDepartmentYear();
+        uni.year = ((Number) map.get("year")).toString();
+        uni.id = (String) map.get("id");
+        uni.highschool_attendee_count = new ArrayList<>();
+        ((List<Map<String, Object>>) map.get("hs_data")).forEach(
+                m -> {
+                    uni.highschool_attendee_count.add(UniHighschoolRecord.fromMap(m));
+                }
+        );
+        uni.table_data = UniversityTableData.fromSource((Map<String, Object>) map.get("table_data"));
+        uni.city_data = new HashMap<>();
+        ((Map<String, Object>)map.get("city_data")).forEach((k, v) -> {
+            uni.city_data.put(k, CityData.fromMap((Map<String, Object>) v));
+        });
+        return uni;
+    }
+
     protected UniversityDepartmentYear(Map<String, Object> map) {
-        this.year = (String) map.get("year");
+        try {
+            this.year = (String) map.get("year");
+        } catch (Exception E) {
+            this.year = map.get("year") + "";
+        }
         this.id = (String) map.get("id");
         this.highschool_attendee_count = new ArrayList<>();
         try {
@@ -30,7 +53,10 @@ public class UniversityDepartmentYear {
             System.out.println("Error in UniversityDepartmentYear.java");
         }
         this.table_data = UniversityTableData.fromMap((Map<String, Object>) map.get("table_data"));
-        this.city_data = CityData.fromMap((Map<String, Object>) map.get("city_data"));
+        this.city_data = new HashMap<>();
+        ((Map<String, Object>)map.get("city_data")).forEach((k, v) -> {
+            this.city_data.put(k, CityData.fromMap((Map<String, Object>) v));
+        });
     }
 
     public UniversityDepartmentYear(String year, String id) {
@@ -61,11 +87,11 @@ public class UniversityDepartmentYear {
         return this;
     }
 
-    public CityData getCity_data() {
+    public Map<String, CityData> getCity_data() {
         return city_data;
     }
 
-    public UniversityDepartmentYear setCity_data(CityData city_data) {
+    public UniversityDepartmentYear setCity_data(Map<String, CityData> city_data) {
         this.city_data = city_data;
         return this;
     }
