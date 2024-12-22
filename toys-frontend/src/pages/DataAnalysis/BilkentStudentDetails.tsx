@@ -20,8 +20,17 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
+const defaultHeaderStyle = {
+    backgroundColor: 'white',
+    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+    width: '100%', // Ensure the container takes the full width of its parent
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center', // Center vertically
+    justifyContent: 'center', // Center horizontally
+};
 
-//test data
+// Default data
 const defaultHighSchools = {"Yükleniyor...": 1};
 const defaultCities = {"Yükleniyor...": 1};
 const defaultRankings = {"Yükleniyor...": 1};
@@ -47,7 +56,7 @@ const BilkentStudentDetails: React.FC = () => {
 
     const getHighSchoolsAndCitiesAndRankingsAndDepartments = useCallback(async () => {
         const url = new URL(TOUR_URL + "internal/analytics/students/all");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
 
         const res = await fetch(url, {
             method: "GET",
@@ -78,11 +87,11 @@ const BilkentStudentDetails: React.FC = () => {
         })
         setDepartments(uniqueDepartments);
 
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     const getYearsAndScholarshipData = useCallback(async (department: string) => {
         const url = new URL(TOUR_URL + "internal/analytics/students/departments");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("department", department);
 
         const res = await fetch(url, {
@@ -101,11 +110,11 @@ const BilkentStudentDetails: React.FC = () => {
         const response = JSON.parse(resText);
         setYears(response["years"]);
         setScholarshipData(response["rankings"]);
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     const getDepartmentData = useCallback(async (department: string, year: string) => {
         const url = new URL(TOUR_URL + "internal/analytics/students/department_high_schools");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("department", department);
         url.searchParams.append("year", year);
 
@@ -123,7 +132,7 @@ const BilkentStudentDetails: React.FC = () => {
         }
 
         setDepartmentData((JSON.parse(resText))["students"]);
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getHighSchoolsAndCitiesAndRankingsAndDepartments().catch((reason) => {
@@ -146,11 +155,11 @@ const BilkentStudentDetails: React.FC = () => {
             });
     }, [selectedDepartment, selectedYear]);
 
-    const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
+    const HeaderTextContainer = <div style={defaultHeaderStyle}>
         <Text style={{fontSize: 'xx-large'}}>
             Bilkent Öğrenci Verisi
         </Text>
-    </Container>
+    </div>
 
     const GraphsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
@@ -240,9 +249,7 @@ const BilkentStudentDetails: React.FC = () => {
 
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Space h="xl"/>
         {HeaderTextContainer}
-        <hr style={{border: '1px solid black'}}/>
         <Space h="xl"/>
         {GraphsContainer}
         <Space h="xl"/>
