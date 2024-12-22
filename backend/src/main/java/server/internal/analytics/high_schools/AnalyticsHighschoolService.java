@@ -259,12 +259,13 @@ public class AnalyticsHighschoolService {
         if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have enough permissions!");
         }
-        HighschoolRecord hs = new HighschoolRecord();
-        hs.setId((String) highschool.get("id"));
-        hs.setTitle((String) highschool.get("name"));
-        hs.setLocation((String) highschool.get("location"));
-        hs.setRanking((String) highschool.get("ranking"));
+
+        HighschoolRecord hs = database.schools.getHighschoolByID((String) highschool.get("id"));
+
         hs.setPriority((String) highschool.get("priority"));
+        hs.setRanking((String) highschool.get("ranking"));
+        hs.setLocation((String) highschool.get("location"));
+        hs.setTitle((String) highschool.get("name"));
 
         database.schools.updateHighschool(hs);
     }

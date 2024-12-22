@@ -130,6 +130,21 @@ public class AnalyticsUniversitiesService {
                                 }
 
                                 List<Map<String,Object>> data = (List<Map<String, Object>>) response.get(year.getYear());
+                                if (data == null) {
+                                    data = new ArrayList<>();
+                                }
+                                if (dep.getScholarship() == null) {
+                                    System.out.println("scholarship is null");
+                                }
+                                if (year.getTable_data() == null) {
+                                    System.out.println("table data is null");
+                                }
+                                if (year.getTable_data().getBest_rank() == null) {
+                                    System.out.println("best rank is null");
+                                }
+                                if (year.getTable_data().getBase_lastguy_rank() == null) {
+                                    System.out.println("base last guy rank is null");
+                                }
                                 data.add(
                                     Map.of(
                                         "title", dep.getScholarship(),

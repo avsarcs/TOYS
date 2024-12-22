@@ -20,6 +20,24 @@ public class UniversityDepartmentYear {
         return new UniversityDepartmentYear(map);
     }
 
+    public static UniversityDepartmentYear fromSource(Map<String, Object> map) {
+        UniversityDepartmentYear uni = new UniversityDepartmentYear();
+        uni.year = ((Number) map.get("year")).toString();
+        uni.id = (String) map.get("id");
+        uni.highschool_attendee_count = new ArrayList<>();
+        ((List<Map<String, Object>>) map.get("hs_data")).forEach(
+                m -> {
+                    uni.highschool_attendee_count.add(UniHighschoolRecord.fromMap(m));
+                }
+        );
+        uni.table_data = UniversityTableData.fromSource((Map<String, Object>) map.get("table_data"));
+        uni.city_data = new HashMap<>();
+        ((Map<String, Object>)map.get("city_data")).forEach((k, v) -> {
+            uni.city_data.put(k, CityData.fromMap((Map<String, Object>) v));
+        });
+        return uni;
+    }
+
     protected UniversityDepartmentYear(Map<String, Object> map) {
         try {
             this.year = (String) map.get("year");

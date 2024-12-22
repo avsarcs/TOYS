@@ -40,7 +40,7 @@ public class University {
         uni.departments = new ArrayList<>();
         ((List<Map<String, Object>>) map.get("departments")).forEach(
                 m -> {
-                    uni.departments.add(UniversityDepartment.fromMap(m));
+                    uni.departments.add(UniversityDepartment.fromSource(m));
                 }
         );
         uni.url = (String) map.get("url");

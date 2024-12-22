@@ -29,6 +29,20 @@ public class UniversityDepartment {
         }
     }
 
+    public static UniversityDepartment fromSource(Map<String, Object> map) {
+        UniversityDepartment uni = new UniversityDepartment();
+        uni.name = (String) map.get("name");
+        uni.id = (String) map.get("id");
+        uni.scholarship = (String) map.get("scholarship");
+        uni.years = new ArrayList<>();
+        ((List<Map<String, Object>>) map.get("years")).forEach(
+                m -> {
+                    uni.years.add(UniversityDepartmentYear.fromSource(m));
+                }
+        );
+        return uni;
+    }
+
     public UniversityDepartment (String name, String id, String scholarship) {
         this.name = name;
         this.id = id;
