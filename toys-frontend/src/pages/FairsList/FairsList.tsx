@@ -24,6 +24,7 @@ import ListItem from "../../components/FairList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
 
 const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fairs");
+const PENDING_FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard");
 
 const FairsList: React.FC = () => {
   const userContext = useContext(UserContext);
@@ -38,34 +39,48 @@ const FairsList: React.FC = () => {
 
   const getFairs = async () => {
     setLoading(true);
-    const fairsUrl = new URL(FAIRS_URL);
-    
-    // Always append required auth token
-    fairsUrl.searchParams.append("auth", await userContext.getAuthToken());
-    
-    // Always append optional parameters, even if empty
-    fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
-    fairsUrl.searchParams.append("school_name", searchSchoolName || '');
-    fairsUrl.searchParams.append("guide_not_assigned", guideMissing.toString());
-    
-    // Handle dates
-    fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
-    fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
-    
-    // Handle filter flags
-    fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
-    fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
-    fairsUrl.searchParams.append("enrolled_in_fair", "");
-
-    const res = await fetch(fairsUrl, {
-      method: "GET"
-    });
-
-    if(res.ok) {
-        setFairs(await res.json());
-        setLoading(false);
+  
+    try {
+      // Prepare URL for fetching fairs
+      const fairsUrl = new URL(FAIRS_URL);
+      fairsUrl.searchParams.append("auth", await userContext.getAuthToken());
+      fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(",") : "");
+      fairsUrl.searchParams.append("school_name", searchSchoolName || "");
+      fairsUrl.searchParams.append("guide_not_assigned", guideMissing.toString());
+      fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : "");
+      fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : "");
+      fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
+      fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
+      fairsUrl.searchParams.append("enrolled_in_fair", "");
+  
+      // Fetch fairs from the main endpoint
+      const fairsRes = await fetch(fairsUrl, { method: "GET" });
+      if (!fairsRes.ok) throw new Error("Failed to fetch fairs");
+      const fairsData = await fairsRes.json();
+  
+      // Prepare URL for fetching pending applications
+      const pendingUrl = new URL(PENDING_FAIRS_URL);
+      pendingUrl.searchParams.append("auth", await userContext.getAuthToken());
+      pendingUrl.searchParams.append("dashboard_category", "PENDING_APPLICATION"); // Example parameter
+  
+      // Fetch pending applications
+      const pendingRes = await fetch(pendingUrl, { method: "GET" });
+      if (!pendingRes.ok) throw new Error("Failed to fetch pending applications");
+      const pendingData = await pendingRes.json();
+  
+      // Filter pending applications by event_type
+      const filteredPending = pendingData.filter((application: any) => application.event_type === "FAIR");
+  
+      // Combine the fairs and filtered pending applications
+      const combinedFairs = [...fairsData, ...filteredPending];
+      setFairs(combinedFairs);
+    } catch (error) {
+      console.error("Error fetching fairs or pending applications:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  };  
+  
 
   useEffect(() => {
     getFairs().catch(console.error);
