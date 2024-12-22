@@ -3,6 +3,7 @@ import {OnlyChildrenProps} from '../types/generic';
 import {User} from '../types/designed';
 import {useCookies} from "react-cookie";
 import {UserRole, TimeSlotStatus, FetchingStatus} from "../types/enum.ts";
+import {notifications} from "@mantine/notifications";
 
 interface UserContextType {
   getAuthToken: () => Promise<string>;
@@ -253,7 +254,14 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
           setUser(EMPTY_USER);
         }
       })
-      .catch(console.error);
+      .catch((e) => {
+        console.error(e);
+        notifications.show({
+          color: "red",
+          title: "Hay aksi!",
+          message: "Bir şeyler yanlış gitti. Sayfayı yenileyin veya site yöneticisine durumu haber edin."
+        });
+      });
   }, [cookies.auth]);
 
   return (
