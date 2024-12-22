@@ -14,6 +14,7 @@ import {
   useMatches, 
   ScrollArea, 
   Autocomplete,
+  Pagination,
   Overlay,
   Loader
 } from "@mantine/core";
@@ -23,7 +24,7 @@ import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/FairList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
 
-const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fairs");
+const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair/search");
 const PENDING_FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard");
 
 const FairsList: React.FC = () => {
@@ -33,10 +34,9 @@ const FairsList: React.FC = () => {
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
-  const [guideMissing, setGuideMissing] = useState(true);
-  const [traineeMissing, setTraineeMissing] = useState(true);
+  const [guideMissing, setGuideMissing] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [page, setPage] = useState(1);
   const getFairs = async () => {
     setLoading(true);
   
@@ -46,12 +46,12 @@ const FairsList: React.FC = () => {
       fairsUrl.searchParams.append("auth", await userContext.getAuthToken());
       fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(",") : "");
       fairsUrl.searchParams.append("school_name", searchSchoolName || "");
-      fairsUrl.searchParams.append("guide_not_assigned", guideMissing.toString());
       fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : "");
       fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : "");
-      fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
-      fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
+      fairsUrl.searchParams.append("filter_guide_missing", guideMissing ? "true" : "");
+      fairsUrl.searchParams.append("filter_trainee_missing", "");
       fairsUrl.searchParams.append("enrolled_in_fair", "");
+      fairsUrl.searchParams.append("guide_not_assigned", guideMissing ? "true" : "");
   
       // Fetch fairs from the main endpoint
       const fairsRes = await fetch(fairsUrl, { method: "GET" });
@@ -74,6 +74,7 @@ const FairsList: React.FC = () => {
       // Combine the fairs and filtered pending applications
       const combinedFairs = [...fairsData, ...filteredPending];
       setFairs(combinedFairs);
+      setPage(1);
     } catch (error) {
       console.error("Error fetching fairs or pending applications:", error);
     } finally {
@@ -115,6 +116,7 @@ const FairsList: React.FC = () => {
     }
     setToDate(date);
   };
+
 
   return (
     <>
@@ -176,6 +178,7 @@ const FairsList: React.FC = () => {
             <Chip size="lg" color="blue" variant="outline" value="FINISHED">
               Bitti
             </Chip>
+
           </Group>
         </Chip.Group>
         <Button onClick={() => setStatusFilter([])}>Temizle</Button>
@@ -207,12 +210,6 @@ const FairsList: React.FC = () => {
             checked={guideMissing}
             onChange={(event) => setGuideMissing(event.currentTarget.checked)}
           />
-          <Checkbox
-            label="Acemi rehber atanmamış."
-            size="md"
-            checked={traineeMissing}
-            onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
-          />
         </Group>
       </Group>
       <Space h="md" />
@@ -225,6 +222,12 @@ const FairsList: React.FC = () => {
           <Space h="xs" />
         </Stack>
       </ScrollArea.Autosize>
+      <Pagination 
+                p="md" 
+                value={page} 
+                onChange={setPage} 
+                total={Math.ceil(fairs.length / 10)} 
+              />
     </Container>
   </>
   

@@ -37,6 +37,7 @@ import CheckLogin from "./components/CheckLogin.tsx";
 import ManagePersonnel from "./pages/ManagePersonnel/ManagePersonnel.tsx";
 import FairsList from "./pages/FairsList/FairsList.tsx";
 import FairPage from "./pages/FairInformation/FairPage.tsx";
+import Admin from "./pages/Admin/Admin.tsx";
 
 function App() {
   dayjs.locale("tr");
@@ -81,6 +82,7 @@ function App() {
             <Route path="/applicant-request/:passkey" element={<ApplicantRequest />}/>
             <Route path="/change-hourly-rate" element={<CheckLogin required redirect children={<ChangeHourlyRate />}/>}/>
             <Route path="/contact" element={<Contact />}/>
+            <Route path="/admin" element={<CheckLogin required redirect children={<Admin />}/>}/>
           </Routes>
         </main>
       </div>
