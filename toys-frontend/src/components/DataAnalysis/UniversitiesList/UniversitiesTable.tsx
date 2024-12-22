@@ -4,7 +4,8 @@ import {IconSelector, IconChevronDown, IconChevronUp} from '@tabler/icons-react'
 import RivalButton from "./RivalButton.tsx";
 
 interface RowData {
-    university: string;
+    name: string;
+    id: string;
     city: string;
     isRival: string;
 }
@@ -46,8 +47,8 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
 function filterData(data: RowData[], search: string, cities: string[]) {
     const query = normalizeString(search.trim());
     return data.filter((item) =>
-        normalizeString(item["university"]).includes(query) &&
-        (cities.length === 0 || cities.includes(item["city"]))
+        normalizeString(item["name"]).toLowerCase().includes(query.toLowerCase()) &&
+        (cities.length === 0 || cities.map(normalizeString).includes(normalizeString(item["city"])))
     );
 }
 
@@ -64,10 +65,10 @@ function sortData(
     return filterData(
         [...data].sort((a, b) => {
             if (payload.reversed) {
-                return b[sortBy].localeCompare(a[sortBy]);
+                return b[sortBy]?.localeCompare(a[sortBy] ?? '') ?? 0;
             }
 
-            return a[sortBy].localeCompare(b[sortBy]);
+            return a[sortBy]?.localeCompare(b[sortBy] ?? '') ?? 0;
         }),
         payload.search,
         payload.cities
@@ -78,9 +79,10 @@ interface UniversitiesTableProps {
     data: RowData[];
     search: string;
     cities: string[];
+    changeIsRival(isRival: boolean, universityID: string): void;
 }
 
-const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, cities}) => {
+const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, cities, changeIsRival}) => {
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
@@ -103,19 +105,18 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
     const paginatedData = sortedData.slice(startIndex, endIndex);
 
     const rows = paginatedData.map((row) => (
-        <Table.Tr key={row.university}>
-            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.university}</Table.Td>
+        <Table.Tr key={row.name}>
+            <Table.Td style={{textAlign: 'center', fontSize: "1rem"}}>{row.name}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.city}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
                 <RivalButton
                     isRival={row.isRival === "true"}
                     setIsRival={(isRival) => {
-                        const updatedData = sortedData.map((item) =>
-                            item.university === row.university ? { ...item, isRival: isRival ? "true" : "false" } : item
-                        );
-                        setSortedData(updatedData);
+                        if (row.id !== "") {
+                        changeIsRival(!isRival, row.id);
+                        }
                     }}
-                    university={row.university}
+                    universityID={row.id}
                 />
             </Table.Td>
         </Table.Tr>
@@ -129,9 +130,9 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
                 <Table.Tbody>
                     <Table.Tr>
                         <Th
-                            sorted={sortBy === 'university'}
+                            sorted={sortBy === 'name'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('university')}
+                            onSort={() => setSorting('name')}
                         >
                             <Text size={"xl"}>
                                 Üniversite
