@@ -42,7 +42,7 @@ const TourListPage: React.FC = () => {
     const toursUrl = new URL(TOURS_URL);
     
     // Always append required auth token
-    toursUrl.searchParams.append("auth", userContext.authToken);
+    toursUrl.searchParams.append("auth", await userContext.getAuthToken());
     
     // Always append optional parameters, even if empty
     toursUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');

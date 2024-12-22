@@ -9,46 +9,36 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
   const path = useLocation();
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
-  const [fetchedOnce, setFetchedOnce] = useState(false);
   const [rendering, setRendering] = useState(false);
   const [validRole, setValidRole] = useState(false);
-  const [auth, setAuth] = useState("");
 
   useEffect(() => {
-    if (userContext.fetchStatus === FetchingStatus.DONE) {
-      if(auth.length === 0) {
+    switch(userContext.profileFetchStatus) {
+      case FetchingStatus.DONE:
         if(userContext.isLoggedIn) {
-          setAuth(userContext.authToken);
-          setFetchedOnce(true);
           setValidRole(props.acceptedRoles?.includes(userContext.user.role) ?? true);
           setRendering(true);
         }
         else if(props.required) {
-          if(!fetchedOnce || !props.dontRerender) {
-            navigate("/login?redirect=" + (props.redirect ? path.pathname : ""), { replace: true });
-          }
+          navigate("/login?redirect=" + (props.redirect ? path.pathname : ""), { replace: true });
         }
         else {
           setRendering(true);
         }
-      }
-      else {
-        if(auth !== userContext.authToken) {
-          setRendering(false);
-          setFetchedOnce(false);
-          setValidRole(false);
-          setAuth(userContext.authToken ?? "");
-        }
-      }
+        break;
+      case FetchingStatus.FAILED:
+        setRendering(true);
     }
-  }, [navigate, path.pathname, props, userContext.authToken, userContext.fetchStatus, userContext.isLoggedIn])
+  }, [props, userContext.isLoggedIn, userContext.profileFetchStatus, userContext.user.role])
+
+  console.log(userContext);
 
   return (
     rendering
     ? (
       <>
         {
-          (props.dontRerender && fetchedOnce) || userContext.fetchStatus === FetchingStatus.DONE
+          userContext.profileFetchStatus === FetchingStatus.DONE
             ?
             validRole
               ?
@@ -60,7 +50,7 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
                 })()
                 : null
             :
-            props.required
+            userContext.profileFetchStatus === FetchingStatus.FAILED && props.required
               ?
               (() => {
                 throw new Error("Something went wrong when fetching user. Refresh the page or contact a site administrator.")

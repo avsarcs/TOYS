@@ -41,7 +41,7 @@ const FairsList: React.FC = () => {
     const fairsUrl = new URL(FAIRS_URL);
     
     // Always append required auth token
-    fairsUrl.searchParams.append("auth", userContext.authToken);
+    fairsUrl.searchParams.append("auth", await userContext.getAuthToken());
     
     // Always append optional parameters, even if empty
     fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');

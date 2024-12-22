@@ -24,11 +24,11 @@ const useGuideReviews = (guideId: string) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchReviews = async (authToken: string) => {
       try {
         const reviewUrl = new URL(GUIDE_REVIEW_URL);
         reviewUrl.searchParams.append('guide_id', guideId);
-        reviewUrl.searchParams.append('auth', userContext.authToken);
+        reviewUrl.searchParams.append('auth', authToken);
         
         const response = await fetch(reviewUrl);
         if (!response.ok) {
@@ -43,10 +43,12 @@ const useGuideReviews = (guideId: string) => {
       }
     };
     
-    if (userContext.authToken) {
-      fetchReviews();
-    }
-  }, [guideId, userContext.authToken]);
+    userContext.getAuthToken().then((authToken) => {
+      if(authToken) {
+        fetchReviews(authToken);
+      }
+    });
+  }, [guideId, userContext.getAuthToken]);
 
   return { reviewData, error, loading };
 };

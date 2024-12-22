@@ -40,7 +40,7 @@ const GuidePayments: React.FC = () => {
     const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
     const url = new URL(apiURL + "internal/management/timesheet/payment-state/guides");
     try {
-      url.searchParams.append("auth", userContext.authToken);
+      url.searchParams.append("auth", await userContext.getAuthToken());
       url.searchParams.append("name", "");
       const res = await fetch(url, {
         method: "GET",
@@ -66,7 +66,7 @@ const GuidePayments: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [userContext.authToken]);
+  }, [userContext.getAuthToken]);
 
   useEffect(() => {
     getInfo().catch(console.error);
@@ -116,7 +116,7 @@ const GuidePayments: React.FC = () => {
     const url = new URL(apiURL + "internal/management/timesheet/pay/guide");
     try {
       url.searchParams.append("guide_id", guideId.toString());
-      url.searchParams.append("auth", userContext.authToken);
+      url.searchParams.append("auth", await userContext.getAuthToken());
       const res = await fetch(url, {
         method: "POST",
       });
@@ -142,7 +142,7 @@ const GuidePayments: React.FC = () => {
         message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
       });
     }
-  }, [userContext.authToken]);
+  }, [userContext.getAuthToken]);
 
   const handleDetails = (guideId: string) => {
     navigate(`/payment-detail/${guideId}`);

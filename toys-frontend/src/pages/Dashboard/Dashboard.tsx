@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
 
     setLoading(true);
     const dashboardUrl = new URL(DASHBOARD_URL);
-    dashboardUrl.searchParams.append("auth", userContext.authToken);
+    dashboardUrl.searchParams.append("auth", await userContext.getAuthToken());
     dashboardUrl.searchParams.append("dashboard_category", category);
 
     const dashboardRes = await fetch(dashboardUrl, {

@@ -21,7 +21,7 @@ const TourReviews: React.FC<TourReviewsProps> = ({ tourId }) => {
       try {
         const reviewUrl = new URL(REVIEW_URL);
         reviewUrl.searchParams.append('tour_id', tourId);
-        reviewUrl.searchParams.append('auth', userContext.authToken);
+        reviewUrl.searchParams.append('auth', await userContext.getAuthToken());
         
         const response = await fetch(reviewUrl);
         if (!response.ok) {
@@ -36,7 +36,7 @@ const TourReviews: React.FC<TourReviewsProps> = ({ tourId }) => {
       }
     };
     fetchReviews();
-  }, [tourId, userContext.authToken]);
+  }, [tourId, userContext.getAuthToken]);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleString('tr-TR', {

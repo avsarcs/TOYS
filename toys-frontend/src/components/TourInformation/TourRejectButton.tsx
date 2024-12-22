@@ -13,7 +13,7 @@ const TourRejectButton: React.FC<TourButtonProps> = (props: TourButtonProps) => 
 
   const setStatus = async () => {
     const rejectUrl = new URL(REJECT_URL);
-    rejectUrl.searchParams.append("auth", userContext.authToken);
+    rejectUrl.searchParams.append("auth", await userContext.getAuthToken());
     rejectUrl.searchParams.append("application_id", props.tour.tour_id);
     rejectUrl.searchParams.append("timeslot", "");
 

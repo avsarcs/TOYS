@@ -33,7 +33,7 @@ const TIME_SLOTS: TimeSlot[] = [
 ];
 
 const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () => void}) => {
-  const { user, authToken } = useContext(UserContext);
+  const { user, getAuthToken } = useContext(UserContext);
   const [opened, { open, close }] = useDisclosure(false);
   const [viewTimesOpened, { open: openViewTimes, close: closeViewTimes }] = useDisclosure(false);
   const [modificationOpened, { open: openModification, close: closeModification }] = useDisclosure(false);
@@ -57,7 +57,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
 
   const handleConfirmWithTime = async () => {
     const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", authToken);
+    respondUrl.searchParams.append("auth", await getAuthToken());
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", selectedTime);
 
@@ -74,7 +74,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
 
   const handleReject = async () => {
     const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", authToken);
+    respondUrl.searchParams.append("auth", await getAuthToken());
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", "");
 
@@ -140,7 +140,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
 
     // Make request to the new endpoint
     const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
-    modUrl.searchParams.append("auth", authToken);
+    modUrl.searchParams.append("auth", await getAuthToken());
     modUrl.searchParams.append("tour_id", tour.tour_id);
 
     const res = await fetch(modUrl, {
@@ -162,7 +162,7 @@ const TourStatusActions = ({ tour, onRefresh }: {tour: TourData, onRefresh: () =
 
   const handleCancel = async () => {
     const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-    respondUrl.searchParams.append("auth", authToken);
+    respondUrl.searchParams.append("auth", await getAuthToken());
     respondUrl.searchParams.append("application_id", tour.tour_id);
     respondUrl.searchParams.append("timeslot", "");
 

@@ -5,9 +5,9 @@ import {useCookies} from "react-cookie";
 import {UserRole, TimeSlotStatus, FetchingStatus} from "../types/enum.ts";
 
 interface UserContextType {
-  authToken: string;
+  getAuthToken: () => Promise<string>;
   setAuthToken: (token: string) => void;
-  fetchStatus: FetchingStatus;
+  profileFetchStatus: FetchingStatus;
   user: User;
   updateUser: () => Promise<boolean>
   isLoggedIn: boolean;
@@ -135,10 +135,10 @@ const EMPTY_USER: User = {
 };
 
 export const UserContext = createContext<UserContextType>({
-  authToken: "",
   setAuthToken: () => {},
+  getAuthToken: () => Promise.resolve(""),
   user: EMPTY_USER,
-  fetchStatus: FetchingStatus.NONE,
+  profileFetchStatus: FetchingStatus.NONE,
   updateUser: () => Promise.resolve(new Promise<boolean>(() => false)),
   isLoggedIn: false
 });
@@ -146,16 +146,13 @@ export const UserContext = createContext<UserContextType>({
 export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
   const [cookies, setCookie] = useCookies(["auth"], {});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [fetchStatus, setFetchStatus] = useState(FetchingStatus.NONE);
+  const [profileFetchStatus, setProfileFetchStatus] = useState(FetchingStatus.NONE);
   const [user, setUser] = useState<User>(EMPTY_USER);
 
   const checkAuth = useCallback(async () => {
-    setUser(EMPTY_USER);
-    setIsLoggedIn(false);
-
     if (!cookies.auth || cookies.auth.length === 0) {
-      setFetchStatus(FetchingStatus.DONE);
-      return;
+      setProfileFetchStatus(FetchingStatus.DONE);
+      return false;
     }
 
     const validURL = new URL(AUTH_VALID_URL);
@@ -168,25 +165,41 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
     );
 
     if (!validRes.ok) {
-      setFetchStatus(FetchingStatus.FAILED);
-      return;
+      setProfileFetchStatus(FetchingStatus.DONE);
+      return false;
     }
 
     const isValid = await validRes.json();
 
     if (isValid !== true) {
-      setFetchStatus(FetchingStatus.DONE);
       setCookie("auth", "");
       setIsLoggedIn(false);
-      return;
+      setProfileFetchStatus(FetchingStatus.DONE);
+      return false;
     }
+    else {
+      setIsLoggedIn(true);
+      return true;
+    }
+  }, [cookies.auth, setCookie]);
+
+  const setAuthToken = useCallback((auth: string) => {
+    setCookie("auth", auth);
+  }, [setCookie]);
+
+  const getAuthToken = useCallback(async () => {
+    await checkAuth().catch(console.error);
+    return cookies.auth;
+  }, [checkAuth, cookies.auth]);
+
+  const getUser = useCallback(async () => {
+    setProfileFetchStatus(FetchingStatus.FETCHING);
 
     const profileURL = new URL(USER_PROFILE_URL);
     profileURL.searchParams.append("auth", cookies.auth);
     profileURL.searchParams.append("id", "");
     const profileRes = await fetch(
-      profileURL,
-      {
+      profileURL, {
         method: "GET"
       }
     );
@@ -198,40 +211,42 @@ export const UserProvider: React.FC<OnlyChildrenProps> = ({ children }) => {
         role: profile.role,
         profile: profile,
       });
-      setFetchStatus(FetchingStatus.DONE);
+      setProfileFetchStatus(FetchingStatus.DONE);
       setIsLoggedIn(true);
     }
     else {
-      setFetchStatus(FetchingStatus.FAILED);
+      setProfileFetchStatus(FetchingStatus.FAILED);
     }
-  }, [cookies.auth, setCookie, setUser, setIsLoggedIn, setFetchStatus]);
+  }, [cookies.auth]);
 
-  const setAuthToken = useCallback((auth: string) => {
-    setFetchStatus(FetchingStatus.FETCHING);
-    setCookie("auth", auth);
-  }, [setCookie, setFetchStatus]);
-
-  const updateUser = useCallback(() => {
-    setFetchStatus(FetchingStatus.FETCHING);
-    return new Promise<boolean>(() => {
-      return checkAuth().then(() => user.id.length !== 0);
-    });
-  }, [checkAuth, user]);
+  const updateUser = useCallback(async () => {
+    setProfileFetchStatus(FetchingStatus.FETCHING);
+    await checkAuth()
+      .then(getUser)
+      .catch(console.error);
+    return user.id.length !== 0;
+  }, [checkAuth, getUser, user.id.length]);
 
   const userContextValue = useMemo(() => {
     return {
-      authToken: cookies.auth,
+      getAuthToken,
       setAuthToken,
       updateUser,
-      fetchStatus,
+      profileFetchStatus,
       user,
       isLoggedIn,
     }
-  }, [cookies.auth, setAuthToken, updateUser, fetchStatus, user, isLoggedIn]);
+  }, [cookies.auth, getAuthToken, setAuthToken, updateUser, profileFetchStatus, user, isLoggedIn]);
 
   useEffect(() => {
-    checkAuth().catch(console.error);
-  }, [checkAuth]);
+    checkAuth()
+      .then((result) => {
+        if(result) {
+          return getUser()
+        }
+      })
+      .catch(console.error);
+  }, [cookies.auth, checkAuth, getUser]);
 
   return (
     <UserContext.Provider value={userContextValue}>
