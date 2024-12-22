@@ -63,7 +63,7 @@ public class AnalyticsUniversitiesService {
         
         // return universities
         response.addAll(
-                universities.entrySet().stream().map(uni -> dto.simpleUniversity(uni.getValue())).toList()
+                universities.entrySet().stream().map(uni -> dto.simpleUniversity(uni.getValue().setId(uni.getKey()))).toList()
         );
         return response;
     }
