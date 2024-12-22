@@ -801,7 +801,7 @@ response_type:json
             method: get
             response: InvitationModel[]
             response_type: json
-            description: my_invitaitons = true returns the invitations sent by the requester
+            description: my_invitations = true returns the invitations sent by the requester
 
 
         /profile #
