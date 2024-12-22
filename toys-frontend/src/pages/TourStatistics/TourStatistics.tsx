@@ -83,9 +83,14 @@ const BilkentStudentDetails: React.FC = () => {
             "Tamamlandı": unorderedStatusData["FINISHED"],
         }
 
+        const unorderedCitiesData = response["cities"];
+        const orderedCitiesData: { [key: string]: number } = Object.fromEntries(
+            Object.entries(unorderedCitiesData).map(([key, value]) => [key.split(" ")[0], value as number])
+        );
+
         setDays(orderedDaysData);
         setStatuses(orderedStatusData)
-        setCities(response["cities"]);
+        setCities(orderedCitiesData);
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
