@@ -129,7 +129,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                         rows
                     ) : (
                         <Table.Tr>
-                            <Table.Td colSpan={Object.keys(data[0]).length}>
+                            <Table.Td colSpan={3}>
                                 <Text fw={500} ta="center">
                                     Öğrenci bulunamadı.
                                 </Text>

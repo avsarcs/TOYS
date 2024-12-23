@@ -75,12 +75,15 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
         }
 
         const resText = await res.text();
+        const fetched = JSON.parse(resText);
 
-        if(resText.length === 0) {
+        if(fetched.length === 0) {
             throw new Error("No high school found.");
         }
 
-        setData(JSON.parse(resText));
+        fetched.students = fetched.students.filter((student: { count: number }) => student.count > 0);
+
+        setData(fetched);
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
