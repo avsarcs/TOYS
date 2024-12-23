@@ -80,6 +80,8 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
             return tour;
         });
 
+        fetched.students = fetched.students.filter((student: { count: number }) => student.count > 0);
+
         setData(fetched);
         setFetchedData(true);
     }, [userContext.getAuthToken]);
