@@ -1,98 +1,214 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Title, Text, Divider, Stack, Container, Card } from '@mantine/core';
+import { Box, Title, Text, Divider, Container, Card, Stepper, Group, Button, Space } from '@mantine/core';
 import { UserContext } from '../../context/UserContext';
 import { UserRole } from '../../types/enum';
+import { Accordion } from '@mantine/core';
+import AdminTexts from "./AdminTexts.ts";
+import AdvisorTexts from "./AdvisorTexts.ts";
+import CoordinatorTexts from "./CoordinatorTexts.ts";
+import DirectorTexts from "./DirectorTexts.ts";
+import GuideTexts from "./GuideTexts.ts";
+import TraineeTexts from "./TraineeTexts.ts";
+import VisitorTexts from "./VisitorTexts.ts";
+
+export interface UserManualItem  {
+    title: string;
+    content?: string;
+    image?: string;
+    dynamicSteps?: {title: string; content: string; image?: string }[];
+    staticSteps?: {title: string; content: string; image?: string }[];
+}
+
+const DynamicStepGenerator: React.FC<{ steps: {title: string; content: string; image?: string }[] }> = ({ steps }) => {
+    const [active, setActive] = useState(0);
+    const nextStep = () => setActive((current) => (current < steps.length - 1 ? current + 1 : current));
+    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+
+    return (
+        <>
+            <Stepper active={active} onStepClick={setActive}>
+                {steps.map((step, index) => (
+                    <Stepper.Step key={index} label={step.title}>
+                        {step.image && <img src={step.image} alt={step.title} />}
+                        {step.content}
+                    </Stepper.Step>
+                ))}
+            </Stepper>
+
+            <Group justify="center" mt="xl">
+                <Button variant="default" onClick={prevStep}>Geri</Button>
+                <Button onClick={nextStep}>İleri</Button>
+            </Group>
+        </>
+    );
+}
+
+const StaticStepGenerator: React.FC<{ steps: {title: string; content: string; image?: string }[] }> = ({ steps }) => {
+    return (
+        <ol style={{ listStyleType: 'decimal' }}>
+            {steps.map((step, index) => (
+                <li key={index} style={{ marginBottom: '1em' }}>
+                    <strong>{step.title}</strong>
+                    {step.image && <img src={step.image} alt={step.title} />}
+                    <p>{step.content}</p>
+                </li>
+            ))}
+        </ol>
+    );
+};
 
 const UserManual: React.FC = () => {
-  const userContext = useContext(UserContext);
-  const [manualContent, setManualContent] = useState<JSX.Element | null>(null);
+    const userContext = useContext(UserContext);
+    const [manualContent, setManualContent] = useState<JSX.Element | null>(null);
+
+    const roleTitle = (() => {
+        switch (userContext.user.role) {
+            case UserRole.NONE:
+                return "Ziyaretçi";
+            case UserRole.TRAINEE:
+                return "Acemi Rehber";
+            case UserRole.GUIDE:
+                return "Rehber";
+            case UserRole.ADVISOR:
+                return "Danışman";
+            case UserRole.COORDINATOR:
+                return "Koordinatör";
+            case UserRole.DIRECTOR:
+                return "Direktör";
+            case UserRole.ADMIN:
+                return "Admin";
+            default:
+                return "Misafir";
+        }
+    })();
 
   // Content for each user role
 const roleContent: Record<UserRole, JSX.Element> = {
     [UserRole.NONE]: (
-        <Text>
-            TOYS'a hoşgeldiniz. Eğer bir TOYS çalışanıysaız, lütfen giriş yapın. Eğer bir ziyaretçiyseniz, bu sayfayı kullanarak:
-            <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Lise grup turlarına başvurabilirsiniz.</li>
-                    <li>Bireysel turlara başvurabilirsiniz.</li>
-                    <li>Lisenizin fuarlarına katılmamız için bize davet gönderebilirsiniz.</li>
-            </ul>
-        </Text>
+        <Accordion>
+            {VisitorTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+                </Accordion.Item>
+            ))}
+        </Accordion>
     ),
     [UserRole.TRAINEE]: (
-        <Stack>
-            <Title order={3}>Acemi Rehber Kılavuzu</Title>
-            <Text>
-                Acemi rehber olarak, şunları yapabilirsiniz:
-                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Turlara davet edilirseniz, turlara katılabilirsiniz.</li>
-                    <li>Kendi başınıza bir turda görevli olamazsınız, deneyimli bir rehberin size eşlik etmesi gerek.</li>
-                </ul>
-            </Text>
-        </Stack>
+        <Accordion>
+            {TraineeTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+                </Accordion.Item>
+            ))}
+        </Accordion>
     ),
     [UserRole.GUIDE]: (
-        <Stack>
-            <Title order={3}>Rehber Kılavuzu</Title>
-            <Text>
-                Rehber olarak, şunları yapabilirsiniz:
-                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Rehberi olmak için turlara başvurabilirsiniz.</li>
-                    <li>Size atanan turları görebilirsiniz.</li>
-                    <li>Programınızı düzenleyebilirsiniz.</li>
-                </ul>
-            </Text>
-        </Stack>
+        <Accordion>
+            {GuideTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+                </Accordion.Item>
+            ))}
+        </Accordion>
     ),
     [UserRole.ADVISOR]: (
-        <Stack>
-            <Title order={3}>Danışman Kılavuzu</Title>
-            <Text>
-                Danışman olarak, şunları yapabilirsiniz:
-                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Sorumlu olduğunuz rehberleri yönetebilirsiniz.</li>
-                    <li>Rehberlerinize tur atayabilirsiniz.</li>
-                    <li>Turlara rehber olarak katılabilirsiniz.</li>
-                </ul>
-            </Text>
-        </Stack>
+        <Accordion>
+            {AdvisorTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+                </Accordion.Item>
+            ))}
+        </Accordion>
     ),
     [UserRole.COORDINATOR]: (
-        <Stack>
-            <Title order={3}>Koordinatör Kılavuzu</Title>
-            <Text>
-                Koordinatör olarak, şunları yapabilirsiniz:
-                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Acemi rehberlere tur atayabilirsiniz.</li>
-                    <li>Fuarları yönetebilirsiniz.</li>
-                    <li>Sistemin işleyişini yönetebilirsiniz, ödemeleri yapabilirsiniz.</li>
-                </ul>
-            </Text>
-        </Stack>
+        <Accordion>
+            {CoordinatorTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+                </Accordion.Item>
+            ))}
+        </Accordion>
     ),
     [UserRole.DIRECTOR]: (
-        <Stack>
-            <Title order={3}>Direktör Kılavuzu</Title>
-            <Text>
-                Direktör olarak, şunları yapabilirsiniz:
-                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Tüm organizasyonel etkinlikleri ve faaliyetleri denetleyebilirsiniz.</li>
-                    <li>Tur ve öğrenci istatistiklerine erişebilirsiniz.</li>
-                    <li>Tüm çalışanlaro yönetebilir, ödeme yapabilirsiniz.</li>
-                </ul>
-            </Text>
-        </Stack>
+        <Accordion>
+            {DirectorTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+            </Accordion.Item>
+            ))}
+        </Accordion>
     ),
     [UserRole.ADMIN]: (
-        <Stack>
-            <Title order={3}>Admin Kılavuzu</Title>
-            <Text>
-                Admin olarak, şunları yapabilirsiniz:
-                <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    <li>Kullanıcı ekleyip çıkartabilir ve onları yönetebilirsiniz.</li>
-                </ul>
-            </Text>
-        </Stack>
+        <Accordion>
+            {AdminTexts.map((item: UserManualItem) => (
+                <Accordion.Item key={item.title} value={item.title}>
+                    <Accordion.Control>
+                        <Title order={3}>{item.title}</Title>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {item.content}
+                        <Space h="md" />
+                        {item.staticSteps && item.staticSteps.length > 0 && <StaticStepGenerator steps={item.staticSteps} />}
+                        <Space h="md" />
+                        {item.dynamicSteps && item.dynamicSteps.length > 0 && <DynamicStepGenerator steps={item.dynamicSteps} />}
+                    </Accordion.Panel>
+                </Accordion.Item>
+            ))}
+        </Accordion>
     ),
 };
 
@@ -108,7 +224,7 @@ return (
     <Container>
         <Card shadow="sm" padding="lg" radius="md">
             <Title ta="center" mb="sm">
-                Kullanıcı Kılavuzu
+                {roleTitle} Kullanıcı Kılavuzu
             </Title>
             <Divider my="sm" />
             <Box>{manualContent || <Text>Yükleniyor...</Text>}</Box>
