@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
           <div>
             <span className={"font-bold"}>TOYS'a</span>
             <br/>
-            <span>hoşgeldiniz.</span>
+            <span>hoş geldiniz.</span>
             <br/>
             <br/>
             <hr/>

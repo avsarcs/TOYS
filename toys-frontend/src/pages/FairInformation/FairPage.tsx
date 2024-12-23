@@ -161,20 +161,24 @@ const FairPage: React.FC = () => {
                 }
                 <Divider className="border-gray-200" />
                 <Group p="lg" align="center">
-                {fair.status === FairStatus.RECEIVED && (
+                {userContext.user?.role === "COORDINATOR" && (
                   <>
+                  {fair.status === FairStatus.RECEIVED && (
+                    <>
                     <Button color="green" onClick={handleAcceptFair}>
-                      Accept Fair
+                      Kabul Et
                     </Button>
                     <Button color="red" onClick={handleRejectFair}>
-                      Reject Fair
+                      Reddet
                     </Button>
+                    </>
+                  )}
+                  {fair.status === FairStatus.CONFIRMED && (
+                    <Button color="orange" onClick={() => setIsCancelModalOpen(true)}>
+                    İpta Et
+                    </Button>
+                  )}
                   </>
-                )}
-                {fair.status === FairStatus.CONFIRMED && (
-                  <Button color="orange" onClick={() => setIsCancelModalOpen(true)}>
-                    Cancel Fair
-                  </Button>
                 )}
               </Group>
                 <Divider className="border-gray-200" />
@@ -189,8 +193,8 @@ const FairPage: React.FC = () => {
       centered
     >
       <Textarea
-        label="Reason for cancellation"
-        placeholder="Write your reason here"
+        label="İptal Etme Nedeni"
+        placeholder="Nedeninizi buraya yazınız..."
         value={cancelReason}
         onChange={(e) => setCancelReason(e.currentTarget.value)}
       />

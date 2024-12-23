@@ -32,7 +32,7 @@ import { UserRole } from '../../types/enum';
 const ALL_USERS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/all-users');
 const CHANGE_ROLE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/change-role');
 const ADD_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/add-user');
-const REMOVE_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/remove-user');
+const REMOVE_USER_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + '/admin/delete-user');
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();

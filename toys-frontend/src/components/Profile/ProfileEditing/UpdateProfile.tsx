@@ -166,6 +166,7 @@ const UpdateProfile: React.FC = () => {
                 role: userContext.user.role,
                 major: "MANAGEMENT",
                 id: userContext.user.id,
+                email: formData.email,
             };
         }
         try {
@@ -236,12 +237,12 @@ const UpdateProfile: React.FC = () => {
                 onChange={(value) => handleInputChange("name", value)}
                 editable
             />
-            {(userContext.user.role !== UserRole.COORDINATOR && userContext.user.role !== UserRole.DIRECTOR) ? <EditProfileField
+            <EditProfileField
                 label="E-mail"
                 value={formData.email}
                 onChange={(value) => handleInputChange("email", value)}
                 editable
-            /> : null}
+            />
             {(userContext.user.role !== UserRole.COORDINATOR && userContext.user.role !== UserRole.DIRECTOR) ? <EditProfileField
                 label="Telefon"
                 value={formData.phone}

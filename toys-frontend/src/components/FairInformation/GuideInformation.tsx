@@ -12,14 +12,14 @@ const VISITOR_PER_GUIDE = 60;
 const GuideInformation: React.FC<FairSectionProps> = (props: FairSectionProps) => {
   const userContext = useContext(UserContext);
   const [manageGuidesOpen, setManageGuidesOpen] = useState(false);
-  const userAssignedToFair = props.fair.guides.some((value) => value.id === userContext.user.id);
+  const userAssignedToFair = props.fair.guides?.some((value) => value.id === userContext.user.id) ?? false;
 
   const guideListText =
-    props.fair.guides.length > 0
+    props.fair.guides && props.fair.guides.length > 0
       ? props.fair.guides.map((value) => value.full_name).join(", ")
       : "Kimse";
 
-  const guideListColor = props.fair.guides.length > 0 ? "dark" : "red";
+  const guideListColor = props.fair.guides && props.fair.guides.length > 0 ? "dark" : "red";
 
 
   return (
