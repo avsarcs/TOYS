@@ -9,7 +9,7 @@ import {UserContext} from "../../context/UserContext.tsx";
 const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
 const FAIR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/fair");
 const EventApplicationRejectButton: React.FC<DashboardInfoBoxButtonProps> = (props: DashboardInfoBoxButtonProps) => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const userContext = useContext(UserContext);
 
   const reject = async () => {
