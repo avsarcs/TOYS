@@ -13,6 +13,7 @@ import {FairStatus} from "../../types/enum.ts";
 const FAIR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair");
 const ACTION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/fair");
 const CANCEL_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/cancel");
+const INVITED_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/am-invited");
 
 const FairPage: React.FC = () => {
   const userContext = useContext(UserContext);
@@ -22,6 +23,33 @@ const FairPage: React.FC = () => {
   const [fair, setFair] = useState<FairData>({} as FairData);
   const [cancelReason, setCancelReason] = useState("");
   if (!params.fairId) throw new Error("Fair ID is required");
+
+  const [isUserInvited, setIsUserInvited] = useState(false);
+
+  const findUserInvitation = useCallback(async () => {
+    const invitedUrl = new URL(INVITED_URL);
+    invitedUrl.searchParams.append("event_id", params.fairId as string);
+    invitedUrl.searchParams.append("auth", await userContext.getAuthToken());
+
+    const res = await fetch(invitedUrl, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error("Something went wrong");
+    }
+
+    const invitedText = await res.text();
+    setIsUserInvited(invitedText === "true");
+  }, []);
+
+  const handleAcceptInvitation = () => {
+    console.log("Accept Invitation clicked"); // Dummy function
+  };
+
+  const handleRejectInvitation = () => {
+    console.log("Reject Invitation clicked"); // Dummy function
+  };
 
   const handleAcceptFair = useCallback(async () => {
     const actionUrl = new URL(ACTION_URL);
@@ -121,6 +149,12 @@ const FairPage: React.FC = () => {
       setFair({} as FairData);
     }
   }, [params.fairId, getFair]);
+  
+  useEffect(() => {
+    findUserInvitation().catch((reason) => {
+      setError(reason);
+    });
+  }, [findUserInvitation]);
 
   if (error) {
     throw error;
@@ -128,6 +162,7 @@ const FairPage: React.FC = () => {
 
   const refreshFair = () => { getFair(params.fairId as string).catch(console.error); }
   console.log(fair);
+  console.log(isUserInvited);
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
@@ -178,6 +213,17 @@ const FairPage: React.FC = () => {
                     İpta Et
                     </Button>
                   )}
+                  </>
+                )}
+                {isUserInvited && fair.status !== FairStatus.FINISHED && (
+                  <>
+                    <p><b>Bu fuarda rehber olmak için davet edildiniz.</b></p>
+                    <Button color="blue" onClick={handleAcceptInvitation}>
+                      Daveti Kabul Et
+                    </Button>
+                    <Button color="red" onClick={handleRejectInvitation}>
+                      Daveti Reddet
+                    </Button>
                   </>
                 )}
               </Group>
