@@ -25,6 +25,9 @@ const LoginPage: React.FC = () => {
           case UserRole.DIRECTOR:
             navigate("/universitieslist");
             break;
+          case UserRole.ADMIN:
+            navigate("/admin");
+            break;
           default:
             navigate("/dashboard");
         }
