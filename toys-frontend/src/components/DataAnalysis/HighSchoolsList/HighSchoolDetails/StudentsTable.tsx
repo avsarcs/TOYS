@@ -21,7 +21,7 @@ function Th({children, reversed, sorted, onSort}: ThProps) {
         <Table.Th style={{padding: 0, textAlign: "center"}}>
             <UnstyledButton onClick={onSort}>
                 <Group justify="space-between">
-                    <Text span fw={500} fz="sm">
+                    <Text fw={500} fz="sm">
                         {children}
                     </Text>
                     <Center>
@@ -39,7 +39,7 @@ function sortData(
 ) {
     const { sortBy } = payload;
 
-    if (!sortBy) {
+    if (!sortBy || data.length == 0) {
         return data
     }
 
@@ -101,7 +101,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('year')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Yıl
                             </Text>
                         </Th>
@@ -110,13 +110,13 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                             reversed={reverseSortDirection}
                             onSort={() => setSorting('count')}
                         >
-                            <Text span size={"xl"}>
+                            <Text size={"xl"}>
                                 Öğrenci Sayısı
                             </Text>
                         </Th>
                         <Table.Th style={{padding: 0, textAlign: "center"}}>
                             <Group justify="space-between">
-                                <Text span fw={500} fz="sm">
+                                <Text fw={500} fz="sm">
                                     {""}
                                 </Text>
                             </Group>
@@ -129,8 +129,8 @@ const StudentsTable: React.FC<StudentsTableProps> = ({data, openDetails}) => {
                         rows
                     ) : (
                         <Table.Tr>
-                            <Table.Td colSpan={Object.keys(data[0]).length}>
-                                <Text span fw={500} ta="center">
+                            <Table.Td colSpan={3}>
+                                <Text fw={500} ta="center">
                                     Öğrenci bulunamadı.
                                 </Text>
                             </Table.Td>

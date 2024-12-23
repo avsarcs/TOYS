@@ -73,7 +73,7 @@ public class MailServiceGateway {
                     if (MailFactory.getTemplates().get(concerning).get(about).containsKey(status)) {
                         MailTemplate template = mailFactory.getTemplates().get(concerning).get(about).get(status).fillDuplicate(formFill);
                         sendActual(to, template.subject, template.body);
-                        //System.out.println("Sending mail to " + to + " with subject: " + template.subject + " and body: " + template.body);
+                        System.out.println("Sending mail to " + to + " with subject: " + template.subject + " and body: " + template.body);
                         // This will be incorporated with Bilkent's internal mailing system
                         return;
                     }
@@ -90,7 +90,7 @@ public class MailServiceGateway {
 
     private static void sendActual(String to, String subject, String body) {
         Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", "asmtp.bilkent.edu.tr");
+        properties.setProperty("mail.smtp.host", "smtp.gmail.com");
         properties.setProperty("mail.smtp.port", "465");
         properties.setProperty("mail.smtp.ssl.enable", "true");
         properties.setProperty("mail.smtp.auth", "true");

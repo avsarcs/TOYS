@@ -212,8 +212,6 @@ public class ReviewService {
         // filter again, this time to get only approved reviews
         relatedReviews = record.entrySet().stream().filter(
                 e -> guide.getExperience().getPrevious_events().contains(e.getValue().getEvent_id())
-        ).filter(
-                e -> e.getValue().getStatus().equals(ReviewResponse.APPROVED)
         ).map( e -> e.getValue().getReview_id()).toList();
 
         response.put("reviews",

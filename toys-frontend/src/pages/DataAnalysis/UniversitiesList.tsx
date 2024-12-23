@@ -142,7 +142,7 @@ const UniversitiesList: React.FC = () => {
                 Üniversiteler
             </Title>
             <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Prestij.
+                Sistemde kayıtlı olan üniversitelerin listesi.
             </Title>
             <Space h="xl"/>
             <Divider className="border-gray-400"/>

@@ -30,7 +30,7 @@ const EventApplicationRejectButton: React.FC<DashboardInfoBoxButtonProps> = (pro
 
     try {
       const rejectRes = await fetch(rejectUrl, {
-        method: "GET",
+        method: "POST",
       });
       if(rejectRes.ok) {
         notifications.show({

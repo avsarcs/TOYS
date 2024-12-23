@@ -1,10 +1,10 @@
-import React, {useContext} from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/InputSelector.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";
-import {notifications} from "@mantine/notifications";
 import {UserContext} from "../../context/UserContext.tsx";
+import {notifications} from "@mantine/notifications";
 import {City} from "../../types/enum.ts";
 
 // Container styling
@@ -18,77 +18,108 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
+// Default data
+const defaultCities: string[] = ["Yükleniyor..."];
 const priorities = ["1", "2", "3", "4", "5"];
 
 interface HighSchoolEditProps {
     opened: boolean;
+    highSchoolID: string;
     currentName: string;
-    currentCity: City;
+    currentCity: string;
+    currentRanking: string;
     currentPriority: string;
     onClose: () => void;
 }
 
-const HIGHSCHOOL_EDIT_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/edit");
-const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, currentName, currentCity, currentPriority}) => {
+const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, onClose, currentName, currentCity, currentRanking, currentPriority}) => {
     const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
-    const [selectedCity, setSelectedCity] = React.useState<City | null>(currentCity);
+    const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
+    const [selectedRanking, setSelectedRanking] = React.useState<string | null>(currentRanking);
     const [selectedPriority, setSelectedPriority] = React.useState<string | null>(currentPriority);
+    const [cities, setCities] = React.useState(defaultCities);
+
+    const getCities = useCallback(async () => {
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
+
+    React.useEffect(() => {
+        getCities().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
 
     React.useEffect(() => {
         if (opened) {
             setSelectedName(currentName);
             setSelectedCity(currentCity);
+            setSelectedPriority(currentRanking)
             setSelectedPriority(currentPriority);
         }
-    }, [opened, currentName, currentCity, currentPriority]);
+    }, [opened, currentName, currentCity, currentRanking, currentPriority]);
 
-    const handleEditButtonClick = async () => {
-        console.log(selectedName)
-        console.log(selectedCity)
-        console.log(selectedPriority)
-        if (!selectedName || !selectedCity || !selectedPriority) {
-            alert("Lütfen tüm detayları doldurun.");
-            return;
-        }
-        if (selectedName === currentName && selectedCity === currentCity && selectedPriority === currentPriority) {
-            alert("Lütfen düzenlemek için bir değişiklik yapın.");
-            return;
-        }
-
-        const editUrl = new URL(HIGHSCHOOL_EDIT_URL);
-        editUrl.searchParams.append("auth", await userContext.getAuthToken());
-
-        const editRes = await fetch(editUrl, {
-            method: "POST",
-            headers: new Headers({"Content-Type": "application/json"}),
-            body: JSON.stringify({
-                id: "",
-                name: selectedName,
-                location: selectedCity,
-                priority: currentPriority,
-                ranking: -1,
-            })
-        });
-
-        if(editRes.ok) {
+    const handleEditButtonClick = useCallback(async () => {
+        if (selectedName === currentName && selectedCity === currentCity && selectedRanking === currentRanking && selectedPriority === currentPriority) {
             notifications.show({
-                color: "green",
-                title: "İşlem başarılı.",
-                message: "Lise eklendi."
+                color: "red",
+                title: "Değişiklik yapılmadı!",
+                message: "Liseyi düzenleyebilmek için lütfen bir değişiklik yapın."
             });
+            return;
         }
-        else {
+        if (!selectedName || !selectedCity || !selectedRanking || !selectedPriority) {
+            notifications.show({
+                color: "red",
+                title: "Tüm bilgiler verilmedi!",
+                message: "Lise ekleyebilmek için lütfen tüm bilgileri doldurun."
+            });
+            return;
+        }
+
+        try {
+            const url = new URL(TOUR_URL + "internal/analytics/high-schools/edit");
+            url.searchParams.append("auth", await userContext.getAuthToken());
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: new Headers({"Content-Type": "application/json"}),
+                body: JSON.stringify({
+                    id: highSchoolID,
+                    name: selectedName,
+                    location: selectedCity,
+                    ranking: selectedRanking,
+                    priority: selectedPriority,
+                })
+            });
+
+            if(res.ok) {
+                notifications.show({
+                    color: "green",
+                    title: "Lise eklendi!",
+                    message: "Lise başarıyla eklendi. Sayfa yeniden yükleniyor."
+                });
+                window.location.reload();
+            }
+            else {
+                notifications.show({
+                    color: "red",
+                    title: "Hay aksi!",
+                    message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
+                });
+            }
+        }
+        catch (e) {
             notifications.show({
                 color: "red",
                 title: "Hay aksi!",
-                message: "Bir şeyler yanlış gitti. Tekrar deneyin veya site yöneticisine durumu haber edin."
+                message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-
-        window.location.reload();
-    };
+    }, [highSchoolID, selectedName, selectedCity, selectedRanking, selectedPriority, userContext.getAuthToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
@@ -102,7 +133,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
             Lise Detaylarını Belirleyin
         </Text>
         <Space h="xs" />
-        <InputSelector priorities={priorities} currentName={currentName} currentCity={currentCity} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedPriority={setSelectedPriority}/>
+        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity} currentRanking={currentRanking} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedRanking={setSelectedRanking} setSelectedPriority={setSelectedPriority}/>
         <Space h="xs" />
     </Container>
 
@@ -129,7 +160,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, onClose, current
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

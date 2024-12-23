@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DashboardCategoryControlProps } from "../../types/designed.ts";
-import {Text, FloatingIndicator, UnstyledButton, Group, Box} from "@mantine/core";
+import {Text, FloatingIndicator, UnstyledButton, Box, Stack, Paper} from "@mantine/core";
 
 const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: DashboardCategoryControlProps) => {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -13,21 +13,23 @@ const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: Dashboa
   };
 
   const controls = props.categories.map((item, index) => (
-    <Box className="border border-gray-300 rounded-lg shadow-sm" key={index}>
+    <Box className="flex-shrink-0 flex-grow-0 basis-1/3 border-gray-300 rounded-lg shadow-sm text-center" key={index}>
       <UnstyledButton
-        className="data-[selected]:text-white p-2 relative z-50"
+        className="data-[selected]:text-white w-full"
         key={index}
         ref={setControlRef(index)}
         onClick={() => { setSelectedCategory(index); props.setCategory(item.value); }}
         mod={{ selected: selectedCategory === index }}
       >
-        <Text className="z-50 transition-color duration-200" size="lg" fw={500}>{item.label}</Text>
+        <Paper withBorder shadow="md" p="sm">
+          <Text className="relative z-50 transition-color duration-200" size="lg" fw={500}>{item.label}</Text>
+        </Paper>
       </UnstyledButton>
     </Box>
   ));
 
   return (
-    <Group ref={setRootRef} gap="0" className="max-w-fit border-2 border-b-1 border-gray-100 bg-gray-100">
+    <Stack ref={setRootRef} gap="0" className="relative max-w-fit border-gray-100 bg-gray-100">
       {controls}
 
       <FloatingIndicator
@@ -35,7 +37,7 @@ const CategoryControl: React.FC<DashboardCategoryControlProps> = (props: Dashboa
         target={buttonRefs[selectedCategory]}
         parent={rootRef}
       />
-    </Group>
+    </Stack>
   );
 }
 

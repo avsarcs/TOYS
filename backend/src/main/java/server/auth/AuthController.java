@@ -18,4 +18,14 @@ public class AuthController {
     public boolean isvalid(@RequestParam("auth") String auth) {
         return authService.check(auth);
     }
+
+    @PostMapping("/auth/pass/forgot")
+    public void forgotPass(@RequestParam String email, @RequestParam String id) {
+        authService.forgotPass(email, id);
+    }
+
+    @PostMapping("/auth/pass/change")
+    public void changePass(@RequestParam String auth, @RequestBody String newpass) {
+        authService.changePass(auth, newpass);
+    }
 }

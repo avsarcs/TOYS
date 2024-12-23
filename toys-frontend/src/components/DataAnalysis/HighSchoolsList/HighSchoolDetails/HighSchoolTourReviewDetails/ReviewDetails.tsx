@@ -1,43 +1,17 @@
 import React from "react";
-import {Text, Stack, rem} from '@mantine/core';
-import {IconStar, IconStarFilled, IconStarHalfFilled} from "@tabler/icons-react";
+import {Text, Stack} from '@mantine/core';
 
 interface ReviewDetailsProps {
-    tourRating: number
-    review: string
+    body: string
 }
 
-function renderStars(rating: number | null) {
-    if(rating === null) {
-        return <Text>Yok</Text>;
-    }
-
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-        if (i <= rating) {
-            stars.push(<IconStarFilled key={i} style={{ width: rem(32), height: rem(32) }} />);
-        } else if (i - rating < 1) {
-            stars.push(<IconStarHalfFilled key={i} style={{ width: rem(32), height: rem(32) }} />);
-        } else {
-            stars.push(<IconStar key={i} style={{ width: rem(32), height: rem(32) }} />);
-        }
-    }
-
-    return stars;
-}
-
-const ReviewDetails: React.FC<ReviewDetailsProps> = ({tourRating, review}) => {
+const ReviewDetails: React.FC<ReviewDetailsProps> = ({body}) => {
     return <Stack>
         <div>
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>Puan</Text>
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>{renderStars(tourRating)}</Text>
-        </div>
-        <div>
             <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}} fw={700}>Yorum</Text>
-            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 'large', margin: '16px'}}>{review}</Text>
+            <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 'large', margin: '16px'}}>{body}</Text>
         </div>
     </Stack>
 }
-
 
 export default ReviewDetails;

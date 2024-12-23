@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/BackButton.tsx";
 import TourDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/TourDetails.tsx";
 import ReviewDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/ReviewDetails.tsx";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -15,24 +16,70 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
-const data = {
-    "author": "Can Tücer",
-    "email": "can.tucer@ug.bilkent.edu.tr",
-    "date": "18/11/2024",
-    "guide": "Leslie Knope",
-    "review": "Bilkent Üniversitesi'ni ziyaret ettim ve çok beğendim. Öğrenciler çok yardımsever ve ilgiliydi. Kampüs çok büyük ve güzel. Eğitim kalitesi de oldukça yüksek. Kesinlikle tavsiye ederim. Herkesin bu üniversiteyi görmesini öneririm. Harika bir deneyimdi.",
-    "reviewRating": 4
+// Default data
+const defaultData = {
+    "tour_id": "",
+    "score": 0,
+    "for": "TOUR",
+    "tour_date": "1970-01-01T00:00:00Z",
+    "body": "Yükleniyor...",
+    "guide": {},
+    "guides": ["Yükleniyor..."],
+    "contact": "Yükleniyor...",
 };
 
 interface HighSchoolTourReviewDetailsProps {
-    tourDate: string
-    highSchoolName: string
+    tourID: string;
+    highSchoolName: string;
+    highSchoolID: string;
     opened: boolean;
     onClose: () => void;
+    contact: string;
 }
 
-const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = ({tourDate, highSchoolName, opened, onClose}) => {
+const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = ({tourID, highSchoolName, highSchoolID, opened, onClose, contact}) => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
+
+    const [data, setData] = React.useState(defaultData);
+
+    const getData = useCallback(async (high_school_id: string, tour_id: string, contact: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/tour-" +
+            "reviews");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("high_school_id", high_school_id);
+        url.searchParams.append("tour_id", tour_id);
+
+        console.log("Sent request for high school tour review details.");
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for high school tour review details.");
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = JSON.parse(resText);
+
+        if(fetched.length === 0) {
+            throw new Error("No high school found.");
+        }
+
+        fetched.contact = contact;
+        fetched.guides = fetched.guide.fullname ? [fetched.guide.fullname] : [];
+
+        setData(fetched);
+    }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        getData(highSchoolID, tourID, contact).catch((reason) => {
+            console.error(reason);
+        });
+    }, [opened]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
@@ -42,13 +89,13 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
 
     const TourDetailsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <TourDetails tourDate={tourDate} authorEmail={data["email"]} authorName={data["author"]} guideName={data["guide"]}/>
+        <TourDetails tour_date={data["tour_date"]} guides={data["guides"]} contact={data["contact"]} score={data["score"]}/>
         <Space h="xs" />
     </Container>
 
     const ReviewDetailsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <ReviewDetails review={data["review"]} tourRating={data["reviewRating"]}/>
+        <ReviewDetails body={data["body"]}/>
         <Space h="xs" />
     </Container>
 
@@ -69,7 +116,7 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
                     </Container>
                 </Group>
 
-                <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
                 <ScrollArea.Autosize mah="75vh" mx="auto">
                     <Space h="xl"/>

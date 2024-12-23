@@ -118,7 +118,9 @@ public class EventTourService {
         ).filter(
                 r -> r.getStatus().equals(RequestStatus.PENDING)
         ).findFirst().orElse(null);
-
+        if (request == null) {
+            return response;
+        }
         response = dto.simpleEvent(request, tour_id);
 
         return response;

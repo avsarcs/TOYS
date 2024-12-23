@@ -2,12 +2,23 @@ import {UserManualItem} from "./UserManual.tsx";
 
 const AdvisorTexts: UserManualItem[] = [
     {
-        title: "Bir turu kabul edin veya reddedin.",
-        content: "Sisteme kaydedilen bir turu kabul edebilir / reddedebilir veya tur bilgilerinde değişiklik isteyebilirsiniz.",
+        title: "Bir tur için gönüllü olun.",
+        content: "Onaylanmış ve henüz rehberi olmayan bir turun rehberi olmak için gönüllü olabilirsiniz.",
         dynamicSteps: [
-            { title: "Tur sayfasını açın.", image: "manual/accepttour1.png" },
-            { title: "İstediğiniz turu seçin.", image: "manual/accepttour2.png" },
-            { title: "İstediğiniz değişikliği yapın.", image: "manual/accepttour3.png" }
+            { title: "Turlar sayfasını açın.", image: "manual/enrollintour1.png" },
+            { title: "İstediğiniz turu seçin ve üzerine tıklayın.", image: "manual/enrollintour2.png" },
+            { title: "Rehber olma tuşuna tıklayın.", image: "manual/enrollintour3.png" },
+            { title: "Onaylayın.", image: "manual/enrollintour4.png" }
+        ]
+    },
+    {
+        title: "Bir tur için gönüllü olmaktan vazgeçin.",
+        content: "Daha önce gönüllü olduğunuz bir tura katılmaktan vazgeçebilirsiniz.",
+        dynamicSteps: [
+            { title: "Turlar sayfasını açın.", image: "manual/enrollintour1.png" },
+            { title: "İstediğiniz turu seçin ve üzerine tıklayın.", image: "manual/enrollintour2.png" },
+            { title: "Rehber olmaktan vazgeçme tuşuna tıklayın.", image: "manual/enrollintour5.png" },
+            { title: "Onaylayın.", image: "manual/enrollintour6.png" }
         ]
     }
 ]

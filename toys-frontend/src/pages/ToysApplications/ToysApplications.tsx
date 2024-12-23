@@ -24,6 +24,7 @@ import {
   IconTarget
 } from '@tabler/icons-react';
 import { TraineeGuideApplicationData } from '../../types/data';
+import {Department} from "../../types/enum.ts";
 
 const APPLICATIONS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/people/applications");
 const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/guide");
@@ -122,7 +123,7 @@ const ToysApplications: React.FC = () => {
                   </div>
                 </Group>
                 <Badge color="blue">
-                  {application.major}
+                  {Department[application.major as keyof typeof Department]}
                 </Badge>
               </Group>
 

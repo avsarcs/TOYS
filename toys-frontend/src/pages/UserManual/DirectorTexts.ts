@@ -16,8 +16,7 @@ const DirectorTexts: UserManualItem[] = [
         dynamicSteps: [
             { title: "Liseler listesi sayfasını açın.", image: "manual/addhighschool1.png" },
             { title: "Lise ekleme tuşuna tıklayın.", image: "manual/addhighschool2.png" },
-            { title: "Lise bilgilerini girin.", image: "manual/addhighschool3.png" },
-            { title: "Kaydet tuşuna tıklayın.", image: "manual/addhighschool4.png" }
+            { title: "Lise bilgilerini girin ve kaydet tuşuna tıklayın", image: "manual/addhighschool3.png" }
         ]
     },
     {
@@ -26,9 +25,18 @@ const DirectorTexts: UserManualItem[] = [
         dynamicSteps: [
             { title: "Liseler listesi sayfasını açın.", image: "manual/edithighschool1.png" },
             { title: "Düzenlemek istediğiniz liseyi belirleyin.", image: "manual/edithighschool2.png" },
-            { title: "Düzeleme tuşuna tıklayın.", image: "manual/edithighschool3.png" },
+            { title: "Düzenleme tuşuna tıklayın.", image: "manual/edithighschool3.png" },
             { title: "İstedğiniz değişiklikleri yapın.", image: "manual/edithighschool4.png" },
             { title: "Kaydet tuşuna tıklayın.", image: "manual/edithighschool5.png" }
+        ]
+    },
+    {
+        title: "Üniviersiteleri karşılaştırın",
+        content: "Sistemdeki diğer üniversiteler ile Bilkent'i karşılaştırabilirsiniz.",
+        dynamicSteps: [
+            { title: "Karşılaştırma sayfasını açın.", image: "manual/compare1.png" },
+            { title: "Üniversite ve bölüm seçimlerini yapın.", image: "manual/compare2.png" },
+            { title: "Ekstra: Sütün grafiğinde gizlemek için verilerin üzerine tıklayın.", image: "manual/compare3.png" }
         ]
     }
 ]

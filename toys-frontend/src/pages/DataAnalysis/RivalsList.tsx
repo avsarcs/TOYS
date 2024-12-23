@@ -98,7 +98,7 @@ const RivalsList: React.FC = () => {
                 Rakipler
             </Title>
             <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Bilmem var mı?
+                Sistemde kayıtlı olan rakip üniversitelerin listesi.
             </Title>
             <Space h="xl"/>
             <Divider className="border-gray-400"/>

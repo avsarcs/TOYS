@@ -136,7 +136,16 @@ public class EventFairService {
             if (!applications.containsKey(fair_id)) {
                 throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Fair not found!");
             }
-            return dto.fair((new FairRegistry(applications.get(fair_id))).setFair_status(FairStatus.RECEIVED));
+
+            return dto.fair((new FairRegistry(applications.get(fair_id))).setFair_status(
+                switch (applications.get(fair_id).getStatus()) {
+                    case RECEIVED -> FairStatus.RECEIVED;
+                    case REJECTED -> FairStatus.REJECTED;
+                    case APPROVED -> FairStatus.CONFIRMED;
+                    case FROZEN ->  FairStatus.CANCELLED;
+                }
+            ));
+
         }
 
         // return fair

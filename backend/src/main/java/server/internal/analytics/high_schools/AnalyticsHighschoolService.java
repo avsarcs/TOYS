@@ -38,6 +38,9 @@ public class AnalyticsHighschoolService {
     @Autowired
     AuthService authService;
 
+    @Autowired
+    ReviewService reviewService;
+
     public List<Map<String, Object>> getAll(String auth) {
         List<HighschoolRecord> highschools =  database.schools.getHighschools();
         List<Map<String, Object>> response = new ArrayList<>();
@@ -185,7 +188,7 @@ public class AnalyticsHighschoolService {
         if (tour == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour not found!");
         }
-        ReviewService reviewService = new ReviewService();
+
 
         Map<String, Object> response = new HashMap<>();
         if (response == null) {

@@ -8,7 +8,7 @@ import java.util.Map;
 
 @RestController
 public class AnalyticsUniversitiesController {
-@Autowired
+        @Autowired
         AnalyticsUniversitiesService service;
 
     @GetMapping("internal/analytics/universities/all")

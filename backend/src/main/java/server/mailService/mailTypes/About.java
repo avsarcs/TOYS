@@ -1,6 +1,8 @@
 package server.mailService.mailTypes;
 
 public enum About {
+    PASS_RECOVERY,
+
     TOUR_APPLICATION,
     TOUR_MODIFICATION,
     FAIR_APPLICATION,

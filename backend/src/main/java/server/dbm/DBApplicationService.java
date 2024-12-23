@@ -63,6 +63,24 @@ public class DBApplicationService {
         }
     }
 
+    public void removeApplication(Application app, String id) {
+        String document = app.getType().name().toLowerCase() + "s";
+        DocumentReference reference = firestore.collection("applications").document(document);
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
+            data.remove(id);
+            reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap(document, data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to remove application from database.");
+        }
+    }
 
     public Map<String, GuideApplication> getGuideApplications() {
         Map<String, GuideApplication> applications = new HashMap<>();

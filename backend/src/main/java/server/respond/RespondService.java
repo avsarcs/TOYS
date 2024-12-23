@@ -79,42 +79,60 @@ public class RespondService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this application!");
         }
 
-        Map<String, Application> applications = database.applications.getAppicationsOfType(ApplicationType.TOUR);
-        Map.Entry<String, Application> applicationEntry = applications.entrySet().stream().filter(e -> e.getKey().equals(application_id)).findFirst().orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No application found for the given application id!")
-        );
-
-        TourApplication application = (TourApplication) applicationEntry.getValue();
-        boolean response = !time.isEmpty();
-
-        if (application.getRequested_hours().stream().noneMatch(
-                rh -> rh.getDate().equals(new ZTime(time).getDate()))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Accepted time is not in the list of requested times!");
+        Map<String, TourApplication> applications = database.applications.getTourApplications();
+        if (!applications.containsKey(application_id)) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No application found for the given application id!");
         }
 
-        application.setStatus(response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
-        database.applications.updateApplication(applicationEntry.getKey(), ApplicationType.TOUR, response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
-
-        String passkey = "";
+        TourApplication application = applications.get(application_id);
+        boolean response = !time.isEmpty();
+        if (!response) {
+            if (application.getRequested_hours().stream().noneMatch(
+                    rh -> rh.getDate().equals(new ZTime(time).getDate()))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Accepted time is not in the list of requested times!");
+            }
+        }
         if (response) {
             TourRegistry tour = new TourRegistry(application);
+
+            tour.setStatus(ApplicationStatus.APPROVED);
             tour.setTour_status(TourStatus.CONFIRMED);
             tour.setAccepted_time(new ZTime(time));
             tour.setTour_id(application_id);
+            tour.setGuides(List.of());
+
             database.tours.addTour(tour);
 
-            passkey = database.auth.createTourKey(tour.getTour_id(), tour.getAccepted_time());
-            System.out.println("For tour " + tour.getTour_id() + " created passkey :" + passkey + ":");
-        }
 
-        mail.sendMail(
+            String passkey = database.auth.createTourKey(tour.getTour_id(), tour.getAccepted_time());
+            System.out.println("For tour " + tour.getTour_id() + " created passkey :" + passkey + ":");
+
+            try {
+                mail.sendMail(
                 application.getApplicant().getContact_info().getEmail(),
                 Concerning.EVENT_APPLICANT,
                 About.TOUR_APPLICATION,
-                response ? Status.APPROVAL : Status.REJECTION,
+                Status.APPROVAL,
                 Map.of("name", application.getApplicant().getName(),
-                        "passkey", passkey)
-        );
+                "passkey", passkey));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            try {
+                mail.sendMail(
+                        application.getApplicant().getContact_info().getEmail(),
+                        Concerning.EVENT_APPLICANT,
+                        About.TOUR_APPLICATION,
+                        Status.REJECTION,
+                        Map.of("name", application.getApplicant().getName()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        database.applications.removeApplication(application, application_id);
     }
 
     public void respondToFairApplication(String auth, String application_id, boolean response) {
@@ -272,16 +290,12 @@ public class RespondService {
 
         List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests();
         GuideAssignmentRequest request = requests.stream().filter(
-                r -> r.getEvent_id().equals(event_id)
+                r -> r.getEvent_id().equals(event_id) && r.getGuide_id().equals(JWTService.getSimpleton().decodeUserID(auth))
         ).findFirst().orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
         );
 
         String userID = JWTService.getSimpleton().decodeUserID(auth);
-        if (!request.getGuide_id().equals(userID)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this request!");
-        }
-
         if (!request.getStatus().equals(RequestStatus.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request already responded!");
         }
@@ -383,6 +397,7 @@ public class RespondService {
     }
 
     public void respondToGuidePromotion(String auth, String promotion_id, boolean response) {
+
         if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this application!");
         }
@@ -411,7 +426,8 @@ public class RespondService {
                 Guide guide = database.people.fetchGuides(request.getGuide_id()).get(0);
                 database.people.updateUser(guide);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                System.out.println("Error while updating guide!");
             }
         }
     }

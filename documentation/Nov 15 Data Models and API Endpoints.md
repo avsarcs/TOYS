@@ -440,13 +440,11 @@ API endpoints:
                 id: user-id
             method: post
 
-        /reset
+        /change
             parameter:
-                accessKey: access key provided through the mail link
-            body:
-            {
-                "password": "new password"
-            }
+                auth: auth token
+            body: (content type, plaintext)
+		"new password"
             method: post
 
 !!! NEW ADMIN ENDPOINT !!! 
@@ -672,6 +670,14 @@ response_type:json
                 auth: auth_token
             method: post
             response: -
+        
+        /invites-of
+			parameters:
+				event_id=event_id // which event to get invited guides for
+				auth: auth_token
+			method: get
+			response: SimpleGuideModel[]
+			response_type: json
 
         /remove 
             parameters:

@@ -257,7 +257,7 @@ const BilkentStudentDetails: React.FC = () => {
                 Bilkent Öğrenci Verisi
             </Title>
             <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Sadece en iyileri.
+                Mevcut öğrencilerin istatistikleri.
             </Title>
             <Space h="xl"/>
             <Divider className="border-gray-400"/>

@@ -1,13 +1,13 @@
 import React from 'react';
-import {Button, Text} from '@mantine/core';
-import {HighschoolData} from "../../../types/data.ts";
+import {Button} from '@mantine/core';
 
 /**
  * Properties for see details button.
  */
 interface DetailsButtonProps {
-    openDetails: (highSchool: HighschoolData) => void; // Function that opens the details modal.
-    highSchool: HighschoolData; // Name of the associated high school.
+    openDetails: (highSchoolName: string, highSchoolID: string) => void; // Function that opens the details modal.
+    highSchoolName: string; // Name of the associated high school.
+    highSchoolID: string; // ID of the associated high school.
 }
 
 /**
@@ -15,16 +15,16 @@ interface DetailsButtonProps {
  * @param openDetails Function that opens the details modal.
  * @param highSchool Name of the associated high school.
  */
-const DetailsButton: React.FC<DetailsButtonProps> = ({openDetails, highSchool}) => {
+const DetailsButton: React.FC<DetailsButtonProps> = ({openDetails, highSchoolName, highSchoolID}) => {
     return <Button
         size="compact-md"
         color={"blue"}
         onClick={() => {
-            openDetails(highSchool);
+            openDetails(highSchoolName, highSchoolID);
         }}
         style={{width: "60%"}}
     >
-        <Text>Detaylar</Text>
+        <text>Detaylar</text>
     </Button>
 }
 
