@@ -71,7 +71,8 @@ export interface TourData {
 export interface FairData {
   fair_id: string,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
-  accepted_time: string,
+  start_time: string,
+    end_time: string,
   status: FairStatus,
   notes: string,
   applicant: {
