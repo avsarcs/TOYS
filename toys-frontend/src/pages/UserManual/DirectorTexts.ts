@@ -29,6 +29,13 @@ const DirectorTexts: UserManualItem[] = [
             { title: "İstedğiniz değişiklikleri yapın.", image: "manual/edithighschool4.png" },
             { title: "Kaydet tuşuna tıklayın.", image: "manual/edithighschool5.png" }
         ]
+    },
+    {
+        title: "Üniviersiteleri karşılaştırın",
+        content: "Sistemdeki diğer üniversiteler ile Bilkent'i karşılaştırabilirsiniz.",
+        dynamicSteps: [
+            { title: "Karşılaştırma sayfasını açın.", image: "manual/compare1.png"}
+        ]
     }
 ]
 
