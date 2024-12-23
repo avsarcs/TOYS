@@ -1,6 +1,6 @@
 import {Button} from "@mantine/core";
 import {IconLoader2, IconUsers} from "@tabler/icons-react";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import { default as ManageTourGuides } from "../TourInformation/ManageGuidesWindow.tsx";
 import { default as ManageFairGuides } from "../FairInformation/ManageGuidesWindow.tsx";
 import {DashboardInfoBoxButtonProps} from "../../types/designed.ts";
@@ -14,7 +14,7 @@ const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/e
 const FAIR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair");
 const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
   const userContext = useContext(UserContext);
-  const [isOpen, setisOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [eventData, setEventData] = useState<TourData | FairData | null>(null);
 
@@ -55,10 +55,6 @@ const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
     setLoading(false);
   }
 
-  useEffect(() => {
-    fetchEventData().catch(console.error);
-  })
-
   return (
     <>
       <Button size="lg"
@@ -66,7 +62,7 @@ const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
               fullWidth
               leftSection={loading ? <IconLoader2 className="animate-spin" /> : <IconUsers />}
               disabled={loading}
-              onClick={() => fetchEventData().then(() => setisOpen(true))}
+              onClick={() => fetchEventData().then(() => setIsOpen(true))}
               className={`${loading ? "brightness-75" : ""} text-center border-white bg-blue-600 border-2 outline outline-0
               hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800 focus:outline-blue-800 hover:outline-blue-800
               focus:outline-2 hover:outline-2 transition-colors duration-300`}>
@@ -74,20 +70,22 @@ const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
       </Button>
       {
         eventData &&
+        (
         props.item.event_type === EventType.TOUR
           ?
           <ManageTourGuides
             opened={isOpen}
-            onClose={() => setisOpen(false)}
+            onClose={() => { setIsOpen(false); props.updateDashboard(); }}
             tour={eventData as TourData}
             totalGuidesNeeded={Math.ceil((eventData as TourData).visitor_count / VISITOR_PER_GUIDE)}
           />
           :
           <ManageFairGuides
             opened={isOpen}
-            onClose={() => { setisOpen(false); props.updateDashboard() }}
+            onClose={() => { setIsOpen(false); props.updateDashboard() }}
             fair={eventData as FairData}
           />
+        )
       }
     </>
   );

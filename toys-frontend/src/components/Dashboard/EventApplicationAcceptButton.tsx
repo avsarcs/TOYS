@@ -71,6 +71,7 @@ const EventApplicationAcceptButton: React.FC<DashboardInfoBoxButtonProps> = (pro
       });
 
       if (res.ok) {
+        closeModal();
         props.updateDashboard();
         notifications.show({
           color: "green",
@@ -140,7 +141,7 @@ const EventApplicationAcceptButton: React.FC<DashboardInfoBoxButtonProps> = (pro
               </Stack>
             </Radio.Group>
             <Group justify="flex-end" mt="xl">
-              <Button variant="light" onClick={close}>Vazgeç</Button>
+              <Button variant="light" onClick={closeModal}>Vazgeç</Button>
               <Button
                 color="green"
                 onClick={handleConfirmWithTime}

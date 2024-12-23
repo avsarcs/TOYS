@@ -15,10 +15,10 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
       case DashboardCategory.EVENT_INVITATION:
         return (
           <>
-            <EventInvitationRespondButton item={props.item} response={true} updateDashboard={props.updateDashboard}>
+            <EventInvitationRespondButton item={props.item} response={true} updateDashboard={props.updateDashboard} key="INVITATION_ACCEPT">
               Kabul Et
             </EventInvitationRespondButton>
-            <EventInvitationRespondButton item={props.item} response={false} updateDashboard={props.updateDashboard}>
+            <EventInvitationRespondButton item={props.item} response={false} updateDashboard={props.updateDashboard} key="INVITATION_REJECT">
               Reddet
             </EventInvitationRespondButton>
           </>
@@ -26,17 +26,17 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
       case DashboardCategory.PENDING_APPLICATION:
         return (
           <>
-            <EventApplicationAcceptButton item={props.item} updateDashboard={props.updateDashboard}>
+            <EventApplicationAcceptButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_ACCEPT">
               Kabul Et
             </EventApplicationAcceptButton>
-            <EventApplicationRejectButton item={props.item} updateDashboard={props.updateDashboard}>
+            <EventApplicationRejectButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_ACCEPT">
               Reddet
             </EventApplicationRejectButton>
           </>
         );
       case DashboardCategory.GUIDELESS:
         return (
-          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard}>
+          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard} key="MANAGE_GUIDES">
             Rehberleri Yönet
           </ManageGuidesButton>
         );
@@ -95,11 +95,11 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
               <>
                 <Text span size="lg" className="text-gray-600" fw={700}>Zamanlar:</Text>
                 {
-                  props.item.requested_times.map((value) => {
+                  props.item.requested_times.map((value, index) => {
                     const date = dayjs(value);
                     const dateEnd = date.add(1, "h");
                     return (
-                      <Text size="md" fw={500} className="text-gray-600">
+                      <Text size="md" fw={500} className="text-gray-600" key={index}>
                         &nbsp;{date.format("DD MMMM YYYY")} {date.format("HH:mm")}-{dateEnd.format("HH:mm")}
                       </Text>
                     );
@@ -121,7 +121,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
         <Card.Section>
           <Stack gap="xs">
             {buttons}
-            <Button size="lg" radius="md" fullWidth component={Link}
+            <Button size="lg" radius="md" fullWidth component={Link} key="GO_TO_EVENT"
                     to={`/${props.item.event_type.toLowerCase()}/${props.item.event_id}`}
                     className="text-center border-white bg-blue-600 border-2 outline outline-0
             hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800

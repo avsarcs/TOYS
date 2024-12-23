@@ -6,7 +6,7 @@ import React from "react";
 
 const Item: React.FC<DashboardItemProps> = (props: DashboardItemProps) => {
   return (
-    <Card onClick={() => props.setItem(props.item)} withBorder shadow="sm" radius="md"
+    <Card onClick={() => props.setItem(props.item)} withBorder shadow="sm" radius="md" key={props.item.event_id}
           className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200">
       <Text fw={700}>{TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type]}</Text>
       <Divider h="md"/>
@@ -22,11 +22,11 @@ const Item: React.FC<DashboardItemProps> = (props: DashboardItemProps) => {
             <>
               <Text span fw={700}>Zamanlar:</Text>
               {
-                props.item.requested_times.map((value) => {
+                props.item.requested_times.map((value, index) => {
                   const date = dayjs(value);
                   const dateEnd = date.add(1, "h");
                   return (
-                    <Text>&nbsp;{date.format("DD MMMM YYYY")} {date.format("HH:mm")}-{dateEnd.format("HH:mm")}</Text>
+                    <Text key={index}>&nbsp;{date.format("DD MMMM YYYY")} {date.format("HH:mm")}-{dateEnd.format("HH:mm")}</Text>
                   );
                 })
               }
