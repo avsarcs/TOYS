@@ -157,6 +157,21 @@ const GeneralInformation: React.FC<TourSectionProps> = ({ tour }) => {
             </Box>
           </>
         )}
+
+        {tour.applicant.notes && tour.applicant.notes.trim() !== "" && (
+          <>
+            <Divider />
+            <Box>
+              <Group gap="xs" mb="xs">
+                <IconNotebook size={20} className="text-gray-600" />
+                <Text fw={600}>Başvuran Notları:</Text>
+              </Group>
+              <Text className="whitespace-pre-wrap bg-gray-50 p-3 rounded-md border border-gray-200">
+                {tour.applicant.notes}
+              </Text>
+            </Box>
+          </>
+        )}
       </Stack>
     </Card>
   );
