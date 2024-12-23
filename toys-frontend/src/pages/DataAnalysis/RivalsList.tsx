@@ -1,22 +1,11 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Box, Title, Divider, LoadingOverlay, Stack} from '@mantine/core';
 import TableFilter from "../../components/DataAnalysis/RivalsList/TableFilter.tsx";
 import RivalsTable from "../../components/DataAnalysis/RivalsList/RivalsTable.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 import {City} from "../../types/enum.ts";
 
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
-
-//test data
+// Default data
 const defaultCities = ["Yükleniyor..."];
 const defaultUniversities = [
     {
@@ -83,18 +72,17 @@ const RivalsList: React.FC = () => {
         });
     }, []);
 
-    const TableFilterContainer = <Container style={defaultContainerStyle}>
+    const TableFilterContainer = <div style={{ padding: '0 20%' }}>
         <Space h="xs" />
         <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
         <Space h="xs" />
-    </Container>
+    </div>
 
-    const RivalsTableContainer = <Container style={defaultContainerStyle}>
+    const RivalsTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
         <RivalsTable data={universities} search={selectedSearch} cities={selectedCities}/>
         <Space h="xs" />
-    </Container>
-
+    </div>
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         {
@@ -111,13 +99,15 @@ const RivalsList: React.FC = () => {
                         <Space h="xl"/>
                         <Divider className="border-gray-400"/>
                     </Box>
-                    <Space h="xl"/>
-                    {TableFilterContainer}
-                    <Space h="xl"/>
-                    <Space h="xl"/>
-                    {RivalsTableContainer}
-                    <Space h="xl"/>
-                    <Space h="xl"/>
+                    <Stack gap="0" bg="white">
+                        <Space h="md"/>
+                        {TableFilterContainer}
+                        <Space h="md"/>
+                        <Divider size="sm" className="border-gray-300"/>
+                        <Space h="md"/>
+                        {RivalsTableContainer}
+                        <Space h="xl"/>
+                    </Stack>
                 </>
                 :
                 <LoadingOverlay

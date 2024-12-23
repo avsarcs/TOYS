@@ -1,22 +1,11 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay, Divider, Stack} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/InputSelector.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 import {notifications} from "@mantine/notifications";
 import {City} from "../../types/enum.ts";
-
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
 
 // Default data
 const defaultCities: string[] = ["Yükleniyor..."];
@@ -127,30 +116,33 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
     }, [highSchoolID, selectedName, selectedCity, selectedRanking, selectedPriority, userContext.getAuthToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
-        <Text style={{fontSize: 'xx-large'}}>
+        <Text fw={700} style={{fontSize: 'xx-large', textAlign: 'center'}}>
             Liseyi Düzenleyin: {currentName}
         </Text>
     </Container>
 
-    const InputSelectorContainer = <Container style={defaultContainerStyle}>
-        <Space h="xs" />
+    const InputSelectorContainer = <div style={{padding: '0 10%'}}>
+        <Space h="xs"/>
         <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Lise Detaylarını Belirleyin
         </Text>
-        <Space h="xs" />
-        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity} currentRanking={currentRanking} currentPriority={currentPriority} setName={setSelectedName} setSelectedCity={setSelectedCity} setSelectedRanking={setSelectedRanking} setSelectedPriority={setSelectedPriority}/>
-        <Space h="xs" />
-    </Container>
+        <Space h="xs"/>
+        <InputSelector cities={cities} priorities={priorities} currentName={currentName} currentCity={currentCity}
+                       currentRanking={currentRanking} currentPriority={currentPriority} setName={setSelectedName}
+                       setSelectedCity={setSelectedCity} setSelectedRanking={setSelectedRanking}
+                       setSelectedPriority={setSelectedPriority}/>
+        <Space h="xs"/>
+    </div>
 
-    const EditButtonContainer = <Container style={{display: 'flex', justifyContent: 'center'}}>
-        <Space h="xs" />
+    const EditButtonContainer = <div style={{padding: '0 10%', display: 'flex', justifyContent: 'center'}}>
+        <Space h="xs"/>
         <EditButton editHighSchool={handleEditButtonClick}/>
-        <Space h="xs" />
-    </Container>
+        <Space h="xs"/>
+    </div>
 
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
-        <Modal.Content style={{borderRadius: '20px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
+        <Modal.Content style={{borderRadius: '10px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
             {
                 fetchedData
                     ?
@@ -169,14 +161,16 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
                                 </Container>
                             </Group>
 
-                            <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
+                            <Divider size="sm" className="border-gray-300"/>
 
                             <ScrollArea.Autosize mah="75vh" mx="auto">
-                                <Space h="xl"/>
-                                {InputSelectorContainer}
-                                <Space h="xl"/>
-                                {EditButtonContainer}
-                                <Space h="xl"/>
+                                <Stack gap="0" bg="white">
+                                    <Space h="md"/>
+                                    {InputSelectorContainer}
+                                    <Space h="md"/>
+                                    {EditButtonContainer}
+                                    <Space h="xl"/>
+                                </Stack>
                             </ScrollArea.Autosize>
 
                         </Modal.Body>

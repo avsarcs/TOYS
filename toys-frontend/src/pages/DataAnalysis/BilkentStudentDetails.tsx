@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Group, Stack, Box, Title, Divider} from '@mantine/core';
+import {Space, Text, Group, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
 import HighSchoolsGraph from "../../components/DataAnalysis/BilkentStudentDetails/HighSchoolsGraph.tsx";
 import CitiesGraph from "../../components/DataAnalysis/BilkentStudentDetails/CitiesGraph.tsx";
 import TopStudentsGraph from "../../components/DataAnalysis/BilkentStudentDetails/TopStudentsGraph.tsx";
@@ -9,17 +9,6 @@ import SearchBar from "../../components/DataAnalysis/BilkentStudentDetails/Searc
 import HighSchoolsTable from "../../components/DataAnalysis/BilkentStudentDetails/HighSchoolsTable.tsx";
 import DepartmentRankingGraph from "../../components/DataAnalysis/BilkentStudentDetails/DepartmentRankingGraph.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
-
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
 
 // Default data
 const defaultHighSchools = {"Yükleniyor...": 1};
@@ -34,6 +23,7 @@ const BilkentStudentDetails: React.FC = () => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
+    const [fetchedData, setFetchedData] = React.useState(false);
     const [selectedDepartment, setSelectedDepartment] = React.useState<string | null>(null);
     const [selectedSearch, setSelectedSearch] = React.useState<string>('');
     const [cities, setCities] = React.useState<Record<string, number>>(defaultCities);
@@ -46,6 +36,8 @@ const BilkentStudentDetails: React.FC = () => {
     const [selectedYear, setSelectedYear] = React.useState<string | null>(years[years.length-1]);
 
     const getHighSchoolsAndCitiesAndRankingsAndDepartments = useCallback(async () => {
+        setFetchedData(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/students/all");
         url.searchParams.append("auth", await userContext.getAuthToken());
 
@@ -77,7 +69,7 @@ const BilkentStudentDetails: React.FC = () => {
             return fetchedDepartments.indexOf(item) == pos;
         })
         setDepartments(uniqueDepartments);
-
+        setFetchedData(true);
     }, [userContext.getAuthToken]);
 
     const getYearsAndScholarshipData = useCallback(async (department: string) => {
@@ -147,19 +139,19 @@ const BilkentStudentDetails: React.FC = () => {
             });
     }, [selectedDepartment, selectedYear]);
 
-    const GraphsContainer = <Container style={defaultContainerStyle}>
+    const GraphsContainer = <div style={{ padding: '0 20%' }}>
         <Space h="xs" />
         <Stack>
             <Group>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
+                    <Text fw={700} style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
                         Öğrencilerin Liseleri (Son 5 Yıl)
                     </Text>
                     <Space h="xs" />
                     <HighSchoolsGraph data={highSchools} style={{ margin: '20px', maxHeight: '400px' }} />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
+                    <Text fw={700} style={{ fontSize: 'x-large', display: 'flex', justifyContent: 'center' }}>
                         Öğrencilerin Şehirleri (Son 5 Yıl)
                     </Text>
                     <Space h="xs" />
@@ -168,7 +160,7 @@ const BilkentStudentDetails: React.FC = () => {
             </Group>
             <Space h="xl"/>
             <div>
-                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+                <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
                     İlk 10 Liseden Gelen Öğrenciler (Son 5 Yıl)
                 </Text>
                 <Space h="xs" />
@@ -176,7 +168,7 @@ const BilkentStudentDetails: React.FC = () => {
             </div>
         </Stack>
         <Space h="xs" />
-    </Container>
+    </div>
 
     const dataForTable = (data: Record<string, Record<string, number>>)=> {
         const uniqueScholarships = new Set<string>();
@@ -201,7 +193,7 @@ const BilkentStudentDetails: React.FC = () => {
     if(selectedDepartment) {
         ShownDataContainer = <Stack>
             <div>
-                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+                <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
                     {selectedDepartment} İçin YKS Tavan Sıralama
                 </Text>
                 <Space h="xs"/>
@@ -209,7 +201,7 @@ const BilkentStudentDetails: React.FC = () => {
             </div>
             <Space h="xs"/>
             <div>
-                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+                <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
                     {selectedDepartment} Öğrencilerinin Liseleri
                 </Text>
                 <Space h="xs"/>
@@ -236,9 +228,9 @@ const BilkentStudentDetails: React.FC = () => {
         ShownDataContainer = <Text style={{display: 'flex', justifyContent: 'center', alignItems: 'center',  fontSize: 'x-large'}}>İncelemek için bölüm seçin.</Text>
     }
 
-    const DepartmentDetailsContainer = <Container style={defaultContainerStyle}>
+    const DepartmentDetailsContainer = <div style={{ padding: '0 20%' }}>
         <Space h="xs"/>
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+        <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bölüm Bazlı Veriler
         </Text>
         <div style={{marginLeft: '75px', marginRight: '75px'}}>
@@ -248,26 +240,39 @@ const BilkentStudentDetails: React.FC = () => {
         <Space h="xl"/>
         {ShownDataContainer}
         <Space h="xs"/>
-    </Container>
+    </div>
 
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Box className="flex-grow-0 flex-shrink-0">
-            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-                Bilkent Öğrenci Verisi
-            </Title>
-            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Mevcut öğrencilerin istatistikleri.
-            </Title>
-            <Space h="xl"/>
-            <Divider className="border-gray-400"/>
-        </Box>
-        <Space h="xl"/>
-        {GraphsContainer}
-        <Space h="xl"/>
-        {DepartmentDetailsContainer}
-        <Space h="xl"/>
-        <Space h="xl"/>
+        {
+            fetchedData
+                ?
+                <>
+                    <Box className="flex-grow-0 flex-shrink-0">
+                        <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                            Bilkent Öğrenci Verisi
+                        </Title>
+                        <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                            Mevcut öğrencilerin istatistikleri.
+                        </Title>
+                        <Space h="xl"/>
+                        <Divider className="border-gray-400"/>
+                    </Box>
+                    <Stack gap="0" bg="white">
+                        <Space h="md"/>
+                        {GraphsContainer}
+                        <Space h="md"/>
+                        <Divider size="sm" className="border-gray-300"/>
+                        <Space h="md"/>
+                        {DepartmentDetailsContainer}
+                        <Space h="xl"/>
+                    </Stack>
+                </>
+                :
+                <LoadingOverlay
+                    visible={!fetchedData} zIndex={10}
+                    overlayProps={{blur: 1, color: "#444", opacity: 0.8}}/>
+        }
     </div>
 
 }
