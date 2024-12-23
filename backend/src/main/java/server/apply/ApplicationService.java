@@ -255,7 +255,8 @@ public class ApplicationService {
             }
 
             db.auth.addPasskey(pk);
-
+            tour = new TourRegistry(app);
+            tour.setTour_id(tourID);
             // notify the applicant
             mailServiceGateway.sendMail(
                     app.getApplicant().getContact_info().getEmail(),
@@ -270,9 +271,11 @@ public class ApplicationService {
 
         }
 
-        // Check if the tour is in a state that can be changed
-        if (!tour.getTourStatus().equals(TourStatus.CONFIRMED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour is not in a state that can be changed!");
+        else{
+            // Check if the tour is in a state that can be changed
+            if (!tour.getTourStatus().equals(TourStatus.CONFIRMED)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour is not in a state that can be changed!");
+            }
         }
 
         TourApplication modifications = changes.containsKey("requested_majors") ? dto.individualTourApplication(changes) : dto.groupTourApplication(changes);
