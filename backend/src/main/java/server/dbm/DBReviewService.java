@@ -98,7 +98,7 @@ public class DBReviewService {
         }
     }
 
-    public void addReview(EventReview review) {
+    public String addReview(EventReview review) {
         try {
             DocumentReference reference = firestore.collection("reviews").document("reviews");
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("reviews");
@@ -113,9 +113,11 @@ public class DBReviewService {
                         Collections.singletonMap("reviews", data),
                         new TypeReference<HashMap<String, Object>>() {}
                     ));
+            return uuid;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to add review from database.");
         }
+        return "";
     }
 }

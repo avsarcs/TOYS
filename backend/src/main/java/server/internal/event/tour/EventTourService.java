@@ -262,8 +262,6 @@ public class EventTourService {
                 .values()
                 .stream()
                 .filter(
-                        tour -> tour.getGuides().contains(userId) || !userRole.equals(UserRole.GUIDE)
-                ).filter(
                         tour -> {
                             if (!school_name.isEmpty()) {
                                 try {

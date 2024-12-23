@@ -1,5 +1,6 @@
 package server.models.review;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class EventReview {
@@ -10,7 +11,10 @@ public class EventReview {
 
 
     protected EventReview(Map<String, Object> map) {
-        this.guide_reviews = (Map<String, Review>) map.get("guide_reviews");
+        this.guide_reviews = new HashMap<>();
+        ((Map<String, Object>)map.get("guide_reviews")).entrySet().forEach(
+                entry -> guide_reviews.put(entry.getKey(), Review.fromMap((Map<String, Object>) entry.getValue()))
+        );
         this.event_id = (String) map.get("event_id");
         this.event_review = Review.fromMap((Map<String, Object>) map.get("event_review"));
     }

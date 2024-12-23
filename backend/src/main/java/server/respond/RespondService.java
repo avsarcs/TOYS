@@ -327,6 +327,8 @@ public class RespondService {
             List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests();
             request = requests.stream().filter(
                     r -> r.getEvent_id().equals(event_id)
+            ).filter(
+                    r -> r.getGuide_id().equals(JWTService.getSimpleton().decodeUserID(auth))
             ).findFirst().orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
             );

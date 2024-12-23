@@ -809,14 +809,17 @@ public class DTOFactory {
         EventReview review = new EventReview();
 
         Map<String, Review> guide_reviews = new HashMap<>();
+
         for (Map<String, Object> r : reviews) {
             if (r.get("for").equals("GUIDE")) {
-                guide_reviews.put((String) r.get("guide_id"), new Review().setScore((int) r.get("score")).setBody((String) r.get("body")));
+                guide_reviews.put( (String) ((Map<String, Object>) r.get("guide")).get("id"), new Review().setScore((int) r.get("score")).setBody((String) r.get("body")));
             } else {
                 review.setEvent_id((String) r.get("tour_id"));
                 review.setEvent_review(new Review().setScore(((Number) r.get("score")).longValue()).setBody((String) r.get("body")));
             }
         }
+
+        review.setGuide_reviews(guide_reviews);
 
         return review;
     }
