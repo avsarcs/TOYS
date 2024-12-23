@@ -432,6 +432,23 @@ API endpoints:
         response: true/false
         response_type: string
 
+
+    /pass
+        /forgot // Use this endpoint 
+            parameters:
+                email: user-email
+                id: user-id
+            method: post
+
+        /reset
+            parameter:
+                accessKey: access key provided through the mail link
+            body:
+            {
+                "password": "new password"
+            }
+            method: post
+
 !!! NEW ADMIN ENDPOINT !!! 
 /admin
 	/all-users
