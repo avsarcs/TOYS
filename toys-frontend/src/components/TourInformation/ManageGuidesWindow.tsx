@@ -54,11 +54,10 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
     try {
       const urlRemove = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/remove");
       urlRemove.searchParams.append("event_id", tour.tour_id);
-      urlRemove.searchParams.append("guides", guideId);
+      urlRemove.searchParams.append("guides[]", guideId);
       urlRemove.searchParams.append("auth", await userContext.getAuthToken());
-
+      
       const response = await fetch(urlRemove.toString(), { method: "POST" });
-
       if (!response.ok) {
         throw new Error("Failed to remove guide");
       }
@@ -70,7 +69,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
         icon: <IconCheck size={16} />,
       });
 
-      // Update local state to reflect the removal
       if (activeStage === "GUIDE") {
         setSelectedGuides(prev => prev.filter(g => g.id !== guideId));
       } else {
@@ -99,7 +97,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
 
       const response = await fetch(url);
       if (!response.ok) throw new Error("Rehberler getirilemedi.");
-
       const data: SimpleGuideData[] = await response.json();
 
       if (type === "GUIDE") {
@@ -158,42 +155,52 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       const urlInvite = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/invite");
       const urlEnroll = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/enroll");
 
+      // Prepare guides to remove
       const guideIdsToRemove = [
         ...tour.guides.map((g) => g.id).filter((g) => !selectedGuides.some((s) => s.id === g)),
-        ...tour.trainee_guides.map((g) => g.id).filter((g) => !selectedGuides.some((s) => s.id === g)),
-      ].join(",");
+        ...tour.trainee_guides.map((g) => g.id).filter((g) => !selectedGuides.some((s) => s.id === g))
+      ];
 
+      // Prepare guides to invite
       const guideIdsToInvite = [
         ...selectedGuides.map((g) => g.id),
         ...selectedTrainees.map((t) => t.id)
-      ].join(",");
+      ];
 
-      urlRemove.searchParams.append("event_id", tour.tour_id);
-      urlRemove.searchParams.append("guides", guideIdsToRemove);
-      urlRemove.searchParams.append("auth", await userContext.getAuthToken());
+      // Remove guides
+      if (guideIdsToRemove.length > 0) {
+        urlRemove.searchParams.append("event_id", tour.tour_id);
+        urlRemove.searchParams.append("auth", await userContext.getAuthToken());
+        guideIdsToRemove.forEach(id => {
+          urlRemove.searchParams.append("guides[]", id);
+        });
+        await fetch(urlRemove.toString(), { method: "POST" });
+      }
 
-      await fetch(urlRemove.toString(), { method: "POST" });
-
+      // Handle current user and other guides
       const isCurrentUserSelected = selectedGuides.some((g) => g.id === userContext.user.id);
-
       if (isCurrentUserSelected) {
         urlEnroll.searchParams.append("event_id", tour.tour_id);
         urlEnroll.searchParams.append("auth", await userContext.getAuthToken());
         await fetch(urlEnroll.toString(), { method: "POST" });
-      } else {
+      }
+
+      // Invite other guides
+      if (guideIdsToInvite.length > 0) {
         urlInvite.searchParams.append("event_id", tour.tour_id);
-        urlInvite.searchParams.append("guides", guideIdsToInvite);
         urlInvite.searchParams.append("auth", await userContext.getAuthToken());
+        guideIdsToInvite.forEach(id => {
+          urlInvite.searchParams.append("guides[]", id);
+        });
         await fetch(urlInvite.toString(), { method: "POST" });
       }
 
       notifications.show({
         title: "Başarılı",
-        message: "Rehberlerdeki değişiklikler yapıldı",
+        message: "Rehberlerdeki değişiklikler yapıldı (yeni eklenen rehberler daveti kabul edene dek gözükmeyecekler).",
         color: "green",
         icon: <IconCheck size={16} />,
       });
-
       setTimeout(onClose, 1500);
     } catch (error) {
       notifications.show({
@@ -322,7 +329,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
 
   const renderCurrentGuides = () => {
     const currentGuides = activeStage === "GUIDE" ? tour.guides : tour.trainee_guides;
-
     if (currentGuides.length === 0) return null;
 
     return (
@@ -353,8 +359,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
     );
   };
 
-
-
   return (
     <Modal
       opened={opened}
@@ -372,7 +376,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
         {renderCurrentGuides()}
         <Divider my="sm" variant="dashed" label="Yeni Seçim" labelPosition="center" />
         {!error && activeStage === "GUIDE" && renderProgress()}
-
         {!error && (
           <Alert
             color={activeStage === "GUIDE" ? "blue" : "violet"}
@@ -384,7 +387,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
               : "İsterseniz tura amatör rehber ekleyebilirsiniz."}
           </Alert>
         )}
-
         {loading ? (
           <Stack align="center" p="xl">
             <Loader color="violet" size="lg" />
@@ -453,7 +455,6 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
             </Stack>
           </ScrollArea.Autosize>
         )}
-
         {!error && !loading && (
           <>
             <Divider my="md" />

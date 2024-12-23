@@ -17,72 +17,48 @@ import {
 import { IconAlertCircle, IconUsers } from '@tabler/icons-react';
 import { SimpleEventData } from '../../types/data';
 
-const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/simple-tour");
+const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/modifications");
 const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour/modification");
 
 const ApplicantRespond: React.FC = () => {
-    const { passkey } = useParams();
-    const navigate = useNavigate();
+    const { passkey, tour_id } = useParams();
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [tourData, setTourData] = useState<SimpleEventData | null>(null);
 
-    
-    const sampleTourData = {
-        event_type: "TOUR",
-        event_subtype: "TOUR",
-        event_id: "123",
-        event_status: "TOYS_WANTS_CHANGE",
-        highschool: {
-            id: "1",
-            name: "Ankara Fen Lisesi",
-            location: "Ankara",
-            priority: 1,
-            ranking: 1
-        },
-        accepted_time: null,
-        requested_times: [
-            "2024-12-19T14:00:00+03:00",
-            "2024-12-20T10:00:00+03:00",
-            "2024-12-21T15:00:00+03:00"
-        ],
-        visitor_count: 25
-    };
-
-
-    const [tourData, setTourData] = useState<SimpleEventData | null>(sampleTourData);
     // Fetch tour data
     useEffect(() => {
-        // const fetchTour = async () => {
-        //     try {
-        //         const url = new URL(SIMPLE_TOUR_URL);
-        //         url.searchParams.append('auth', passkey || '');
-        //         url.searchParams.append('tid', ''); // Empty string as required
+        const fetchTour = async () => {
+            try {
+                const url = new URL(SIMPLE_TOUR_URL);
+                url.searchParams.append('auth', passkey || '');
+                url.searchParams.append('tour_id', tour_id || '');
 
-        //         const response = await fetch(url, {
-        //             method: 'GET'
-        //         });
+                const response = await fetch(url, {
+                    method: 'GET'
+                });
 
-        //         if (!response.ok) {
-        //             throw new Error('Failed to fetch tour data');
-        //         }
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tour data');
+                }
 
-        //         const data = await response.json();
-        //         setTourData(data);
+                const data = await response.json();
+                setTourData(data);
                 
-        //     } catch (err) {
-        //         console.error('Error fetching tour:', err);
-        //         setFetchError('Tur bilgileri yüklenirken bir hata oluştu.');
-        //     }
-        // };
+            } catch (err) {
+                console.error('Error fetching tour:', err);
+                setFetchError('Tur bilgileri yüklenirken bir hata oluştu.');
+            }
+        };
 
-        // if (passkey) {
-        //     fetchTour();
-        // }
-    }, [passkey]);
+        if (passkey && tour_id) {
+            fetchTour();
+        }
+    }, [passkey, tour_id]);
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -102,25 +78,22 @@ const ApplicantRespond: React.FC = () => {
         }
         setLoading(true);
         setError(null);
-
+    
         try {
             const url = new URL(RESPOND_URL);
+            url.searchParams.append('auth', passkey || '');
+            url.searchParams.append('request_id', tour_id || '');
+            url.searchParams.append('response', 'true')
+            url.searchParams.append('accepted_time', selectedTime);
+    
             const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'auth': passkey || '',
-                    'tour_id': '', // Empty string as required
-                    'accepted_time': selectedTime
-                })
+                method: 'POST'
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to accept tour');
             }
-
+    
             setSuccessMessage(`${formatDate(selectedTime)} zamanını başarıyla onayladınız`);
             setShowSuccessModal(true);
             
@@ -131,29 +104,25 @@ const ApplicantRespond: React.FC = () => {
             setLoading(false);
         }
     };
-
+    
     const handleReject = async () => {
         setLoading(true);
         setError(null);
-
+    
         try {
             const url = new URL(RESPOND_URL);
+            url.searchParams.append('auth', passkey || '');
+            url.searchParams.append('tour_id', tour_id || '');
+            url.searchParams.append('accepted_time', ''); // Empty string for rejection
+    
             const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'auth': passkey || '',
-                    'tour_id': '', // Empty string as required
-                    'accepted_time': '' // Empty string for rejection
-                })
+                method: 'POST'
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to reject tour');
             }
-
+    
             setSuccessMessage('Teklif edilen vakitleri reddettiniz. Yakın bir vakitte yeniden tur başvurusu yapmayı deneyebilirsiniz.');
             setShowSuccessModal(true);
             
@@ -210,7 +179,7 @@ const ApplicantRespond: React.FC = () => {
                                 <Text>• Tanıtım Ofisi'ne uygun ziyaretçi sayısı ve vakitler aşağıda belirtilmiştir.</Text>
                                 <Text>• Belirtilen vakitlerden size uygun olanını seçiniz.</Text>
                                 <Text>• Vakit veya ziyaretçi sayısı size uygun değilse reddedip, başka bir zaman yeniden tur başvurusunda bulunabilirsiniz.</Text>
-</Stack>
+                            </Stack>
                         </Alert>
 
                         <Card withBorder shadow="sm" radius="md" className="bg-blue-50">

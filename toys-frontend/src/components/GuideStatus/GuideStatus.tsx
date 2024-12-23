@@ -348,7 +348,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
         try {
           const acceptUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/tour-invite");
           acceptUrl.searchParams.append("auth", await userContext.getAuthToken());
-          acceptUrl.searchParams.append("request_id", tour.tour_id);
+          acceptUrl.searchParams.append("event_id", tour.tour_id);
           acceptUrl.searchParams.append("response", "true");
   
           const res = await fetch(acceptUrl, { method: 'POST' });
@@ -393,7 +393,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
         try {
           const rejectUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/tour-invite");
           rejectUrl.searchParams.append("auth", await userContext.getAuthToken());
-          rejectUrl.searchParams.append("request_id", tour.tour_id);
+          rejectUrl.searchParams.append("event_id", tour.tour_id);
           rejectUrl.searchParams.append("response", "false");
   
           const res = await fetch(rejectUrl, { method: 'POST' });
