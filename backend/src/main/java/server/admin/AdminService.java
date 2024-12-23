@@ -147,6 +147,7 @@ public class AdminService {
         user.setProfile(user.getProfile().setName(name));
         user.setBilkent_id(id);
         user.setStatus(UserStatus.ACTIVE);
+        user.setRole(role);
 
         database.people.addUser(user);
     }

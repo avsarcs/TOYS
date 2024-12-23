@@ -50,26 +50,6 @@ public class Advisor extends Guide {
         this.responsibleFor = ((List<String>) map.get("responsibleFor")).stream().map(DayOfWeek::valueOf).toList();
     }
 
-    public static Advisor getDefault() {
-        Advisor advisor = new Advisor();
-        advisor.setResponsibleFor(List.of(DayOfWeek.MONDAY));
-        advisor.setExperience(Experience.getDefault());
-        advisor.setHigh_school("000000");
-        advisor.setRole(UserRole.ADVISOR);
-        advisor.setStatus(UserStatus.ACTIVE);
-        advisor.setAuthInfo(AuthInfo.getDefault());
-        advisor.setApplication(new Application()
-                .setType(ApplicationType.ADVISOR)
-                .setStatus(ApplicationStatus.APPROVED)
-        );
-        advisor.setDepartment(Department.MANAGEMENT);
-        advisor.setBilkent_id("000001");
-        advisor.setProfile(Profile.getDefault());
-        advisor.setFiscalState(new FiscalState(0, 0, List.of()));
-
-        return advisor;
-    }
-
     public Advisor modifyWithDTO(Map<String, Object> dto) {
         super.modifyWithDTO(dto);
 

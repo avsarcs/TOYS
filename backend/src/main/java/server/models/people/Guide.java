@@ -5,7 +5,6 @@ import server.enums.roles.UserRole;
 import server.enums.status.ApplicationStatus;
 import server.enums.status.UserStatus;
 import server.enums.types.ApplicationType;
-import server.models.DTO.DTO_Guide;
 import server.models.Experience;
 import server.models.payment.FiscalState;
 import server.models.people.details.*;
@@ -16,21 +15,18 @@ import java.util.UUID;
 
 public class Guide extends User {
     private String high_school;
-    private Department department;
 
     private Experience experience;
 
     public Guide(Guide other) {
         super(other);
         this.high_school = other.high_school;
-        this.department = other.department;
         this.experience = new Experience(other.experience);
     }
 
     static public Guide nonnull() {
         Guide guide = new Guide(User.nonnull());
         guide.setHigh_school("");
-        guide.setDepartment(Department.MANAGEMENT);
         guide.setExperience(Experience.nonnull());
         return guide;
     }
@@ -44,7 +40,6 @@ public class Guide extends User {
         guide.setBilkent_id(application.getBilkent_id());
         guide.setProfile(application.getProfile());
         guide.setFiscalState(new FiscalState(0, 0, List.of()));
-        guide.setDepartment(application.getProfile().getMajor());
         guide.setExperience(new Experience().setExperienceLevel_level(ExperienceLevel.TRAINEE).setPrevious_events(List.of()));
 
         guide.setRole(UserRole.GUIDE);
@@ -75,7 +70,6 @@ public class Guide extends User {
                 .setSchedule(new Schedule())
         );
         guide.setFiscalState(new FiscalState(0, 0, List.of()));
-        guide.setDepartment(Department.MANAGEMENT);
         guide.setExperience(Experience.getDefault());
 
         guide.setRole(UserRole.GUIDE);
@@ -100,7 +94,7 @@ public class Guide extends User {
     }
 
     public Guide modifyWithDTO(Map<String, Object> dto) {
-        this.setBilkent_id((String) dto.get("id"));
+        //this.setBilkent_id((String) dto.get("id"));x
 
         profile.setName((String) dto.get("fullname"));
         profile.getContact_info().setPhone((String) dto.get("phone"));
@@ -134,7 +128,6 @@ public class Guide extends User {
     protected Guide(Map<String, Object> map) {
         super(map);
         this.high_school = (String) map.get("high_school");
-        this.department = Department.valueOf((String) map.get("department"));
         this.experience = Experience.fromMap((Map<String, Object>) map.get("experience"));
     }
 
@@ -148,15 +141,6 @@ public class Guide extends User {
 
     public Guide setHigh_school(String high_school) {
         this.high_school = high_school;
-        return this;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public Guide setDepartment(Department department) {
-        this.department = department;
         return this;
     }
 

@@ -157,11 +157,17 @@ public class RespondService {
         );
     }
 
-    public void respondToTourModification(String auth, String request_id, boolean response) {
+    public void respondToTourModification(String auth, String tour_id, String accepted_time) {
         // get request
-        List<Request> requests = database.requests.getRequestsOfType(RequestType.TOUR_MODIFICATION, request_id);
-        TourModificationRequest request = (TourModificationRequest) requests.stream().findFirst().orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
+        List<TourModificationRequest> requests = database.requests.getTourModificationRequests().stream().filter(
+                r -> r.getTour_id().equals(tour_id)
+        ).toList();
+
+        TourModificationRequest request = requests.stream().findFirst().orElseThrow(
+                () -> {
+                    System.out.println("No request found for the given request id!");
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!");
+                }
         );
 
         if (!authService.checkWithPasskey(auth, request.getTour_id(), Permission.AR_TOUR_REQUESTS)) {
@@ -172,6 +178,8 @@ public class RespondService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request already responded!");
         }
 
+        boolean response = !accepted_time.isEmpty();
+
         request.setStatus(response ? RequestStatus.APPROVED : RequestStatus.REJECTED);
         database.requests.updateRequest(request);
 
@@ -180,6 +188,9 @@ public class RespondService {
             tour.modify(request.getModifications());
             tour.setStatus(response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
             tour.setTour_status(response ? TourStatus.CONFIRMED : TourStatus.REJECTED);
+            if (response) {
+                tour.setAccepted_time(new ZTime(accepted_time));
+            }
 
             tour.getGuides().forEach( s -> {
                 try {
@@ -189,7 +200,7 @@ public class RespondService {
                         Concerning.GUIDE,
                         About.TOUR_MODIFICATION,
                         response ? Status.APPROVAL : Status.REJECTION,
-                        Map.of("{tour_id}", tour.getTour_id())
+                        Map.of("tour_id", tour.getTour_id())
                     );
                 } catch (Exception e) {}
             });
@@ -203,7 +214,7 @@ public class RespondService {
                     Concerning.EVENT_APPLICANT,
                     About.TOUR_MODIFICATION,
                     response ? Status.APPROVAL : Status.REJECTION,
-                    Map.of("{tour_id}", request.getTour_id())
+                    Map.of("tour_id", request.getTour_id())
                 );
             } else {
                 mail.sendMail(
@@ -211,7 +222,7 @@ public class RespondService {
                     Concerning.ADVISOR,
                     About.TOUR_MODIFICATION,
                     response ? Status.APPROVAL : Status.REJECTION,
-                    Map.of("{tour_id}", request.getTour_id())
+                        Map.of("tour_id", request.getTour_id())
                 );
             }
 
@@ -239,7 +250,7 @@ public class RespondService {
                 Concerning.ADVISOR,
                 About.TOUR_MODIFICATION,
                 response ? Status.APPROVAL : Status.REJECTION,
-                Map.of("{tour_id}", request.getTour_id())
+                    Map.of("tour_id", request.getTour_id())
             );
 
             mail.sendMail(
@@ -247,21 +258,21 @@ public class RespondService {
                 Concerning.EVENT_APPLICANT,
                 About.TOUR_APPLICATION,
                 response ? Status.APPROVAL : Status.REJECTION,
-                Map.of("{tour_id}", request.getTour_id())
+                    Map.of("tour_id", request.getTour_id())
             );
         }
 
     }
 
 
-    public void respondToFairGuideInvite(String auth, String invite_id, boolean response) {
+    public void respondToFairGuideInvite(String auth, String event_id, boolean response) {
         if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this application!");
         }
 
-        List<Request> requests = database.requests.getRequestsOfType(RequestType.ASSIGNMENT, invite_id);
-        GuideAssignmentRequest request = (GuideAssignmentRequest) requests.stream().filter(
-                r -> r.getRequest_id().equals(invite_id)
+        List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests();
+        GuideAssignmentRequest request = requests.stream().filter(
+                r -> r.getEvent_id().equals(event_id)
         ).findFirst().orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
         );
@@ -294,36 +305,31 @@ public class RespondService {
     }
 
     private GuideAssignmentRequest findInviteFor(String guid, String tourID) throws Exception {
-        List<Request> requests = database.requests.getRequestsOfType(RequestType.ASSIGNMENT, null);
-        return (GuideAssignmentRequest) requests.stream().filter(
-                r -> ((GuideAssignmentRequest) r).getEvent_id().equals(tourID) && ((GuideAssignmentRequest) r).getGuide_id().equals(guid)
+        List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests();
+        return requests.stream().filter(
+                r -> r.getEvent_id().equals(tourID) && r.getGuide_id().equals(guid)
         ).findFirst().orElseThrow(
                 () -> new Exception()
         );
     }
 
-    public void respondToTourGuideInvite(String auth, String application_id, boolean response) {
+    public void respondToTourGuideInvite(String auth, String event_id, boolean response) {
         if (!authService.check(auth)) {
+            System.out.println("Insufficient permissions! :: RESPOND TO TOUR GUIDE INVITE");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this application!");
         }
 
         GuideAssignmentRequest request = null;
 
-        if (database.tours.fetchTour(application_id) == null) {
-            List<Request> requests = database.requests.getRequestsOfType(RequestType.ASSIGNMENT, application_id);
-            request = (GuideAssignmentRequest) requests.stream().filter(
-                    r -> r.getRequest_id().equals(application_id)
+        TourRegistry tour = database.tours.fetchTour(event_id);
+
+        if (tour != null) {
+            List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests();
+            request = requests.stream().filter(
+                    r -> r.getEvent_id().equals(event_id)
             ).findFirst().orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
             );
-        } else {
-            // accept with tour, not application
-            try {
-                request = findInviteFor(JWTService.getSimpleton().decodeUserID(auth), application_id);
-            } catch (Exception E) {
-                E.printStackTrace();
-                System.out.println("Could not find an invite for!");
-            }
         }
 
         if (request == null) {
@@ -332,6 +338,7 @@ public class RespondService {
 
         String userID = JWTService.getSimpleton().decodeUserID(auth);
         if (!request.getGuide_id().equals(userID)) {
+            System.out.println("Insufficient permissions! :: RESPOND TO TOUR GUIDE INVITE USER ROLLE");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this request!");
         }
 
@@ -343,7 +350,6 @@ public class RespondService {
 
         if (response) {
             try {
-                TourRegistry tour = database.tours.fetchTour(request.getEvent_id());
                 List<String> guides = tour.getGuides();
 
                 guides.add(userID);
@@ -354,16 +360,22 @@ public class RespondService {
             }
         }
 
-        mail.sendMail(
-                request.getRequested_by().getContactInfo().getEmail(),
-                Concerning.ADVISOR,
-                About.GUIDE_ASSIGNMENT,
-                response ? Status.APPROVAL : Status.REJECTION,
-                Map.of(
-                        "tour_id", request.getEvent_id(),
-                        "guide_id", userID
-                )
-        );
+        try {
+
+            mail.sendMail(
+                    request.getRequested_by().getContactInfo().getEmail(),
+                    Concerning.ADVISOR,
+                    About.GUIDE_ASSIGNMENT,
+                    response ? Status.APPROVAL : Status.REJECTION,
+                    Map.of(
+                            "tour_id", request.getEvent_id(),
+                            "guide_id", userID
+                    )
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error while sending mail!");
+        }
 
         database.requests.updateRequest(request);
     }

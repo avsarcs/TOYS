@@ -2,6 +2,7 @@ package server.apply;
 
 import server.auth.AuthService;
 import server.auth.JWTService;
+import server.auth.Passkey;
 import server.auth.Permission;
 import server.dbm.Database;
 import server.enums.status.ApplicationStatus;
@@ -32,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ApplicationService {
@@ -65,29 +67,39 @@ public class ApplicationService {
             tour.setTour_status(TourStatus.CANCELLED);
             db.tours.updateTour(tour, tour.getTour_id());
 
-            // Notify advisor
-            mailServiceGateway.sendMail(
-                    db.people.fetchAdvisorForDay(tour.getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
-                    Concerning.ADVISOR,
-                    About.TOUR_MODIFICATION,
-                    Status.CANCELLED,
-                    Map.of(
-                            "tour_id", tour.getTour_id(),
-                            "reasoning", reason
-                    )
-            );
+            try {
+                // Notify advisor
+                mailServiceGateway.sendMail(
+                        db.people.fetchAdvisorForDay(tour.getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
+                        Concerning.ADVISOR,
+                        About.TOUR_MODIFICATION,
+                        Status.CANCELLED,
+                        Map.of(
+                                "tour_id", tour.getTour_id(),
+                                "reasoning", reason
+                        )
+                );
+            } catch (Exception E) {
+                E.printStackTrace();
+                System.out.println("Failed to notify the advisor for the day for a new tour modification request.");
+            }
 
             // notify applicant
-            mailServiceGateway.sendMail(
+            try {
+                mailServiceGateway.sendMail(
                     tour.getApplicant().getContact_info().getEmail(),
                     Concerning.EVENT_APPLICANT,
                     About.TOUR_MODIFICATION,
                     Status.CANCELLED,
                     Map.of(
-                            "tour_id", tour.getTour_id(),
-                            "reasoning", reason
+                        "tour_id", tour.getTour_id(),
+                        "reasoning", reason
                     )
-            );
+                );
+
+            } catch (Exception E) {
+                System.out.println("Failed to notify the applicant for the tour cancellation " + event_id);
+            }
 
             // notify the guides
             tour.getGuides().forEach(
@@ -108,35 +120,46 @@ public class ApplicationService {
                         }
                     }
             );
+
+
         } else if (fairs.containsKey(event_id)) {
             FairRegistry fair = fairs.get(event_id);
             fair.setFair_status(FairStatus.CANCELLED);
             db.fairs.updateFair(fair, fair.getFair_id());
 
+            try {
+                // Notify advisor
+                mailServiceGateway.sendMail(
+                        db.people.fetchAdvisorForDay(fair.getStarts_at().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
+                        Concerning.ADVISOR,
+                        About.FAIR_MODIFICATION,
+                        Status.CANCELLED,
+                        Map.of(
+                                "fair_id", fair.getFair_id(),
+                                "reasoning", reason
+                        )
+                );
+            } catch (Exception E) {
+                E.printStackTrace();
+                System.out.println("Failed to notify the advisor for the day for a new tour modification request.");
+            }
 
-            // Notify advisor
-            mailServiceGateway.sendMail(
-                    db.people.fetchAdvisorForDay(fair.getStarts_at().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
-                    Concerning.ADVISOR,
-                    About.FAIR_MODIFICATION,
-                    Status.CANCELLED,
-                    Map.of(
-                            "fair_id", fair.getFair_id(),
-                            "reasoning", reason
-                    )
-            );
 
-            // notify applicant
-            mailServiceGateway.sendMail(
-                    fair.getApplicant().getContact_info().getEmail(),
-                    Concerning.EVENT_APPLICANT,
-                    About.FAIR_MODIFICATION,
-                    Status.CANCELLED,
-                    Map.of(
-                            "fair_id", fair.getFair_id(),
-                            "reasoning", reason
-                    )
-            );
+            try {
+                // notify applicant
+                mailServiceGateway.sendMail(
+                        fair.getApplicant().getContact_info().getEmail(),
+                        Concerning.EVENT_APPLICANT,
+                        About.FAIR_MODIFICATION,
+                        Status.CANCELLED,
+                        Map.of(
+                                "fair_id", fair.getFair_id(),
+                                "reasoning", reason
+                        )
+                );
+            } catch (Exception E) {
+                System.out.println("Failed to notify the applicant for the fair cancellation " + event_id);
+            }
 
             // notify the guides
             fair.getGuides().forEach(
@@ -161,6 +184,12 @@ public class ApplicationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found!");
         }
 
+        // find all invites, delete them
+        db.requests.getGuideAssignmentRequests().stream().filter(
+                e -> e.getEvent_id().equals(event_id)
+        ).forEach(
+                e -> db.requests.deleteRequest(e)
+        );
     }
 
     public String getTourType(String tour_id) {
@@ -205,9 +234,22 @@ public class ApplicationService {
             request.setTour_id(tourID);
             request.setNotes((String) changes.get("notes"));
             request.setType(RequestType.TOUR_MODIFICATION);
-            request.setModifications(TourApplication.fromMap(changes));
+            TourApplication chang = TourApplication.fromMap(changes);
+            chang.setStatus(ApplicationStatus.RECEIVED);
+            request.setModifications(chang);
 
             db.requests.addRequest(request);
+
+            Map<String, Passkey> passkeys = db.auth.getPasskeys();
+            Passkey pk = new Passkey();
+            pk.setEvent_id(tourID);
+            pk.setExpiration(new ZTime(ZonedDateTime.now().plusDays(7)));
+            pk.setKey(UUID.randomUUID().toString());
+            while (passkeys.containsKey(pk.getKey())) {
+                pk.setKey(UUID.randomUUID().toString());
+            }
+
+            db.auth.addPasskey(pk);
 
             // notify the applicant
             mailServiceGateway.sendMail(
@@ -215,7 +257,10 @@ public class ApplicationService {
                     Concerning.EVENT_APPLICANT,
                     About.TOUR_MODIFICATION,
                     Status.RECIEVED,
-                    Map.of("{tour_id}", tourID)
+                    Map.of(
+                            "{tour_id}", tourID,
+                            "{pass}", pk.getKey()
+                            )
             );
 
         }
@@ -376,12 +421,17 @@ public class ApplicationService {
 
         // if the fair does not exist, add the fair to the system
         db.applications.addApplication(application);
-        mailServiceGateway.sendMail(
-                application.getApplicant().getContact_info().getEmail(),
-                Concerning.EVENT_APPLICANT,
-                About.FAIR_APPLICATION,
-                Status.RECIEVED,
-                Map.of("name", application.getApplicant().getName())
-        );
+        try {
+            mailServiceGateway.sendMail(
+                    application.getApplicant().getContact_info().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.FAIR_APPLICATION,
+                    Status.RECIEVED,
+                    Map.of("name", application.getApplicant().getName())
+            );
+
+        } catch (Exception e) {
+            System.out.println("Failed to send mail to the applicant for the fair application.");
+        }
     }
 }

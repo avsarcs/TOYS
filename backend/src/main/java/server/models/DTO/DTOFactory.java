@@ -255,7 +255,8 @@ public class DTOFactory {
 
         dto.put("trainee_guides", guides.stream().filter(
                 guide -> guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
-        ).map(this::tourGuide).toList());
+        ).filter( gid -> tour.getGuides().contains(gid.getBilkent_id()))
+                .map(this::tourGuide).toList());
 
         dto.put("guides", guides.stream().filter(
                 guide -> !guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
@@ -538,7 +539,7 @@ public class DTOFactory {
         dto.put("highschool", highschool(guide.getProfile().getHighschool_id()));
         dto.put("schedule", guide.getProfile().getSchedule());
         dto.put("iban", guide.getProfile().getPayment_info().getIban());
-        dto.put("major", guide.getDepartment());
+        dto.put("major", guide.getProfile().getMajor());
         dto.put("email", guide.getProfile().getContact_info().getEmail());
 
         Map<String, ReviewRecord> records = database.reviews.getReviewRecords();
@@ -593,8 +594,9 @@ public class DTOFactory {
 
         dto.put("id", guide.getBilkent_id());
         dto.put("name", guide.getProfile().getName());
-        dto.put("major", guide.getDepartment());
+        dto.put("major", guide.getProfile().getMajor());
         dto.put("experience", guide.getExperience().getPrevious_events().size() + " events");
+        dto.put("role", guide.getRole().name());
 
         return dto;
     }

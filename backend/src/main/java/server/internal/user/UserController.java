@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import server.models.DTO.DTO_AdvisorOffer;
-import server.models.DTO.DTO_SimpleEvent;
-import server.models.DTO.DTO_SimpleGuide;
 import server.models.DTO.DTO_UserType;
 
 import java.util.List;

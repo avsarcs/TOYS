@@ -22,7 +22,7 @@ public class MailFactory {
                                     Status.CANCELLED, new MailTemplate("Bilkent'e Tur İsteğiniz Hakkında", "Bilkent'e turunuz iptal edildi.")
                             ),
                             About.TOUR_MODIFICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Turunuz için değişiklik isteğiniz bize ulaştı. En yakın zamanda size geri dönüş yapacağız."),
+                                    Status.RECIEVED, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Turunuz için değişiklik isteğiniz bize ulaştı. En yakın zamanda size geri dönüş yapacağız. {pass}  :::: {tour_id}"),
                                     Status.APPROVAL, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Turunuz için değişiklikler kabul edildi!"),
                                     Status.REJECTION, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Üzülerek bildirmek isteriz ki turunuz için değişiklik isteğiniz reddedildi."),
                                     Status.ERROR, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Başvurunuz alınırken bir hata oluştu ve başvurunuz bize ulaşmadı.\nLütfen bizimle iletişime geçin.")

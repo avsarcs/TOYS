@@ -25,16 +25,14 @@ import server.models.events.TourApplication;
 import server.models.events.TourRegistry;
 import server.models.payment.HourlyRate;
 import server.models.people.Guide;
+import server.models.requests.TourModificationRequest;
 import server.models.review.ReviewRecord;
 import server.models.review.ReviewResponse;
 import server.models.time.ZTime;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EventTourService {
@@ -71,12 +69,19 @@ public class EventTourService {
             }
         }
 
+        Map<String, Object> tourMap = Map.of();
         if (tour.getTour_type() == TourType.GROUP) {
-            return dto.groupTour(tour);
+            tourMap = dto.groupTour(tour);
         } else if (tour.getTour_type() == TourType.INDIVIDUAL) {
-            return dto.individualTour(tour);
+            tourMap = dto.individualTour(tour);
         }
-        return null;
+
+        if (tourMap.get("status").equals("PENDING_MODIFICATION")) {
+            // TODO: this fix
+            tourMap.put("status", "TOYS_WANTS_CHANGE");
+        }
+
+        return tourMap;
     }
 
     public Map<String, Object> getSimpleTour(String auth, String tid) {
@@ -97,6 +102,26 @@ public class EventTourService {
         }
 
         return dto.simpleEvent(tour);
+    }
+
+    public Map<String, Object> getModifications(String auth, String tour_id) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (!authService.checkWithPasskey(auth, tour_id)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view tour info!");
+        }
+
+        TourModificationRequest request = null;
+
+        request = database.requests.getTourModificationRequests().stream().filter(
+                r -> r.getTour_id().equals(tour_id)
+        ).filter(
+                r -> r.getStatus().equals(RequestStatus.PENDING)
+        ).findFirst().orElse(null);
+
+        response = dto.simpleEvent(request, tour_id);
+
+        return response;
     }
 
     public void startTour(String auth, String tourID, String startTime) {

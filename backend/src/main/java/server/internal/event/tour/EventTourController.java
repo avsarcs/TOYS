@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import server.internal.event.EventService;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,10 @@ public class EventTourController {
             eventTourService.endTour(auth, tour_id, end_time);
         }
 
+        @GetMapping("/internal/event/tour/modifications")
+        public Map<String, Object> getModifications(@RequestParam String auth, @RequestParam String tour_id) {
+            return eventTourService.getModifications(auth, tour_id);
+        }
 
         @GetMapping("/internal/event/tour/search")
         public List<Map<String, Object>> searchTours(

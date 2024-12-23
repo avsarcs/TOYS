@@ -20,7 +20,6 @@ import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.DTO.DTOFactory;
-import server.models.DTO.DTO_IndividualTour;
 import server.models.events.FairRegistry;
 import server.models.events.TourApplication;
 import server.models.events.TourRegistry;

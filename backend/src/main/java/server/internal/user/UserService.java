@@ -86,26 +86,32 @@ public class UserService {
         if (category.equals(DashboardCategory.EVENT_INVITATION)) {
             response.addAll(
                     database.requests.getGuideAssignmentRequests()
-                                    .stream().map(
+                            .stream()
+                            .filter(r -> r.getStatus().equals(RequestStatus.PENDING))
+                            .filter(r -> r.getGuide_id().equals(userID))
+                            .map(
                                             r -> {
+                                                Map<String, Object> event = null;
                                                 try {
-                                                    return dto.simpleEvent(database.tours.fetchTour(r.getEvent_id()));
+                                                    event = dto.simpleEvent(database.tours.fetchTour(r.getEvent_id()));
                                                 } catch (Exception e) {
                                                     try {
-                                                        return dto.simpleEvent(database.fairs.fetchFairs().get(r.getEvent_id()));
+                                                        event = dto.simpleEvent(database.fairs.fetchFairs().get(r.getEvent_id()));
                                                     } catch (Exception e2) {
                                                         return null;
                                                     }
                                                 }
+                                                event.put("event_id", r.getEvent_id());
+                                                return event;
                                             }
                             ).toList());
         }
 
         if (category.equals(DashboardCategory.GUIDELESS)) {
-            if (user.getRole().equals(UserRole.ADVISOR)) {
+            if (user.getRole().equals(UserRole.ADVISOR) && user instanceof Advisor) {
                 response.addAll(
                         database.tours.fetchTours().entrySet().stream().filter(
-                                e -> e.getValue().getGuides().isEmpty() && e.getValue().getStarted_at().getDate().getDayOfWeek().equals(((Advisor) user).getResponsibleFor())
+                                e -> e.getValue().getGuides().isEmpty() && ((Advisor) user).getResponsibleFor().contains(e.getValue().getStarted_at().getDate().getDayOfWeek())
                         ).map(
                                 e -> dto.simpleEvent(e.getValue())
                         ).toList()
@@ -114,6 +120,22 @@ public class UserService {
         }
 
         if (category.equals(DashboardCategory.PENDING_APPLICATION)) {
+            if (authService.check(auth, Permission.AR_FAIR_INVITATIONS)) {
+                response.addAll(
+                        database.applications.getAppicationsOfType(ApplicationType.FAIR).entrySet().stream()
+                                .filter(
+                                        e -> e.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
+                                )
+                                .map(e -> {
+                                            if (e.getValue() instanceof FairApplication) {
+                                                return dto.simpleEvent((FairApplication) e.getValue(), e.getKey());
+                                            }
+                                            return null;
+                                        }
+                                ).toList()
+                );
+            }
+            }
             response.addAll(
                     database.applications.getAppicationsOfType(ApplicationType.TOUR).entrySet().stream()
                             .filter(
@@ -129,20 +151,7 @@ public class UserService {
                     ).toList()
             );
 
-            response.addAll(
-                    database.applications.getAppicationsOfType(ApplicationType.FAIR).entrySet().stream()
-                            .filter(
-                                    e -> e.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
-                            )
-                            .map(e -> {
-                                        if (e.getValue() instanceof FairApplication) {
-                                            return dto.simpleEvent((FairApplication) e.getValue(), e.getKey());
-                                        }
-                                        return null;
-                                    }
-                            ).toList()
-            );
-        }
+
 
         if (category.equals(DashboardCategory.PENDING_MODIFICATION)) {
             response.addAll(

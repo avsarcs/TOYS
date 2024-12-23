@@ -13,8 +13,8 @@ public class MailTemplate {
 
     MailTemplate fillTemplate(Map<String, String> form) {
         for (String key : form.keySet()) {
-            subject = subject.replaceAll("{" + key + "}", form.get(key));
-            body = body.replaceAll("{" + key + "}", form.get(key));
+            subject = subject.replaceAll("\\{" + key + "\\}", form.get(key));
+            body = body.replaceAll("\\{" + key + "\\}", form.get(key));
         }
         return this;
     }

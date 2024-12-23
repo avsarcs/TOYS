@@ -51,7 +51,7 @@ public class EventFairService {
         SorensenDice sd = new SorensenDice();
 
         List<Map.Entry<String, FairRegistry>> fairs = db.fairs.fetchFairs().entrySet() .stream()
-                .filter(f -> status.isEmpty() || f.getValue().getFair_status().name().equals(status))
+                .filter(f -> status.isEmpty() || status.contains(f.getValue().getFair_status().name()))
                 .filter(f -> {
                     if (guide_not_assigned.isEmpty()) {
                         return true;
@@ -98,6 +98,19 @@ public class EventFairService {
         if (status.contains(FairStatus.RECEIVED.name())) {
             db.applications.getFairApplications().entrySet().stream()
                     .filter(a -> a.getValue().getStatus() == ApplicationStatus.RECEIVED)
+                    .forEach(a -> {
+                        try {
+                            dtos.add(dto.simpleEvent(a.getValue(), a.getKey()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("Error while converting fair applications to DTOs!");
+                        }
+                    });
+        }
+
+        if (status.contains(FairStatus.REJECTED.name())) {
+            db.applications.getFairApplications().entrySet().stream()
+                    .filter(a -> a.getValue().getStatus() == ApplicationStatus.REJECTED)
                     .forEach(a -> {
                         try {
                             dtos.add(dto.simpleEvent(a.getValue(), a.getKey()));

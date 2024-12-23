@@ -97,7 +97,7 @@ public class UserProfileService {
             );
         }
         Map<String, Object> profile = dto.guide((Guide) user);
-        if (user.getRole().equals(UserRole.ADVISOR)) {
+        if (user.getRole().equals(UserRole.ADVISOR) && user instanceof Advisor) {
             profile.put("responsible_days", ((Advisor) user).getResponsibleFor());
         }
         return profile;
