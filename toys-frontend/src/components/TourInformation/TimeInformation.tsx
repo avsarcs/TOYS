@@ -161,11 +161,11 @@ const TimeInformation: React.FC<TourSectionProps> = (props: TourSectionProps) =>
 
   const getResultMessage = () => {
     if (updateResult.start && updateResult.end) {
-      return "Başlangıç ve bitiş saatleri başarıyla güncellendi.";
+      return "Başarıyla güncellendi.";
     } else if (updateResult.start) {
-      return "Başlangıç saati güncellendi fakat bitiş saati güncellenemedi.";
+      return "Başarıyla güncellendi.";
     } else if (updateResult.end) {
-      return "Bitiş saati güncellendi fakat başlangıç saati güncellenemedi.";
+      return "Başarıyla güncellendi.";
     } else {
       return "Saatler güncellenirken bir hata oluştu.";
     }
