@@ -179,7 +179,8 @@ export interface ManageGuidesWindowProps {
   opened: boolean; // Controls modal visibility
   onClose: () => void; // Closes the modal
   tour: TourData; // ISO 8601 time
-  totalGuidesNeeded: number; // Total number of guides needed for the tour
+  totalGuidesNeeded: number;
+  refreshTour: () => void;// Total number of guides needed for the tour
 }
 
 export interface ManageGuidesWindowPropsFair {
