@@ -34,7 +34,7 @@ const EventInvitationRespondButton: React.FC<EventInvitationRespondButtonProps> 
         notifications.show({
           color: "green",
           title: "İşlem başarılı!",
-          message: "Davet kabul edildi."
+          message: props.response ? "Davet kabul edildi." : "Davet reddedildi."
         });
         props.updateDashboard();
       }

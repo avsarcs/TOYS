@@ -153,7 +153,7 @@ export interface SimpleGuideData {
   id: string,
   name: string,
   role: string,
-  major: string,
+  major: keyof typeof Department,
   experience: string,
 }
 interface Recipient {

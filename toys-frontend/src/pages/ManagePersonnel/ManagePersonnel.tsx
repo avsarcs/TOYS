@@ -16,7 +16,7 @@ import {
 import { UserContext } from '../../context/UserContext';
 import { IconSearch, IconUser, IconStarFilled, IconBriefcase } from '@tabler/icons-react';
 import { SimpleGuideData } from '../../types/data';
-import MockSimpleGuides from "../../mock_data/mock_simple_guides1.json"
+import {Department} from "../../types/enum.ts";
 
 const GUIDES_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/guides");
 
@@ -49,8 +49,6 @@ const ManagePersonnel: React.FC = () => {
       const data = await res.json();
       setGuides(data);
     }
-
-    setGuides(MockSimpleGuides)
   }, [searchQuery, selectedTypes]);
 
   useEffect(() => {
@@ -158,7 +156,7 @@ const ManagePersonnel: React.FC = () => {
                     </Badge>
                   </Group>
                   <Group gap="lg">
-                    <Text size="sm" c="dimmed">Bölüm: {guide.major}</Text>
+                    <Text size="sm" c="dimmed">Bölüm: {Department[guide.major]}</Text>
                     <Text size="sm" c="dimmed">Deneyim: {formatExperience(guide.experience)}</Text>
                   </Group>
                 </Stack>

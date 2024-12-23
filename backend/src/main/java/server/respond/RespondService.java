@@ -290,16 +290,12 @@ public class RespondService {
 
         List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests();
         GuideAssignmentRequest request = requests.stream().filter(
-                r -> r.getEvent_id().equals(event_id)
+                r -> r.getEvent_id().equals(event_id) && r.getGuide_id().equals(JWTService.getSimpleton().decodeUserID(auth))
         ).findFirst().orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
         );
 
         String userID = JWTService.getSimpleton().decodeUserID(auth);
-        if (!request.getGuide_id().equals(userID)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this request!");
-        }
-
         if (!request.getStatus().equals(RequestStatus.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request already responded!");
         }

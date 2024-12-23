@@ -26,9 +26,6 @@ public class AnalyticsToursService {
     @Autowired
     private Database database;
 
-
-
-
     public Map<String, Object> getTours(String auth) {
 
         if (!authService.check(auth, Permission.TOTAL_ANALYTICS_ACCESS)) {

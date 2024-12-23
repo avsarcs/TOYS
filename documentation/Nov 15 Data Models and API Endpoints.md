@@ -670,6 +670,14 @@ response_type:json
                 auth: auth_token
             method: post
             response: -
+        
+        /invites-of
+			parameters:
+				event_id=event_id // which event to get invited guides for
+				auth: auth_token
+			method: get
+			response: SimpleGuideModel[]
+			response_type: json
 
         /remove 
             parameters:
