@@ -58,9 +58,9 @@ public class AnalyticsUniversitiesController {
     public Map<String, Object> getDetails(
             @RequestParam String auth,
             @RequestParam String university_id,
-            @RequestParam String depertment_id
+            @RequestParam String department_name
     ) {
-        return service.getDetails(auth, university_id, depertment_id);
+        return service.getDetails(auth, university_id, department_name);
     }
 
     @PostMapping("internal/analytics/universities/set-rivalry")

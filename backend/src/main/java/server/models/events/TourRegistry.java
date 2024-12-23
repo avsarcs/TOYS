@@ -22,8 +22,24 @@ public class TourRegistry extends TourApplication {
         tour_id = "tour_" + System.currentTimeMillis();
     }
 
+    public TourRegistry(TourApplication application, String id) {
+        super(application);
+
+        this.tour_id = id;
+
+        this.accepted_time = new ZTime("1970-01-01T00:00:00Z");
+        this.guides = new ArrayList<>();
+        this.tour_status = TourStatus.RECEIVED;
+        this.notes = "";
+        this.reviews = new ArrayList<>();
+        this.started_at = new ZTime("1970-01-01T00:00:00Z");
+        this.ended_at = new ZTime("1970-01-01T00:00:00Z");
+        this.classroom = "";
+    }
+
     public TourRegistry(TourApplication application) {
         super(application);
+
         tour_id = "tour_" + System.currentTimeMillis();
 
         this.accepted_time = new ZTime("1970-01-01T00:00:00Z");

@@ -4,16 +4,22 @@ import {Button} from "@mantine/core";
 import {IconCircleCheck, IconCircleX, IconLoader2} from "@tabler/icons-react";
 import {notifications} from "@mantine/notifications";
 import {UserContext} from "../../context/UserContext.tsx";
+import {EventType} from "../../types/enum.ts";
 
 
-const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/tour-invite")
+const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/tour-invite");
+const FAIR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/guide/fair-invite");
 const EventInvitationRespondButton: React.FC<EventInvitationRespondButtonProps> = (props: EventInvitationRespondButtonProps) => {
   const userContext = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
   const onClick = async () => {
       setLoading(true);
-      const acceptUrl = new URL(RESPOND_URL);
+      const acceptUrl = new URL(
+        props.item.event_type === EventType.TOUR
+          ? TOUR_URL
+          : FAIR_URL
+      );
 
       acceptUrl.searchParams.append("auth", await userContext.getAuthToken());
       acceptUrl.searchParams.append("request_id", props.item.event_id);

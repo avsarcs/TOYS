@@ -18,6 +18,14 @@ public class Director extends User {
         return new Director(Guide.nonnull());
     }
 
+    public Director modifyWithDTO(Map<String, Object> dto) {
+        this.setBilkent_id((String) dto.get("id"));
+        this.profile.setContact_info(profile.getContact_info().setEmail((String) dto.get("email")));
+        profile.setName((String) dto.get("fullname"));
+        return this;
+    }
+
+
     protected Director(Map<String, Object> map) {
         super(map);
     }

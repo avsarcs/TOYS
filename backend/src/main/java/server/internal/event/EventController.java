@@ -35,4 +35,9 @@ public class EventController {
     public void removeFromEvent(@RequestParam String auth, @RequestParam String event_id, @RequestParam List<String> guides) {
         eventService.removeGuides(auth, event_id, guides);
     }
+
+    @GetMapping("/internal/event/soon")
+    public List<Map<String, Object>> getSoonEvents(@RequestParam String auth) {
+        return eventService.getSoonEvents(auth);
+    }
 }

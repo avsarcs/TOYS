@@ -89,10 +89,15 @@ public class UserProfileService {
                     "role", user.getRole().name(),
                     "email", user.getProfile().getContact_info().getEmail()
             );
+        } else if (user.getRole() == UserRole.ADMIN) {
+            return Map.of(
+                    "id", id,
+                    "fullname", user.getProfile().getName(),
+                    "role", user.getRole().name()
+            );
         }
         Map<String, Object> profile = dto.guide((Guide) user);
         if (user.getRole().equals(UserRole.ADVISOR)) {
-
             profile.put("responsible_days", ((Advisor) user).getResponsibleFor());
         }
         return profile;

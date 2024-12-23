@@ -53,7 +53,7 @@ const LoginForm : React.FC<LoginFormProps> = (props : LoginFormProps) => {
           notifications.show({
             color: "green",
             title: "Giriş başarılı!",
-            message: "Başarıyle giriş yapıldı. Ana sayfaya yönlendiriliyorsunuz."
+            message: "Başarıyla giriş yapıldı. Ana sayfaya yönlendiriliyorsunuz."
           });
           userContext.setAuthToken(token);
         }
