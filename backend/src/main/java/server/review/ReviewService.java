@@ -67,10 +67,11 @@ public class ReviewService {
 
         EventReview review = dto.reviewCreateModel(reviewMap);
 
-        database.reviews.addReview(review);
+        String id = database.reviews.addReview(review);
 
         ReviewRecord rr = reviewRecord.get(reviewerID);
         rr.setStatus(ReviewResponse.RECEIVED);
+        rr.setReview_id(id);
         reviewRecord.put(reviewerID, rr);
         database.reviews.updateReviewRecords(reviewRecord);
         try {
