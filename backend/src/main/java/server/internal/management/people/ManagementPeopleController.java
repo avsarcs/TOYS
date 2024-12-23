@@ -36,10 +36,9 @@ public class ManagementPeopleController {
     }
 
 
-    @Deprecated
     @GetMapping ("/internal/management/people/applications")
-    public Map<String, Application> getApplications() {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This endpoint is deprecated");
+    public List<Map<String, Object>> getApplications(@RequestParam String auth) {
+        return internalManagementPeopleService.getApplications(auth);
     }
 
     @Deprecated

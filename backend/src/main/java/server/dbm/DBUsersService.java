@@ -30,6 +30,7 @@ public class DBUsersService {
         users.addAll(fetchAdvisors(bilkentID));
         users.addAll(fetchCoordinators(bilkentID));
         users.addAll(fetchDirectors(bilkentID));
+        users.addAll(fetchAdmins(bilkentID));
 
         if (users.size() == 0) {
             return null;
@@ -215,6 +216,7 @@ public class DBUsersService {
         document = user instanceof Advisor ? "advisors" : document;
         document = user instanceof Coordinator ? "coordinators" : document;
         document = user instanceof Director ? "directors" : document;
+        document = user instanceof Administrator ? "admins" : document;
         DocumentReference reference = firestore.collection("people").document(document);
 
         try {
@@ -242,6 +244,8 @@ public class DBUsersService {
         document = user instanceof Advisor ? "advisors" : document;
         document = user instanceof Coordinator ? "coordinators" : document;
         document = user instanceof Director ? "directors" : document;
+
+        System.out.println("Document is [" + document + "]." );
         DocumentReference reference = firestore.collection("people").document(document);
 
         try {

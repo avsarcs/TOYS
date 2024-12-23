@@ -96,33 +96,39 @@ public class AnalyticsHighschoolService {
         details_map.put("ranking", hs.getRanking());
         details_map.put("priority", hs.getPriority());
 
+        SorensenDice sorensenDice = new SorensenDice();
         List<Map<String, Object>> counts_map = new ArrayList<>();
-
         // go through every year, get total student counts for those years
         try {
+            // Get the Bilkent university
+            University bilkent = database.universities.getUniversity("bilkent");
+            // Initialize a map to store the total student counts for each year
+            Map<String, Long> studentCountsByYear = new HashMap<>();
 
-            for (UniversityDepartment department : database.universities.getUniversity("bilkent").getDepartments()) {
+            // Iterate through the departments of Bilkent university
+            for (UniversityDepartment department : bilkent.getDepartments()) {
+                // Iterate through each year of the department
                 for (UniversityDepartmentYear year : department.getYears()) {
-                    for (UniHighschoolRecord data : year.highschool_attendee_count) {
+                    // Sum the totals of the given high school for the specific year
+                    long totalForYear = year.getHighschool_attendee_count().stream()
+                            .filter(record -> sorensenDice.similarity(record.getSchool_name().toLowerCase(), hs.getTitle().toLowerCase()) > 0.8)
+                            .mapToLong(UniHighschoolRecord::getTotal)
+                            .sum();
 
-                        boolean added = false;
-                        for (Map<String, Object> count : counts_map) {
-                            if (count.get("year").equals(year.year)) {
-                                count.put("count", ((Number) count.get("count")).longValue() + data.getTotal());
-                                added = true;
-                                break;
-                            }
-                        }
-                        if (!added) {
-                            Map<String, Object> newCount = new HashMap<>();
-                            newCount.put("year", year.year);
-                            newCount.put("count", data.getTotal());
-                            counts_map.add(newCount);
-                        }
-
-                    }
+                    // Add the total to the map
+                    studentCountsByYear.merge(year.getYear(), totalForYear, Long::sum);
                 }
             }
+
+// Convert the map to a list of maps for the response
+            counts_map = studentCountsByYear.entrySet().stream()
+                    .map(entry -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("year", entry.getKey());
+                        map.put("count", entry.getValue());
+                        return map;
+                    })
+                    .toList();
         } catch (Exception E) {
             E.printStackTrace();
             System.out.println("There was an error while getting student counts for highschools.");

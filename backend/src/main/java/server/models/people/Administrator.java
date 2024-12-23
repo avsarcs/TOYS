@@ -14,6 +14,14 @@ public class Administrator extends User{
 
     }
 
+    public static Administrator nonnull() {
+        return new Administrator(User.nonnull());
+    }
+
+    protected Administrator(User user) {
+        super(user);
+    }
+
     public static Administrator getDefault() {
         Administrator administrator = new Administrator();
         administrator.profile = Profile.getDefault();

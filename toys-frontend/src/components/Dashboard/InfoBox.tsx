@@ -4,9 +4,10 @@ import React, {useMemo} from "react";
 import {DashboardCategory, EventType, EventTypeText, TourType, TourTypeText} from "../../types/enum.ts";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
-import {IconCircleCheck, IconCircleX} from "@tabler/icons-react";
 import EventInvitationRespondButton from "./EventInvitationRespondButton.tsx";
 import ManageGuidesButton from "./ManageGuidesButton.tsx";
+import EventApplicationAcceptButton from "./EventApplicationAcceptButton.tsx";
+import EventApplicationRejectButton from "./EventApplicationRejectButton.tsx";
 
 const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) => {
   const buttons = useMemo(() => {
@@ -25,23 +26,19 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
       case DashboardCategory.PENDING_APPLICATION:
         return (
           <>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconCircleCheck/>}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
+            <EventApplicationAcceptButton item={props.item} updateDashboard={props.updateDashboard}>
               Kabul Et
-            </Button>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconCircleX/>}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
+            </EventApplicationAcceptButton>
+            <EventApplicationRejectButton item={props.item} updateDashboard={props.updateDashboard}>
               Reddet
-            </Button>
+            </EventApplicationRejectButton>
           </>
         );
       case DashboardCategory.GUIDELESS:
         return (
-          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard}/>
+          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard}>
+            Rehberleri Yönet
+          </ManageGuidesButton>
         );
       default: return <></>
     }

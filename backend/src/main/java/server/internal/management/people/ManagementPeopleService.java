@@ -14,6 +14,7 @@ import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.*;
+import server.models.DTO.DTOFactory;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
 import server.models.people.GuideApplication;
@@ -29,6 +30,7 @@ import server.models.requests.Requester;
 import server.models.time.ZTime;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +45,9 @@ public class ManagementPeopleService {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    DTOFactory dto;
 
     public void promoteUser(String auth, String invitee) {
         if (!authService.check(auth, Permission.FIRE_GUIDE_OR_ADVISOR)) {
@@ -189,13 +194,23 @@ public class ManagementPeopleService {
         user.setStatus(UserStatus.INACTIVE);
     }
 
-    public Map<String, Application> getApplications(String authToken) {
-        if (!authService.check(authToken, Permission.AR_GUIDE_APPLICATIONS)) {
+    public List<Map<String, Object>> getApplications(String auth) {
+        if (!authService.check(auth, Permission.AR_GUIDE_APPLICATIONS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view applications");
         }
 
+        List<Map<String, Object>> applications = new ArrayList<>();
+
+        databaseEngine.applications.getGuideApplications().entrySet().stream().filter(
+                entry -> entry.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
+        ).forEach(
+                e -> {
+                    applications.add(dto.guideApplication(e.getValue()));
+                }
+        );
+
         // get and return all applications
-        return databaseEngine.applications.getApplications();
+        return applications;
     }
 
     public List<User> getPeople(String auth) {

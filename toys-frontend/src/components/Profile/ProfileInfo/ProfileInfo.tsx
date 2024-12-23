@@ -74,7 +74,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                     Kişisel Bilgiler
                 </Title>
                 <p><strong>İsim: </strong> {profile.fullname} </p>
-                {(profile.role !== UserRole.COORDINATOR && profile.role !== UserRole.DIRECTOR) ? <p><strong>E-Mail: </strong> {profile.email} </p> : null}
+                <p><strong>E-Mail: </strong> {profile.email} </p>
                 <p><strong>ID: </strong> {profile.id}</p>
                 {( profile.role !== UserRole.COORDINATOR && profile.role !== UserRole.DIRECTOR) ?
                 <><p><strong>Telefon: </strong>{profile.phone}</p>

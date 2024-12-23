@@ -11,6 +11,7 @@ import server.auth.Permission;
 import server.dbm.Database;
 import server.enums.ExperienceLevel;
 import server.enums.roles.UserRole;
+import server.enums.status.ApplicationStatus;
 import server.enums.status.RequestStatus;
 import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
@@ -62,7 +63,7 @@ public class EventTourService {
         if (tour == null) {
             try {
                 TourApplication application = (TourApplication) database.applications.getAppicationsOfType(ApplicationType.TOUR).get(tid);
-                tour = new TourRegistry(application);
+                tour = new TourRegistry(application, tid);
 
                 tour.setTour_id(tid);
             } catch (Exception e) {
@@ -197,12 +198,13 @@ public class EventTourService {
 
         System.out.println("Passkey is: "+ key);
 
+        // ask for a review
         mail.sendMail(
                 tour.getApplicant().getContact_info().getEmail(),
                 Concerning.EVENT_APPLICANT,
                 About.REVIEW,
                 Status.PENDING,
-                Map.of("passkey", key, "tour_id", tourID)
+                Map.of("pass", key, "tour_id", tourID)
         );
 
         database.reviews.updateReviewRecords(records);
@@ -240,7 +242,7 @@ public class EventTourService {
                         tour -> {
                             if (!school_name.isEmpty()) {
                                 try {
-                                    return alg.similarity(school_name.toLowerCase(), database.schools.getHighschoolByID(tour.getApplicant().getSchool()).getTitle().toLowerCase()) > 0.8;
+                                    return alg.similarity(school_name.toLowerCase(), database.schools.getHighschoolByID(tour.getApplicant().getSchool()).getTitle().toLowerCase()) > 0.4;
                                 } catch (Exception e) {
                                     return false;
                                 }
@@ -356,6 +358,27 @@ public class EventTourService {
                 .collect(ArrayList::new,
                         (list, tour) -> list.add(dto.simpleEvent(tour)),
                         ArrayList::addAll);
+
+        if (status.contains(TourStatus.RECEIVED.name())) {
+            database.applications.getTourApplications().entrySet().stream().filter(
+                    entry -> entry.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
+            ).map(
+                    entry -> dto.simpleEvent(entry.getValue(), entry.getKey())
+            ).forEach(
+                    tours::add
+            );
+        }
+
+        if (!school_name.isEmpty()) {
+            tours.sort((t1, t2) -> {
+                try {
+                    return alg.similarity(school_name.toLowerCase(), database.schools.getHighschoolByID((String) t1.get("school")).getTitle().toLowerCase()) >
+                            alg.similarity(school_name.toLowerCase(), database.schools.getHighschoolByID((String) t2.get("school")).getTitle().toLowerCase()) ? -1 : 1;
+                } catch (Exception e) {
+                    return 0;
+                }
+            });
+        }
 
         // return tours
         return tours;

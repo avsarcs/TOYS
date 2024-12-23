@@ -146,12 +146,12 @@ export interface DashboardInfoBoxProps {
   updateDashboard: () => void,
 }
 
-export interface DashboardInfoBoxButtonProps {
+export interface DashboardInfoBoxButtonProps extends OnlyChildrenProps {
   item: SimpleEventData,
   updateDashboard: () => void
 }
 
-export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps, OnlyChildrenProps{
+export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps{
   response: boolean
 }
 

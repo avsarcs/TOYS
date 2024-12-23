@@ -8,7 +8,10 @@ import org.springframework.web.server.ResponseStatusException;
 import server.auth.AuthService;
 import server.auth.Permission;
 import server.dbm.Database;
+import server.enums.status.ApplicationStatus;
+import server.enums.status.FairStatus;
 import server.models.DTO.DTOFactory;
+import server.models.events.FairApplication;
 import server.models.events.FairRegistry;
 import server.models.schools.HighschoolRecord;
 import server.models.time.ZTime;
@@ -85,28 +88,45 @@ public class EventFairService {
         List<Map<String, Object>> dtos = new ArrayList<>();
 
         try {
-            dtos = fairs.stream().map(f -> dto.simpleEvent(f.getValue())).toList();
+            dtos.addAll(fairs.stream().map(f -> dto.simpleEvent(f.getValue())).toList());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error while converting fairs to DTOs!");
             throw new ResponseStatusException(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, "Error while converting fairs to DTOs!");
         }
 
+        if (status.contains(FairStatus.RECEIVED.name())) {
+            db.applications.getFairApplications().entrySet().stream()
+                    .filter(a -> a.getValue().getStatus() == ApplicationStatus.RECEIVED)
+                    .forEach(a -> {
+                        try {
+                            dtos.add(dto.simpleEvent(a.getValue(), a.getKey()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("Error while converting fair applications to DTOs!");
+                        }
+                    });
+        }
+
         return dtos;
     }
 
-    public Map<String, Object> getFair(String auth, String fid) {
+    public Map<String, Object> getFair(String auth, String fair_id) {
         if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to access this");
         }
 
         // get fair
         Map<String, FairRegistry> fairs = db.fairs.fetchFairs();
-        if (!fairs.containsKey(fid)) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Fair not found!");
+        if (!fairs.containsKey(fair_id)) {
+            Map<String, FairApplication> applications = db.applications.getFairApplications();
+            if (!applications.containsKey(fair_id)) {
+                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Fair not found!");
+            }
+            return dto.fair((new FairRegistry(applications.get(fair_id))).setFair_status(FairStatus.RECEIVED));
         }
 
         // return fair
-        return dto.fair(fairs.get(fid));
+        return dto.fair(fairs.get(fair_id));
     }
 }

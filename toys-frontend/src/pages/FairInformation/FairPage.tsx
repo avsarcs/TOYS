@@ -13,6 +13,7 @@ import { FairStatus, UserRole } from "../../types/enum.ts";
 const FAIR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair");
 const ACTION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/fair");
 const CANCEL_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/cancel");
+const INVITED_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/am-invited");
 
 const FairPage: React.FC = () => {
   const userContext = useContext(UserContext);
@@ -119,6 +120,12 @@ const FairPage: React.FC = () => {
       setFair({} as FairData);
     }
   }, [params.fairId, getFair]);
+  
+  useEffect(() => {
+    findUserInvitation().catch((reason) => {
+      setError(reason);
+    });
+  }, [findUserInvitation]);
 
   if (error) {
     throw error;
