@@ -464,7 +464,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
         <>
           <Text size="sm" c="blue" mb="md">Bu turun rehberi sizsiniz!</Text>
           <Stack gap="md">
-            {userContext.user.role === UserRole.GUIDE && (
+            {(userContext.user.role === UserRole.GUIDE || userContext.user.role === UserRole.ADVISOR) && (
               <Group>
                 {tour.status !== "ONGOING" && tour.status !== "FINISHED" && (
                   <Button

@@ -16,6 +16,7 @@ import {
 import { UserContext } from '../../context/UserContext';
 import { IconSearch, IconUser, IconStarFilled, IconBriefcase } from '@tabler/icons-react';
 import { SimpleGuideData } from '../../types/data';
+import { Department } from '../../types/enum';
 
 const GUIDES_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/guides");
 
@@ -86,7 +87,7 @@ const GuidesPage: React.FC = () => {
   const getRoleName = (role: string) => {
     switch (role) {
       case 'TRAINEE':
-        return 'Amatör Rehber';
+        return 'Acemi Rehber';
       case 'GUIDE':
         return 'Rehber';
       case 'ADVISOR':
@@ -94,6 +95,13 @@ const GuidesPage: React.FC = () => {
       default:
         return role;
     }
+  };
+
+  const getMajorName = (major: string): string => {
+    const departmentKey = Object.keys(Department).find(
+      key => Department[key as keyof typeof Department] === major || key === major
+    );
+    return departmentKey ? Department[departmentKey as keyof typeof Department] : major;
   };
 
   return (
@@ -116,7 +124,7 @@ const GuidesPage: React.FC = () => {
             <Chip.Group multiple value={selectedTypes} onChange={setSelectedTypes}>
               <Group>
                 <Chip value="TRAINEE" color="blue" variant="outline">
-                  Amatör Rehberler
+                  Acemi Rehberler
                 </Chip>
                 <Chip value="GUIDE" color="blue" variant="outline">
                   Rehberler
@@ -154,7 +162,7 @@ const GuidesPage: React.FC = () => {
                     </Badge>
                   </Group>
                   <Group gap="lg">
-                    <Text size="sm" c="dimmed">Bölüm: {guide.major}</Text>
+                    <Text size="sm" c="dimmed">Bölüm: {getMajorName(guide.major)}</Text>
                     <Text size="sm" c="dimmed">Deneyim: {formatExperience(guide.experience)}</Text>
                   </Group>
                 </Stack>

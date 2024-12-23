@@ -52,7 +52,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
       </Group>
 
       {
-        props.tour.status == "CONFIRMED" && <GuideStatus tour={props.tour} refreshTour={props.refreshTour} />
+        (props.tour.status == "CONFIRMED" || props.tour.status == "ONGOING") && <GuideStatus tour={props.tour} refreshTour={props.refreshTour} />
       }
     </Stack>
   );

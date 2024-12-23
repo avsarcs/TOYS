@@ -40,6 +40,7 @@ import FairPage from "./pages/FairInformation/FairPage.tsx";
 import Admin from "./pages/Admin/Admin.tsx";
 import UserManual from "./pages/UserManual/UserManual.tsx";
 import GuideInvitations from "./pages/GuideInvitations/GuideInvitations.tsx";
+import GuidesPage from "./pages/GuidesPage/GuidesPage.tsx";
 
 function App() {
   dayjs.locale("tr");
@@ -87,6 +88,7 @@ function App() {
             <Route path="/admin" element={<CheckLogin required redirect children={<Admin />}/>}/>
             <Route path="/user-manual" element={<CheckLogin required redirect children={<UserManual />}/>}/>
             <Route path="/guide-invitations" element={<CheckLogin required redirect children={<GuideInvitations />}/>}/>
+            <Route path="/guides" element={<CheckLogin required redirect children={<GuidesPage />}/>}/>          
           </Routes>
         </main>
       </div>

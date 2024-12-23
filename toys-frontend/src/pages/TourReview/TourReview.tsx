@@ -14,9 +14,17 @@ import {
     Center,
     Collapse,
     Alert,
-    Group
+    Group,
+    Modal
 } from '@mantine/core';
-import { IconChevronDown, IconChevronUp, IconInfoCircle, IconMessageCircle } from '@tabler/icons-react';
+import { 
+    IconChevronDown, 
+    IconChevronUp, 
+    IconInfoCircle, 
+    IconMessageCircle,
+    IconCircleCheck,
+    IconCircleX
+} from '@tabler/icons-react';
 
 interface TourToReviewModel {
     tour_id: string;
@@ -45,7 +53,7 @@ interface GuideReview {
     comment: string;
 }
 
-const REVIEW_DETAILS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review/tour-details");
+const REVIEW_DETAILS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review/tour_details");
 const SUBMIT_REVIEW_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review/tour");
 
 const TourReviewPage: React.FC = () => {
@@ -57,6 +65,7 @@ const TourReviewPage: React.FC = () => {
     const [hasOpenedOptionalFields, setHasOpenedOptionalFields] = useState<boolean>(false);
     const [showPrompt, setShowPrompt] = useState<boolean>(false);
     const [hasComments, setHasComments] = useState<boolean>(false);
+    const [submissionStatus, setSubmissionStatus] = useState<'success' | 'error' | null>(null);
 
     const [tourScore, setTourScore] = useState<number>(5);
     const [tourComment, setTourComment] = useState<string>('');
@@ -107,12 +116,6 @@ const TourReviewPage: React.FC = () => {
         setHasComments(hasAnyComments);
     }, [tourComment, guideReviews]);
 
-/*    const handleOptionalFieldsToggle = () => {
-        setOptionalFieldsOpen(!optionalFieldsOpen);
-        setHasOpenedOptionalFields(true);
-        setShowPrompt(false);
-    };*/
-
     const handleGuideReviewChange = (index: number, field: 'score' | 'comment', value: number | string): void => {
         setGuideReviews(prev => {
             const newReviews = [...prev];
@@ -125,13 +128,14 @@ const TourReviewPage: React.FC = () => {
     };
 
     const handleSubmitInitial = () => {
-        if (!hasOpenedOptionalFields) {
-            setOptionalFieldsOpen(false);
-            setShowPrompt(true);
+        if (hasOpenedOptionalFields || optionalFieldsOpen) {
+            handleFinalSubmit();
             return;
         }
-
-        handleFinalSubmit();
+    
+        // Otherwise, show the prompt
+        setOptionalFieldsOpen(false);
+        setShowPrompt(true);
     };
 
     const handleYorumYap = () => {
@@ -146,7 +150,6 @@ const TourReviewPage: React.FC = () => {
         try {
             setIsLoading(true);
 
-            // Create review models array
             const reviews: ReviewCreateModel[] = [
                 // Tour review
                 {
@@ -185,10 +188,9 @@ const TourReviewPage: React.FC = () => {
                 throw new Error('Failed to submit review');
             }
 
-            // Handle successful submission (you might want to redirect or show a success message)
-            
+            setSubmissionStatus('success');
         } catch (err) {
-            setError('Failed to submit review. Please try again later.');
+            setSubmissionStatus('error');
         } finally {
             setIsLoading(false);
         }
@@ -201,6 +203,45 @@ const TourReviewPage: React.FC = () => {
             year: 'numeric'
         });
     };
+
+    const StatusModal = () => (
+        <Modal
+            opened={submissionStatus !== null}
+            onClose={() => {}} // Empty function to make it unclosable
+            withCloseButton={false}
+            centered
+            size="md"
+            className="text-center"
+        >
+            <Stack align="center" gap="lg" py="xl">
+                {submissionStatus === 'success' ? (
+                    <>
+                        <IconCircleCheck size={80} className="text-green-500" />
+                        <Stack gap="md">
+                            <Text size="xl" fw={600} className="text-gray-800">
+                                İncelemeniz Başarıyla Gönderildi!
+                            </Text>
+                            <Text size="md" className="text-gray-600">
+                                Değerli geri bildiriminiz için teşekkür ederiz.
+                            </Text>
+                        </Stack>
+                    </>
+                ) : (
+                    <>
+                        <IconCircleX size={80} className="text-red-500" />
+                        <Stack gap="md">
+                            <Text size="xl" fw={600} className="text-gray-800">
+                                İnceleme Gönderilemedi
+                            </Text>
+                            <Text size="md" className="text-gray-600">
+                                Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.
+                            </Text>
+                        </Stack>
+                    </>
+                )}
+            </Stack>
+        </Modal>
+    );
 
     if (error) {
         return (
@@ -234,7 +275,6 @@ const TourReviewPage: React.FC = () => {
         );
     };
 
-    // Rest of the component remains the same...
     return (
         <Container size="sm" className="py-8 relative max-w-2xl mx-auto">
             <LoadingOverlay visible={isLoading} />
@@ -383,6 +423,7 @@ const TourReviewPage: React.FC = () => {
 
                 {renderSubmitButton()}
             </Stack>
+            <StatusModal />
         </Container>
     );
 };
