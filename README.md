@@ -1,6 +1,16 @@
 # Bilkent TOYS (Tanıtım Ofisi Yönetim Sistemi)
+![GitHub Release](https://img.shields.io/github/v/release/avsarcs/TOYS)
+
+## Team
+@begumfilizoz
+@cantucer
+@avsarcs
+@rusenaliyilmaz
+@steins-ut
+@oegecelik
+
 ## Description
-Bilkent TOYS is a system for guides, advisors, coordinators and heads to communicate, plan and participate in university tours and fairs, submitted by high school councelors and manage private tours for students
+Bilkent TOYS is a system for guides, advisors, coordinators and directors to communicate, plan and participate in university tours and fairs, submitted by high school councelors and manage private tours for students
 ## Features
 ### Form Application Interface for highschools to apply for tours
 Highschools can apply through a form, in which they choose their highschool from a list, choose their timeslot, give their contact information and information about how many students are coming.
