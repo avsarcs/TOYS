@@ -122,7 +122,7 @@ const HighSchoolsList: React.FC = () => {
                   Liseler
               </Title>
               <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                  Göç kaynağı.
+                  Sistemde kayıtlı olan liselerin listesi.
               </Title>
               <Space h="xl"/>
               <Divider className="border-gray-400"/>

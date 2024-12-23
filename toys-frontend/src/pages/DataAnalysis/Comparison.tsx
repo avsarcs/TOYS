@@ -351,7 +351,7 @@ const Comparison: React.FC = () => {
                 Üniversite Karşılaşırma Sistemi
             </Title>
             <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Veriler ortada.
+                Bilkent ile diğer üniversiteleri karşılaştırın.
             </Title>
             <Space h="xl"/>
             <Divider className="border-gray-400"/>
