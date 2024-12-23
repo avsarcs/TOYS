@@ -32,6 +32,8 @@ const EventApplicationRejectButton: React.FC<DashboardInfoBoxButtonProps> = (pro
       const rejectRes = await fetch(rejectUrl, {
         method: "POST",
       });
+
+      props.updateDashboard();
       if(rejectRes.ok) {
         notifications.show({
           color: "green",

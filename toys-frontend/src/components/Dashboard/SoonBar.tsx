@@ -1,5 +1,5 @@
 import {DashboardUrgentBarProps} from "../../types/designed.ts";
-import {Button, Group, Text} from "@mantine/core";
+import {Button, Group, Paper, Text} from "@mantine/core";
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {IconAlertCircle} from "@tabler/icons-react";
 import {UserContext} from "../../context/UserContext.tsx";
@@ -125,26 +125,28 @@ const SoonBar: React.FC<DashboardUrgentBarProps> = (props: DashboardUrgentBarPro
   }
 
   return (
-    <Group p="md" className="bg-gray-300 border border-black" justify="space-between">
-      <Group>
-        <IconAlertCircle size={36} /><Text span>Şu an devam eden bir turunuz var</Text>
-      </Group>
-      <Group gap="xs">
-        <Group gap="xs">
-          {buttons}
+    <Paper withBorder shadow={"md"}>
+      <Group p="md" justify="space-between">
+        <Group>
+          <IconAlertCircle size={36} /><Text span>Şu an devam eden bir turunuz var</Text>
         </Group>
-        <Button onClick={() => { props.setItem(item); props.setCategory(DashboardCategory.OWN_EVENT); }}>
-          Göster
-        </Button>
-        <Button component={Link} to={`/${item.event_type.toLowerCase()}/${item.event_id}`}>
-          {
-            item.event_type === EventType.TOUR
-              ? "Tura Git"
-              : "Fuara Git"
-          }
-        </Button>
+        <Group gap="xs">
+          <Group gap="xs">
+            {buttons}
+          </Group>
+          <Button onClick={() => { props.setItem(item); props.setCategory(DashboardCategory.OWN_EVENT); }}>
+            Göster
+          </Button>
+          <Button component={Link} to={`/${item.event_type.toLowerCase()}/${item.event_id}`}>
+            {
+              item.event_type === EventType.TOUR
+                ? "Tura Git"
+                : "Fuara Git"
+            }
+          </Button>
+        </Group>
       </Group>
-    </Group>
+    </Paper>
   );
 }
 

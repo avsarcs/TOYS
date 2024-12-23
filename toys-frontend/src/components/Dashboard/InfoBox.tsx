@@ -65,7 +65,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
   return (
     <Stack justify="flex-start" align="center">
       <Title order={2} fw={700} className="text-blue-700 font-main">
-        Detailed Information
+        Detaylı Bilgi
       </Title>
       <Card ta="center" p="xl" withBorder className="w-full bg-blue-200 rounded-xl">
         <Center>
