@@ -13,7 +13,7 @@ const TourStatusText = {
   REJECTED: "Reddedildi",
   CANCELLED: "İptal Edildi",
   ONGOING: "Devam Ediyor",
-  FINISHED: "Bitti"
+  FINISHED: "Tamamlandı"
 } as const;
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
@@ -22,7 +22,7 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
     switch (props.tour.status) {
       case "CONFIRMED":
       case "FINISHED":
-        return "text-green-500";
+        return "text-purple-500";
       case "REJECTED":
       case "CANCELLED":
         return "text-red-500";

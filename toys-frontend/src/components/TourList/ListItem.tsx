@@ -12,7 +12,7 @@ const statusColorMap = {
   REJECTED: "red",
   CANCELLED: "gray",
   ONGOING: "indigo",
-  FINISHED: "teal"
+  FINISHED: "purple"
 } as const;
 
 const ListItem: React.FC<TourListItemProps> = (props: TourListItemProps) => {

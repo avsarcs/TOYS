@@ -182,7 +182,7 @@ const TourListPage: React.FC = () => {
               <Chip color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
               <Chip color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
               <Chip color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
-              <Chip color="blue" variant="outline" value="FINISHED">Bitti</Chip>
+              <Chip color="blue" variant="outline" value="FINISHED">Tamamlandı</Chip>
             </Group>
           </Chip.Group>
           <Button onClick={handleClearFilters}>Temizle</Button>
