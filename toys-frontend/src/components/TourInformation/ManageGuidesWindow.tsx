@@ -37,6 +37,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
   onClose,
   tour,
   totalGuidesNeeded,
+  refreshTour
 }) => {
   const [guides, setGuides] = useState<SimpleGuideData[]>([]);
   const [trainees, setTrainees] = useState<SimpleGuideData[]>([]);
@@ -211,6 +212,7 @@ const ManageGuidesWindow: React.FC<ManageGuidesWindowProps> = ({
       });
     } finally {
       setIsSaving(false);
+      refreshTour();
     }
   };
 

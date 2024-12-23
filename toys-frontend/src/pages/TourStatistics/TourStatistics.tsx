@@ -1,13 +1,11 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
 import DaysGraph from "../../components/TourStatistics/DaysGraph.tsx";
 import StatusGraph from "../../components/TourStatistics/StatusGraph.tsx";
 import CitiesGraph from "../../components/TourStatistics/CitiesGraph.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 
-// Container styling
-
-//test data
+// Default data
 const defaultDays: { [key: string]: number } = {"Yükleniyor...": 1};
 const defaultStatuses: { [key: string]: number } = {"Yükleniyor...": 1};
 const defaultCities: { [key: string]: number } = {"Yükleniyor...": 1};
@@ -133,6 +131,7 @@ const BilkentStudentDetails: React.FC = () => {
                     </Box>
                     <Stack gap="0" bg="white">
                         {GraphsContainer}
+                        <Space h="xl"/>
                     </Stack>
                 </>
                 :
