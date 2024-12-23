@@ -34,7 +34,7 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour
   const totalGuidesNeeded = Math.ceil(tour.visitor_count / VISITOR_PER_GUIDE);
 
   const [invitedGuides, setInvitedGuides] = useState<SimpleGuideData[]>([]);
-  const [loadingInvites, setLoadingInvites] = useState(false);
+  const [, setLoadingInvites] = useState(false);
 
   const fetchInvitedGuides = useCallback(async () => {
     if (!tour.tour_id) return;
