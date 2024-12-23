@@ -134,7 +134,6 @@ public class UserService {
                                 ).toList()
                 );
             }
-            }
             response.addAll(
                     database.applications.getAppicationsOfType(ApplicationType.TOUR).entrySet().stream()
                             .filter(
@@ -149,6 +148,7 @@ public class UserService {
                             }
                     ).toList()
             );
+        }
 
 
 
@@ -314,7 +314,8 @@ public class UserService {
         ).toList();
 
         people = people.stream().filter(
-                p -> tours.stream().anyMatch(t -> t.getGuides().contains(p.getBilkent_id())) || fairs.stream().anyMatch(f -> f.getGuides().contains(p.getBilkent_id())
+                p -> !(tours.stream().anyMatch(t -> t.getGuides().contains(p.getBilkent_id()))
+                        && fairs.stream().anyMatch(f -> f.getGuides().contains(p.getBilkent_id()))
                 )).toList();
 
         SorensenDice alg = new SorensenDice();

@@ -73,7 +73,12 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
             throw new Error("No high school found.");
         }
 
-        fetched.students = fetched.students.filter((student: { count: number }) => student.count > 0);
+        fetched.tours = fetched.tours.map((tour: { type?: string }) => {
+            if (!tour.type) {
+                tour.type = "Tur";
+            }
+            return tour;
+        });
 
         setData(fetched);
         setFetchedData(true);
@@ -118,7 +123,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     const ToursTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+        <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bu Okul İçin Düzenlenmiş Turlar
         </Text>
         <Space h="xs" />
@@ -128,7 +133,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     const StudentsTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+        <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bilkent'e Gelen Mezunlar
         </Text>
         <Space h="xs" />

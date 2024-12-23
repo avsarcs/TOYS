@@ -21,7 +21,7 @@ const TIME_SLOTS: TimeSlot[] = [
   { start: '10:00', end: '12:00' },
   { start: '13:00', end: '15:00' },
   { start: '14:00', end: '16:00' },
-  { start: '15:00', end: '19:00' },
+  { start: '15:00', end: '17:00' },
 ];
 
 const TimeSlotStage: React.FC<GroupApplicationStageProps | IndividualApplicationStageProps> = ({

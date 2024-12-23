@@ -1,19 +1,50 @@
-users:
-    guides: {}
-    advisors: {}
-    coordinators: []
-    directors: []
-    profiles: {
-        "id": PROFILE_OBJ
-    }
-requests:
-    tour_change_requests: {}
-    guide_assign_requests: {}
-    guide_fair_invites: {}
-
-highschools: []
-
-applications:
-    advisors: []
-    tours: []
-    fairs: []
+applications
+    fairs
+        {fairs:}
+    guides
+        {guides:}
+    tours
+        {tours:}
+auth
+    passkeys
+        {passkeys:}
+    tokens
+        {tokens:}
+edu
+    highschools
+        {highschools:}
+events
+    fairs
+        {fairs:}
+    tours
+        {tours:}
+payment
+    timesheet
+        {rates:[]}
+people
+    advisors
+        {advisors:}
+    guides
+        {students:}
+    directors
+        {users:}
+    admins
+        {admins:}
+    coordinators
+        {coordinators:}
+requests
+    assignment
+        {assignment:}
+    modification
+        {modification:}
+    promotion
+        {promotion:}
+    tour_modification
+        {tour_modification:}
+    withdrawal
+        {withdrawal:}
+reviews
+    fairs
+        {fairs:}
+    tours
+        {tours:}
