@@ -379,7 +379,7 @@ public class EventTourService {
                         (list, tour) -> list.add(dto.simpleEvent(tour)),
                         ArrayList::addAll);
 
-        if (status.contains(TourStatus.RECEIVED.name())) {
+        if (status.isEmpty() || status.contains(TourStatus.RECEIVED.name())) {
             database.applications.getTourApplications().entrySet().stream().filter(
                     entry -> entry.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
             ).map(
