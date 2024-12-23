@@ -25,7 +25,7 @@ public class UserController {
 
     // TODO: guide recommendation algo here
     @GetMapping("/internal/user/available-guides")
-    public List<Map<String, Object>> getAvailableGuides(@RequestParam String auth, @RequestParam DTO_UserType type, @RequestParam String time) {
+    public List<Map<String, Object>> getAvailableGuides(@RequestParam String auth, @RequestParam String type, @RequestParam String time) {
         return userService.getAvailableGuides(auth, type, time);
     }
 

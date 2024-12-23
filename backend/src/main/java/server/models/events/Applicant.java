@@ -13,6 +13,16 @@ public class Applicant {
 
     }
 
+    public Map<String,Object> asMap() {
+        return Map.of(
+                "name", name,
+                "contact_info", contact_info.asMap(),
+                "role", role.name(),
+                "school", school,
+                "notes", notes
+        );
+    }
+
     protected Applicant(Map<String, Object> map) {
         this.name = (String) map.get("name");
         this.contact_info = ContactInfo.fromMap((Map<String, Object>) map.get("contact_info"));

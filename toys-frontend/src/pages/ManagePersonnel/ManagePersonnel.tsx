@@ -18,7 +18,6 @@ import {
 import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { UserContext } from '../../context/UserContext';
-import { UserRole } from '../../types/enum';
 import { IconSearch, IconUser, IconStarFilled, IconBriefcase } from '@tabler/icons-react';
 import { SimpleGuideData } from '../../types/data';
 import { Department } from '../../types/enum.ts';

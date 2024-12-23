@@ -82,7 +82,7 @@ function App() {
             <Route path="/tourstatistics" element={<CheckLogin required redirect children={<TourStatistics />}/>}/>
             <Route path="/manage-personnel" element={<CheckLogin required redirect children={<ManagePersonnel />}/>}/>
             <Route path="/applicant-respond/:passkey/:tour_id" element={<ApplicantRespond />} />
-            <Route path="/applicant-request/:passkey" element={<ApplicantRequest />}/>
+            <Route path="/applicant-request/:passkey/:tour_id" element={<ApplicantRequest />}/>
             <Route path="/change-hourly-rate" element={<CheckLogin required redirect children={<ChangeHourlyRate />}/>}/>
             <Route path="/contact" element={<Contact />}/>
             <Route path="/admin" element={<CheckLogin required redirect children={<Admin />}/>}/>

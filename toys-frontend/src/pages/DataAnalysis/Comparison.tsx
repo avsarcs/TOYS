@@ -8,7 +8,7 @@ import {UserContext} from "../../context/UserContext.tsx";
 
 // Default data
 const defaultUniversities: {name: string, id: string}[] = [
-    { name: "Yükleniyor...", id: "1" },
+    { name: "Yükleniyor...", id: "" },
 ];
 const defaultBilkentDepartments = ["Yükleniyor..."];
 const defaultOtherDepartments = ["Yükleniyor..."];

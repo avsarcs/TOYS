@@ -32,10 +32,8 @@ import server.models.requests.Request;
 import server.models.requests.TourModificationRequest;
 import server.models.time.ZTime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -67,17 +65,18 @@ public class UserService {
 
         User user = database.people.fetchUser(userID);
 
+        List<Object> sortby = List.of(TourStatus.CONFIRMED, TourStatus.ONGOING, FairStatus.ONGOING, FairStatus.CONFIRMED);
         if (category.equals(DashboardCategory.OWN_EVENT)) {
             response.addAll(
                     database.tours.fetchTours().entrySet().stream().filter(
-                            e -> e.getValue().getGuides().contains(userID)
+                            e -> e.getValue().getGuides().contains(userID) && sortby.contains(e.getValue().getTourStatus())
                     ).map(
                             e -> dto.simpleEvent(e.getValue())
                     ).toList()
             );
             response.addAll(
                     database.fairs.fetchFairs().entrySet().stream().filter(
-                            e -> e.getValue().getGuides().contains(userID)
+                            e -> e.getValue().getGuides().contains(userID) && sortby.contains(e.getValue().getFair_status())
                     ).map(
                             e -> dto.simpleEvent(e.getValue())
                     ).toList()
@@ -284,8 +283,7 @@ public class UserService {
         return guides;
     }
 
-    public List<Map<String,Object>> getAvailableGuides(String auth, DTO_UserType type, String timeString) {
-        List<Map<String, Object>> guides = new ArrayList<>();
+    public List<Map<String,Object>> getAvailableGuides(String auth, String type, String timeString) {
         // validate jwt token
         if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
@@ -294,49 +292,53 @@ public class UserService {
         List<Guide> people = database.people.fetchGuides(null);
         people.addAll(database.people.fetchAdvisors(null));
 
-        for (Guide guide : people) {
-            if (type == DTO_UserType.TRAINEE) {
-                if (guide.getExperience().getExperienceLevel_level() == ExperienceLevel.TRAINEE) {
-                    guides.add(dto.simpleGuide(guide));
+        people = people.stream().filter(
+                g -> {
+                    if (type.equals("TRAINEE"))
+                        return g.getRole().equals(UserRole.GUIDE) && g.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE);
+                    else if (type.equals("GUIDE"))
+                        return g.getRole().equals(UserRole.GUIDE) && !g.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE);
+                    else
+                        return g.getRole().equals(UserRole.ADVISOR);
                 }
-            } else if (type == DTO_UserType.GUIDE) {
-                if (guide.getExperience().getExperienceLevel_level() != ExperienceLevel.TRAINEE) {
-                    guides.add(dto.simpleGuide(guide));
-                }
-            }
-        }
+        ).toList();
 
         ZTime time = new ZTime(timeString);
 
-        // now do a time check and see if they are available
-        Map<String,TourRegistry> tours = database.tours.fetchTours();
-        for (TourRegistry tour : tours.values()) {
-            if (tour.getTourStatus() == TourStatus.CONFIRMED) {
-                for (Guide guide : people) {
+        List<TourRegistry> tours = database.tours.fetchTours().values().stream().filter(
+                tourRegistry -> tourRegistry.getTourStatus().equals(TourStatus.CONFIRMED) && !tourRegistry.getAccepted_time().inRange(time, 2)
+        ).toList();
 
-                    if (tour.getGuides().contains(guide.getBilkent_id())) {
-                        if (tour.getAccepted_time().inRange(time, 1)) {
-                            guides.remove(dto.simpleGuide(guide));
+        List<FairRegistry> fairs = database.fairs.fetchFairs().values().stream().filter(
+                fairRegistry -> fairRegistry.getFair_status().equals(FairStatus.CONFIRMED) && !fairRegistry.getStarts_at().inRange(time, 24)
+        ).toList();
+
+        people = people.stream().filter(
+                p -> tours.stream().anyMatch(t -> t.getGuides().contains(p.getBilkent_id())) || fairs.stream().anyMatch(f -> f.getGuides().contains(p.getBilkent_id())
+                )).toList();
+
+        SorensenDice alg = new SorensenDice();
+
+        people = people.stream().sorted(
+                (p,o) -> {
+                    int total = 0;
+                    if (p.getExperience().getExperienceLevel_level().equals(o.getExperience().getExperienceLevel_level())) {
+                        total += 0;
+                    } else if (p.getExperience().getExperienceLevel_level().equals(ExperienceLevel.SENIOR)) {
+                        total += 1;
+                    } else if (p.getExperience().getExperienceLevel_level().equals(ExperienceLevel.JUNIOR)) {
+                        if (o.getExperience().getExperienceLevel_level().equals(ExperienceLevel.SENIOR)) {
+                            total -= 1;
+                        } else {
+                            total += 1;
                         }
+                    } else if (p.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)) {
+                        total -= 1;
                     }
-                }
-            }
-        }
+                    return total;
+                }).toList();
 
-        Map<String, FairRegistry> fairs = database.fairs.fetchFairs();
-        for (FairRegistry fair : fairs.values()) {
-            if (fair.getFair_status() == FairStatus.CONFIRMED) {
-                for (Guide guide : people) {
-                    if (fair.getGuides().contains(guide.getBilkent_id())) {
-                        if (fair.getStarts_at().inRange(time, 24)) {
-                            guides.remove(dto.simpleGuide(guide));
-                        }
-                    }
-                }
-            }
-        }
-
-        return guides;
+        return people.stream().map(dto::simpleGuide).toList();
     }
 
     public boolean amEnrolled(String auth, String event_id) {

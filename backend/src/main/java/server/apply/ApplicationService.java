@@ -283,9 +283,13 @@ public class ApplicationService {
         TourModificationRequest request = new TourModificationRequest();
         request.setModifications(modifications);
         request.setRequested_at(new ZTime(ZonedDateTime.now()));
-        request.setRequested_by(new Requester().setBilkent_id(requester).setContactInfo(
-                requester.isEmpty() ? modifications.getApplicant().getContact_info() : db.people.fetchUser(requester).getProfile().getContact_info()
-        ));
+        try {
+            request.setRequested_by(new Requester().setBilkent_id(requester).setContactInfo(
+                    requester.isEmpty() ? modifications.getApplicant().getContact_info() : db.people.fetchUser(requester).getProfile().getContact_info()
+            ));
+        } catch (Exception E) {
+            request.setRequested_by(new Requester().setBilkent_id(requester).setContactInfo(modifications.getApplicant().getContact_info()));
+        }
         request.setTour_id(tourID);
         request.setType(RequestType.TOUR_MODIFICATION);
         request.setNotes(modifications.getNotes());

@@ -30,8 +30,8 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
       {
         props.loading
           ?
-          <Box pos="relative">
-            <LoadingOverlay className="rounded-md" h="50vh"
+          <Box className="relative flex-grow flex-shrink basis-2/3">
+            <LoadingOverlay className="rounded-md" h="70vh"
                             visible zIndex={10}
                             overlayProps={{ blur: 1, color: "#444", opacity: 0.4 }}/>
           </Box>

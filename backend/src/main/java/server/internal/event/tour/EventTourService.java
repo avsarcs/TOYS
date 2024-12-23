@@ -29,6 +29,7 @@ import server.models.requests.TourModificationRequest;
 import server.models.review.ReviewRecord;
 import server.models.review.ReviewResponse;
 import server.models.time.ZTime;
+import server.review.ReviewService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -50,6 +51,9 @@ public class EventTourService {
 
     @Autowired
     MailServiceGateway mail;
+
+    @Autowired
+    ReviewService reviewService;
 
     public Object getTour(String auth, String tid) {
         if (!authService.checkWithPasskey(auth, tid, Permission.VIEW_TOUR_INFO)) {
@@ -77,8 +81,16 @@ public class EventTourService {
         }
 
         if (tourMap.get("status").equals("PENDING_MODIFICATION")) {
-            // TODO: this fix
-            tourMap.put("status", "TOYS_WANTS_CHANGE");
+            TourModificationRequest tmr =  database.requests.getTourModificationRequests().stream().filter(
+                    r -> r.getTour_id().equals(tid)
+            ).findFirst().orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Modification request not found!")
+            );
+            if (tmr.getRequested_by().getBilkent_id().isEmpty()) {
+                tourMap.put("status", "APPLICANT_WANTS_CHANGE");
+            } else {
+                tourMap.put("status", "TOYS_WANTS_CHANGE");
+            }
         }
 
         return tourMap;
@@ -214,16 +226,7 @@ public class EventTourService {
 
         database.tours.updateTour(tour, tourID);
 
-        // Create review thingy
-        Map<String, ReviewRecord> records = database.reviews.getReviewRecords();
-        String key = UUID.randomUUID().toString();
-        while (records.containsKey(key)) {
-            key = UUID.randomUUID().toString();
-        }
-
-        records.put(key, new ReviewRecord().setReview_id("").setStatus(ReviewResponse.PENDING).setReview_id("").setEvent_id(tourID));
-
-        System.out.println("Passkey is: "+ key);
+        String pass = reviewService.markForReview(tourID);
 
         // ask for a review
         mail.sendMail(
@@ -231,10 +234,9 @@ public class EventTourService {
                 Concerning.EVENT_APPLICANT,
                 About.REVIEW,
                 Status.PENDING,
-                Map.of("pass", key, "tour_id", tourID)
+                Map.of("pass", pass, "tour_id", tourID)
         );
 
-        database.reviews.updateReviewRecords(records);
     }
 
     public List<Map<String, Object>> searchTours(
@@ -264,18 +266,11 @@ public class EventTourService {
                 .values()
                 .stream()
                 .filter(
-                        tour -> {
-                            if (!school_name.isEmpty()) {
-                                try {
-                                    return alg.similarity(school_name.toLowerCase(), database.schools.getHighschoolByID(tour.getApplicant().getSchool()).getTitle().toLowerCase()) > 0.4;
-                                } catch (Exception e) {
-                                    return false;
-                                }
-                            } else {
-                                return true;
-                            }
-                        }
-                ).filter(
+                        tour ->
+                            (school_name.isEmpty() || alg.similarity(school_name.toLowerCase(), database.schools.getHighschoolByID(tour.getApplicant().getSchool()).getTitle().toLowerCase()) > 0.4)
+
+                )
+                .filter(
                         tour -> {
 
                             if (!status.isEmpty()) {
@@ -406,6 +401,7 @@ public class EventTourService {
         }
 
         // return tours
+        Collections.reverse(tours);
         return tours;
     }
 

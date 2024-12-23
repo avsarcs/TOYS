@@ -1,4 +1,4 @@
-import {Box, Divider, Flex, Space, Title} from "@mantine/core";
+import {Box, Divider, Flex, Space, StyleProp, Title, useMatches} from "@mantine/core";
 import ItemList from "../../components/Dashboard/ItemList.tsx";
 import InfoBox from "../../components/Dashboard/InfoBox.tsx";
 import React, {useContext, useEffect, useMemo, useState} from "react";
@@ -16,6 +16,10 @@ const Dashboard: React.FC = () => {
   const [items, setItems] = useState<SimpleEventData[]>([]);
   const [item, setItem] = useState<SimpleEventData | null>(null);
   const [currentAbortController, setCurrentAbortController] = useState(new AbortController());
+  const wrap = useMatches({
+    xs: "wrap",
+    md: "nowrap",
+  }) as StyleProp<React.CSSProperties['flexWrap']>;;
 
   const categories = useMemo(() => {
     switch(userContext.user.role) {
@@ -95,7 +99,7 @@ const Dashboard: React.FC = () => {
         <Space h="xl"/>
         <Divider className="border-gray-400"/>
       </Box>
-      <Flex direction="row" gap="xl" p="md" justify="center" wrap="nowrap" className="flex-grow flex-shrink">
+      <Flex direction="row" gap="xl" p="md" justify="center" wrap={wrap} className="flex-grow flex-shrink">
         <Box className="flex-grow flex-shrink">
           <SoonBar setItem={setItem} setCategory={setCategory} />
           <Space h="md"/>
