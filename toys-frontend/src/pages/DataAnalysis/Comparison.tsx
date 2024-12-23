@@ -1,11 +1,10 @@
 import React, {useCallback, useContext} from "react";
-import {Box, Container, Divider, Space, Text, Title, Stack, LoadingOverlay} from '@mantine/core';
+import {Box, Divider, Space, Text, Title, Stack, LoadingOverlay} from '@mantine/core';
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
 import {useLocation} from 'react-router-dom';
 import {UserContext} from "../../context/UserContext.tsx";
-import {notifications} from '@mantine/notifications';
 
 // Default data
 const defaultUniversities: {name: string, id: string}[] = [
@@ -223,6 +222,10 @@ const Comparison: React.FC = () => {
         setOtherData(fetched);
         setFetchedOtherUniversity(true);
     }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        setSelectedOtherUniversity(otherUniversity);
+    }, [otherUniversity]);
 
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
