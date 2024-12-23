@@ -29,8 +29,8 @@ const defaultData = {
             "date": "1970-01-01T00:00:00Z",
             "attendance": 1,
             "type": "Yükleniyor...",
-            "reviewRating": null,
-            "reviewID": "",
+            "review_rating": null,
+            "tour_id": "",
             "contact": "Yükleniyor..."
         }
     ],

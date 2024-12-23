@@ -26,8 +26,8 @@ interface RowData {
     date: string;
     attendance: number;
     type: string;
-    reviewID: string;
-    reviewRating: number | null;
+    tour_id: string;
+    review_rating: number | null;
     contact: string;
 }
 
@@ -68,7 +68,7 @@ function sortData(
 
     return [...data].sort((a, b) => {
         if (payload.reversed) {
-            if (sortBy === 'attendance' || sortBy === 'reviewRating') {
+            if (sortBy === 'attendance' || sortBy === 'review_rating') {
                 return Number(b[sortBy]) - Number(a[sortBy]);
             } else if (sortBy === 'date') {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -77,7 +77,7 @@ function sortData(
             }
         }
 
-        if (sortBy === 'attendance' || sortBy === 'reviewRating') {
+        if (sortBy === 'attendance' || sortBy === 'review_rating') {
             return Number(a[sortBy]) - Number(b[sortBy]);
         } else if (sortBy === 'date') {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -119,7 +119,7 @@ const ToursTable: React.FC<ToursTableProps> = ({ data, openDetails }) => {
             <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{new Date(row.date).toLocaleDateString('en-GB')}</Table.Td>
             <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{row.attendance}</Table.Td>
             <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{row.type}</Table.Td>
-            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.reviewRating, row.reviewID, openDetails)}</Table.Td>
+            <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{renderStars(row.review_rating, row.tour_id, openDetails)}</Table.Td>
             <Table.Td style={{ textAlign: 'center', fontSize: "1rem" }}>{row.contact}</Table.Td>
         </Table.Tr>
     ));
@@ -159,9 +159,9 @@ const ToursTable: React.FC<ToursTableProps> = ({ data, openDetails }) => {
                             </Text>
                         </Th>
                         <Th
-                            sorted={sortBy === 'reviewRating'}
+                            sorted={sortBy === 'review_rating'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('reviewRating')}
+                            onSort={() => setSorting('review_rating')}
                         >
                             <Text size={"xl"}>
                                 Değerlendirme

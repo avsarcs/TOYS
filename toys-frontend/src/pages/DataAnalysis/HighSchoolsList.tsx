@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState, useCallback, useContext} from "react";
-import {Space, Container, Text, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
+import React, {useContext, useCallback} from "react";
+import {Space, Container, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
@@ -16,15 +16,6 @@ const defaultContainerStyle = {
     minWidth: '500px', // Set a minimum width to keep it consistent
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
-};
-const defaultHeaderStyle = {
-    backgroundColor: 'white',
-    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    padding: '10px',
-    display: 'flex',
-    alignItems: 'center', // Center vertically
-    justifyContent: 'center', // Center horizontally
 };
 
 // Default data
@@ -43,6 +34,7 @@ const HighSchoolsList: React.FC = () => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
+    const [fetchedHighschools, setFetchedHighschools] = React.useState(false);
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
     const [selectedHighSchoolName, setSelectedHighSchoolName] = React.useState<any>("");
@@ -83,6 +75,7 @@ const HighSchoolsList: React.FC = () => {
         }
 
         setHighSchools(fetched);
+        setFetchedHighschools(true);
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
@@ -120,22 +113,6 @@ const HighSchoolsList: React.FC = () => {
     </Container>
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
-        {HeaderTextContainer}
-        <Space h="xl"/>
-        {TableFilterContainer}
-        <Space h="xl"/>
-        <Space h="xl"/>
-        {HighSchoolsTableContainer}
-        <Space h="xl"/>
-        <Space h="xl" />
-        {selectedHighSchoolID && selectedHighSchoolID != "" && (
-            <HighSchoolDetails
-                opened={detailsModalOpened}
-                onClose={() => setDetailsModalOpened(false)}
-                highSchoolName={selectedHighSchoolName}
-                highSchoolID={selectedHighSchoolID}
-            />
-        )}
         {
             fetchedHighschools && highSchools.length > 0
               ?
@@ -158,11 +135,12 @@ const HighSchoolsList: React.FC = () => {
             {HighSchoolsTableContainer}
             <Space h="xl"/>
             <Space h="xl" />
-            {selectedHighSchool && (
+            {selectedHighSchoolID && (
                 <HighSchoolDetails
                     opened={detailsModalOpened}
                     onClose={() => setDetailsModalOpened(false)}
-                    highSchool={selectedHighSchool}
+                    highSchoolName={selectedHighSchoolName}
+                    highSchoolID={selectedHighSchoolID}
                 />
             )}
             {
