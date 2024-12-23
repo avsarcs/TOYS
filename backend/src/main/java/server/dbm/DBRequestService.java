@@ -130,7 +130,12 @@ public class DBRequestService {
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tour_modification");
 
             for (Map.Entry<String, Object> entry : data.entrySet()) {
-                requests.add(TourModificationRequest.fromMap((Map<String, Object>) entry.getValue()));
+                try {
+                    requests.add(TourModificationRequest.fromMap((Map<String, Object>) entry.getValue()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Failed to fetch directors from database.");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

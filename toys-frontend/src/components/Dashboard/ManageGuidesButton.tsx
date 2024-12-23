@@ -78,6 +78,7 @@ const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
             onClose={() => { setIsOpen(false); props.updateDashboard(); }}
             tour={eventData as TourData}
             totalGuidesNeeded={Math.ceil((eventData as TourData).visitor_count / VISITOR_PER_GUIDE)}
+            refreshTour={() => {}}
           />
           :
           <ManageFairGuides

@@ -31,6 +31,11 @@ public class EventController {
         eventService.inviteGuidesToEvent(auth, event_id, guides);
     }
 
+    @GetMapping("/internal/event/invites-of")
+    public List<Map<String, Object>> getInvitesOf(@RequestParam String event_id, @RequestParam String auth) {
+        return eventService.getInvitesOf(auth, event_id);
+    }
+
     @PostMapping("/internal/event/remove")
     public void removeFromEvent(@RequestParam String auth, @RequestParam String event_id, @RequestParam List<String> guides) {
         eventService.removeGuides(auth, event_id, guides);

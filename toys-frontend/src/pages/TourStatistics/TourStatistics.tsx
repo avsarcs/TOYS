@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
 import DaysGraph from "../../components/TourStatistics/DaysGraph.tsx";
 import StatusGraph from "../../components/TourStatistics/StatusGraph.tsx";
 import CitiesGraph from "../../components/TourStatistics/CitiesGraph.tsx";

@@ -58,6 +58,30 @@ public class EventService {
     @Autowired
     MailServiceGateway mail;
 
+    public List<Map<String, Object>> getInvitesOf(String auth, String event_id) {
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to view this page!");
+        }
+
+
+        List<Map<String, Object>> invites = new ArrayList<>();
+
+        List<GuideAssignmentRequest> requests = database.requests.getGuideAssignmentRequests().stream().filter(
+                r -> r.getEvent_id().equals(event_id)
+        ).toList();
+
+
+        for (GuideAssignmentRequest request : requests) {
+            try {
+                invites.add(dto.simpleGuide(request.getGuide_id()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return invites;
+    }
+
     public List<Map<String, Object>> getSoonEvents(String auth) {
         if (!authService.check(auth)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to view this page!");
@@ -219,6 +243,8 @@ public class EventService {
         Map<String, TourRegistry> tours = database.tours.fetchTours();
         Map<String, FairRegistry> fairs = database.fairs.fetchFairs();
 
+
+
         if (tours.containsKey(event_id)) {
             for (String guideID : guides) {
                 try {
@@ -245,6 +271,11 @@ public class EventService {
     private void inviteGuideToTour(String tour_id, String guideID, String inviterID) {
         if (database.people.fetchUser(guideID) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guide not found!");
+        }
+
+        if (database.requests.getGuideAssignmentRequests().stream()
+                .anyMatch(r -> r.getEvent_id().equals(tour_id) && r.getGuide_id().equals(guideID))) {
+            return;
         }
 
         // check if tour exists
@@ -302,6 +333,11 @@ public class EventService {
     private void inviteGuideToFair(String fair_id, String guideID, String inviterID) {
         if (database.people.fetchUser(guideID) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guide not found!");
+        }
+
+        if (database.requests.getGuideAssignmentRequests().stream()
+                .anyMatch(r -> r.getEvent_id().equals(fair_id) && r.getGuide_id().equals(guideID))) {
+            return;
         }
         FairRegistry fair;
         // check if tour exists

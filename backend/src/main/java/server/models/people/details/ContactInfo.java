@@ -8,6 +8,14 @@ import java.util.Map;
 public class ContactInfo {
     private String email, phone, address;
 
+    public Map<String, Object> asMap() {
+        return Map.of(
+                "email", email,
+                "phone", phone,
+                "address", address
+        );
+    }
+
     public static ContactInfo nonnull() {
         return new ContactInfo().setEmail("").setAddress("").setPhone("");
     }
