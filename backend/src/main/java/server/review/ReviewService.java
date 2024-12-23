@@ -76,13 +76,18 @@ public class ReviewService {
 
             reviewEvent(reviewerID, event_id, reviewMap);
 
-            mailService.sendMail(
-                    database.people.fetchAdvisorForDay(database.tours.fetchTour(event_id).getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
-                    Concerning.ADVISOR,
-                    About.REVIEW,
-                    Status.RECIEVED,
-                    Map.of("tour_id", event_id)
-            );
+            try {
+                mailService.sendMail(
+                        database.people.fetchAdvisorForDay(database.tours.fetchTour(event_id).getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
+                        Concerning.ADVISOR,
+                        About.REVIEW,
+                        Status.RECIEVED,
+                        Map.of("tour_id", event_id)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid reviewer!");
