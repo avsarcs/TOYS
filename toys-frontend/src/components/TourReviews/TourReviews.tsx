@@ -84,7 +84,7 @@ const TourReviews: React.FC<TourReviewsProps> = ({ tourId }) => {
             key={review.id} 
             shadow="sm" 
             radius="lg" 
-            p="xl" 
+            p="xl"
             withBorder
             className={`border-l-4 ${review.for === 'TOUR' ? 'border-l-blue-500' : 'border-l-violet-500'}`}
           >
@@ -95,7 +95,7 @@ const TourReviews: React.FC<TourReviewsProps> = ({ tourId }) => {
                     <Text fw={600} size="lg" className="text-gray-800">
                       {review.for === 'TOUR'
                         ? 'Tur İncelemesi'
-                        : `${review.guide?.name} için İnceleme`}
+                        : `${review?.guide?.name} için İnceleme`}
                     </Text>
                     <Badge 
                       variant="light"

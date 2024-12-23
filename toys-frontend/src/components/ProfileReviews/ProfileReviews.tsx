@@ -3,6 +3,7 @@ import { Paper, Stack, Text, Group, Title, Container, Alert, Card, Button } from
 import { IconStarFilled, IconAlertCircle } from '@tabler/icons-react';
 import { UserContext } from '../../context/UserContext';
 import { Review } from '../../types/data';
+import { Link } from 'react-router-dom';
 
 const GUIDE_REVIEW_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review/of_guide");
 
@@ -144,10 +145,12 @@ export const ProfileReviewsList: React.FC<ProfileRatingProps> = ({ guideId }) =>
   return (
     <Container size="md" px={0} id="profile-reviews-section">
       <Stack gap="xl">
-        { reviewData.reviews.length > 0 &&
+        { reviewData.reviews.length > 0 ?
           (<Title order={3} className="text-gray-800">
             Tur İncelemeleri
-          </Title>)
+          </Title>) : <Title order={3} className="text-gray-800">
+            Yazılı İnceleme Bulunmuyor
+          </Title>
         }
 
         {reviewData.reviews.map((review) => (
@@ -159,7 +162,9 @@ export const ProfileReviewsList: React.FC<ProfileRatingProps> = ({ guideId }) =>
             withBorder
             className="border-l-4 border-l-violet-500"
           >
+            
             <Stack gap="lg">
+            <Link to={`/tour/${review.tour_id}`}>
               <Group justify="space-between" wrap="nowrap">
                 <Stack gap="xs">
                   <Text fw={600} size="lg" className="text-gray-800">
@@ -174,6 +179,7 @@ export const ProfileReviewsList: React.FC<ProfileRatingProps> = ({ guideId }) =>
                   <Text size="sm" c="gray.6">/10</Text>
                 </Group>
               </Group>
+              </Link>
 
               {review.body ? (
                 <Text className="text-gray-600 leading-relaxed">

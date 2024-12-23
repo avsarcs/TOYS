@@ -64,7 +64,7 @@ export enum BackendDepartment{
   TURKISH_LITERATURE = "TURKISH_LITERATURE"  
 }
 
-export enum Department {
+export enum Department {  
   ARCHITECTURE = "Mimarlık",
   COMMUNICATION_AND_DESIGN = "İletişim ve Tasarım",
   FINE_ARTS = "Güzel Sanatlar",

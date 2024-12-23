@@ -185,7 +185,7 @@ export interface Review {
   for: "TOUR" | "GUIDE";
   tour_id: string;
   tour_date: string;
-  guide?: {
+  guide: {
     id: string;
     name: string;
   };

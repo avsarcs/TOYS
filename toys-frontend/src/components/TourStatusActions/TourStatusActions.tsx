@@ -505,9 +505,9 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
             <Button color="red" onClick={handleReject} leftSection={<IconX size={16} />}>
               Turu Reddet
             </Button>
-            <Button color="blue" onClick={handleRequestChange} leftSection={<IconClockEdit size={16} />}>
+            {/* <Button color="blue" onClick={handleRequestChange} leftSection={<IconClockEdit size={16} />}>
               Başvuruda Değişiklik İste
-            </Button>
+            </Button> */}
           </Group>
         </>
       );

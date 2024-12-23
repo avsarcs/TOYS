@@ -13,7 +13,9 @@ import IndividualInfoStage from '../../components/TourApplication/IndividualInfo
 import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import MajorSelectionStage from '../../components/TourApplication/MajorSelectionStage';
 import IndividualNotesStage from '../../components/TourApplication/IndividualNotesStage';
-import {City} from "../../types/enum.ts";
+import { City } from "../../types/enum.ts";
+import { Department } from '../../types/enum.ts';
+
 const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
 
 
@@ -77,17 +79,18 @@ const IndividualTourApplication: React.FC = () => {
         "not_enough_dates": false,
         "no_major_selected": false,
         "no_student_count": false,
-        "visitor_count_too_high": false
+        "visitor_count_too_high": false,
+        "invalid_major_selected": false
     })
 
-/*    const clearWarnings = () => {
-        for (const field in warnings) {
-            setWarnings((warnings) => ({
-                ...warnings,
-                [field]: false
-            }))
-        }
-    }*/
+    /*    const clearWarnings = () => {
+            for (const field in warnings) {
+                setWarnings((warnings) => ({
+                    ...warnings,
+                    [field]: false
+                }))
+            }
+        }*/
 
     // Validate if Stage 1 is done
     const validateStage1 = () => {
@@ -147,23 +150,31 @@ const IndividualTourApplication: React.FC = () => {
         return stagePass
     }
 
-    // stage2 is valid all the time
     const validateStage2 = () => {
-        if (!applicationInfo.requested_majors ||
-            applicationInfo.requested_majors.length === 0 ||
-            applicationInfo.requested_majors.some(major => major.trim() === '')) {
+        // Check if majors array exists and has at least one item
+        if (!applicationInfo.requested_majors || applicationInfo.requested_majors.length === 0) {
             setWarnings(prev => ({
                 ...prev,
                 "no_major_selected": true
             }));
             return false;
-        } else {
+        }
+        
+        // Check if any major in the array is an empty string
+        if (applicationInfo.requested_majors.some(major => major === '')) {
             setWarnings(prev => ({
                 ...prev,
-                "no_major_selected": false
+                "no_major_selected": true
             }));
-            return true;
+            return false;
         }
+        
+        // If we get here, everything is valid
+        setWarnings(prev => ({
+            ...prev,
+            "no_major_selected": false
+        }));
+        return true;
     };
 
     // Validate if stage 3 is done.
@@ -307,6 +318,9 @@ const IndividualTourApplication: React.FC = () => {
                             {warnings["no_major_selected"] && (<><br />  <strong>Boş bölüm seçimi bırakamazsınız / En az bir bölüm seçmelisiniz</strong></>)}
                             {warnings["no_student_count"] && (<><br />  <strong>0'dan büyük bir sayı giriniz.</strong></>)}
                             {warnings["visitor_count_too_high"] && (<><br />  <strong>Bireysel tur başvurularında en fazla 10 kişi olabilir.</strong></>)}
+                            {warnings["invalid_major_selected"] && (
+                                <><br />  <strong>Lütfen listeden geçerli bir bölüm seçiniz.</strong></>
+                            )}
                             <br />
                         </Alert>
                     }

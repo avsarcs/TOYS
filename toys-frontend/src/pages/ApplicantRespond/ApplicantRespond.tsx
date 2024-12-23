@@ -52,6 +52,9 @@ const ApplicantRespond: React.FC = () => {
             } catch (err) {
                 console.error('Error fetching tour:', err);
                 setFetchError('Tur bilgileri yüklenirken bir hata oluştu.');
+            } finally {
+                console.log(JSON.stringify(tourData))
+                console.log(typeof tourData)
             }
         };
 
@@ -144,11 +147,12 @@ const ApplicantRespond: React.FC = () => {
         );
     }
 
-    if (!tourData) {
+    if (!tourData || tourData == null) {
+        console.log("evet aga tour data yok")
         return null;
     }
 
-    return (
+    return tourData && (
         <>
             <Modal
                 opened={showSuccessModal}
@@ -196,7 +200,7 @@ const ApplicantRespond: React.FC = () => {
                             <Title order={3}>Teklif Edilen Zamanlar</Title>
                             <RadioGroup value={selectedTime} onChange={setSelectedTime}>
                                 <Stack gap="lg">
-                                    {tourData.requested_times.map((time: string) => (
+                                    {tourData?.requested_times.map((time: string) => (
                                         <Radio
                                             key={time}
                                             value={time}
