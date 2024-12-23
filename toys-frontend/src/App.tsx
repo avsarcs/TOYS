@@ -39,6 +39,7 @@ import FairsList from "./pages/FairsList/FairsList.tsx";
 import FairPage from "./pages/FairInformation/FairPage.tsx";
 import Admin from "./pages/Admin/Admin.tsx";
 import UserManual from "./pages/UserManual/UserManual.tsx";
+import GuideInvitations from "./pages/GuideInvitations/GuideInvitations.tsx";
 
 function App() {
   dayjs.locale("tr");
