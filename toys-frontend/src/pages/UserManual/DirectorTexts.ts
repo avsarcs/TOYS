@@ -34,7 +34,9 @@ const DirectorTexts: UserManualItem[] = [
         title: "Üniviersiteleri karşılaştırın",
         content: "Sistemdeki diğer üniversiteler ile Bilkent'i karşılaştırabilirsiniz.",
         dynamicSteps: [
-            { title: "Karşılaştırma sayfasını açın.", image: "manual/compare1.png"}
+            { title: "Karşılaştırma sayfasını açın.", image: "manual/compare1.png" },
+            { title: "Üniversite ve bölüm seçimlerini yapın.", image: "manual/compare2.png" },
+            { title: "Ekstra: Sütün grafiğinde gizlemek için verilerin üzerine tıklayın.", image: "manual/compare3.png" }
         ]
     }
 ]
