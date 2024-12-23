@@ -2,7 +2,8 @@ import { Dispatch, SetStateAction } from "react";
 import {
   DashboardCategory,
   DashboardCategoryText,
-  UserRole
+  UserRole,
+  EventType
 } from "./enum.ts";
 import { HighschoolData, ProfileData, SimpleEventData, TourData, FairData } from "./data.ts";
 import {OnlyChildrenProps} from "./generic.ts";
@@ -108,11 +109,21 @@ export interface AdvisorApplication {
 }
 
 export interface LoginFormProps {
+  setForgotPassword: Dispatch<SetStateAction<boolean>>;
   setRegistering: Dispatch<SetStateAction<boolean>>
 }
 
 export interface RegisterFormProps {
   setRegistering: Dispatch<SetStateAction<boolean>>
+}
+
+export interface ForgotPasswordFormProps {
+  setForgotPassword: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface DashboardUrgentBarProps {
+  setItem: Dispatch<SetStateAction<SimpleEventData | null>>
+  setCategory: Dispatch<SetStateAction<DashboardCategory>>
 }
 
 export interface DashboardCategoryControlProps {
@@ -140,12 +151,12 @@ export interface DashboardInfoBoxProps {
   updateDashboard: () => void,
 }
 
-export interface DashboardInfoBoxButtonProps {
+export interface DashboardInfoBoxButtonProps extends OnlyChildrenProps {
   item: SimpleEventData,
   updateDashboard: () => void
 }
 
-export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps, OnlyChildrenProps{
+export interface EventInvitationRespondButtonProps extends DashboardInfoBoxButtonProps{
   response: boolean
 }
 
@@ -180,8 +191,11 @@ export interface ManageGuidesWindowPropsFair {
 export interface TourListItemProps {
   tour: SimpleEventData
 }
+
+type CombinedFairData = FairData | (SimpleEventData & { event_type: EventType.FAIR });
+
 export interface FairListItemProps {
-  fair: SimpleEventData
+  fair: CombinedFairData
 }
 
 export interface ProfileComponentProps {

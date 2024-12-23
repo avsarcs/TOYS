@@ -15,7 +15,6 @@ import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.DTO.DTOFactory;
-import server.models.DTO.DTO_SimpleGuide;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
 import server.models.people.Guide;
@@ -63,12 +62,18 @@ public class ReviewService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
         }
         if (reviewRecord.get(reviewerID).getStatus() != ReviewResponse.PENDING) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review already submitted!");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Review already submitted!");
         }
 
         EventReview review = dto.reviewCreateModel(reviewMap);
 
-        database.reviews.addReview(review);
+        String id = database.reviews.addReview(review);
+
+        ReviewRecord rr = reviewRecord.get(reviewerID);
+        rr.setStatus(ReviewResponse.RECEIVED);
+        rr.setReview_id(id);
+        reviewRecord.put(reviewerID, rr);
+        database.reviews.updateReviewRecords(reviewRecord);
         try {
 
             mailService.sendMail(
@@ -173,21 +178,21 @@ public class ReviewService {
     }
 
     public Map<String,Object> getReviewOfGuide(String auth, String guide_id) {
-        if (!JWTService.getSimpleton().isValid(auth)) {
+        if (!authService.check(auth, Permission.RU_FROM_TOUR)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authorization!");
         }
-        if (!JWTService.getSimpleton().decodeUserID(auth).equals(guide_id)) {
-            if (!PermissionMap.hasPermission(
-                    JWTService.getSimpleton().getUserRole(auth),
-                    Permission.VIEW_TOUR_REVIEW
-            )) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to view review");
-            }
-        }
+
         Guide guide;
         try {
-            guide = database.people.fetchGuides(guide_id).get(0);
+            System.out.println("Guide ID: " + guide_id);
+            List<Guide> guides = database.people.fetchGuides(guide_id);
+            if (guides.isEmpty()) {
+                guide = database.people.fetchAdvisors(guide_id).get(0);
+            } else {
+                guide = guides.get(0);
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No guide with this id!");
         }
 
@@ -207,8 +212,6 @@ public class ReviewService {
         // filter again, this time to get only approved reviews
         relatedReviews = record.entrySet().stream().filter(
                 e -> guide.getExperience().getPrevious_events().contains(e.getValue().getEvent_id())
-        ).filter(
-                e -> e.getValue().getStatus().equals(ReviewResponse.APPROVED)
         ).map( e -> e.getValue().getReview_id()).toList();
 
         response.put("reviews",

@@ -5,20 +5,18 @@ import { TextInput, Select, Autocomplete } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconSearch } from '@tabler/icons-react';
 import { HighschoolData } from '../../types/data';
+import { HoverCard, Group, Text } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
+import {City} from "../../types/enum.ts";
 
-const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
-  const [schoolName, setSchoolName] = useState<string>(applicationInfo.highschool.name || '');
+const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({
+  applicationInfo,
+  setApplicationInfo,
+  warnings
+}) => {
   const [schools, setSchools] = useState<HighschoolData[]>([]);
-  const [schoolOptions, setSchoolOptions] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState('');
 
-  // Create a display string for a school that includes location if needed to differentiate
-  const createSchoolDisplayName = (school: HighschoolData, allSchools: HighschoolData[]): string => {
-    const duplicateNames = allSchools.filter(s => s.name === school.name);
-    if (duplicateNames.length > 1) {
-      return `${school.name}`;
-    }
-    return school.name;
-  };
 
   const getSchools = useCallback(async () => {
     const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
@@ -26,7 +24,6 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
 
     try {
       url.searchParams.append("auth", "");
-
       const res = await fetch(url, {
         method: "GET",
       });
@@ -39,16 +36,18 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         });
       } else {
         const resText = await res.text();
-        const resJson: HighschoolData[] = JSON.parse(resText);
+        const resJson = JSON.parse(resText);
 
-        console.log(resJson);
-        setSchools(resJson);
-        
-        // Create unique display names for schools
-        const uniqueOptions = resJson.map(school => createSchoolDisplayName(school, resJson));
-        setSchoolOptions(Array.from(new Set(uniqueOptions)));
+        const schoolsByName = resJson.reduce((acc: { [key: string]: HighschoolData }, school: HighschoolData) => {
+          if (!acc[school.name]) {
+            acc[school.name] = school;
+          }
+          return acc;
+        }, {});
 
-        if (resJson.length === 0) {
+        const uniqueSchools: HighschoolData[] = Object.values(schoolsByName);
+
+        if (uniqueSchools.length === 0) {
           notifications.show({
             color: "yellow",
             title: "No Schools Found",
@@ -56,13 +55,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
           });
         }
 
-        // Update current school display name if exists
-        if (applicationInfo.highschool.name) {
-          const currentSchool = resJson.find(s => s.name === applicationInfo.highschool.name);
-          if (currentSchool) {
-            setSchoolName(createSchoolDisplayName(currentSchool, resJson));
-          }
-        }
+        setSchools(uniqueSchools);
       }
     } catch (e) {
       console.error("Error fetching schools:", e);
@@ -72,42 +65,42 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
         message: "Something went wrong. Please contact the site administrator.",
       });
     }
-  }, [applicationInfo.highschool.name]);
+  }, []);
 
   useEffect(() => {
     getSchools();
   }, [getSchools]);
 
-  const handleSchoolChange = (value: string) => {
-    setSchoolName(value);
-    
-    if (value === '') {
-      // Reset highschool data if no school is selected
-      setApplicationInfo(prevInfo => ({
-        ...prevInfo,
-        highschool: {
-          id: '',
-          name: '',
-          location: '',
-          priority: 1,
-          ranking: 0
-        }
-      }));
-      return;
-    }
+  const schoolNames = schools.map(school => school.name);
 
-    // Find the school by matching either its name directly or the display name
-    const selectedSchool = schools.find(school => {
-      const displayName = createSchoolDisplayName(school, schools);
-      return displayName === value || school.name === value;
-    });
-    
+  const handleSchoolSelect = (value: string) => {
+    const selectedSchool = schools.find(school => school.name === value);
+    setSearchInput(value);
+
     if (selectedSchool) {
-      setApplicationInfo(prevInfo => ({
-        ...prevInfo,
+      setApplicationInfo(prev => ({
+        ...prev,
         highschool: selectedSchool
       }));
+    } else {
+      // If the value doesn't match any school, reset the highschool data
+      setApplicationInfo({
+        ...applicationInfo,
+        highschool: {
+          id: "",
+          name: "",
+          location: "" as City,
+          priority: -1,
+          ranking: 1,
+        }
+      });
     }
+  };
+
+  const validateStage = () => {
+    // Check if the input exactly matches a school in the list
+    const isValidSchool = schools.some(school => school.name === searchInput);
+    return isValidSchool;
   };
 
   return (
@@ -123,16 +116,13 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             id="name"
             name="name"
             placeholder="Adınız ve Soyadınız"
-            error={(warnings["empty_fields"] && isEmpty(applicationInfo.applicant.fullname)) ? "Bu alanı boş bırakamazsınız." : false}
+            error={warnings.empty_fields && isEmpty(applicationInfo.applicant.fullname) ? "Bu alanı boş bırakamazsınız." : false}
             maxLength={100}
             value={applicationInfo.applicant.fullname}
             onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                applicant: {
-                  ...appInfo.applicant,
-                  fullname: e.target.value,
-                },
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: { ...prev.applicant, fullname: e.target.value },
               }));
             }}
             required
@@ -147,16 +137,13 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             id="email"
             name="email"
             placeholder="E-postanız"
-            error={warnings["not_email"] ? "Geçerli bir e-posta adresi girin." : false}
+            error={warnings.not_email ? "Geçerli bir e-posta adresi girin." : false}
             maxLength={100}
             value={applicationInfo.applicant.email}
             onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                applicant: {
-                  ...appInfo.applicant,
-                  email: e.target.value,
-                },
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: { ...prev.applicant, email: e.target.value },
               }));
             }}
             required
@@ -171,16 +158,13 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
             id="phone"
             name="phone"
             placeholder="İletişim numaranız"
-            error={warnings["not_phone_no"] ? "Geçerli bir telefon numarası girin." : false}
+            error={warnings.not_phone_no ? "Geçerli bir telefon numarası girin." : false}
             maxLength={60}
             value={applicationInfo.applicant.phone}
             onChange={(e) => {
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
-                applicant: {
-                  ...appInfo.applicant,
-                  phone: e.target.value,
-                },
+              setApplicationInfo((prev) => ({
+                ...prev,
+                applicant: { ...prev.applicant, phone: e.target.value },
               }));
             }}
             required
@@ -189,29 +173,52 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({ applicationInf
 
         <div className="mb-4">
           <Autocomplete
-            limit={5}
             label="Okul"
             placeholder="Okulunuzun adını giriniz"
-            leftSection={<IconSearch size="1rem" />}
-            data={schoolOptions}
-            value={schoolName}
-            onChange={handleSchoolChange}
-            error={(warnings["empty_fields"] && isEmpty(applicationInfo.highschool.name)) ? "Bu alanı boş bırakamazsınız." : false}
+            data={schoolNames}
+            limit={5}
+            value={searchInput.split(' ').map(word => word.charAt(0).toLocaleUpperCase("TR") + word.slice(1).toLocaleLowerCase("TR")).join(' ')}
+            onChange={handleSchoolSelect}
+            leftSection={<IconSearch size={16} />}
             withAsterisk
+            error={
+              (warnings.empty_fields && isEmpty(searchInput)) ? "Bu alanı boş bırakamazsınız." :
+                (!isEmpty(searchInput) && !validateStage()) ? "Lütfen listeden geçerli bir okul seçin" :
+                  false
+            }
           />
+
+          <HoverCard width={350} shadow="md">
+            <HoverCard.Target>
+              <Group gap="xs" mt="xs">
+                <Text size="xs" className="text-blue-600 cursor-pointer">
+                  Liseniz burda yok mu?
+                </Text>
+                <IconInfoCircle size={12} className="text-blue-600" />
+              </Group>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text size="sm">
+                Liseniz bu listede yoksa eklenmesi için ornek@email.com'a istek atın. <br />
+                Şu an için herhangi bir liseyi seçip son aşamada notlarınıza asıl lisenizi yazabilirsiniz.
+              </Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
         </div>
 
         <div className="mb-4">
           <Select
             label="Rolünüz"
             placeholder="Öğrenci"
+            withAsterisk
             data={["Öğrenci", "Görevli, Öğretmen vs."]}
+            error={warnings.empty_fields && isEmpty(applicationInfo.applicant.role) ? "Bu alanı boş bırakamazsınız." : false}
             onChange={(_value) => {
               const englishValue = _value === "Öğrenci" ? "STUDENT" : _value === "Görevli, Öğretmen vs." ? "TEACHER" : "";
-              setApplicationInfo((appInfo) => ({
-                ...appInfo,
+              setApplicationInfo((prev) => ({
+                ...prev,
                 applicant: {
-                  ...appInfo.applicant,
+                  ...prev.applicant,
                   role: englishValue,
                 },
               }));

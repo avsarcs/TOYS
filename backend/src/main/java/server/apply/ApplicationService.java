@@ -33,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ApplicationService {
@@ -66,29 +67,39 @@ public class ApplicationService {
             tour.setTour_status(TourStatus.CANCELLED);
             db.tours.updateTour(tour, tour.getTour_id());
 
-            // Notify advisor
-            mailServiceGateway.sendMail(
-                    db.people.fetchAdvisorForDay(tour.getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
-                    Concerning.ADVISOR,
-                    About.TOUR_MODIFICATION,
-                    Status.CANCELLED,
-                    Map.of(
-                            "tour_id", tour.getTour_id(),
-                            "reasoning", reason
-                    )
-            );
+            try {
+                // Notify advisor
+                mailServiceGateway.sendMail(
+                        db.people.fetchAdvisorForDay(tour.getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
+                        Concerning.ADVISOR,
+                        About.TOUR_MODIFICATION,
+                        Status.CANCELLED,
+                        Map.of(
+                                "tour_id", tour.getTour_id(),
+                                "reasoning", reason
+                        )
+                );
+            } catch (Exception E) {
+                E.printStackTrace();
+                System.out.println("Failed to notify the advisor for the day for a new tour modification request.");
+            }
 
             // notify applicant
-            mailServiceGateway.sendMail(
+            try {
+                mailServiceGateway.sendMail(
                     tour.getApplicant().getContact_info().getEmail(),
                     Concerning.EVENT_APPLICANT,
                     About.TOUR_MODIFICATION,
                     Status.CANCELLED,
                     Map.of(
-                            "tour_id", tour.getTour_id(),
-                            "reasoning", reason
+                        "tour_id", tour.getTour_id(),
+                        "reasoning", reason
                     )
-            );
+                );
+
+            } catch (Exception E) {
+                System.out.println("Failed to notify the applicant for the tour cancellation " + event_id);
+            }
 
             // notify the guides
             tour.getGuides().forEach(
@@ -109,35 +120,46 @@ public class ApplicationService {
                         }
                     }
             );
+
+
         } else if (fairs.containsKey(event_id)) {
             FairRegistry fair = fairs.get(event_id);
             fair.setFair_status(FairStatus.CANCELLED);
             db.fairs.updateFair(fair, fair.getFair_id());
 
+            try {
+                // Notify advisor
+                mailServiceGateway.sendMail(
+                        db.people.fetchAdvisorForDay(fair.getStarts_at().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
+                        Concerning.ADVISOR,
+                        About.FAIR_MODIFICATION,
+                        Status.CANCELLED,
+                        Map.of(
+                                "fair_id", fair.getFair_id(),
+                                "reasoning", reason
+                        )
+                );
+            } catch (Exception E) {
+                E.printStackTrace();
+                System.out.println("Failed to notify the advisor for the day for a new tour modification request.");
+            }
 
-            // Notify advisor
-            mailServiceGateway.sendMail(
-                    db.people.fetchAdvisorForDay(fair.getStarts_at().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
-                    Concerning.ADVISOR,
-                    About.FAIR_MODIFICATION,
-                    Status.CANCELLED,
-                    Map.of(
-                            "fair_id", fair.getFair_id(),
-                            "reasoning", reason
-                    )
-            );
 
-            // notify applicant
-            mailServiceGateway.sendMail(
-                    fair.getApplicant().getContact_info().getEmail(),
-                    Concerning.EVENT_APPLICANT,
-                    About.FAIR_MODIFICATION,
-                    Status.CANCELLED,
-                    Map.of(
-                            "fair_id", fair.getFair_id(),
-                            "reasoning", reason
-                    )
-            );
+            try {
+                // notify applicant
+                mailServiceGateway.sendMail(
+                        fair.getApplicant().getContact_info().getEmail(),
+                        Concerning.EVENT_APPLICANT,
+                        About.FAIR_MODIFICATION,
+                        Status.CANCELLED,
+                        Map.of(
+                                "fair_id", fair.getFair_id(),
+                                "reasoning", reason
+                        )
+                );
+            } catch (Exception E) {
+                System.out.println("Failed to notify the applicant for the fair cancellation " + event_id);
+            }
 
             // notify the guides
             fair.getGuides().forEach(
@@ -162,6 +184,12 @@ public class ApplicationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found!");
         }
 
+        // find all invites, delete them
+        db.requests.getGuideAssignmentRequests().stream().filter(
+                e -> e.getEvent_id().equals(event_id)
+        ).forEach(
+                e -> db.requests.deleteRequest(e)
+        );
     }
 
     public String getTourType(String tour_id) {
@@ -176,7 +204,6 @@ public class ApplicationService {
 
 
     public void requestChanges(Map<String, Object> changes, String tourID, String passkey) {
-
         String requester = "";
 
         if (authService.check(passkey, Permission.REQUEST_TOUR_CHANGES)) {
@@ -188,12 +215,67 @@ public class ApplicationService {
         // Check if tour exists
         TourRegistry tour = db.tours.fetchTour(tourID);
         if (tour == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found!");
+
+            // check if application with given id exists
+
+            TourApplication app = db.applications.getTourApplications().getOrDefault(tourID, null);
+            if (app == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found!");
+            }
+
+            // if it exists, mark it pending_changes
+            app.setStatus(ApplicationStatus.FROZEN);
+
+            // add a request to the system
+            TourModificationRequest request = new TourModificationRequest();
+            request.setStatus(RequestStatus.PENDING);
+            request.setRequested_at(new ZTime(ZonedDateTime.now()));
+            request.setRequested_by(new Requester().setBilkent_id(requester).setContactInfo(app.getApplicant().getContact_info()));
+            request.setTour_id(tourID);
+            request.setNotes((String) changes.get("notes"));
+            request.setType(RequestType.TOUR_MODIFICATION);
+            TourApplication chang = null;
+            if(changes.containsKey("requested_majors")) {
+                chang = dto.individualTourApplication(changes);
+            } else {
+                chang = dto.groupTourApplication(changes);
+            }
+            chang.setStatus(ApplicationStatus.RECEIVED);
+            request.setModifications(chang);
+
+            db.requests.addRequest(request);
+
+            Map<String, Passkey> passkeys = db.auth.getPasskeys();
+            Passkey pk = new Passkey();
+            pk.setEvent_id(tourID);
+            pk.setExpiration(new ZTime(ZonedDateTime.now().plusDays(7)));
+            pk.setKey(UUID.randomUUID().toString());
+            while (passkeys.containsKey(pk.getKey())) {
+                pk.setKey(UUID.randomUUID().toString());
+            }
+
+            db.auth.addPasskey(pk);
+            tour = new TourRegistry(app);
+            tour.setTour_id(tourID);
+            // notify the applicant
+            mailServiceGateway.sendMail(
+                    app.getApplicant().getContact_info().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.TOUR_MODIFICATION,
+                    Status.RECIEVED,
+                    Map.of(
+                            "tour_id", tourID,
+                            "pass", pk.getKey()
+                            )
+            );
+
         }
 
-        // Check if the tour is in a state that can be changed
-        if (!tour.getTourStatus().equals(TourStatus.CONFIRMED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour is not in a state that can be changed!");
+        else{
+            // Check if the tour is in a state that can be changed
+            if (!tour.getTourStatus().equals(TourStatus.CONFIRMED)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tour is not in a state that can be changed!");
+            }
         }
 
         TourApplication modifications = changes.containsKey("requested_majors") ? dto.individualTourApplication(changes) : dto.groupTourApplication(changes);
@@ -284,14 +366,7 @@ public class ApplicationService {
             // if invalid, send email to the applicant notifying them of invalidity
             // the application is not valid
             System.out.println("Invalid tour application!");
-            mailServiceGateway.sendMail(
-                    tourApplication.getApplicant().getContact_info().getEmail(),
-                    Concerning.EVENT_APPLICANT,
-                    About.TOUR_APPLICATION,
-                    Status.ERROR,
-                    Map.of("name", tourApplication.getApplicant().getName())
-            );
-            throw new ResponseStatusException(HttpStatus.OK, "All ok");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid application!");
         }
 
         // check if there is a time - collision with another tour
@@ -318,7 +393,7 @@ public class ApplicationService {
             // if there is a time collision, set tour status type to "CONFLICT"
             // all requested dates are already taken
             // set status to CONFLICT
-            tourApplication.setStatus(ApplicationStatus.CONFILCT);
+            tourApplication.setStatus(ApplicationStatus.FROZEN);
         } else {
             // if there is no conflict, set tour status type to "Recieved"
             tourApplication.setStatus(ApplicationStatus.RECEIVED);
@@ -341,16 +416,10 @@ public class ApplicationService {
 
             if (fairs != null) {
                 for (FairRegistry fair : fairs.values()) {
-                    boolean overlaps = ZTime.overlap(
-                            application.getStarts_at(), application.getEnds_at(),
-                            fair.getStarts_at(), fair.getEnds_at()
-                    );
-                    if (overlaps) {
-                        if (fair.getApplicant().getSchool().equals(application.getApplicant().getSchool())) {
-                            // if the fair exists, reject application
-                            // the fair already exists, http OK is enough
-                            return;
-                        }
+                    if (fair.getApplicant().getSchool().equals(application.getApplicant().getSchool())) {
+                        // if the fair exists, reject application
+                        // the fair already exists, http OK is enough
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Fair already exists in the system");
                     }
                 }
             } else {
@@ -360,12 +429,17 @@ public class ApplicationService {
 
         // if the fair does not exist, add the fair to the system
         db.applications.addApplication(application);
-        mailServiceGateway.sendMail(
-                application.getApplicant().getContact_info().getEmail(),
-                Concerning.EVENT_APPLICANT,
-                About.FAIR_APPLICATION,
-                Status.RECIEVED,
-                Map.of("name", application.getApplicant().getName())
-        );
+        try {
+            mailServiceGateway.sendMail(
+                    application.getApplicant().getContact_info().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.FAIR_APPLICATION,
+                    Status.RECIEVED,
+                    Map.of("name", application.getApplicant().getName())
+            );
+
+        } catch (Exception e) {
+            System.out.println("Failed to send mail to the applicant for the fair application.");
+        }
     }
 }

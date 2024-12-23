@@ -96,33 +96,39 @@ public class AnalyticsHighschoolService {
         details_map.put("ranking", hs.getRanking());
         details_map.put("priority", hs.getPriority());
 
+        SorensenDice sorensenDice = new SorensenDice();
         List<Map<String, Object>> counts_map = new ArrayList<>();
-
         // go through every year, get total student counts for those years
         try {
+            // Get the Bilkent university
+            University bilkent = database.universities.getUniversity("bilkent");
+            // Initialize a map to store the total student counts for each year
+            Map<String, Long> studentCountsByYear = new HashMap<>();
 
-            for (UniversityDepartment department : database.universities.getUniversity("bilkent").getDepartments()) {
+            // Iterate through the departments of Bilkent university
+            for (UniversityDepartment department : bilkent.getDepartments()) {
+                // Iterate through each year of the department
                 for (UniversityDepartmentYear year : department.getYears()) {
-                    for (UniHighschoolRecord data : year.highschool_attendee_count) {
+                    // Sum the totals of the given high school for the specific year
+                    long totalForYear = year.getHighschool_attendee_count().stream()
+                            .filter(record -> sorensenDice.similarity(record.getSchool_name().toLowerCase(), hs.getTitle().toLowerCase()) > 0.8)
+                            .mapToLong(UniHighschoolRecord::getTotal)
+                            .sum();
 
-                        boolean added = false;
-                        for (Map<String, Object> count : counts_map) {
-                            if (count.get("year").equals(year.year)) {
-                                count.put("count", ((Number) count.get("count")).longValue() + data.getTotal());
-                                added = true;
-                                break;
-                            }
-                        }
-                        if (!added) {
-                            Map<String, Object> newCount = new HashMap<>();
-                            newCount.put("year", year.year);
-                            newCount.put("count", data.getTotal());
-                            counts_map.add(newCount);
-                        }
-
-                    }
+                    // Add the total to the map
+                    studentCountsByYear.merge(year.getYear(), totalForYear, Long::sum);
                 }
             }
+
+// Convert the map to a list of maps for the response
+            counts_map = studentCountsByYear.entrySet().stream()
+                    .map(entry -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("year", entry.getKey());
+                        map.put("count", entry.getValue());
+                        return map;
+                    })
+                    .toList();
         } catch (Exception E) {
             E.printStackTrace();
             System.out.println("There was an error while getting student counts for highschools.");
@@ -260,11 +266,18 @@ public class AnalyticsHighschoolService {
         }
 
         HighschoolRecord hs = database.schools.getHighschoolByID((String) highschool.get("id"));
-
         hs.setPriority((String) highschool.get("priority"));
         hs.setRanking((String) highschool.get("ranking"));
-        hs.setLocation((String) highschool.get("location"));
-        hs.setTitle((String) highschool.get("name"));
+        String location = (String) highschool.get("location");
+        hs.setLocation(location);
+
+        if (location != null && location.contains(" / ")) {
+            String[] locationParts = location.split(" / ");
+            String formattedLocation = locationParts[0] + " - " + locationParts[1];
+            hs.setTitle(highschool.get("name") + " (" + formattedLocation + ")");
+        } else {
+            hs.setTitle(highschool.get("name") + " (" + location + ")");
+        }
 
         database.schools.updateHighschool(hs);
     }
@@ -278,7 +291,13 @@ public class AnalyticsHighschoolService {
         hs.setLocation((String) highschool.get("location"));
         hs.setRanking((String) highschool.get("ranking"));
         hs.setPriority((String) highschool.get("priority"));
-
+        HighschoolEntranceDetails details = new HighschoolEntranceDetails();
+        details.setPercentile("0");
+        details.setDuration("0");
+        details.setLanguage("Turkish");
+        details.setPuan("0");
+        details.setQuota("0");
+        hs.setDetails(details);
         database.schools.addHighschool(hs);
     }
 }

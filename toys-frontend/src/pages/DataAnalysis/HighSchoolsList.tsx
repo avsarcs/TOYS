@@ -1,5 +1,5 @@
-import React, {useCallback, useContext} from "react";
-import {Space, Container, Text} from '@mantine/core';
+import React, {useContext, useEffect, useState, useCallback, useContext} from "react";
+import {Space, Container, Text, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
@@ -107,12 +107,6 @@ const HighSchoolsList: React.FC = () => {
         setAddModalOpened(true);
     }
 
-    const HeaderTextContainer = <div style={defaultHeaderStyle}>
-        <Text style={{fontSize: 'xx-large'}}>
-            Liseler Listesi
-        </Text>
-    </div>
-
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
         <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
@@ -143,10 +137,45 @@ const HighSchoolsList: React.FC = () => {
             />
         )}
         {
-            <HighSchoolAdd
-                opened={addModalOpened}
-                onClose={() => setAddModalOpened(false)}
-            />
+            fetchedHighschools && highSchools.length > 0
+              ?
+              <>
+          <Box className="flex-grow-0 flex-shrink-0">
+              <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                  Liseler
+              </Title>
+              <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                  Göç kaynağı.
+              </Title>
+              <Space h="xl"/>
+              <Divider className="border-gray-400"/>
+          </Box>
+            <hr style={{border: '1px solid black'}}/>
+            <Space h="xl"/>
+            {TableFilterContainer}
+            <Space h="xl"/>
+            <Space h="xl"/>
+            {HighSchoolsTableContainer}
+            <Space h="xl"/>
+            <Space h="xl" />
+            {selectedHighSchool && (
+                <HighSchoolDetails
+                    opened={detailsModalOpened}
+                    onClose={() => setDetailsModalOpened(false)}
+                    highSchool={selectedHighSchool}
+                />
+            )}
+            {
+                <HighSchoolAdd
+                    opened={addModalOpened}
+                    onClose={() => setAddModalOpened(false)}
+                />
+            }
+              </>
+            :
+              <LoadingOverlay
+                visible={!fetchedHighschools} zIndex={10}
+                overlayProps={{ blur: 1, color: "#444", opacity: 0.8 }}/>
         }
     </div>
 }

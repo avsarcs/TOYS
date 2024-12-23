@@ -14,6 +14,7 @@ import {
   useMatches, 
   ScrollArea, 
   Autocomplete,
+  Pagination,
   Overlay,
   Loader
 } from "@mantine/core";
@@ -21,51 +22,90 @@ import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
 import { IconSearch } from "@tabler/icons-react";
 import ListItem from "../../components/FairList/ListItem.tsx";
-import { SimpleEventData } from "../../types/data";
+import { SimpleEventData, FairData } from "../../types/data";
+import { EventType } from "../../types/enum";
 
-const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fairs");
+const FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair/search");
+const PENDING_FAIRS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard");
+type CombinedFairData = FairData | (SimpleEventData & { event_type: EventType.FAIR });
+
 
 const FairsList: React.FC = () => {
   const userContext = useContext(UserContext);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [fairs, setFairs] = useState<SimpleEventData[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([
+    "RECEIVED",
+    "CONFIRMED", 
+    "REJECTED",
+    "CANCELLED",
+    "ONGOING",
+    "FINISHED"
+  ]);
+  const [fairs, setFairs] = useState<CombinedFairData[]>([]);
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
-  const [guideMissing, setGuideMissing] = useState(true);
-  const [traineeMissing, setTraineeMissing] = useState(true);
+  const [guideMissing, setGuideMissing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
   const getFairs = async () => {
     setLoading(true);
-    const fairsUrl = new URL(FAIRS_URL);
-    
-    // Always append required auth token
-    fairsUrl.searchParams.append("auth", await userContext.getAuthToken());
-    
-    // Always append optional parameters, even if empty
-    fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(',') : '');
-    fairsUrl.searchParams.append("school_name", searchSchoolName || '');
-    fairsUrl.searchParams.append("guide_not_assigned", guideMissing.toString());
-    
-    // Handle dates
-    fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : '');
-    fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : '');
-    
-    // Handle filter flags
-    fairsUrl.searchParams.append("filter_guide_missing", guideMissing.toString());
-    fairsUrl.searchParams.append("filter_trainee_missing", traineeMissing.toString());
-    fairsUrl.searchParams.append("enrolled_in_fair", "");
-
-    const res = await fetch(fairsUrl, {
-      method: "GET"
-    });
-
-    if(res.ok) {
-        setFairs(await res.json());
-        setLoading(false);
+  
+    try {
+      // Prepare URL for fetching fairs
+      const fairsUrl = new URL(FAIRS_URL);
+      fairsUrl.searchParams.append("auth", await userContext.getAuthToken());
+      fairsUrl.searchParams.append("status[]", statusFilter.length > 0 ? statusFilter.join(",") : "");
+      fairsUrl.searchParams.append("school_name", searchSchoolName || "");
+      fairsUrl.searchParams.append("from_date", fromDate ? fromDate.toISOString() : "");
+      fairsUrl.searchParams.append("to_date", toDate ? toDate.toISOString() : "");
+      fairsUrl.searchParams.append("filter_guide_missing", guideMissing ? "true" : "");
+      fairsUrl.searchParams.append("filter_trainee_missing", "");
+      fairsUrl.searchParams.append("enrolled_in_fair", "");
+      fairsUrl.searchParams.append("guide_not_assigned", guideMissing ? "true" : "");
+  
+      // Fetch fairs from the main endpoint
+      const fairsRes = await fetch(fairsUrl, { method: "GET" });
+      if (!fairsRes.ok) throw new Error("Failed to fetch fairs");
+      const fairsData: FairData[] = await fairsRes.json();
+  
+      // Prepare URL for fetching pending applications
+      const pendingUrl = new URL(PENDING_FAIRS_URL);
+      pendingUrl.searchParams.append("auth", await userContext.getAuthToken());
+      pendingUrl.searchParams.append("dashboard_category", "PENDING_APPLICATION"); // Example parameter
+  
+      // Fetch pending applications
+      const pendingRes = await fetch(pendingUrl, { method: "GET" });
+      if (!pendingRes.ok) throw new Error("Failed to fetch pending applications");
+      const pendingData: SimpleEventData[] = await pendingRes.json();
+  
+      // Filter pending applications to only include events with event_type: FAIR
+      const filteredPendingData = pendingData.filter((fair) => fair.event_type === EventType.FAIR);
+  
+      const normalizedFairs = [
+        ...fairsData,
+        ...filteredPendingData.map((fair) => ({
+          ...fair,
+          event_type: EventType.FAIR, // Ensure event_type is explicitly EventType.FAIR
+        } as SimpleEventData & { event_type: EventType.FAIR })),
+      ];
+  
+      // Remove duplicates by event_id
+      /*const uniqueFairs = Array.from(
+        new Map(normalizedFairs.map((fair) => [fair.event_id, fair])).values()
+      );*/
+  
+      setFairs(normalizedFairs);
+      setPage(1);
+    } catch (error) {
+      console.error("Error fetching fairs or pending applications:", error);
+    } finally {
+      setLoading(false);
     }
   };
+  
+  
 
   useEffect(() => {
     getFairs().catch(console.error);
@@ -78,10 +118,16 @@ const FairsList: React.FC = () => {
     md: "50vh",
   });
 
-  const listItems = useMemo(() =>
-    fairs ? fairs.map((fair, index) => <ListItem key={index} fair={fair}/>) : null,
-  [fairs]);
+    const paginatedFairs = useMemo(() => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return fairs.slice(startIndex, endIndex);
+  }, [fairs, page]);
 
+  const listItems = useMemo(
+    () => paginatedFairs.map((fair, index) => <ListItem key={index} fair={fair} />),
+    [paginatedFairs]
+  );
   const handleSearch = async () => {
     await getFairs().catch(console.error);
   };
@@ -100,6 +146,8 @@ const FairsList: React.FC = () => {
     }
     setToDate(date);
   };
+  
+
 
   return (
     <>
@@ -161,6 +209,7 @@ const FairsList: React.FC = () => {
             <Chip size="lg" color="blue" variant="outline" value="FINISHED">
               Bitti
             </Chip>
+
           </Group>
         </Chip.Group>
         <Button onClick={() => setStatusFilter([])}>Temizle</Button>
@@ -192,12 +241,6 @@ const FairsList: React.FC = () => {
             checked={guideMissing}
             onChange={(event) => setGuideMissing(event.currentTarget.checked)}
           />
-          <Checkbox
-            label="Acemi rehber atanmamış."
-            size="md"
-            checked={traineeMissing}
-            onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
-          />
         </Group>
       </Group>
       <Space h="md" />
@@ -210,6 +253,12 @@ const FairsList: React.FC = () => {
           <Space h="xs" />
         </Stack>
       </ScrollArea.Autosize>
+      <Pagination 
+                p="md" 
+                value={page} 
+                onChange={setPage} 
+                total={Math.ceil(fairs.length / 10)} 
+              />
     </Container>
   </>
   

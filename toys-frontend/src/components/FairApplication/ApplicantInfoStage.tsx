@@ -6,10 +6,12 @@ import { notifications } from '@mantine/notifications';
 import { IconSearch } from '@tabler/icons-react';
 import { HighschoolData } from '../../types/data';
 import { City } from '../../types/enum';
+import { HoverCard, Group, Text } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, setApplicationInfo, warnings }) => {
-  // Store complete highschool objects
   const [schools, setSchools] = useState<HighschoolData[]>([]);
+  const [searchInput, setSearchInput] = useState('');
   
   const getSchools = useCallback(async () => {
     const apiURL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
@@ -41,7 +43,7 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
         }, {});
 
         // Convert back to array
-        const uniqueSchools = Object.values(schoolsByName);
+        const uniqueSchools: HighschoolData[] = Object.values(schoolsByName);
         
         if (uniqueSchools.length === 0) {
           notifications.show({
@@ -70,9 +72,31 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
   // Get unique school names for the Autocomplete
   const schoolNames = schools.map(school => school.name);
 
-  // Function to find the complete school object by name
-  const findSchoolByName = (name: string): HighschoolData | undefined => {
-    return schools.find(school => school.name === name);
+  const handleSchoolSelect = (value: string) => {
+    const selectedSchool = schools.find(school => school.name === value);
+    setSearchInput(value);
+
+    if (selectedSchool) {
+      setApplicationInfo(prev => ({
+        ...prev,
+        highschool: selectedSchool
+      }));
+    } else {
+      setApplicationInfo(prev => ({
+        ...prev,
+        highschool: {
+          id: "",
+          name: "",
+          location: "" as City,
+          priority: 1,
+          ranking: 0
+        }
+      }));
+    }
+  };
+
+  const validateStage = () => {
+    return schools.some(school => school.name === searchInput);
   };
 
   return (
@@ -151,24 +175,33 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
             placeholder="Okulunuzun adını giriniz"
             data={schoolNames}
             limit={5}
-            value={applicationInfo.highschool.name}
-            onChange={(value) => {
-              const selectedSchool = findSchoolByName(value);
-              setApplicationInfo({
-                ...applicationInfo,
-                highschool: selectedSchool || {
-                  id: "",
-                  name: value,
-                  location: "" as City,
-                  priority: 1,
-                  ranking: 0
-                } as HighschoolData
-              });
-            }}
+            value={searchInput.split(' ').map(word => word.charAt(0).toLocaleUpperCase("TR") + word.slice(1).toLocaleLowerCase("TR")).join(' ')}
+            onChange={handleSchoolSelect}
             leftSection={<IconSearch size={16} />}
             withAsterisk
-            error={warnings.empty_fields && isEmpty(applicationInfo.highschool.name) ? "Bu alanı boş bırakamazsınız." : false}
+            error={
+              (warnings.empty_fields && isEmpty(searchInput)) ? "Bu alanı boş bırakamazsınız." :
+              (!isEmpty(searchInput) && !validateStage()) ? "Lütfen listeden geçerli bir okul seçin" :
+              false
+            }
           />
+
+          <HoverCard width={350} shadow="md">
+            <HoverCard.Target>
+              <Group gap="xs" mt="xs">
+                <Text size="xs" className="text-blue-600 cursor-pointer">
+                  Liseniz burda yok mu?
+                </Text>
+                <IconInfoCircle size={12} className="text-blue-600" />
+              </Group>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text size="sm">
+                Liseniz bu listede yoksa eklenmesi için ornek@email.com'a istek atın. <br />
+                Şu an için herhangi bir liseyi seçip son aşamada notlarınıza asıl lisenizi yazabilirsiniz.
+              </Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
         </div>
       </form>
     </>

@@ -9,7 +9,6 @@ const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
   setApplicationInfo,
 }) => {
   const majorDisplayNames = Object.values(Department);
-  const majorEnumValues = Object.keys(Department) as Department[];
 
   // Initialize with empty array instead of default majors
   React.useEffect(() => {
@@ -26,7 +25,7 @@ const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
     return enumKey as Department | undefined;
   };
 
-  const getDisplayFromEnum = (enumValue: Department): string => {
+  const getDisplayFromEnum = (enumValue: keyof typeof Department): string => {
     return Department[enumValue];
   };
 
@@ -97,7 +96,7 @@ const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
               <Autocomplete
                 className="flex-grow"
                 label={`${index + 1}. Seçim`}
-                value={major ? getDisplayFromEnum(major as Department) : ''}
+                value={major ? getDisplayFromEnum(major as keyof typeof Department) : ''}
                 onChange={(value) => handleMajorSelect(index, value)}
                 data={majorDisplayNames}
                 classNames={{
@@ -105,7 +104,6 @@ const MajorSelectionStage: React.FC<IndividualApplicationStageProps> = ({
                   label: 'text-blue-500 font-medium mx-2'
                 }}
                 placeholder="Bölüm seçiniz"
-                clearable
               />
               <Button
                 color="red"

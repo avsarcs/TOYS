@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text} from '@mantine/core';
+import {Space, Container, Box, Title, Divider} from '@mantine/core';
 import UniversitiesTable from "../../components/DataAnalysis/UniversitiesList/UniversitiesTable.tsx";
 import TableFilter from "../../components/DataAnalysis/UniversitiesList/TableFilter.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
@@ -16,23 +16,14 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
-const defaultHeaderStyle = {
-    backgroundColor: 'white',
-    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    padding: '10px',
-    display: 'flex',
-    alignItems: 'center', // Center vertically
-    justifyContent: 'center', // Center horizontally
-};
 
-//test data
+// Default data
 const defaultCities = ["Yükleniyor..."];
 const defaultUniversities = [
     {
         name: "Yükleniyor...",
         city: "Yükleniyor...",
-        isRival: "true",
+        is_rival: true,
         id: ""
     }
 ];
@@ -44,7 +35,7 @@ const UniversitiesList: React.FC = () => {
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
     const [cities, setCities] = React.useState<string[]>(defaultCities);
-    const [universities, setUniversities] = React.useState<{name: string; city: string; isRival: string; id: string}[]>(defaultUniversities);
+    const [universities, setUniversities] = React.useState<{name: string; city: string; is_rival: boolean; id: string}[]>(defaultUniversities);
 
     const getCities = useCallback(async () => {
         const cityNames = Object.values(City);
@@ -53,7 +44,7 @@ const UniversitiesList: React.FC = () => {
 
     const getUniversities = useCallback(async () => {
         const url = new URL(TOUR_URL + "internal/analytics/universities/all");
-        url.searchParams.append("auth", userContext.authToken);
+        url.searchParams.append("auth", await userContext.getAuthToken());
 
         console.log("Sent request for universities list.");
 
@@ -76,9 +67,6 @@ const UniversitiesList: React.FC = () => {
         }
 
         const resText = await res.text();
-
-        console.log(resText);
-
         const fetched = (JSON.parse(resText));
 
         if(fetched.length === 0) {
@@ -86,14 +74,14 @@ const UniversitiesList: React.FC = () => {
         }
 
         setUniversities(fetched);
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     const updateRival = useCallback(async (isRival: boolean, universityID: string) => {
         try {
             const url = new URL(TOUR_URL + "internal/analytics/universities/set-rivalry");
-            url.searchParams.append("auth", userContext.authToken);
+            url.searchParams.append("auth", await userContext.getAuthToken());
             url.searchParams.append("university_id", universityID);
-            url.searchParams.append("value_to_set", isRival ? "true" : "false");
+            url.searchParams.append("value_to_set", isRival ? "false" : "true");
 
             const res = await fetch(url, {
                 method: "POST",
@@ -122,7 +110,7 @@ const UniversitiesList: React.FC = () => {
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
-    }, [userContext.authToken]);
+    }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
         getCities().catch((reason) => {
@@ -136,12 +124,6 @@ const UniversitiesList: React.FC = () => {
         });
     }, []);
 
-    const HeaderTextContainer = <div style={defaultHeaderStyle}>
-        <Text style={{fontSize: 'xx-large'}}>
-            Üniversiteler Listesi
-        </Text>
-    </div>
-
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
         <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
@@ -154,9 +136,17 @@ const UniversitiesList: React.FC = () => {
         <Space h="xs" />
     </Container>
 
-
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
-        {HeaderTextContainer}
+        <Box className="flex-grow-0 flex-shrink-0">
+            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                Üniversiteler
+            </Title>
+            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                Prestij.
+            </Title>
+            <Space h="xl"/>
+            <Divider className="border-gray-400"/>
+        </Box>
         <Space h="xl"/>
         {TableFilterContainer}
         <Space h="xl"/>

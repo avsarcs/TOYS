@@ -29,14 +29,29 @@ public class DataTransmitter {
 
             Map<String, Object> map = new HashMap<>();
             map.put("Default HS ID", HighschoolRecord.getDefault());
-            maps.forEach(
-                    m -> {
-                        HighschoolRecord hs = HighschoolRecord.fromMap(m);
-                        map.put(UUID.randomUUID().toString(), hs);
+
+            maps.sort(
+                    (m1, m2) -> {
+                        double hs1 = 0;
+                        try {
+                            hs1 = Double.valueOf((String)((Map<String,Object>)m1.get("details")).get("percentile"));
+                        } catch (Exception e) {}
+                        double hs2 = 0;
+                        try {
+                            hs2 = (Double.valueOf((String)((Map<String,Object>)m2.get("details")).get("percentile")));
+                        } catch (Exception e) {}
+                        return Double.compare(hs1, hs2);
                     }
             );
 
-
+            maps.forEach(
+                    m -> {
+                        HighschoolRecord hs = HighschoolRecord.fromMap(m);
+                        String id = UUID.randomUUID().toString();
+                        map.put(id, hs.setId(id).setRanking(String.valueOf(maps.indexOf(m) + 1)));
+                    }
+            );
+            
             System.out.println("Entry count: " + map.size());
 
             ApiFuture<WriteResult> result = reference.set(
@@ -51,6 +66,7 @@ public class DataTransmitter {
             // Print the map
             System.out.println(map);
         } catch (Exception e) {
+            System.out.println("WE GOT AN ERROR AI AI AI IAI ");
             e.printStackTrace();
         }
     }

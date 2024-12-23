@@ -1,12 +1,13 @@
-import { Button, Title } from "@mantine/core";
+import {Button, Title} from "@mantine/core";
 import "./ProfileInfo.css";
 
-import { UserRole, UserRoleText } from "../../../types/enum.ts";
-import { UserContext } from "../../../context/UserContext.tsx";
-import { useCallback, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ProfileComponentProps } from "../../../types/designed.ts";
-import { notifications } from "@mantine/notifications";
+import {BackendDepartment, UserRole, UserRoleText} from "../../../types/enum.ts";
+import {UserContext} from "../../../context/UserContext.tsx";
+import {useCallback, useContext} from "react";
+import {Link, useParams} from "react-router-dom";
+import {ProfileComponentProps} from "../../../types/designed.ts";
+import {notifications} from "@mantine/notifications";
+import { departmentMapping } from "../ProfileEditing/UpdateProfile.tsx";
 
 const FIRE_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/fire");
 
@@ -76,19 +77,18 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                 <p><strong>İsim: </strong> {profile.fullname} </p>
                 <p><strong>E-Mail: </strong> {profile.email} </p>
                 <p><strong>ID: </strong> {profile.id}</p>
-                {( profile.role !== UserRole.COORDINATOR &&
-                (<><p><strong>Telefon: </strong>{profile.phone}</p>
-                <p><strong>Açıklama: </strong> {profile.profile_description}</p></>)
-                )}
+                {( profile.role !== UserRole.COORDINATOR && profile.role !== UserRole.DIRECTOR) ?
+                <><p><strong>Telefon: </strong>{profile.phone}</p>
+                <p><strong>Açıklama: </strong> {profile.profile_description}</p></>
+                : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Lise:</strong> {profile.highschool.name} </p> : null}
-                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Bölüm:</strong> {profile.major}</p> : null}
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Bölüm:</strong> {departmentMapping[profile.major as BackendDepartment]}</p> : null}
             </div>
             <div className="toys-info">
                 <Title order={5} className="text-blue-700 font-bold font-main">
                     TOYS'a Dair Bilgiler
                 </Title>
                 <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
-                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Rehber Edilen Tur Sayısı:</strong> {profile.previous_tour_count} </p> : null}
                 {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
                 {(profile.role === UserRole.ADVISOR) ? (
                     <p><strong>Sorumlu Olunan Gün: </strong> {translateDays(profile.responsible_days)} </p>

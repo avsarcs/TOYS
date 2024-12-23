@@ -43,10 +43,9 @@ public class AnalyticsUniversitiesService {
         // return universities
         response.addAll(
                 universities.entrySet().stream().map(uni -> {
-                    Map<String, Object> data = dto.university(uni.getValue());
-                    data.put("id", uni.getKey());
+                    Map<String, Object> data = dto.university(uni.getValue().setId(uni.getKey()));
                     return data;
-                }).toList()
+                }).collect(Collectors.toSet())
         );
         return response;
     }
@@ -63,7 +62,7 @@ public class AnalyticsUniversitiesService {
         
         // return universities
         response.addAll(
-                universities.entrySet().stream().map(uni -> dto.simpleUniversity(uni.getValue())).toList()
+                universities.entrySet().stream().map(uni -> dto.simpleUniversity(uni.getValue().setId(uni.getKey()))).toList()
         );
         return response;
     }
@@ -82,7 +81,7 @@ public class AnalyticsUniversitiesService {
         response.addAll(
             universities.entrySet().stream()
                 .filter(uni -> uni.getValue().getIs_rival())
-                .map(uni -> dto.university(uni.getValue()))
+                .map(uni -> dto.university(uni.getValue().setId(uni.getKey())))
                 .toList()
         );
 
@@ -171,6 +170,9 @@ public class AnalyticsUniversitiesService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
+        if(university_id.equals("bilkent")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot set rivalry status of Bilkent!");
+        }
         // get university
         University university = database.universities.getUniversity(university_id);
         if (university == null) {

@@ -6,6 +6,7 @@ import {UserContext} from "../../context/UserContext.tsx";
 import {DashboardCategory, DashboardCategoryText, UserRole} from "../../types/enum.ts";
 import {SimpleEventData} from "../../types/data.ts";
 import {notifications} from "@mantine/notifications";
+import SoonBar from "../../components/Dashboard/SoonBar.tsx";
 
 const DASHBOARD_URL = import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/dashboard";
 const Dashboard: React.FC = () => {
@@ -14,15 +15,16 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [items, setItems] = useState<SimpleEventData[]>([]);
   const [item, setItem] = useState<SimpleEventData | null>(null);
+  const [currentAbortController, setCurrentAbortController] = useState(new AbortController());
 
   const categories = useMemo(() => {
     switch(userContext.user.role) {
       case UserRole.TRAINEE:
       case UserRole.GUIDE:
-        return ([
+        return [
           {value: DashboardCategory.OWN_EVENT, label: DashboardCategoryText.OWN_EVENT},
           {value: DashboardCategory.EVENT_INVITATION, label: DashboardCategoryText.EVENT_INVITATION}
-        ]);
+        ];
       case UserRole.ADVISOR:
         return [
           {value: DashboardCategory.OWN_EVENT, label: DashboardCategoryText.OWN_EVENT},
@@ -31,14 +33,14 @@ const Dashboard: React.FC = () => {
           {value: DashboardCategory.GUIDELESS, label: DashboardCategoryText.GUIDELESS},
           {value: DashboardCategory.GUIDE_ASSIGNED, label: DashboardCategoryText.GUIDE_ASSIGNED},
           {value: DashboardCategory.PENDING_MODIFICATION, label: DashboardCategoryText.PENDING_MODIFICATION}
-        ]
+        ];
       default:
-        return []
+        return [];
     }
   }, [userContext.user.role]);
   const [category, setCategory] = useState<DashboardCategory>(DashboardCategory.NONE);
 
-  const fetchDashboardItems = async () => {
+  const fetchDashboardItems = async (abortController: AbortController) => {
     if(category === DashboardCategory.NONE) {
       return;
     }
@@ -49,7 +51,8 @@ const Dashboard: React.FC = () => {
     dashboardUrl.searchParams.append("dashboard_category", category);
 
     const dashboardRes = await fetch(dashboardUrl, {
-      method: "GET"
+      method: "GET",
+      signal: abortController.signal,
     });
 
     if(!dashboardRes.ok) {
@@ -66,21 +69,21 @@ const Dashboard: React.FC = () => {
   }
 
   const updateDashboard =  () => {
-    fetchDashboardItems().catch(console.error);
+    currentAbortController.abort("Your time is up old man.");
+    const abortController = new AbortController();
+    setCurrentAbortController(abortController);
+    fetchDashboardItems(abortController).catch(console.error);
+    setItem(null);
   }
 
   useEffect(() => {
+    setItem(null);
     updateDashboard();
   }, [category]);
 
   useEffect(() => {
     setCategory(categories.length > 0 ? categories[0].value : DashboardCategory.NONE);
   }, [categories]);
-
-  useEffect(() => {
-    setItem(null);
-  }, [category]);
-
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
       <Box className="flex-grow-0 flex-shrink-0">
@@ -95,6 +98,8 @@ const Dashboard: React.FC = () => {
       </Box>
       <Flex p="xl" direction="row" gap="xl" justify="center" wrap="wrap" className="flex-grow flex-shrink">
         <Box className="basis-1 flex-grow flex-shrink">
+          <SoonBar setItem={setItem} setCategory={setCategory} />
+          <Space h="sm" />
           <ItemList loading={loading} categories={categories} category={category} setCategory={setCategory} items={items} setItem={setItem}/>
         </Box>
         <Box className="min-w-96 flex-shrink-0 flex-grow-0">

@@ -8,6 +8,10 @@ import java.util.Map;
 public class PaymentInfo {
     private String iban;
 
+    public static PaymentInfo nonnull() {
+        return new PaymentInfo().setIban("");
+    }
+
     public PaymentInfo() {
     }
 

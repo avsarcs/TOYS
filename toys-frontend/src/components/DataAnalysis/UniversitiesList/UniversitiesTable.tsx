@@ -7,7 +7,7 @@ interface RowData {
     name: string;
     id: string;
     city: string;
-    isRival: string;
+    is_rival: boolean;
 }
 
 interface ThProps {
@@ -64,6 +64,12 @@ function sortData(
 
     return filterData(
         [...data].sort((a, b) => {
+            if (sortBy === 'is_rival') {
+                return payload.reversed
+                    ? Number(b[sortBy]) - Number(a[sortBy])
+                    : Number(a[sortBy]) - Number(b[sortBy]);
+            }
+
             if (payload.reversed) {
                 return b[sortBy]?.localeCompare(a[sortBy] ?? '') ?? 0;
             }
@@ -110,13 +116,14 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>{row.city}</Table.Td>
             <Table.Td style={{textAlign: 'center', fontSize: "1rem" }}>
                 <RivalButton
-                    isRival={row.isRival === "true"}
+                    isRival={row.is_rival}
                     setIsRival={(isRival) => {
                         if (row.id !== "") {
                         changeIsRival(!isRival, row.id);
                         }
                     }}
                     universityID={row.id}
+                    disabled={row.id === "bilkent"}
                 />
             </Table.Td>
         </Table.Tr>
@@ -148,9 +155,9 @@ const UniversitiesTable: React.FC<UniversitiesTableProps> = ({data, search, citi
                             </Text>
                         </Th>
                         <Th
-                            sorted={sortBy === 'isRival'}
+                            sorted={sortBy === 'is_rival'}
                             reversed={reverseSortDirection}
-                            onSort={() => setSorting('isRival')}
+                            onSort={() => setSorting('is_rival')}
                         >
                             <Text size={"xl"}>
                                 Rakiplik

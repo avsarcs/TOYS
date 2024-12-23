@@ -48,7 +48,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
       return;
     }
 
-    const fetchedHighschools = await highschoolRes.json();
+    const fetchedHighschools: HighschoolData[] = await highschoolRes.json();
     setHighschools(fetchedHighschools);
   }
 
@@ -257,7 +257,7 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
               radius="sm"
               leftSection={<IconSearch />}
               limit={7}
-              data={highschools.map((item: HighschoolData) => item.name)}
+              data={[...new Set(highschools.map((item: HighschoolData) => item.name))]}
               key = {form.key("highschool")}
               {...form.getInputProps("highschool")}/>
             <Select label = "Bölüm" withAsterisk placeholder="Bölüm seç" size="lg" radius="sm"

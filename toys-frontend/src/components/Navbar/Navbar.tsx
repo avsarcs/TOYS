@@ -3,10 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Group, Code, ScrollArea, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconGauge,
   IconPresentationAnalytics,
-  IconFileAnalytics,
-  IconLock,
   IconUsers,
   IconUser,
   IconLogout,
@@ -16,8 +13,9 @@ import {
   IconBrandSafari,
   IconCreditCard,
   IconLayoutDashboard,
-  IconMessage
-
+  IconMessage,
+  IconQuestionMark,
+  IconInvoice, Icon
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
 import { UserContext } from '../../context/UserContext';
@@ -26,7 +24,7 @@ import { UserRole } from '../../types/enum';
 
 type LinkType = {
   label: string;
-  icon: React.ComponentType<Icon['props']>;
+  icon: Icon;
   link?: string;
   onClick?: () => void;
   subLinks?: { label: string; link: string }[];
@@ -71,6 +69,8 @@ export const Navbar: React.FC = () => {
       ],
     });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+    links.push({ label: "Rehber Olma Davetiyeleri", icon:  IconInvoice, link: '/guide-invitations'});
   }
   else if (user.role === UserRole.COORDINATOR) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -82,14 +82,19 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Ödemeler', icon: IconCreditCard, link: '/guide-payments' });
     links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '/manage-personnel' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+    links.push({ label: "Rehber Olma Davetiyeleri", icon:  IconInvoice, link: '/guide-invitations'});
   }
   else if (user.role === UserRole.ADVISOR) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
     links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
-    links.push({ label: 'Rehberler', icon: IconUsers, link: '#' });
+    links.push({ label: 'Rehberler', icon: IconUsers, link: '/guides' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+    links.push({ label: "Rehber Olma Davetiyeleri", icon:  IconInvoice, link: '/guide-invitations'});
+  
   }
   else if (user.role === UserRole.GUIDE) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -97,6 +102,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
   else if (user.role === UserRole.TRAINEE) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -104,9 +110,14 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Tüm Turlar', icon: IconMap, link: '/tours' });
     links.push({ label: 'Pano', icon: IconLayoutDashboard, link: '/dashboard' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
   }
-  else {
+  else if (user.role === UserRole.NONE) {
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
+    links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+  }
+  else if (user.role === UserRole.ADMIN) {
+    links.push({ label: 'Çıkış Yapın', icon: IconLogout, onClick: handleLogout });
   }
 
   const toggleSubMenu = (label: string) => {

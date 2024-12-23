@@ -7,6 +7,7 @@ import server.dbm.Database;
 import server.enums.Department;
 import server.enums.ExperienceLevel;
 import server.enums.roles.ApplicantRole;
+import server.enums.roles.UserRole;
 import server.enums.status.ApplicationStatus;
 import server.enums.status.RequestStatus;
 import server.enums.types.ApplicationType;
@@ -41,6 +42,26 @@ public class DTOFactory {
 
     @Autowired
     Database database;
+
+    public Map<String, Object> guideApplication(GuideApplication application) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("fullname", application.getProfile().getName());
+        dto.put("id", application.getBilkent_id());
+        dto.put("highschool", highschool(application.getProfile().getHighschool_id()));
+
+        dto.put("email", application.getProfile().getContact_info().getEmail());
+        dto.put("phone", application.getProfile().getContact_info().getPhone());
+
+        dto.put("major", application.getProfile().getMajor().name());
+
+        dto.put("current_semester", application.getProfile().getSemester());
+        dto.put("next_semester_exchange", application.isFutureExchange());
+        dto.put("how_did_you_hear", application.getHeardFrom());
+        dto.put("why_apply", application.getApplicationReason());
+
+        return dto;
+    }
 
     public Map<String, Object> highschool(Highschool highschool) {
         Map<String, Object> dto = new HashMap<>();
@@ -129,6 +150,9 @@ public class DTOFactory {
     public Map<String, Object> tourGuide(String guideID) {
         try {
             Guide guide = database.people.fetchGuides(guideID).get(0);
+            if (guide == null) {
+                guide = database.people.fetchAdvisors(guideID).get(0);
+            }
             return tourGuide(guide);
         } catch (Exception e) {
             System.out.println("Guide with id [" + guideID + "] not found!");
@@ -176,7 +200,7 @@ public class DTOFactory {
                 "name", inviteeName
         ));
 
-        dto.put("event_id", request.getEvent_id());
+        dto.put("event", simpleEvent(request.getEvent_id()));
         switch (request.getStatus()) {
             case APPROVED -> dto.put("status", "ACCEPTED");
             case REJECTED -> dto.put("status", "REJECTED");
@@ -184,6 +208,23 @@ public class DTOFactory {
         }
 
         return dto;
+    }
+
+    public Map<String, Object> simpleEvent(String event_id) {
+        try {
+            TourRegistry tour = database.tours.fetchTour(event_id);
+            if (tour == null) {
+                FairRegistry fair = database.fairs.fetchFairs().get(event_id);
+                if (fair == null) {
+                    return Map.of();
+                }
+                return simpleEvent(fair);
+            }
+            return simpleEvent(tour);
+        } catch (Exception e) {
+            System.out.println("Event with id [" + event_id + "] not found!");
+            return Map.of();
+        }
     }
 
     public Applicant tourApplicant(Map<String, Object> map, String hsid) {
@@ -209,17 +250,20 @@ public class DTOFactory {
 
         dto.put("highschool", highschool(tour.getApplicant().getSchool()));
         List<Guide> guides = database.people.fetchGuides(null);
+        guides.addAll(database.people.fetchAdvisors(null));
+
 
         dto.put("trainee_guides", guides.stream().filter(
                 guide -> guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
-        ).map(this::tourGuide).toList());
+        ).filter( gid -> tour.getGuides().contains(gid.getBilkent_id()))
+                .map(this::tourGuide).toList());
 
         dto.put("guides", guides.stream().filter(
                 guide -> !guide.getExperience().getExperienceLevel_level().equals(ExperienceLevel.TRAINEE)
         ).filter( gid -> tour.getGuides().contains(gid.getBilkent_id()))
                 .map(this::tourGuide).toList());
 
-        dto.put("type", tour.getTour_type().name().toLowerCase());
+        dto.put("type", tour.getTour_type().name());
 
         dto.put("requested_times", tour.getRequested_hours());
         dto.put("accepted_time", tour.getAccepted_time());
@@ -377,7 +421,7 @@ public class DTOFactory {
     public Map<String,Object> simpleEvent(FairApplication application, String id) {
         Map<String, Object> dto = new HashMap<>();
 
-        dto.put("event_type", "TOUR");
+        dto.put("event_type", "FAIR");
         dto.put("event_id", id);
         dto.put("highschool", highschool(application.getApplicant().getSchool()));
         dto.put("accepted_time", "");
@@ -390,6 +434,16 @@ public class DTOFactory {
         return dto;
     }
 
+    public Map<String, Object> simpleUser(User user) {
+        Map<String, Object> dto = new HashMap<>();
+
+        dto.put("id", user.getBilkent_id());
+        dto.put("name", user.getProfile().getName());
+        dto.put("role", user.getRole().name());
+        // TODO: add trainee check
+
+        return dto;
+    }
 
     public Map<String, Object> simpleEvent(FairRegistry tour) {
         Map<String, Object> dto = new HashMap<>();
@@ -485,7 +539,7 @@ public class DTOFactory {
         dto.put("highschool", highschool(guide.getProfile().getHighschool_id()));
         dto.put("schedule", guide.getProfile().getSchedule());
         dto.put("iban", guide.getProfile().getPayment_info().getIban());
-        dto.put("major", guide.getDepartment());
+        dto.put("major", guide.getProfile().getMajor());
         dto.put("email", guide.getProfile().getContact_info().getEmail());
 
         Map<String, ReviewRecord> records = database.reviews.getReviewRecords();
@@ -540,8 +594,9 @@ public class DTOFactory {
 
         dto.put("id", guide.getBilkent_id());
         dto.put("name", guide.getProfile().getName());
-        dto.put("major", guide.getDepartment());
+        dto.put("major", guide.getProfile().getMajor());
         dto.put("experience", guide.getExperience().getPrevious_events().size() + " events");
+        dto.put("role", guide.getRole().name());
 
         return dto;
     }
@@ -754,14 +809,17 @@ public class DTOFactory {
         EventReview review = new EventReview();
 
         Map<String, Review> guide_reviews = new HashMap<>();
+
         for (Map<String, Object> r : reviews) {
             if (r.get("for").equals("GUIDE")) {
-                guide_reviews.put((String) r.get("guide_id"), new Review().setScore((int) r.get("score")).setBody((String) r.get("body")));
+                guide_reviews.put( (String) ((Map<String, Object>) r.get("guide")).get("id"), new Review().setScore((int) r.get("score")).setBody((String) r.get("body")));
             } else {
                 review.setEvent_id((String) r.get("tour_id"));
                 review.setEvent_review(new Review().setScore(((Number) r.get("score")).longValue()).setBody((String) r.get("body")));
             }
         }
+
+        review.setGuide_reviews(guide_reviews);
 
         return review;
     }

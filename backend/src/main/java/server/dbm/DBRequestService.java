@@ -26,6 +26,28 @@ public class DBRequestService {
         this.mapper = Database.getObjectMapper();
     }
 
+
+    public void deleteRequest(Request request) {
+        String document = request.getType().name().toLowerCase();
+        DocumentReference reference = firestore.collection("requests").document(document);
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
+            data.remove(request.getRequest_id());
+
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap(document, data),
+                            new TypeReference<HashMap<String, Object>>() {
+                            }));
+
+            System.out.println("Request [" + request.getRequest_id() + "] deleted from database." + result.get().getUpdateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to delete request from database.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete request from the database.");
+        }
+    }
+
     public boolean addRequest(Request request, boolean force) {
         String document = request.getType().name().toLowerCase();
         DocumentReference reference = firestore.collection("requests").document(document);

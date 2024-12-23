@@ -1,9 +1,6 @@
-import React, {useContext, useMemo} from "react";
+import React, {useMemo} from "react";
 import {Group, Stack, Text} from "@mantine/core";
 import {FairSectionProps} from "../../types/designed.ts";
-import {UserRole} from "../../types/enum.ts";
-import {UserContext} from "../../context/UserContext.tsx";
-import TourStatusActions from "../TourStatusActions/TourStatusActions.tsx";
 
 // Define the new tour status text mapping
 const FairStatusText = {
@@ -16,8 +13,6 @@ const FairStatusText = {
 } as const;
 
 const StatusInformation: React.FC<FairSectionProps> = (props: FairSectionProps) => {
-  const userContext = useContext(UserContext);
-
   const statusColorClass = useMemo(() => {
     switch (props.fair.status) {
       case "CONFIRMED":

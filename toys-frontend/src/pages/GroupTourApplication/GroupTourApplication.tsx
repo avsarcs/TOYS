@@ -11,22 +11,22 @@ import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
 import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
-
 import TeacherInfoStage from '../../components/TourApplication/TeacherInfoStage';
 import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import NotesStage from '../../components/TourApplication/NotesStage';
+import {City} from "../../types/enum.ts";
 const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
-
 
 export const GroupTourApplication: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const userContext = useContext(UserContext);
 
   const [applicationInfo, setApplicationInfo] = useState<GroupApplication>({
     "highschool": {
-      "id": "", "name": "", "location": "", "priority": 1
+      "id": "", "name": "", "location": "" as City, "priority": 1, "ranking": 1
     },
     "requested_times": [],
     "visitor_count": -1,
@@ -60,17 +60,16 @@ export const GroupTourApplication: React.FC = () => {
     }
   }
 
-  /**************
-   * VALIDATION
-  **************/
-
   const [warnings, setWarnings] = useState({
     "empty_fields": false,
     "not_email": false,
     "not_phone_no": false,
     "not_enough_dates": false,
-    "no_student_count": false
+    "no_student_count": false,
+    "invalid_student_count": false
   })
+  
+  const [, setIsStage3Valid] = useState(false)
 
   // Validate if Stage 1 is done
   const validateStage1 = () => {
@@ -90,7 +89,6 @@ export const GroupTourApplication: React.FC = () => {
     }
 
     if (!empty_fields) {
-      console.log("empty_fields is being set to false")
       setWarnings((warnings) => ({
         ...warnings,
         "empty_fields": false
@@ -145,28 +143,40 @@ export const GroupTourApplication: React.FC = () => {
 
   // Validate if stage 3 is done.
   const validateStage3 = () => {
-    if (applicationInfo.visitor_count < 1) {
-      setWarnings((warnings) => ({
-        ...warnings,
-        "no_student_count": true
-      }))
-      return false
+    let isValid = true;
+    
+    if (applicationInfo.visitor_count === -1) {
+      setWarnings(prev => ({
+        ...prev,
+        "no_student_count": true,
+        "invalid_student_count": false
+      }));
+      isValid = false;
+    } else if (applicationInfo.visitor_count <= 0) {
+      setWarnings(prev => ({
+        ...prev,
+        "no_student_count": false,
+        "invalid_student_count": true
+      }));
+      isValid = false;
+    } else {
+      setWarnings(prev => ({
+        ...prev,
+        "no_student_count": false,
+        "invalid_student_count": false
+      }));
     }
-    else {
-      setWarnings((warnings) => ({
-        ...warnings,
-        "no_student_count": false
-      }))
-      return true
-    }
+    
+    setIsStage3Valid(isValid);
+    return isValid;
   }
 
-  const navigate = useNavigate()
   // Submit form function
   const attemptSubmitForm = async () => {
-    if (validateStage3()) {
-      const applicationUrl = new URL(TOUR_APPLICATION_URL)
-      applicationUrl.searchParams.append("auth", await userContext.getAuthToken())
+    if (validateStage3() && !isSubmitting) {
+      setIsSubmitting(true);
+      const applicationUrl = new URL(TOUR_APPLICATION_URL);
+      applicationUrl.searchParams.append("auth", await userContext.getAuthToken());
       
       try {
         const res = await fetch(applicationUrl, {
@@ -181,12 +191,14 @@ export const GroupTourApplication: React.FC = () => {
           setShowSuccessModal(true);
         } else {
           setShowErrorModal(true);
+          setIsSubmitting(false);
         }
       } catch (error) {
         setShowErrorModal(true);
+        setIsSubmitting(false);
       }
     }
-  }
+  };
 
   return (
     <>
@@ -246,7 +258,8 @@ export const GroupTourApplication: React.FC = () => {
               {warnings["not_email"] && (<><br />  <strong>Geçerli bir e-posta adresi girin.</strong></>)}
               {warnings["not_phone_no"] && (<><br />  <strong>Geçerli bir telefon numarası girin.</strong></>)}
               {warnings["not_enough_dates"] && (<><br />  <strong>En az bir zaman aralığı seçin.</strong></>)}
-              {warnings["no_student_count"] && (<><br />  <strong>0'dan büyük bir öğrenci sayısı giriniz.</strong></>)} <br />
+              {warnings["no_student_count"] && (<><br />  <strong>Lütfen öğrenci sayısını giriniz.</strong></>)}
+              {warnings["invalid_student_count"] && (<><br />  <strong>Öğrenci sayısı 0'dan büyük olmalıdır.</strong></>)}
             </Alert>
           }
           {currentStage == 0 && <TeacherInfoStage
@@ -290,55 +303,57 @@ export const GroupTourApplication: React.FC = () => {
           }
           {currentStage == 2 &&
             <Button
-              className="fat-button bg-gray-600 hover:bg-gray-700 text-white rounded-full flex items-center px-4 py-2"
-              onClick={() => { attemptSubmitForm() }}
+              className="fat-button bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center px-4 py-2"
+              onClick={attemptSubmitForm}
+              disabled={isSubmitting}
             >
               Başvuruyu Tamamlayın
             </Button>
           }
         </div>
+        
         <div style={{ position: 'fixed', right: '10px', bottom: '10px', backgroundColor: '#2c3e50', color: '#ecf0f1', padding: '20px', borderRadius: '8px' }}>
-                <Container size="sm">
-                    <Title order={2} style={{ marginBottom: '20px', textAlign: 'center', color: '#ecf0f1' }}>
-                        Bize Ulaşın
-                    </Title>
-                    <Stack spacing="md">
-                        <Group>
-                            <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
-                                <IconMail size={24} color="#ecf0f1" />
-                            </ThemeIcon>
-                            <div>
-                                <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
-                                    Email
-                                </Text>
-                                <Text size="md" style={{ color: '#bdc3c7' }}>iletisim@ornek.com</Text>
-                            </div>
-                        </Group>
-                        <Group>
-                            <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
-                                <IconPhone size={24} color="#ecf0f1" />
-                            </ThemeIcon>
-                            <div>
-                                <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
-                                    Telefon
-                                </Text>
-                                <Text size="md" style={{ color: '#bdc3c7' }}>+90 555 555 55 55</Text>
-                            </div>
-                        </Group>
-                        <Group>
-                            <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
-                                <IconUser size={24} color="#ecf0f1" />
-                            </ThemeIcon>
-                            <div>
-                                <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
-                                    İlgili Kişi
-                                </Text>
-                                <Text size="md" style={{ color: '#bdc3c7' }}>Ahmet Yılmaz</Text>
-                            </div>
-                        </Group>
-                    </Stack>
-                </Container>
-            </div>
+          <Container size="sm">
+            <Title order={2} style={{ marginBottom: '20px', textAlign: 'center', color: '#ecf0f1' }}>
+              Bize Ulaşın
+            </Title>
+            <Stack gap="md">
+              <Group>
+                <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
+                  <IconMail size={24} color="#ecf0f1" />
+                </ThemeIcon>
+                <div>
+                  <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
+                    Email
+                  </Text>
+                  <Text size="md" style={{ color: '#bdc3c7' }}>iletisim@ornek.com</Text>
+                </div>
+              </Group>
+              <Group>
+                <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
+                  <IconPhone size={24} color="#ecf0f1" />
+                </ThemeIcon>
+                <div>
+                  <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
+                    Telefon
+                  </Text>
+                  <Text size="md" style={{ color: '#bdc3c7' }}>+90 555 555 55 55</Text>
+                </div>
+              </Group>
+              <Group>
+                <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
+                  <IconUser size={24} color="#ecf0f1" />
+                </ThemeIcon>
+                <div>
+                  <Text size="lg" fw={500} style={{ color: '#ecf0f1' }}>
+                    İlgili Kişi
+                  </Text>
+                  <Text size="md" style={{ color: '#bdc3c7' }}>Ahmet Yılmaz</Text>
+                </div>
+              </Group>
+            </Stack>
+          </Container>
+        </div>
       </div>
     </>
   );

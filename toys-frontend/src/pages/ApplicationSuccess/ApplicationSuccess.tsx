@@ -1,4 +1,4 @@
-import { Box, Title } from '@mantine/core';
+import { Title } from '@mantine/core';
 import React from 'react';
 import { Container, Text, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
@@ -20,7 +20,7 @@ export const ApplicationSuccess: React.FC = () => {
                     <Title order={2} style={{ marginBottom: '20px', textAlign: 'center', color: '#ecf0f1' }}>
                         Bize Ulaşın
                     </Title>
-                    <Stack spacing="md">
+                    <Stack>
                         <Group>
                             <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
                                 <IconMail size={24} color="#ecf0f1" />

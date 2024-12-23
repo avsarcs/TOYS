@@ -15,8 +15,6 @@ public class University {
     public String city;
     public List<UniversityDepartment> departments;
 
-    
-
     protected University(Map<String, Object> map) {
         this.university_type = (String) map.get("university_type");
         this.name = (String) map.get("name");
@@ -47,10 +45,19 @@ public class University {
         uni.url = (String) map.get("url");
         uni.city = (String) map.get("city");
         try {
-            uni.is_rival = (boolean) map.get("is_rival");
+            uni.is_rival = (Boolean) map.get("is_rival");
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error in University.java");
+            try {
+                uni.is_rival = (boolean) map.get("is_rival");
+            } catch (Exception e1) {
+                try {
+                    uni.is_rival = Boolean.valueOf((String) map.get("is_rival"));
+                } catch (Exception e2) {
+                    e.printStackTrace();
+                    uni.is_rival = false;
+                    System.out.println("Error in University.java");
+                }
+            }
         }
         return uni;
     }

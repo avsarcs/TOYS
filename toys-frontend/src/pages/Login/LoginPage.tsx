@@ -1,21 +1,41 @@
-import { Image } from "@mantine/core"
+import {Image} from "@mantine/core"
 import LoginForm from "../../components/Login/LoginForm";
 import {useContext, useEffect, useState} from "react";
 import RegisterForm from "../../components/Login/RegisterForm.tsx";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
+import {UserRole} from "../../types/enum.ts";
+import ForgotPasswordForm from "../../components/Login/ForgotPasswordForm.tsx";
 
 const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [registering, setRegistering] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     if(userContext.isLoggedIn) {
-      navigate(searchParams.get("redirect") ?? "/dashboard", { replace: true });
+      if(searchParams.has("redirect")) {
+        navigate(searchParams.get("redirect") as string);
+      }
+      else {
+        switch(userContext.user.role) {
+          case UserRole.COORDINATOR:
+            navigate("/tours");
+            break;
+          case UserRole.DIRECTOR:
+            navigate("/universitieslist");
+            break;
+          case UserRole.ADMIN:
+            navigate("/admin");
+            break;
+          default:
+            navigate("/dashboard");
+        }
+      }
     }
-  }, [userContext.isLoggedIn]);
+  }, [userContext.user.role]);
 
   return (
     <div className={"w-full min-h-screen grid lg:grid-cols-2 grid-cols-1 lg:grid-rows-1 grid-rows-2"}>
@@ -30,7 +50,7 @@ const LoginPage: React.FC = () => {
           <div>
             <span className={"font-bold"}>TOYS'a</span>
             <br/>
-            <span>hoşgeldiniz.</span>
+            <span>hoş geldiniz.</span>
             <br/>
             <br/>
             <hr/>
@@ -47,7 +67,9 @@ const LoginPage: React.FC = () => {
           md:p-8 lg:p-14 border-t lg:border-l lg:border-t-0 bg-blue-600 
           bg-gradient-to-bl from-50% from-blue-600 via-blue-500 to-red-300 lg:via-blue-600 lg:to-blue-600`}>
         {
-          registering ? <RegisterForm setRegistering={setRegistering}/> : <LoginForm setRegistering={setRegistering}/>
+          registering ? <RegisterForm setRegistering={setRegistering}/> :
+            (forgotPassword ? <ForgotPasswordForm setForgotPassword={setForgotPassword}/> :
+              <LoginForm setRegistering={setRegistering} setForgotPassword={setForgotPassword} />)
         }
       </div>
     </div>

@@ -9,6 +9,10 @@ public class Application {
     private ApplicationType type;
     private ApplicationStatus status;
 
+    public static Application nonnull() {
+        return new Application().setType(ApplicationType.GUIDE).setStatus(ApplicationStatus.RECEIVED);
+    }
+
     public Application() {
 
     }

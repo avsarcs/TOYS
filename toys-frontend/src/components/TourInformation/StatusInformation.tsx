@@ -1,8 +1,6 @@
-import React, { useContext, useMemo } from "react";
-import { Box, Group, Stack, Text } from "@mantine/core";
+import React, { useMemo } from "react";
+import { Group, Stack, Text } from "@mantine/core";
 import { TourSectionProps } from "../../types/designed.ts";
-import { UserRole } from "../../types/enum.ts";
-import { UserContext } from "../../context/UserContext.tsx";
 import { TourTypeText } from "../../types/enum.ts";
 import TourStatusActions from "../TourStatusActions/TourStatusActions.tsx";
 import GuideStatus from "../GuideStatus/GuideStatus.tsx";
@@ -19,8 +17,7 @@ const TourStatusText = {
 } as const;
 
 const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) => {
-  const userContext = useContext(UserContext);
-  
+
   const statusColorClass = useMemo(() => {
     switch (props.tour.status) {
       case "CONFIRMED":
@@ -53,8 +50,10 @@ const StatusInformation: React.FC<TourSectionProps> = (props: TourSectionProps) 
         </Stack>
         <TourStatusActions tour={props.tour} onRefresh={props.refreshTour} />
       </Group>
-      
-      <GuideStatus tour={props.tour} refreshTour={props.refreshTour} />
+
+      {
+        (props.tour.status == "CONFIRMED" || props.tour.status == "ONGOING") && <GuideStatus tour={props.tour} refreshTour={props.refreshTour} />
+      }
     </Stack>
   );
 };

@@ -1,13 +1,15 @@
 import React from 'react';
-import { Select } from '@mantine/core';
+import {rem, Select} from '@mantine/core';
+import {notifications} from "@mantine/notifications";
+import {IconBuildings} from "@tabler/icons-react";
 
 /**
  * Properties for university selector dropdown menu.
  */
 interface UniversitySelectorProps {
-    universities: string[]; // List of universities to display in the dropdown menu.
-    onUniversityChange: (selectedUniversity: string | null) => void; // Function that sets the selected university.
-    currentUniversity: string | null; // Currently selected university.
+    universities: { name: string, id: string }[]; // List of universities to display in the dropdown menu.
+    onUniversityChange: (selectedUniversity: { name: string, id: string } | null) => void; // Function that sets the selected university.
+    currentUniversity: { name: string, id: string } | null; // Currently selected university.
 }
 
 /**
@@ -18,21 +20,26 @@ interface UniversitySelectorProps {
  */
 const UniversitySelector: React.FC<UniversitySelectorProps> = ({universities, onUniversityChange, currentUniversity}) => {
     if (currentUniversity && !universities.includes(currentUniversity)) {
-        alert("Üniversite bulunamadı.");
+        notifications.show({
+            color: "red",
+            title: "Üniversite bulunamadı.",
+            message: "Seçilen üniversite sistemde kayıtlı değil."
+        });
     }
-
     return <Select
-        value = {currentUniversity}
+        value = {currentUniversity ? currentUniversity.id : null}
         label = "Üniversite Seçin"
         placeholder = "Seçmek için tıklayın."
-        data = {universities.map((university) => ({ value: university, label: university }))}
+        data = {universities.map((university) => ({ value: university.id, label: university.name }))}
         searchable
         nothingFoundMessage="Üniversite bulunamadı."
         allowDeselect = {false}
         radius = "10"
+        leftSection={<IconBuildings style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         required
         onChange={(selectedValue) => {
-            onUniversityChange(selectedValue);
+            const selectedUniversity = universities.find(university => university.id === selectedValue) || null;
+            onUniversityChange(selectedUniversity);
         }}
     />;
 }

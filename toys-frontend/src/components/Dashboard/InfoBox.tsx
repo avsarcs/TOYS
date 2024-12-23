@@ -4,8 +4,10 @@ import React, {useMemo} from "react";
 import {DashboardCategory, EventType, EventTypeText, TourType, TourTypeText} from "../../types/enum.ts";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
-import {IconCircleCheck, IconCircleX, IconUsers} from "@tabler/icons-react";
 import EventInvitationRespondButton from "./EventInvitationRespondButton.tsx";
+import ManageGuidesButton from "./ManageGuidesButton.tsx";
+import EventApplicationAcceptButton from "./EventApplicationAcceptButton.tsx";
+import EventApplicationRejectButton from "./EventApplicationRejectButton.tsx";
 
 const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) => {
   const buttons = useMemo(() => {
@@ -13,10 +15,10 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
       case DashboardCategory.EVENT_INVITATION:
         return (
           <>
-            <EventInvitationRespondButton item={props.item} response={true} updateDashboard={props.updateDashboard}>
+            <EventInvitationRespondButton item={props.item} response={true} updateDashboard={props.updateDashboard} key="INVITATION_ACCEPT">
               Kabul Et
             </EventInvitationRespondButton>
-            <EventInvitationRespondButton item={props.item} response={false} updateDashboard={props.updateDashboard}>
+            <EventInvitationRespondButton item={props.item} response={false} updateDashboard={props.updateDashboard} key="INVITATION_REJECT">
               Reddet
             </EventInvitationRespondButton>
           </>
@@ -24,30 +26,19 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
       case DashboardCategory.PENDING_APPLICATION:
         return (
           <>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconCircleCheck/>}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
+            <EventApplicationAcceptButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_ACCEPT">
               Kabul Et
-            </Button>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconCircleX/>}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
+            </EventApplicationAcceptButton>
+            <EventApplicationRejectButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_ACCEPT">
               Reddet
-            </Button>
+            </EventApplicationRejectButton>
           </>
         );
       case DashboardCategory.GUIDELESS:
         return (
-          <>
-            <Button size="lg" radius="md" fullWidth leftSection={<IconUsers />}
-                    className="text-center border-white bg-blue-600 border-2 outline outline-0
-            hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
-            focus:outline-2 hover:outline-2 transition-colors duration-300">
-              Rehberleri Yönet
-            </Button>
-          </>
+          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard} key="MANAGE_GUIDES">
+            Rehberleri Yönet
+          </ManageGuidesButton>
         );
       default: return <></>
     }
@@ -65,11 +56,11 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
         else {
           return "";
         }
+      case EventType.FAIR:
+        return "fair_icon.svg";
       default: return "";
     }
   }, [props.item.event_type, props.item.event_subtype]);
-
-  console.log(props.item);
 
   return (
     <Stack justify="flex-start" align="center">
@@ -86,11 +77,11 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
           />
         </Center>
         <Space h="sm"/>
-        <Title order={3} fw={700} className="font-main">{ TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type] }</Title>
+        <Title order={3} fw={700} className="font-main">{ (TourTypeText[props.item.event_subtype]) || EventTypeText[props.item.event_type] }</Title>
         <Space h="sm"/>
         <Card.Section inheritPadding ta="start">
-          <Text size="lg" className="text-gray-600">
-            <Text span fw={700}>Lise:</Text> {props.item.highschool.name}
+          <Text size="lg" className="text-gray-600 max-w-72 break-all break-words whitespace-break-spaces">
+            <Text span fw={700} className="">Lise:</Text> {props.item.highschool.name}
           </Text>
           <Text size="lg" className="text-gray-600">
             <Text span fw={700}>Katılımcı Sayısı:</Text> {props.item.visitor_count}
@@ -104,11 +95,11 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
               <>
                 <Text span size="lg" className="text-gray-600" fw={700}>Zamanlar:</Text>
                 {
-                  props.item.requested_times.map((value) => {
+                  props.item.requested_times.map((value, index) => {
                     const date = dayjs(value);
                     const dateEnd = date.add(1, "h");
                     return (
-                      <Text size="md" fw={500} className="text-gray-600">
+                      <Text size="md" fw={500} className="text-gray-600" key={index}>
                         &nbsp;{date.format("DD MMMM YYYY")} {date.format("HH:mm")}-{dateEnd.format("HH:mm")}
                       </Text>
                     );
@@ -130,7 +121,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
         <Card.Section>
           <Stack gap="xs">
             {buttons}
-            <Button size="lg" radius="md" fullWidth component={Link}
+            <Button size="lg" radius="md" fullWidth component={Link} key="GO_TO_EVENT"
                     to={`/${props.item.event_type.toLowerCase()}/${props.item.event_id}`}
                     className="text-center border-white bg-blue-600 border-2 outline outline-0
             hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800

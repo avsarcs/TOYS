@@ -9,6 +9,18 @@ public class Experience {
     private ExperienceLevel experienceLevel_level;
     private List<String> previous_events;
 
+    public static Experience nonnull() {
+        return new Experience().setPrevious_events(List.of()).setExperienceLevel_level(ExperienceLevel.JUNIOR);
+    }
+
+    public Experience() {
+    }
+
+    public Experience(Experience other) {
+        this.experienceLevel_level = other.experienceLevel_level;
+        this.previous_events = other.previous_events;
+    }
+
     public static Experience fromMap(Map<String,Object> map) {
         return new Experience()
                 .setExperienceLevel_level(ExperienceLevel.valueOf((String) map.get("experienceLevel_level")))

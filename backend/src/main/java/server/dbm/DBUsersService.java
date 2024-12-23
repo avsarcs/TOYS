@@ -7,6 +7,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
 import org.springframework.stereotype.Service;
+import server.enums.roles.UserRole;
 import server.models.people.*;
 
 import java.time.DayOfWeek;
@@ -29,6 +30,7 @@ public class DBUsersService {
         users.addAll(fetchAdvisors(bilkentID));
         users.addAll(fetchCoordinators(bilkentID));
         users.addAll(fetchDirectors(bilkentID));
+        users.addAll(fetchAdmins(bilkentID));
 
         if (users.size() == 0) {
             return null;
@@ -43,11 +45,61 @@ public class DBUsersService {
             users.addAll(fetchAdvisors(null));
             users.addAll(fetchCoordinators(null));
             users.addAll(fetchDirectors(null));
+            users.addAll(fetchAdmins(null));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to fetch users from database.");
         }
         return users;
+    }
+
+    public List<Administrator> fetchAdmins(String bilkentID) {
+        List<Administrator> admins = new ArrayList<Administrator>();
+
+        try {
+            DocumentReference reference = firestore.collection("people").document("admins");
+
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("admins");
+
+            if (bilkentID == null || bilkentID.isEmpty()) {
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    admins.add(Administrator.fromMap((Map<String, Object>) entry.getValue()));
+                }
+            } else {
+                if (data.containsKey(bilkentID)) {
+                    admins.add(Administrator.fromMap((Map<String, Object>) data.get(bilkentID)));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to fetch guides from database.");
+        }
+        return admins;
+    }
+
+    public void deleteUser(String bilkentID, UserRole role) {
+        String document = "";
+        document = role.equals(UserRole.GUIDE) ? "guides" : document;
+        document = role.equals(UserRole.ADVISOR) ? "advisors" : document;
+        document = role.equals(UserRole.COORDINATOR) ? "coordinators" : document;
+        document = role.equals(UserRole.DIRECTOR) ? "directors" : document;
+        DocumentReference reference = firestore.collection("people").document(document);
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
+            data.remove(bilkentID);
+
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap(document, data),
+                            new TypeReference<HashMap<String, Object>>() {
+                            }));
+
+            System.out.println("User [" + bilkentID + "] removed." + result.get().getUpdateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to add user to database.");
+        }
     }
 
     public List<Guide> fetchGuides(String bilkentID) {
@@ -164,6 +216,7 @@ public class DBUsersService {
         document = user instanceof Advisor ? "advisors" : document;
         document = user instanceof Coordinator ? "coordinators" : document;
         document = user instanceof Director ? "directors" : document;
+        document = user instanceof Administrator ? "admins" : document;
         DocumentReference reference = firestore.collection("people").document(document);
 
         try {
@@ -191,6 +244,8 @@ public class DBUsersService {
         document = user instanceof Advisor ? "advisors" : document;
         document = user instanceof Coordinator ? "coordinators" : document;
         document = user instanceof Director ? "directors" : document;
+
+        System.out.println("Document is [" + document + "]." );
         DocumentReference reference = firestore.collection("people").document(document);
 
         try {

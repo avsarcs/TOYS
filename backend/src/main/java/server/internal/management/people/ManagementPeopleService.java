@@ -5,6 +5,7 @@ import server.auth.JWTService;
 import server.auth.Permission;
 import server.auth.PermissionMap;
 import server.dbm.Database;
+import server.enums.roles.UserRole;
 import server.enums.status.*;
 import server.enums.types.ApplicationType;
 import server.enums.types.RequestType;
@@ -13,6 +14,7 @@ import server.mailService.mailTypes.About;
 import server.mailService.mailTypes.Concerning;
 import server.mailService.mailTypes.Status;
 import server.models.*;
+import server.models.DTO.DTOFactory;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
 import server.models.people.GuideApplication;
@@ -22,13 +24,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import server.models.people.details.ContactInfo;
+import server.models.requests.AdvisorPromotionRequest;
 import server.models.requests.GuideAssignmentRequest;
 import server.models.requests.Requester;
 import server.models.time.ZTime;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ManagementPeopleService {
@@ -40,6 +45,55 @@ public class ManagementPeopleService {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    DTOFactory dto;
+
+    public void promoteUser(String auth, String invitee) {
+        if (!authService.check(auth, Permission.FIRE_GUIDE_OR_ADVISOR)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to promote users!");
+        }
+
+        User user = databaseEngine.people.fetchUser(invitee);
+
+        // check if user exists
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "User does not exist!");
+        }
+
+        if (!user.getRole().equals(UserRole.GUIDE)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is already an advisor or above!");
+        }
+
+        AdvisorPromotionRequest APR = new AdvisorPromotionRequest();
+        APR.setGuide_id(invitee);
+        APR.setStatus(RequestStatus.PENDING);
+        APR.setRequested_at(new ZTime(ZonedDateTime.now()));
+        APR.setRequest_id("APR" + System.currentTimeMillis() + UUID.randomUUID());
+
+        APR.setType(RequestType.PROMOTION);
+        Requester requester = new Requester();
+        requester.setBilkent_id(JWTService.getSimpleton().decodeUserID(auth));
+        requester.setContactInfo(databaseEngine.people.fetchUser(requester.getBilkent_id()).getProfile().getContact_info());
+        APR.setRequested_by(requester);
+
+        databaseEngine.requests.addRequest(APR);
+
+        // notify the guide
+        try {
+            mailService.sendMail(
+                    databaseEngine.people.fetchUser(invitee).getProfile().getContact_info().getEmail(),
+                    Concerning.GUIDE,
+                    About.ADVISOR_APPLICATION,
+                    Status.RECIEVED,
+                    Map.of(
+                            "request_id", APR.getRequest_id()
+                    )
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void inviteUserToFair(String auth, String invitee, String fairId) {
 
@@ -140,13 +194,23 @@ public class ManagementPeopleService {
         user.setStatus(UserStatus.INACTIVE);
     }
 
-    public Map<String, Application> getApplications(String authToken) {
-        if (!authService.check(authToken, Permission.AR_GUIDE_APPLICATIONS)) {
+    public List<Map<String, Object>> getApplications(String auth) {
+        if (!authService.check(auth, Permission.AR_GUIDE_APPLICATIONS)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view applications");
         }
 
+        List<Map<String, Object>> applications = new ArrayList<>();
+
+        databaseEngine.applications.getGuideApplications().entrySet().stream().filter(
+                entry -> entry.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
+        ).forEach(
+                e -> {
+                    applications.add(dto.guideApplication(e.getValue()));
+                }
+        );
+
         // get and return all applications
-        return databaseEngine.applications.getApplications();
+        return applications;
     }
 
     public List<User> getPeople(String auth) {

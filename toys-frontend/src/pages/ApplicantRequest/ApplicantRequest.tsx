@@ -51,7 +51,7 @@ const ApplicantRequest: React.FC = () => {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [visitorCount, setVisitorCount] = useState<number | ''>(0);
+  const [visitorCount, setVisitorCount] = useState<number | string>(0);
   const [selectedMajors, setSelectedMajors] = useState<string[]>([]);
 
   // // Test data setup
@@ -90,7 +90,7 @@ const ApplicantRequest: React.FC = () => {
         setTourData(data);
         setVisitorCount(data.visitor_count);
         
-        if (data.event_subtype === "individual" && data.requested_majors) {
+        if (data.event_subtype === TourType.INDIVIDUAL && data.requested_majors) {
           setSelectedMajors(data.requested_majors.slice(0, 3));
         }
       } catch (err) {

@@ -40,6 +40,7 @@ public class DBApplicationService {
 
         try {
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get(document);
+
             if (data == null) {
                 data = new HashMap<>();
             }
@@ -60,6 +61,55 @@ public class DBApplicationService {
             e.printStackTrace();
             System.out.println("Failed to add application to database.");
         }
+    }
+
+
+    public Map<String, GuideApplication> getGuideApplications() {
+        Map<String, GuideApplication> applications = new HashMap<>();
+        DocumentReference reference = firestore.collection("applications").document("guides");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("guides");
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                applications.put(entry.getKey(), GuideApplication.fromMap((Map<String,Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to get applications from database.");
+        }
+        return applications;
+    }
+
+    public Map<String, TourApplication> getTourApplications() {
+        Map<String, TourApplication> applications = new HashMap<>();
+        DocumentReference reference = firestore.collection("applications").document("tours");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                applications.put(entry.getKey(), TourApplication.fromMap((Map<String,Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to get applications from database.");
+        }
+        return applications;
+    }
+
+    public Map<String, FairApplication> getFairApplications() {
+        Map<String, FairApplication> applications = new HashMap<>();
+        DocumentReference reference = firestore.collection("applications").document("fairs");
+
+        try {
+            Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("fairs");
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                applications.put(entry.getKey(), FairApplication.fromMap((Map<String,Object>) entry.getValue()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to get applications from database.");
+        }
+        return applications;
     }
 
     public Map<String, Application> getApplications() {

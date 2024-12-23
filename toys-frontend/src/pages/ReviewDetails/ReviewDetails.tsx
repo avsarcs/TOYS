@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Text, Group, Stack, Button, Title, Paper, Loader, Alert } from '@mantine/core';
 import { IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
 import { UserContext } from '../../context/UserContext';
+import {TourData} from "../../types/data.ts";
 
 const REVIEW_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/review");
 const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour");
@@ -15,7 +16,7 @@ const ReviewDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [review, setReview] = useState<any>(null);
-  const [tourData, setTourData] = useState<any>(null);
+  const [tourData, setTourData] = useState<TourData | null>(null);
 
   useEffect(() => {
     const fetchReviewAndTour = async (authToken: string) => {

@@ -37,6 +37,10 @@ import CheckLogin from "./components/CheckLogin.tsx";
 import ManagePersonnel from "./pages/ManagePersonnel/ManagePersonnel.tsx";
 import FairsList from "./pages/FairsList/FairsList.tsx";
 import FairPage from "./pages/FairInformation/FairPage.tsx";
+import Admin from "./pages/Admin/Admin.tsx";
+import UserManual from "./pages/UserManual/UserManual.tsx";
+import GuideInvitations from "./pages/GuideInvitations/GuideInvitations.tsx";
+import GuidesPage from "./pages/GuidesPage/GuidesPage.tsx";
 
 function App() {
   dayjs.locale("tr");
@@ -77,10 +81,14 @@ function App() {
             <Route path="/review/:review-id" element={<CheckLogin required redirect children={<ReviewDetailsPage />}/>}/>
             <Route path="/tourstatistics" element={<CheckLogin required redirect children={<TourStatistics />}/>}/>
             <Route path="/manage-personnel" element={<CheckLogin required redirect children={<ManagePersonnel />}/>}/>
-            <Route path="/applicant-respond/:passkey" element={<ApplicantRespond />} />
+            <Route path="/applicant-respond/:passkey/:tour_id" element={<ApplicantRespond />} />
             <Route path="/applicant-request/:passkey" element={<ApplicantRequest />}/>
             <Route path="/change-hourly-rate" element={<CheckLogin required redirect children={<ChangeHourlyRate />}/>}/>
             <Route path="/contact" element={<Contact />}/>
+            <Route path="/admin" element={<CheckLogin required redirect children={<Admin />}/>}/>
+            <Route path="/user-manual" element={<CheckLogin required redirect children={<UserManual />}/>}/>
+            <Route path="/guide-invitations" element={<CheckLogin required redirect children={<GuideInvitations />}/>}/>
+            <Route path="/guides" element={<CheckLogin required redirect children={<GuidesPage />}/>}/>          
           </Routes>
         </main>
       </div>

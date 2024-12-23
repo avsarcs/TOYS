@@ -16,6 +16,11 @@ export interface LoginData {
   password: string
 }
 
+export interface SimpleUserData {
+  id: string,
+  name: string,
+  role: UserRole
+}
 export interface TraineeGuideApplicationData {
   id: string,
   fullname: string,
@@ -66,7 +71,8 @@ export interface TourData {
 export interface FairData {
   fair_id: string,
   guides: { id: string; full_name: string, highschool: HighschoolData }[],
-  accepted_time: string,
+  start_time: string,
+    end_time: string,
   status: FairStatus,
   notes: string,
   applicant: {

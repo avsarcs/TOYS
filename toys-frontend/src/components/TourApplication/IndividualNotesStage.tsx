@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     Paper,
     Title,
     Textarea,
     Stack,
     Container,
-    TextInput
+    TextInput,
+    Text,
+    Alert
 } from '@mantine/core';
-
+import { Link } from 'react-router-dom';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { IndividualApplicationStageProps } from '../../types/designed';
 
 export const IndividualNotesStage: React.FC<IndividualApplicationStageProps> = ({
@@ -15,6 +18,15 @@ export const IndividualNotesStage: React.FC<IndividualApplicationStageProps> = (
     setApplicationInfo,
     warnings
 }) => {
+    const showVisitorCountWarning = applicationInfo.visitor_count > 10;
+
+    const handleVisitorCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value);
+        setApplicationInfo((application) => ({
+            ...application,
+            visitor_count: value
+        }));
+    };
 
     return (
         <Container size="sm">
@@ -26,19 +38,33 @@ export const IndividualNotesStage: React.FC<IndividualApplicationStageProps> = (
                                 Son Aşama...
                             </Title>
                         </div>
-                        <TextInput
-                            label="Grupta kaç öğrenci olması bekleniyor?"
-                            withAsterisk
-                            placeholder="Bir sayı girin..."
-                            value={applicationInfo.visitor_count == -1 ? "" : applicationInfo.visitor_count}
-                            onChange={(e) => setApplicationInfo((application) => ({
-                                ...application,
-                                visitor_count: parseInt(e.target.value)
-                            }))}
-                            type="number"
-                            error={warnings["no_student_count"] ? "0'dan büyük bir sayı giriniz." : false}
-                            min={0}
-                        />
+                        
+                        <div>
+                            <TextInput
+                                label="Grupta kaç öğrenci olması bekleniyor?"
+                                withAsterisk
+                                placeholder="Bir sayı girin..."
+                                value={applicationInfo.visitor_count === -1 ? "" : applicationInfo.visitor_count}
+                                onChange={handleVisitorCountChange}
+                                type="number"
+                                error={warnings["no_student_count"] ? "0'dan büyük bir sayı giriniz." : false}
+                                min={0}
+                            />
+                            {showVisitorCountWarning && (
+                                <Alert 
+                                    icon={<IconAlertCircle size={16} />}
+                                    color="red"
+                                    variant="light"
+                                    mt="xs"
+                                >
+                                    Bireysel tur başvurularında en fazla 10 kişi olabilir. 10 kişiden kalabalık gruplar için lütfen <Link to="/group-tour-application"><u>Grup Turu Başvurusu'nda</u></Link> bulunun
+                                </Alert>
+                            )}
+                            <Text size="xs" mt="xs" c="dimmed">
+                                (Bireysel tur başvurularında en fazla 10 kişi olabilir)
+                            </Text>
+                        </div>
+
                         <Textarea
                             label="Bize bırakmak istediğiniz başka notlar var mı?"
                             description="(Örneğin özel ihtiyaç sahibi öğrenciler vs.)"

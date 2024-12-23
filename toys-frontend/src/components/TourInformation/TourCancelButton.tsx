@@ -13,7 +13,7 @@ const TourCancelButton: React.FC<TourButtonProps> = (props: TourButtonProps) => 
 
   const setStatus = async () => {
     const cancelUrl = new URL(CANCEL_URL);
-    cancelUrl.searchParams.append("auth", userContext.authToken);
+    cancelUrl.searchParams.append("auth", await userContext.getAuthToken());
     cancelUrl.searchParams.append("event_id", props.tour.tour_id);
 
     try {
@@ -50,7 +50,7 @@ const TourCancelButton: React.FC<TourButtonProps> = (props: TourButtonProps) => 
   }
 
   return (
-    <Button className={working ? "brightness-75" : ""} size="md" leftSection={working ? <IconLoader2 /> : <IconCircleX/>} onClick={setStatus}>
+    <Button className={working ? "brightness-75" : ""} disabled={working} size="md" leftSection={working ? <IconLoader2 /> : <IconCircleX/>} onClick={setStatus}>
       İptal Et
     </Button>
   );
