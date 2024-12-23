@@ -10,6 +10,7 @@ import server.enums.roles.ApplicantRole;
 import server.enums.roles.UserRole;
 import server.enums.status.ApplicationStatus;
 import server.enums.status.RequestStatus;
+import server.enums.status.TourStatus;
 import server.enums.types.ApplicationType;
 import server.enums.types.TourType;
 import server.models.events.*;
@@ -610,9 +611,9 @@ public class DTOFactory {
     }
 
     public Map<String, Object> simpleGuide(String guide_id) {
-        Guide guide = null;
         try {
-            guide = database.people.fetchGuides(guide_id).get(0);
+            Guide guide = (Guide) database.people.fetchUser(guide_id);
+
             return simpleGuide(guide);
         } catch (Exception e) {
             System.out.println("Guide with id "+ guide_id + " not found");

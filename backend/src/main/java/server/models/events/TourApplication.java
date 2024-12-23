@@ -11,6 +11,7 @@ import server.models.DTO.DTO_IndividualTourApplication;
 import server.models.time.ZTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +33,24 @@ public class TourApplication extends Application {
         this.tour_type = TourType.valueOf((String) map.get("tour_type"));
         this.setType(ApplicationType.valueOf((String) map.get("type")));
         this.requested_hours = ((List<String>) map.get("requested_hours")).stream().map(s -> new ZTime(s)).toList();
-        this.interested_in = (List<Department>) map.get("interested_in");
+        this.interested_in = ((List<String>) map.get("interested_in")).stream().map(Department::valueOf).toList();
         this.expected_souls = (long) map.get("expected_souls");
         this.notes = (String) map.get("notes");
         this.applicant = Applicant.fromMap((Map<String, Object>) map.get("applicant"));
+    }
+
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("tour_type", tour_type.name());
+        map.put("type", getType().name());
+        map.put("requested_hours", requested_hours.stream().map(t -> t.getDate().toString()).toList());
+        map.put("interested_in", interested_in.stream().map(Department::name).toList());
+        map.put("expected_souls", expected_souls);
+        map.put("notes", notes);
+        map.put("applicant", applicant.asMap());
+
+        return map;
     }
 
     public static TourApplication fromMap(Map<String, Object> map) {

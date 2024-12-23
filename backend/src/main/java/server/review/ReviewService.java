@@ -58,55 +58,100 @@ public class ReviewService {
 
         Map<String, ReviewRecord> reviewRecord = database.reviews.getReviewRecords();
 
-        if (!reviewRecord.containsKey(reviewerID)) {
+       /* if (!reviewRecord.containsKey(reviewerID)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
         }
         if (reviewRecord.get(reviewerID).getStatus() != ReviewResponse.PENDING) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Review already submitted!");
-        }
+        }*/
 
-        EventReview review = dto.reviewCreateModel(reviewMap);
-
-        String id = database.reviews.addReview(review);
-
-        ReviewRecord rr = reviewRecord.get(reviewerID);
-        rr.setStatus(ReviewResponse.RECEIVED);
-        rr.setReview_id(id);
-        reviewRecord.put(reviewerID, rr);
-        database.reviews.updateReviewRecords(reviewRecord);
         try {
+            String event_id = reviewRecord.entrySet().stream().filter(
+                    e -> e.getValue().getEvent_id().equals(reviewerID)
+            ).findFirst().orElse(null).getKey();
+
+            if (canReview(reviewerID, event_id)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
+            }
+
+            reviewEvent(reviewerID, event_id, reviewMap);
 
             mailService.sendMail(
-                    database.people.fetchAdvisorForDay(database.tours.fetchTour(review.getEvent_id()).getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
+                    database.people.fetchAdvisorForDay(database.tours.fetchTour(event_id).getAccepted_time().getDate().getDayOfWeek()).getProfile().getContact_info().getEmail(),
                     Concerning.ADVISOR,
                     About.REVIEW,
                     Status.RECIEVED,
-                    Map.of("tour_id", review.getEvent_id(), "score", Long.toString(review.getEvent_review().getScore()))
+                    Map.of("tour_id", event_id)
             );
         } catch (Exception e) {
-            System.out.println("ReviewService:reviewTour() :There was an error on sending mail to advisor");
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid reviewer!");
         }
+
+    }
+
+    public String markForReview(String event_id) {
+        String pass = "";
+
+        Map<String, ReviewRecord> record = database.reviews.getReviewRecords();
+
+        if (record.containsKey(event_id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Already marked for review!");
+        }
+
+        pass = UUID.randomUUID().toString();
+
+        record.put(event_id, new ReviewRecord().setEvent_id(pass).setStatus(ReviewResponse.PENDING).setReview_id(""));
+
+        database.reviews.updateReviewRecords(record);
+
+        return pass;
+    }
+
+    public boolean canReview(String pass, String event_id) {
+        Map<String, ReviewRecord> record = database.reviews.getReviewRecords();
+        return record.containsKey(event_id) && record.get(event_id).getEvent_id().equals(pass) && record.get(event_id).getStatus().equals(ReviewResponse.PENDING);
+    }
+
+    public void reviewEvent(String pass, String event_id, List<Map<String, Object>> reviews) {
+        if (!canReview(pass, event_id)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
+        }
+
+        EventReview eventReview = dto.reviewCreateModel(reviews);
+
+        String review_id = database.reviews.addReview(eventReview);
+
+        Map<String, ReviewRecord> record = database.reviews.getReviewRecords();
+
+        record.get(event_id).setReview_id(review_id).setStatus(ReviewResponse.RECEIVED);
+
+        database.reviews.updateReviewRecords(record);
     }
 
     public Map<String, Object> getTourDetails(String reviewer_id) {
         Map<String, ReviewRecord> reviewRecord = database.reviews.getReviewRecords();
 
-        if (!reviewRecord.containsKey(reviewer_id)) {
+        try {
+            String eventID = reviewRecord.entrySet().stream().filter(
+                    e -> e.getValue().getEvent_id().equals(reviewer_id)
+            ).findFirst().orElse(null).getKey();
+
+
+            TourRegistry tour = database.tours.fetchTour(eventID);
+            List<Guide> guides = new ArrayList<>();
+            for (String gid : tour.getGuides()) {
+                try {
+                    guides.add(database.people.fetchGuides(gid).get(0));
+                } catch (Exception e) {
+                    System.out.println("ReviewService:getTourDetails() :There was an error on fetching guide with id: " + gid);
+                }
+            }
+            return dto.tourToReview(tour, guides);
+
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized");
         }
-
-
-        TourRegistry tour = database.tours.fetchTour(reviewRecord.get(reviewer_id).getEvent_id());
-        List<Guide> guides = new ArrayList<>();
-        for (String gid : tour.getGuides()) {
-            try {
-                guides.add(database.people.fetchGuides(gid).get(0));
-            } catch (Exception e) {
-                System.out.println("ReviewService:getTourDetails() :There was an error on fetching guide with id: " + gid);
-            }
-        }
-
-        return dto.tourToReview(tour, guides);
     }
 
     public void respondToReview(String auth, String review_id, String responseString) {
@@ -158,26 +203,32 @@ public class ReviewService {
         if (reviewEntry == null) {
             return new ArrayList<>();
         }
-        ReviewRecord reviewRecord = reviewEntry.getValue();
+        try {
 
-        EventReview review = database.reviews.getReview(reviewRecord.getReview_id());
+            ReviewRecord reviewRecord = reviewEntry.getValue();
+
+            EventReview review = database.reviews.getReview(reviewRecord.getReview_id());
         if(review == null) {
             return new ArrayList<>();
         }
 
-        TourRegistry tour = database.tours.fetchTour(tour_id);
-        List<Map<String, Object>> reviews = new ArrayList<>();
-        reviews.add(dto.reviewOfTour(tour, review));
-        reviews.addAll(review.getGuide_reviews().entrySet().stream().map(
-                e -> {
-                    try {
-                        return dto.reviewOfGuide(database.people.fetchGuides(e.getKey()).get(0), tour, review);
-                    } catch (Exception ex) {
-                        return null;
+            TourRegistry tour = database.tours.fetchTour(tour_id);
+            List<Map<String, Object>> reviews = new ArrayList<>();
+            reviews.add(dto.reviewOfTour(tour, review));
+            reviews.addAll(review.getGuide_reviews().entrySet().stream().map(
+                    e -> {
+                        try {
+                            return dto.reviewOfGuide(database.people.fetchGuides(e.getKey()).get(0), tour, review);
+                        } catch (Exception ex) {
+                            return null;
+                        }
                     }
-                }
-        ).toList());
-        return reviews.stream().filter(Objects::nonNull).toList();
+            ).toList());
+            return reviews.stream().filter(Objects::nonNull).toList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public Map<String,Object> getReviewOfGuide(String auth, String guide_id) {

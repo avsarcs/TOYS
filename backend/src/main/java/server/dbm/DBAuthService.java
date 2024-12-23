@@ -31,6 +31,26 @@ public class DBAuthService {
     }
 
 
+    public void invalidatePasskey(String passkey) {
+        DocumentReference reference = firestore.collection("auth").document("passkeys");
+        Map<String, Object> data = new HashMap<>();
+        try {
+            data = (Map<String,Object>) reference.get().get().getData().get("passkeys");
+
+            data.remove(passkey);
+            ApiFuture<WriteResult> result = reference.set(
+                    mapper.convertValue(
+                            Collections.singletonMap("passkeys", data),
+                            new TypeReference<HashMap<String, Object>>() {}
+                    )
+            );
+            System.out.println("Passkey invalidated." + result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to invalidate passkey.");
+        }
+    }
 
     public void addAuthEntry(AuthEntry entry) {
         try {

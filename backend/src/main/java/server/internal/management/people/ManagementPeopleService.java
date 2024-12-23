@@ -3,7 +3,6 @@ package server.internal.management.people;
 import server.auth.AuthService;
 import server.auth.JWTService;
 import server.auth.Permission;
-import server.auth.PermissionMap;
 import server.dbm.Database;
 import server.enums.roles.UserRole;
 import server.enums.status.*;
@@ -17,8 +16,7 @@ import server.models.*;
 import server.models.DTO.DTOFactory;
 import server.models.events.FairRegistry;
 import server.models.events.TourRegistry;
-import server.models.people.GuideApplication;
-import server.models.people.User;
+import server.models.people.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,7 +36,7 @@ import java.util.UUID;
 @Service
 public class ManagementPeopleService {
     @Autowired
-    Database databaseEngine;
+    Database database;
 
     @Autowired
     MailServiceGateway mailService;
@@ -49,21 +47,54 @@ public class ManagementPeopleService {
     @Autowired
     DTOFactory dto;
 
+
     public void promoteUser(String auth, String invitee) {
         if (!authService.check(auth, Permission.FIRE_GUIDE_OR_ADVISOR)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to promote users!");
         }
 
-        User user = databaseEngine.people.fetchUser(invitee);
+        User user = database.people.fetchUser(invitee);
 
         // check if user exists
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "User does not exist!");
         }
 
-        if (!user.getRole().equals(UserRole.GUIDE)) {
+
+        if (List.of(UserRole.GUIDE, UserRole.ADVISOR).contains(user.getRole())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "U r a maggot with no permission to do this!");
+        }
+
+        try {
+            Guide guide = database.people.fetchGuides(invitee).get(0);
+            database.people.deleteUser(invitee, UserRole.GUIDE);
+
+            Advisor advisor = new Advisor(guide);
+
+            database.people.addUser(advisor);
+
+            try{
+
+                mailService.sendMail(
+                        advisor.getProfile().getContact_info().getEmail(),
+                        Concerning.GUIDE,
+                        About.ADVISOR_APPLICATION,
+                        Status.APPROVAL,
+                        Map.of()
+                );
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is already an advisor or above!");
         }
+
+        if (true == (1 == 1)) {
+            return;
+        }
+
+
 
         AdvisorPromotionRequest APR = new AdvisorPromotionRequest();
         APR.setGuide_id(invitee);
@@ -74,15 +105,15 @@ public class ManagementPeopleService {
         APR.setType(RequestType.PROMOTION);
         Requester requester = new Requester();
         requester.setBilkent_id(JWTService.getSimpleton().decodeUserID(auth));
-        requester.setContactInfo(databaseEngine.people.fetchUser(requester.getBilkent_id()).getProfile().getContact_info());
+        requester.setContactInfo(database.people.fetchUser(requester.getBilkent_id()).getProfile().getContact_info());
         APR.setRequested_by(requester);
 
-        databaseEngine.requests.addRequest(APR);
+        database.requests.addRequest(APR);
 
         // notify the guide
         try {
             mailService.sendMail(
-                    databaseEngine.people.fetchUser(invitee).getProfile().getContact_info().getEmail(),
+                    database.people.fetchUser(invitee).getProfile().getContact_info().getEmail(),
                     Concerning.GUIDE,
                     About.ADVISOR_APPLICATION,
                     Status.RECIEVED,
@@ -103,14 +134,14 @@ public class ManagementPeopleService {
 
 
         //check if fair exists
-        if (databaseEngine.fairs
+        if (database.fairs
                 .fetchFairs()
                 .keySet().stream().noneMatch(k -> k.equals(fairId))) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Fair does not exist!");
         }
 
         //check if guide exists
-        if (databaseEngine.people.fetchUser(invitee) == null) {
+        if (database.people.fetchUser(invitee) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Guide does not exist!");
         }
 
@@ -126,23 +157,23 @@ public class ManagementPeopleService {
         String userID = JWTService.getSimpleton().decodeUserID(auth);
 
         // fetch the source contact info
-        ContactInfo contact = databaseEngine.people.fetchUser(userID).getProfile().getContact_info();
+        ContactInfo contact = database.people.fetchUser(userID).getProfile().getContact_info();
 
         request.setRequested_by(new Requester().setBilkent_id(userID).setContactInfo(contact));
 
         // add the invitation request
-        databaseEngine.requests.addRequest(request);
+        database.requests.addRequest(request);
 
         // notify the guide
         try {
         mailService.sendMail(
-                databaseEngine.people.fetchUser(invitee).getProfile().getContact_info().getEmail(),
+                database.people.fetchUser(invitee).getProfile().getContact_info().getEmail(),
                 Concerning.GUIDE,
                 About.GUIDE_ASSIGNMENT,
                 Status.RECIEVED,
                 Map.of(
                         "event_id", fairId,
-                        "event_name", databaseEngine.fairs.fetchFairs().get(fairId).getFair_name(),
+                        "event_name", database.fairs.fetchFairs().get(fairId).getFair_name(),
                         "request_id", request.getRequest_id()
                 )
 
@@ -160,37 +191,37 @@ public class ManagementPeopleService {
         }
 
         // check if user exists
-        if (databaseEngine.people.fetchUser(firee) == null) {
+        if (database.people.fetchUser(firee) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User does not exist!");
         }
 
         // find all events the user is assigned to, and remove them from those events
-        Map<String, TourRegistry> tours = databaseEngine.tours.fetchTours();
+        Map<String, TourRegistry> tours = database.tours.fetchTours();
         for (Map.Entry<String, TourRegistry> tour : tours.entrySet()) {
             // check if guide is assigned to said tour
             if (tour.getValue().getGuides().contains(firee)) {
                 // check if guide is assigned to be a guide for a tour
                 if (tour.getValue().getTourStatus() == TourStatus.CONFIRMED) {
                     tour.getValue().getGuides().remove(firee);
-                    databaseEngine.tours.updateTour(tour.getValue(), tour.getKey());
+                    database.tours.updateTour(tour.getValue(), tour.getKey());
                 }
             }
         }
 
         // find all assigned fairs, remove the guide from them as well
-        Map<String, FairRegistry> fairs = databaseEngine.fairs.fetchFairs();
+        Map<String, FairRegistry> fairs = database.fairs.fetchFairs();
         for (Map.Entry<String, FairRegistry> fair : fairs.entrySet()) {
             // check if guide is assigned to said fair
             if (fair.getValue().getGuides().contains(firee)) {
                 if (fair.getValue().getFair_status() == FairStatus.CONFIRMED) {
                     fair.getValue().getGuides().remove(firee);
-                    databaseEngine.fairs.updateFair(fair.getValue(), fair.getKey());
+                    database.fairs.updateFair(fair.getValue(), fair.getKey());
                 }
             }
         }
 
         // set guide status to be inactive
-        User user = databaseEngine.people.fetchUser(firee);
+        User user = database.people.fetchUser(firee);
         user.setStatus(UserStatus.INACTIVE);
     }
 
@@ -201,7 +232,7 @@ public class ManagementPeopleService {
 
         List<Map<String, Object>> applications = new ArrayList<>();
 
-        databaseEngine.applications.getGuideApplications().entrySet().stream().filter(
+        database.applications.getGuideApplications().entrySet().stream().filter(
                 entry -> entry.getValue().getStatus().equals(ApplicationStatus.RECEIVED)
         ).forEach(
                 e -> {
@@ -219,7 +250,7 @@ public class ManagementPeopleService {
         }
 
         // get all users
-        List<User> users = databaseEngine.people.fetchUsers();
+        List<User> users = database.people.fetchUsers();
         // remove their authentication information
         users.forEach(user -> {
             user.setAuthInfo(null);
@@ -232,17 +263,17 @@ public class ManagementPeopleService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to view applications");
         }
 
-        ApplicationType type = databaseEngine.applications.getApplications().get(applicationId).getType();
+        ApplicationType type = database.applications.getApplications().get(applicationId).getType();
 
         ApplicationStatus status = ApplicationStatus.valueOf(response);
-        databaseEngine.applications.updateApplication(applicationId, type ,status);
+        database.applications.updateApplication(applicationId, type ,status);
 
         // notify the applicant
         try {
-            Application application = databaseEngine.applications.getApplications().get(applicationId);
+            Application application = database.applications.getApplications().get(applicationId);
             if (application.getType() == ApplicationType.GUIDE) {
                 mailService.sendMail(
-                        databaseEngine.people.fetchUser(((GuideApplication) application).getProfile().getContact_info().getEmail()).getProfile().getContact_info().getEmail(),
+                        database.people.fetchUser(((GuideApplication) application).getProfile().getContact_info().getEmail()).getProfile().getContact_info().getEmail(),
                         Concerning.GUIDE,
                         About.GUIDE_APPLICATION,
                         response.equals("ACCEPTED") ? Status.APPROVAL : Status.REJECTION,

@@ -47,6 +47,8 @@ public class TourRegistry extends TourApplication {
         this.started_at = new ZTime("1970-01-01T00:00:00Z");
         this.ended_at = new ZTime("1970-01-01T00:00:00Z");
         this.classroom = "";
+
+        this.guides = new ArrayList<>();
     }
 
     public static TourRegistry getDefault() {
@@ -80,6 +82,20 @@ public class TourRegistry extends TourApplication {
         this.ended_at = new ZTime(ZonedDateTime.parse((String) map.get("ended_at")));
         this.tour_id = (String) map.get("tour_id");
         this.classroom = (String) map.get("classroom");
+    }
+
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = super.asMap();
+        map.put("accepted_time", accepted_time.getDate().toString());
+        map.put("guides", guides);
+        map.put("tourStatus", tour_status.name());
+        map.put("notes", notes);
+        map.put("reviews", reviews);
+        map.put("started_at", started_at.getDate().toString());
+        map.put("ended_at", ended_at.getDate().toString());
+        map.put("tour_id", tour_id);
+        map.put("classroom", classroom);
+        return map;
     }
 
     public ZTime getAccepted_time() {
