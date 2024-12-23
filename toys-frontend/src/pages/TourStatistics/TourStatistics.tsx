@@ -1,9 +1,11 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Stack, Box, Title, Divider} from '@mantine/core';
+import {Space, Container, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
 import DaysGraph from "../../components/TourStatistics/DaysGraph.tsx";
 import StatusGraph from "../../components/TourStatistics/StatusGraph.tsx";
 import CitiesGraph from "../../components/TourStatistics/CitiesGraph.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
+import HighSchoolDetails from "../DataAnalysis/HighSchoolDetails.tsx";
+import HighSchoolAdd from "../DataAnalysis/HighSchoolAdd.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -25,11 +27,14 @@ const BilkentStudentDetails: React.FC = () => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
+    const [fetchedData, setFetchedData] = React.useState(false);
     const [days, setDays] = React.useState(defaultDays);
     const [statuses, setStatuses] = React.useState(defaultStatuses);
     const [cities, setCities] = React.useState(defaultCities);
 
     const getDaysAndStatusesAndCities = useCallback(async () => {
+        setFetchedData(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/tours");
         url.searchParams.append("auth", await userContext.getAuthToken());
 
@@ -82,6 +87,7 @@ const BilkentStudentDetails: React.FC = () => {
         setDays(orderedDaysData);
         setStatuses(orderedStatusData)
         setCities(orderedCitiesData);
+        setFetchedData(true);
 
     }, [userContext.getAuthToken]);
 
@@ -91,27 +97,27 @@ const BilkentStudentDetails: React.FC = () => {
         });
     }, []);
 
-    const GraphsContainer = <Container style={defaultContainerStyle}>
+    const GraphsContainer = <div>
         <Space h="xs" />
         <Stack>
-            <div>
-                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+            <div style={{ padding: '0 20%' }}>
+                <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
                     Turların Düzenlendiği Günler
                 </Text>
                 <Space h="xs"/>
                 <DaysGraph data={days} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
-            <Space h="xl"/>
-            <div>
-                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+            <Divider size="sm" className="border-gray-300"/>
+            <div style={{ padding: '0 20%' }}>
+                <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
                     Turların Durumları
                 </Text>
                 <Space h="xs"/>
                 <StatusGraph data={statuses} style={{margin: '20px', maxHeight: '400px'}}/>
             </div>
-            <Space h="xl"/>
-            <div>
-                <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+            <Divider size="sm" className="border-gray-300"/>
+            <div style={{ padding: '0 20%' }}>
+                <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
                     Tur Gruplarının Geldiği Şehirler
                 </Text>
                 <Space h="xs"/>
@@ -119,25 +125,33 @@ const BilkentStudentDetails: React.FC = () => {
             </div>
         </Stack>
         <Space h="xs" />
-    </Container>
-
-    return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Box className="flex-grow-0 flex-shrink-0">
-            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-                Tur İstatistikleri
-            </Title>
-            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Kim, ne, nerede, ne zaman, nasıl?
-            </Title>
-            <Space h="xl"/>
-            <Divider className="border-gray-400"/>
-        </Box>
-        <Space h="xl"/>
-        {GraphsContainer}
-        <Space h="xl"/>
-        <Space h="xl"/>
     </div>
 
+    return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
+        {
+            fetchedData
+                ?
+                <>
+                    <Box className="flex-grow-0 flex-shrink-0">
+                        <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                            Tur İstatistikleri
+                        </Title>
+                        <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                            Sisteme kayıtlı olan turların istatistikleri.
+                        </Title>
+                        <Space h="xl"/>
+                        <Divider className="border-gray-400"/>
+                    </Box>
+                    <Stack gap="0" bg="white">
+                        {GraphsContainer}
+                    </Stack>
+                </>
+                :
+                <LoadingOverlay
+                    visible={!fetchedData} zIndex={10}
+                    overlayProps={{ blur: 1, color: "#444", opacity: 0.8 }}/>
+        }
+    </div>
 }
 
 export default BilkentStudentDetails;
