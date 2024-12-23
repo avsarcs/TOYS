@@ -1,9 +1,10 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/BackButton.tsx";
 import TourDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/TourDetails.tsx";
 import ReviewDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/ReviewDetails.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
+import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/EditButton.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -41,9 +42,12 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
+    const [fetchedData, setFetchedData] = React.useState(false);
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string, tour_id: string, contact: string) => {
+        setFetchedData(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/high-schools/tour-" +
             "reviews");
         url.searchParams.append("auth", await userContext.getAuthToken());
@@ -73,6 +77,7 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
         fetched.guides = fetched.guide.fullname ? [fetched.guide.fullname] : [];
 
         setData(fetched);
+        setFetchedData(true);
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
@@ -102,31 +107,41 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
         <Modal.Content style={{borderRadius: '20px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
-            <Modal.Body style={{maxHeight: "100vh"}}>
-                <Space h="xl"/>
-                <Group>
-                    <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
-                        <BackButton onBack={onClose}/>
-                    </Container>
-                    <Container style={{flex: '2', display: 'flex', justifyContent: 'center'}}>
-                        {HeaderTextContainer}
-                    </Container>
-                    <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
-                        {/* Empty container */}
-                    </Container>
-                </Group>
+            {
+                fetchedData
+                    ?
+                    <>
+                        <Modal.Body style={{maxHeight: "100vh"}}>
+                            <Space h="xl"/>
+                            <Group>
+                                <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
+                                    <BackButton onBack={onClose}/>
+                                </Container>
+                                <Container style={{flex: '2', display: 'flex', justifyContent: 'center'}}>
+                                    {HeaderTextContainer}
+                                </Container>
+                                <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
+                                    {/* Empty container */}
+                                </Container>
+                            </Group>
 
-                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
+                            <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
-                <ScrollArea.Autosize mah="75vh" mx="auto">
-                    <Space h="xl"/>
-                    {TourDetailsContainer}
-                    <Space h="xl"/>
-                    {ReviewDetailsContainer}
-                    <Space h="xl"/>
-                </ScrollArea.Autosize>
+                            <ScrollArea.Autosize mah="75vh" mx="auto">
+                                <Space h="xl"/>
+                                {TourDetailsContainer}
+                                <Space h="xl"/>
+                                {ReviewDetailsContainer}
+                                <Space h="xl"/>
+                            </ScrollArea.Autosize>
 
-            </Modal.Body>
+                        </Modal.Body>
+                    </>
+                    :
+                    <LoadingOverlay
+                        visible={!fetchedData} zIndex={10}
+                        overlayProps={{ blur: 1, color: "#444", opacity: 0.8 }}/>
+            }
         </Modal.Content>
     </Modal.Root>
 

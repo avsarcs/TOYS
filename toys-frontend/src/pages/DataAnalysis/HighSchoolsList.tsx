@@ -34,7 +34,7 @@ const HighSchoolsList: React.FC = () => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
-    const [fetchedHighschools, setFetchedHighschools] = React.useState(false);
+    const [fetchedData, setFetchedData] = React.useState(false);
     const [selectedSearch, setSearch] = React.useState<string>('');
     const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
     const [selectedHighSchoolName, setSelectedHighSchoolName] = React.useState<any>("");
@@ -50,6 +50,8 @@ const HighSchoolsList: React.FC = () => {
     }, []);
 
     const getHighSchools = useCallback(async () => {
+        setFetchedData(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/high-schools/all-dto");
         url.searchParams.append("auth", await userContext.getAuthToken());
 
@@ -75,7 +77,7 @@ const HighSchoolsList: React.FC = () => {
         }
 
         setHighSchools(fetched);
-        setFetchedHighschools(true);
+        setFetchedData(true);
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
@@ -114,7 +116,7 @@ const HighSchoolsList: React.FC = () => {
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         {
-            fetchedHighschools && highSchools.length > 0
+            fetchedData && highSchools.length > 0
               ?
               <>
           <Box className="flex-grow-0 flex-shrink-0">
@@ -152,7 +154,7 @@ const HighSchoolsList: React.FC = () => {
               </>
             :
               <LoadingOverlay
-                visible={!fetchedHighschools} zIndex={10}
+                visible={!fetchedData} zIndex={10}
                 overlayProps={{ blur: 1, color: "#444", opacity: 0.8 }}/>
         }
     </div>

@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/InputSelector.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";
@@ -36,6 +36,7 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
+    const [fetchedData, setFetchedData] = React.useState(true);
     const [selectedName, setSelectedName] = React.useState<string | null>(currentName);
     const [selectedCity, setSelectedCity] = React.useState<string | null>(currentCity);
     const [selectedRanking, setSelectedRanking] = React.useState<string | null>(currentRanking);
@@ -81,6 +82,8 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
         }
 
         try {
+            setFetchedData(false);
+
             const url = new URL(TOUR_URL + "internal/analytics/high-schools/edit");
             url.searchParams.append("auth", await userContext.getAuthToken());
 
@@ -119,6 +122,8 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
                 message: "Bir şeyler yanlış gitti. Lütfen site yöneticisine durumu haber edin."
             });
         }
+
+        setFetchedData(true);
     }, [highSchoolID, selectedName, selectedCity, selectedRanking, selectedPriority, userContext.getAuthToken]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
@@ -146,31 +151,41 @@ const HighSchoolEdit: React.FC<HighSchoolEditProps> = ({opened, highSchoolID, on
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
         <Modal.Content style={{borderRadius: '20px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
-            <Modal.Body style={{maxHeight: "100vh"}}>
-                <Space h="xl"/>
-                <Group>
-                    <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
-                        <BackButton onBack={onClose}/>
-                    </Container>
-                    <Container style={{flex: '2', display: 'flex', justifyContent: 'center'}}>
-                        {HeaderTextContainer}
-                    </Container>
-                    <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
-                        {/* Empty container */}
-                    </Container>
-                </Group>
+            {
+                fetchedData
+                    ?
+                    <>
+                        <Modal.Body style={{maxHeight: "100vh"}}>
+                            <Space h="xl"/>
+                            <Group>
+                                <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
+                                    <BackButton onBack={onClose}/>
+                                </Container>
+                                <Container style={{flex: '2', display: 'flex', justifyContent: 'center'}}>
+                                    {HeaderTextContainer}
+                                </Container>
+                                <Container style={{flex: '1', display: 'flex', justifyContent: 'center'}}>
+                                    {/* Empty container */}
+                                </Container>
+                            </Group>
 
-                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
+                            <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
-                <ScrollArea.Autosize mah="75vh" mx="auto">
-                    <Space h="xl"/>
-                    {InputSelectorContainer}
-                    <Space h="xl"/>
-                    {EditButtonContainer}
-                    <Space h="xl"/>
-                </ScrollArea.Autosize>
+                            <ScrollArea.Autosize mah="75vh" mx="auto">
+                                <Space h="xl"/>
+                                {InputSelectorContainer}
+                                <Space h="xl"/>
+                                {EditButtonContainer}
+                                <Space h="xl"/>
+                            </ScrollArea.Autosize>
 
-            </Modal.Body>
+                        </Modal.Body>
+                    </>
+                    :
+                    <LoadingOverlay
+                        visible={!fetchedData} zIndex={10}
+                        overlayProps={{blur: 1, color: "#444", opacity: 0.8}}/>
+            }
         </Modal.Content>
     </Modal.Root>
 
