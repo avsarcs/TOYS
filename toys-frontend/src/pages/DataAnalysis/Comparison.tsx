@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Container, Space, Text} from '@mantine/core';
+import {Box, Container, Divider, Space, Text, Title} from '@mantine/core';
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
@@ -298,12 +298,6 @@ const Comparison: React.FC = () => {
         setData(combinedData);
     }, [bilkentData, otherData]);
 
-    const HeaderTextContainer = <div style={defaultHeaderStyle}>
-        <Text style={{fontSize: 'xx-large'}}>
-            Üniversite Karşılaştırma Sistemi
-        </Text>
-    </div>
-
     const ComparisonSelectorContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
         <ComparisonSelector
@@ -361,7 +355,16 @@ const Comparison: React.FC = () => {
     }
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        {HeaderTextContainer}
+        <Box className="flex-grow-0 flex-shrink-0">
+            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                Üniversite Karşılaşırma Sistemi
+            </Title>
+            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                Veriler ortada.
+            </Title>
+            <Space h="xl"/>
+            <Divider className="border-gray-400"/>
+        </Box>
         <Space h="xl"/>
         {ComparisonSelectorContainer}
         <Space h="xl"/>

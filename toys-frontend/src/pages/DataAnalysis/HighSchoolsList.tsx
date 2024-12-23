@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Space, Container, Text, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
@@ -66,12 +66,6 @@ const HighSchoolsList: React.FC = () => {
         setAddModalOpened(true);
     }
 
-    const HeaderTextContainer = <Container style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-        <Text style={{fontSize: 'xx-large'}}>
-            Liseler Listesi
-        </Text>
-    </Container>
-
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
         <TableFilter setSearch={setSearch} setSelectedCities={setSelectedCities}/>
@@ -90,8 +84,16 @@ const HighSchoolsList: React.FC = () => {
             fetchedHighschools && highSchools.length > 0
               ?
               <>
-            <Space h="xl"/>
-            {HeaderTextContainer}
+          <Box className="flex-grow-0 flex-shrink-0">
+              <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                  Liseler
+              </Title>
+              <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                  Göç kaynağı.
+              </Title>
+              <Space h="xl"/>
+              <Divider className="border-gray-400"/>
+          </Box>
             <hr style={{border: '1px solid black'}}/>
             <Space h="xl"/>
             {TableFilterContainer}

@@ -109,11 +109,16 @@ export interface AdvisorApplication {
 }
 
 export interface LoginFormProps {
+  setForgotPassword: Dispatch<SetStateAction<boolean>>;
   setRegistering: Dispatch<SetStateAction<boolean>>
 }
 
 export interface RegisterFormProps {
   setRegistering: Dispatch<SetStateAction<boolean>>
+}
+
+export interface ForgotPasswordFormProps {
+  setForgotPassword: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface DashboardUrgentBarProps {

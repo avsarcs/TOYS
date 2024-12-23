@@ -56,6 +56,8 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
         else {
           return "";
         }
+      case EventType.FAIR:
+        return "fair_icon.svg";
       default: return "";
     }
   }, [props.item.event_type, props.item.event_subtype]);

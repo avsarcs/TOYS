@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Group, Stack} from '@mantine/core';
+import {Space, Container, Text, Group, Stack, Box, Title, Divider} from '@mantine/core';
 import HighSchoolsGraph from "../../components/DataAnalysis/BilkentStudentDetails/HighSchoolsGraph.tsx";
 import CitiesGraph from "../../components/DataAnalysis/BilkentStudentDetails/CitiesGraph.tsx";
 import TopStudentsGraph from "../../components/DataAnalysis/BilkentStudentDetails/TopStudentsGraph.tsx";
@@ -156,12 +156,6 @@ const BilkentStudentDetails: React.FC = () => {
             });
     }, [selectedDepartment, selectedYear]);
 
-    const HeaderTextContainer = <div style={defaultHeaderStyle}>
-        <Text style={{fontSize: 'xx-large'}}>
-            Bilkent Öğrenci Verisi
-        </Text>
-    </div>
-
     const GraphsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
         <Stack>
@@ -267,7 +261,16 @@ const BilkentStudentDetails: React.FC = () => {
 
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        {HeaderTextContainer}
+        <Box className="flex-grow-0 flex-shrink-0">
+            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                Bilkent Öğrenci Verisi
+            </Title>
+            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                Sadece en iyileri.
+            </Title>
+            <Space h="xl"/>
+            <Divider className="border-gray-400"/>
+        </Box>
         <Space h="xl"/>
         {GraphsContainer}
         <Space h="xl"/>

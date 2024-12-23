@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text} from '@mantine/core';
+import {Space, Container, Text, Box, Title, Divider} from '@mantine/core';
 import UniversitiesTable from "../../components/DataAnalysis/UniversitiesList/UniversitiesTable.tsx";
 import TableFilter from "../../components/DataAnalysis/UniversitiesList/TableFilter.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
@@ -133,12 +133,6 @@ const UniversitiesList: React.FC = () => {
         });
     }, []);
 
-    const HeaderTextContainer = <div style={defaultHeaderStyle}>
-        <Text style={{fontSize: 'xx-large'}}>
-            Üniversiteler Listesi
-        </Text>
-    </div>
-
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
         <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
@@ -152,7 +146,16 @@ const UniversitiesList: React.FC = () => {
     </Container>
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
-        {HeaderTextContainer}
+        <Box className="flex-grow-0 flex-shrink-0">
+            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                Üniversiteler
+            </Title>
+            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                Prestij.
+            </Title>
+            <Space h="xl"/>
+            <Divider className="border-gray-400"/>
+        </Box>
         <Space h="xl"/>
         {TableFilterContainer}
         <Space h="xl"/>

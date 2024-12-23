@@ -165,7 +165,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
             <HighSchoolEdit
                 opened={editModalOpened}
                 onClose={() => setEditModalOpened(false)}
-                currentName={highSchool}
+                currentName={highSchool.name}
                 currentCity={highSchool.location}
                 currentPriority={highSchool.priority.toString()}
             />
@@ -175,7 +175,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 opened={studentDetailsModalOpened}
                 onClose={() => setStudentDetailsModalOpened(false)}
                 year={studentDetailsModalYear}
-                name={highSchool}
+                name={highSchool.name}
             />
         }
         {
@@ -183,7 +183,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 opened={tourReviewDetailsModalOpened}
                 onClose={() => setTourReviewDetailsModalOpened(false)}
                 tourDate={tourReviewDetailsModalDate}
-                highSchoolName={highSchool}
+                highSchoolName={highSchool.name}
             />
         }
     </Modal.Root>

@@ -63,7 +63,7 @@ const TourPage: React.FC = () => {
           Tur Bilgileri
         </Title>
         <Title pl="xl" order={3} className="text-gray-400 font-bold font-main">
-          Kim, ne, nerede, ne zaman, nasıl?
+          Gelin ve görün.
         </Title>
         <Space h="xl"/>
         <Divider className="border-gray-400" />

@@ -5,10 +5,12 @@ import RegisterForm from "../../components/Login/RegisterForm.tsx";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.tsx";
 import {UserRole} from "../../types/enum.ts";
+import ForgotPasswordForm from "../../components/Login/ForgotPasswordForm.tsx";
 
 const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [registering, setRegistering] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -65,7 +67,9 @@ const LoginPage: React.FC = () => {
           md:p-8 lg:p-14 border-t lg:border-l lg:border-t-0 bg-blue-600 
           bg-gradient-to-bl from-50% from-blue-600 via-blue-500 to-red-300 lg:via-blue-600 lg:to-blue-600`}>
         {
-          registering ? <RegisterForm setRegistering={setRegistering}/> : <LoginForm setRegistering={setRegistering}/>
+          registering ? <RegisterForm setRegistering={setRegistering}/> :
+            (forgotPassword ? <ForgotPasswordForm setForgotPassword={setForgotPassword}/> :
+              <LoginForm setRegistering={setRegistering} setForgotPassword={setForgotPassword} />)
         }
       </div>
     </div>
