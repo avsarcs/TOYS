@@ -122,6 +122,14 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
     onConfirm: async () => {},
   });
 
+  const VISITOR_PER_GUIDE = 60
+
+  const checkIfMoreGuidesNeeded = () => {
+    const totalGuides = (tour.guides || []).length;
+    const neededGuides = Math.ceil(tour.visitor_count / VISITOR_PER_GUIDE);
+    return totalGuides < neededGuides;
+  };
+
   const handleModalClose = () => {
     setModalConfig(prev => ({ ...prev, isOpen: false }));
   };
@@ -441,6 +449,16 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
 
   const renderContent = () => {
     if (!isEnrolled && !isInvited) {
+      const moreGuidesNeeded = checkIfMoreGuidesNeeded();
+      
+      if (!moreGuidesNeeded) {
+        return (
+          <Text size="sm" className="text-slate-900" mb="md">
+            Bu tur için yeterli sayıda rehber mevcut.
+          </Text>
+        );
+      }
+
       return (
         <>
           <Text size="sm" className="text-slate-900" mb="md">
@@ -451,7 +469,7 @@ const GuideStatus: React.FC<GuideStatusProps> = ({ tour, refreshTour }) => {
             variant="filled"
             color="blue"
             onClick={handleEnroll}
-            disabled={isLoading}  // Add this
+            disabled={isLoading}
           >
             Bu Turun Rehberi Ol
           </Button>
