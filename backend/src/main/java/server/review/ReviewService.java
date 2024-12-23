@@ -161,6 +161,9 @@ public class ReviewService {
         ReviewRecord reviewRecord = reviewEntry.getValue();
 
         EventReview review = database.reviews.getReview(reviewRecord.getReview_id());
+        if(review == null) {
+            return new ArrayList<>();
+        }
 
         TourRegistry tour = database.tours.fetchTour(tour_id);
         List<Map<String, Object>> reviews = new ArrayList<>();
