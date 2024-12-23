@@ -1,26 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Group,
-  Modal,
-  MultiSelect,
-  NumberInput,
-  Paper,
-  Stack,
-  Text,
-  Title,
+  Alert, Box, Button, Container, Group, Modal, MultiSelect, 
+  NumberInput, Paper, Stack, Text, TextInput, Title
 } from '@mantine/core';
-import {DatePicker} from '@mantine/dates';
-import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
+import { DatePicker } from '@mantine/dates';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import 'dayjs/locale/tr';
-import {SimpleEventData} from '../../types/data';
-import {Department, TourType} from '../../types/enum';
+import { SimpleEventData } from '../../types/data';
+import { Department, TourType } from '../../types/enum';
+import isEmpty from 'validator/lib/isEmpty';
+import isEmail from 'validator/lib/isEmail';
+import isMobilePhone from 'validator/lib/isMobilePhone';
 
-const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/simple-tour");
+const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/simple");
 const REQUEST_CHANGES_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
 
 interface TimeSlot {
@@ -42,46 +35,35 @@ const departmentOptions = Object.values(Department).map(dept => ({
 }));
 
 const ApplicantRequest: React.FC = () => {
-  const { passkey } = useParams();
+  const { passkey, tour_id } = useParams();
   const [tourData, setTourData] = useState<SimpleEventData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showModificationModal, setShowModificationModal] = useState(false);
+  const [formErrors, setFormErrors] = useState({
+    fullname: false,
+    email: false,
+    phone: false
+  });
 
+  // Application form state
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [visitorCount, setVisitorCount] = useState<number | string>(0);
   const [selectedMajors, setSelectedMajors] = useState<string[]>([]);
-
-  // // Test data setup
-  // useEffect(() => {
-  //   setTourData({
-  //     event_type: "TOUR",
-  //     event_subtype: "individual",
-  //     event_id: "123",
-  //     event_status: "CONFIRMED",
-  //     highschool: {
-  //       id: "1",
-  //       name: "Ankara Fen Lisesi",
-  //       location: "Çankaya, Ankara",
-  //       priority: 1,
-  //       ranking: 1
-  //     },
-  //     visitor_count: 25,
-  //     accepted_time: "2024-12-19T14:00:00+03:00",
-  //     requested_times: ["2024-12-19T14:00:00+03:00"]
-  //   });
-  // }, []);
+  const [applicantInfo, setApplicantInfo] = useState({
+    fullname: '',
+    email: '',
+    phone: '',
+  });
 
   useEffect(() => {
-    console.log("passkey useeffect triggered")
-    console.log("passkey: " + passkey)
     const fetchTourData = async () => {
       try {
         const url = new URL(SIMPLE_TOUR_URL);
         url.searchParams.append('auth', passkey || '');
-        url.searchParams.append('tid', '');
+        url.searchParams.append('tour_id', tour_id || '');
 
         const response = await fetch(url);
         if (!response.ok) throw new Error('Tur bilgileri alınamadı');
@@ -99,12 +81,19 @@ const ApplicantRequest: React.FC = () => {
     };
 
     if (passkey) {
-      console.log("passkey var babba")
       fetchTourData();
-    } else {
-      console.log("passkey yok babba")
     }
-  }, [passkey]);
+  }, [passkey, tour_id]);
+
+  const validateForm = () => {
+    const errors = {
+      fullname: isEmpty(applicantInfo.fullname),
+      email: !isEmail(applicantInfo.email),
+      phone: !isMobilePhone(applicantInfo.phone, 'tr-TR')
+    };
+    setFormErrors(errors);
+    return !Object.values(errors).some(error => error);
+  };
 
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     if (!selectedDate) return;
@@ -126,35 +115,14 @@ const ApplicantRequest: React.FC = () => {
     });
   };
 
-  const handleMajorChange = (value: string[]) => {
-    if (value.length <= 3) {
-      setSelectedMajors(value);
-    }
-  };
-
-  const formatTimeDisplay = (timeString: string): string => {
-    const date = new Date(timeString);
-    return date.toLocaleDateString('tr-TR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const isTimeSlotSelected = (timeSlot: TimeSlot): boolean => {
-    if (!selectedDate) return false;
-    const year = selectedDate.getFullYear();
-    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(selectedDate.getDate()).padStart(2, '0');
-    const timeString = `${year}-${month}-${day}T${timeSlot.start}+03:00`;
-    return selectedTimes.includes(timeString);
-  };
-
   const handleRequestChanges = async () => {
     if (!tourData || selectedTimes.length === 0 || !visitorCount) {
       setError('Lütfen tüm gerekli alanları doldurun');
+      return;
+    }
+
+    if (!validateForm()) {
+      setError('Lütfen tüm alanları doğru şekilde doldurun');
       return;
     }
 
@@ -170,7 +138,14 @@ const ApplicantRequest: React.FC = () => {
       const baseApplication = {
         highschool: tourData.highschool,
         requested_times: selectedTimes,
-        visitor_count: visitorCount
+        visitor_count: Number(visitorCount),
+        applicant: {
+          fullname: applicantInfo.fullname,
+          email: applicantInfo.email,
+          phone: applicantInfo.phone,
+          role: tourData.event_subtype === TourType.INDIVIDUAL ? "STUDENT" : "TEACHER",
+          notes: ""
+        }
       };
       
       const applicationModel = tourData.event_subtype === TourType.INDIVIDUAL
@@ -207,55 +182,48 @@ const ApplicantRequest: React.FC = () => {
 
   if (!tourData) {
     return (
-      <Container size="lg" py="xl" className="px-4 sm:px-6 lg:px-8">
+      <Container size="lg" py="xl">
         <Alert color="blue">Tur bilgileri yükleniyor...</Alert>
       </Container>
     );
   }
 
   return (
-    <Container size="lg" py="xl" className="px-4 sm:px-6 lg:px-8">
-      <Paper shadow="sm" p="md" withBorder className="sm:p-xl">
+    <Container size="lg" py="xl">
+      <Paper shadow="sm" p="md" withBorder>
         <Stack gap="xl">
-          <Title order={2} className="text-blue-700 text-xl sm:text-2xl">
+          <Title order={2} className="text-blue-700">
             Tur Başvurunuz Başarıyla Kabul Edildi!
           </Title>
 
           <Alert color="blue" variant="light">
             <Stack gap="xs">
-              <Text size="sm" className="sm:text-base">• Tur başvurunuz Tanıtım Ofisi tarafından değerlendirilmiş ve onaylanmıştır.</Text>
-              <Text size="sm" className="sm:text-base">• Kabul edilen tur detaylarını aşağıda görebilirsiniz.</Text>
+              <Text>• Tur başvurunuz Tanıtım Ofisi tarafından değerlendirilmiş ve onaylanmıştır.</Text>
+              <Text>• Kabul edilen tur detaylarını aşağıda görebilirsiniz.</Text>
             </Stack>
           </Alert>
 
           <Stack gap="md">
             <Group wrap="wrap" gap="xs">
-              <Text fw={700} className="w-full sm:w-auto">Okul:</Text>
+              <Text fw={700}>Okul:</Text>
               <Text>{tourData.highschool.name}</Text>
             </Group>
 
             <Group wrap="wrap" gap="xs">
-              <Text fw={700} className="w-full sm:w-auto">Ziyaretçi Sayısı:</Text>
+              <Text fw={700}>Ziyaretçi Sayısı:</Text>
               <Text>{tourData.visitor_count} kişi</Text>
             </Group>
 
             <Group wrap="wrap" gap="xs">
-              <Text fw={700} className="w-full sm:w-auto">Kabul Edilen Zaman:</Text>
-              <Text>{formatTimeDisplay(tourData.accepted_time)}</Text>
+              <Text fw={700}>Kabul Edilen Zaman:</Text>
+              <Text>{new Date(tourData.accepted_time).toLocaleString('tr-TR')}</Text>
             </Group>
           </Stack>
-
-          <Alert color="yellow" variant="light">
-            <Text size="sm">
-              - Eğer turunuzda değişiklik isterseniz turunuz baştan değerlendirilecektir ve reddedilebilir.
-            </Text>
-          </Alert>
 
           <Button 
             variant="light" 
             color="blue" 
             onClick={() => setShowModificationModal(true)}
-            className="w-full sm:w-fit"
           >
             Tur Zamanı veya Ziyaretçi Sayısında Değişiklik İste
           </Button>
@@ -279,10 +247,35 @@ const ApplicantRequest: React.FC = () => {
         onClose={() => setShowModificationModal(false)}
         title="Tur Değişiklik Talebi"
         size="lg"
-        fullScreen={window.innerWidth < 640}
-        padding="md"
       >
         <Stack>
+          <TextInput
+            label="İsim Soyisim"
+            placeholder="Adınız ve Soyadınız"
+            value={applicantInfo.fullname}
+            onChange={(e) => setApplicantInfo(prev => ({ ...prev, fullname: e.target.value }))}
+            error={formErrors.fullname && "İsim Soyisim gereklidir"}
+            required
+          />
+
+          <TextInput
+            label="E-posta"
+            placeholder="E-posta adresiniz"
+            value={applicantInfo.email}
+            onChange={(e) => setApplicantInfo(prev => ({ ...prev, email: e.target.value }))}
+            error={formErrors.email && "Geçerli bir e-posta adresi giriniz"}
+            required
+          />
+
+          <TextInput
+            label="Telefon"
+            placeholder="Telefon numaranız"
+            value={applicantInfo.phone}
+            onChange={(e) => setApplicantInfo(prev => ({ ...prev, phone: e.target.value }))}
+            error={formErrors.phone && "Geçerli bir telefon numarası giriniz"}
+            required
+          />
+
           <NumberInput
             label="Ziyaretçi Sayısı"
             value={visitorCount}
@@ -298,7 +291,7 @@ const ApplicantRequest: React.FC = () => {
                 label="Rehber Bölüm Tercihleri (Tercih sırasıyla 3 bölüm seçiniz)"
                 data={departmentOptions}
                 value={selectedMajors}
-                onChange={handleMajorChange}
+                onChange={(value) => value.length <= 3 && setSelectedMajors(value)}
                 searchable
                 maxValues={3}
                 required
@@ -307,46 +300,43 @@ const ApplicantRequest: React.FC = () => {
             </Box>
           )}
 
-          <Group align="flex-start" className="flex-col sm:flex-row">
-            <Box className="w-full sm:w-auto">
-              <Text c="blue" fw={500} mb="xs">Önce Tarih Seçin</Text>
+          <Group align="flex-start">
+            <Stack>
+              <Text c="blue" fw={500}>Tarih Seçin</Text>
               <DatePicker
                 locale="tr"
                 value={selectedDate}
                 onChange={setSelectedDate}
                 minDate={new Date()}
-                className="w-full sm:w-auto"
               />
-            </Box>
+            </Stack>
 
-            <Box className="w-full sm:w-auto">
-              <Text c="blue" fw={500}>Sonra Zaman Aralığı Seçin</Text>
-              <Text mb={"xs"} fw={300}>(Zaman Aralıklarını Farklı Tarihlerden Seçebilirsiniz)</Text>
-              <Stack gap="sm">
+            <Stack>
+              <Text c="blue" fw={500}>Zaman Aralığı Seçin</Text>
+              <Stack>
                 {TIME_SLOTS.map((slot) => (
                   <Button
                     key={`${slot.start}-${slot.end}`}
-                    variant={isTimeSlotSelected(slot) ? "filled" : "light"}
+                    variant={selectedTimes.includes(`${selectedDate?.toISOString().split('T')[0]}T${slot.start}+03:00`) ? "filled" : "light"}
                     onClick={() => handleTimeSlotClick(slot)}
                     disabled={!selectedDate}
-                    className="w-full sm:w-48"
                   >
                     {slot.start} - {slot.end}
                   </Button>
                 ))}
               </Stack>
-            </Box>
+            </Stack>
           </Group>
 
           {selectedTimes.length > 0 && (
             <Box>
               <Text fw={500} mb="xs">Seçili Zaman Aralıkları:</Text>
-              <Stack gap="xs">
+              <Stack>
                 {selectedTimes.map((time, index) => (
-                  <Group key={index} wrap="wrap" className="w-full">
-                    <Text className="flex-grow">{formatTimeDisplay(time)}</Text>
+                  <Group key={index} gap="apart">
+                    <Text>{new Date(time).toLocaleString('tr-TR')}</Text>
                     <Button 
-                      size="compact-sm" 
+                      size="sm" 
                       color="red" 
                       onClick={() => setSelectedTimes(prev => prev.filter(t => t !== time))}
                     >
@@ -358,13 +348,8 @@ const ApplicantRequest: React.FC = () => {
             </Box>
           )}
 
-          <Group justify="flex-end" mt="xl" className="flex-col-reverse sm:flex-row gap-2">
-            <Button 
-              variant="light" 
-              onClick={() => setShowModificationModal(false)}
-              fullWidth
-              className="sm:w-auto"
-            >
+          <Group justify="flex-end" mt="xl">
+            <Button variant="light" onClick={() => setShowModificationModal(false)}>
               İptal
             </Button>
             <Button
@@ -376,8 +361,6 @@ const ApplicantRequest: React.FC = () => {
                 !visitorCount || 
                 (tourData.event_subtype === TourType.INDIVIDUAL && selectedMajors.length !== 3)
               }
-              fullWidth
-              className="sm:w-auto"
             >
               Değişiklik Talep Et
             </Button>

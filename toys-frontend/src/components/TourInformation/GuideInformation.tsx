@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Box, Card, Text, Group, Title, Divider, Button, Avatar, Tooltip, Stack } from '@mantine/core';
 import { IconUsers, IconUserCheck } from '@tabler/icons-react';
 import { UserContext } from "../../context/UserContext";
@@ -6,6 +6,7 @@ import { TourStatus, UserRole } from "../../types/enum";
 import ManageGuidesWindow from "./ManageGuidesWindow";
 import { TourData } from "../../types/data";
 import { Link } from 'react-router-dom';
+import { SimpleGuideData } from '../../types/data';
 
 interface TourSectionProps {
   tour: TourData;
@@ -31,6 +32,35 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour }) => {
   const userContext = useContext(UserContext);
   const [manageGuidesOpen, setManageGuidesOpen] = useState(false);
   const totalGuidesNeeded = Math.ceil(tour.visitor_count / VISITOR_PER_GUIDE);
+
+  const [invitedGuides, setInvitedGuides] = useState<SimpleGuideData[]>([]);
+  const [loadingInvites, setLoadingInvites] = useState(false);
+
+  const fetchInvitedGuides = useCallback(async () => {
+    if (!tour.tour_id) return;
+
+    setLoadingInvites(true);
+    try {
+      const invitesUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/invites-of");
+      invitesUrl.searchParams.append("event_id", tour.tour_id);
+      invitesUrl.searchParams.append("auth", await userContext.getAuthToken());
+
+      const response = await fetch(invitesUrl);
+      if (!response.ok) throw new Error("Failed to fetch invites");
+
+      const data = await response.json();
+      setInvitedGuides(data);
+    } catch (error) {
+      console.error("Error fetching invites:", error);
+    } finally {
+      setLoadingInvites(false);
+    }
+  }, [tour.tour_id]);
+
+
+  useEffect(() => {
+    fetchInvitedGuides();
+  }, [fetchInvitedGuides]);
 
   const GuideSection: React.FC<GuideSectionProps> = ({ title, guides = [], color = "blue" }) => (
     <Box>
@@ -95,6 +125,35 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour }) => {
           guides={tour?.trainee_guides || []}
           color="cyan"
         />
+        
+        {invitedGuides.length > 0 && (
+          <>
+            <Divider variant="dashed" />
+            <Box>
+              <Text size="sm" fw={600} c="gray.6" mb="xs">Davet Edilmiş Rehberler</Text>
+              <Group gap="sm">
+                {invitedGuides.map((guide, index) => (
+                  <Tooltip
+                    key={index}
+                    label={`${guide.name} (Yanıt Bekliyor)`}
+                  >
+                    <Card withBorder p="xs" className="bg-yellow-50">
+                      <Group gap="sm">
+                        <Avatar size="sm" color="yellow" radius="xl">
+                          {guide.name.charAt(0)}
+                        </Avatar>
+                        <Box>
+                          <Text size="sm" fw={500}>{guide.name}</Text>
+                          <Text size="xs" c="gray.6">Yanıt Bekliyor</Text>
+                        </Box>
+                      </Group>
+                    </Card>
+                  </Tooltip>
+                ))}
+              </Group>
+            </Box>
+          </>
+        )}
 
         <Box>
           <Text size="sm" c="gray.6">
