@@ -1,20 +1,9 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay, Divider, Stack} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/BackButton.tsx";
 import TourDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/TourDetails.tsx";
 import ReviewDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/ReviewDetails.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
-
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
 
 // Default data
 const defaultData = {
@@ -86,26 +75,27 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
     }, [opened]);
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
-        <Text style={{fontSize: 'xx-large'}}>
+        <Text fw={700} style={{fontSize: 'xx-large', textAlign: 'center'}}>
             Tur Değerlendirmesi: {highSchoolName}
         </Text>
     </Container>
 
-    const TourDetailsContainer = <Container style={defaultContainerStyle}>
-        <Space h="xs" />
-        <TourDetails tour_date={data["tour_date"]} guides={data["guides"]} contact={data["contact"]} score={data["score"]}/>
-        <Space h="xs" />
-    </Container>
+    const TourDetailsContainer = <div style={{padding: '0 10%'}}>
+        <Space h="xs"/>
+        <TourDetails tour_date={data["tour_date"]} guides={data["guides"]} contact={data["contact"]}
+                     score={data["score"]}/>
+        <Space h="xs"/>
+    </div>
 
-    const ReviewDetailsContainer = <Container style={defaultContainerStyle}>
-        <Space h="xs" />
+    const ReviewDetailsContainer = <div style={{padding: '0 10%'}}>
+        <Space h="xs"/>
         <ReviewDetails body={data["body"]}/>
-        <Space h="xs" />
-    </Container>
+        <Space h="xs"/>
+    </div>
 
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
-        <Modal.Content style={{borderRadius: '20px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
+        <Modal.Content style={{borderRadius: '10px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
             {
                 fetchedData
                     ?
@@ -124,14 +114,18 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
                                 </Container>
                             </Group>
 
-                            <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
+                            <Divider size="sm" className="border-gray-300"/>
 
                             <ScrollArea.Autosize mah="75vh" mx="auto">
-                                <Space h="xl"/>
-                                {TourDetailsContainer}
-                                <Space h="xl"/>
-                                {ReviewDetailsContainer}
-                                <Space h="xl"/>
+                                <Stack gap="0" bg="white">
+                                    <Space h="md"/>
+                                    {TourDetailsContainer}
+                                    <Space h="md"/>
+                                    <Divider size="sm" className="border-gray-300"/>
+                                    <Space h="md"/>
+                                    {ReviewDetailsContainer}
+                                    <Space h="xl"/>
+                                </Stack>
                             </ScrollArea.Autosize>
 
                         </Modal.Body>

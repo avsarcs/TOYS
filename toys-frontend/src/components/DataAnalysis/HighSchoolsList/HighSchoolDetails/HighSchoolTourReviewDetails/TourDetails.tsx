@@ -4,7 +4,7 @@ import {
     IconCalendar,
     IconBrandSafari,
     IconUser,
-    IconStarFilled
+    IconStar
 } from "@tabler/icons-react";
 
 interface TourDetailsProps {
@@ -28,7 +28,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({tour_date, guides, contact, sc
             <Text style={{
                 fontSize: 'x-large',
                 marginLeft: '8px'
-            }}>{guides ? guides.join(', ') : 'Yok'}</Text>
+            }}>{guides && guides.length > 0 ? guides.join(', ') : 'Yok'}</Text>
         </div>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
             <IconCalendar/>
@@ -38,7 +38,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({tour_date, guides, contact, sc
             }}>{new Date(tour_date).toLocaleDateString('en-GB')}</Text>
         </div>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <IconStarFilled/>
+            <IconStar/>
             <Text style={{
                 fontSize: 'x-large',
                 marginLeft: '8px'
