@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Alert, Box, Button, Container, Group, Modal, MultiSelect, 
+  Alert, Box, Button, Container, Group, Modal, MultiSelect,
   NumberInput, Paper, Stack, Text, TextInput, Title
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
@@ -29,10 +29,19 @@ const TIME_SLOTS: TimeSlot[] = [
   { start: '15:00', end: '19:00' },
 ];
 
-const departmentOptions = Object.values(Department).map(dept => ({
-  value: dept,
-  label: dept
+// Create a mapping between Turkish display values and enum keys
+const departmentOptionsMap = Object.entries(Department).reduce((acc, [key, value]) => {
+  acc[value] = key;
+  return acc;
+}, {} as Record<string, string>);
+
+// Create options array with value as enum key and label as Turkish display value
+const departmentOptions = Object.entries(Department).map(([key, value]) => ({
+  value: key,
+  label: value
 }));
+
+
 
 const ApplicantRequest: React.FC = () => {
   const { passkey, tour_id } = useParams();
@@ -71,7 +80,7 @@ const ApplicantRequest: React.FC = () => {
         const data = await response.json();
         setTourData(data);
         setVisitorCount(data.visitor_count);
-        
+
         if (data.event_subtype === TourType.INDIVIDUAL && data.requested_majors) {
           setSelectedMajors(data.requested_majors.slice(0, 3));
         }
@@ -147,12 +156,12 @@ const ApplicantRequest: React.FC = () => {
           notes: ""
         }
       };
-      
+
       const applicationModel = tourData.event_subtype === TourType.INDIVIDUAL
         ? {
-            ...baseApplication,
-            requested_majors: selectedMajors
-          }
+          ...baseApplication,
+          requested_majors: selectedMajors
+        }
         : baseApplication;
 
       const url = new URL(REQUEST_CHANGES_URL);
@@ -220,9 +229,9 @@ const ApplicantRequest: React.FC = () => {
             </Group>
           </Stack>
 
-          <Button 
-            variant="light" 
-            color="blue" 
+          <Button
+            variant="light"
+            color="blue"
             onClick={() => setShowModificationModal(true)}
           >
             Tur Zamanı veya Ziyaretçi Sayısında Değişiklik İste
@@ -335,9 +344,9 @@ const ApplicantRequest: React.FC = () => {
                 {selectedTimes.map((time, index) => (
                   <Group key={index} gap="apart">
                     <Text>{new Date(time).toLocaleString('tr-TR')}</Text>
-                    <Button 
-                      size="sm" 
-                      color="red" 
+                    <Button
+                      size="sm"
+                      color="red"
                       onClick={() => setSelectedTimes(prev => prev.filter(t => t !== time))}
                     >
                       İptal
@@ -357,8 +366,8 @@ const ApplicantRequest: React.FC = () => {
               onClick={handleRequestChanges}
               loading={loading}
               disabled={
-                selectedTimes.length === 0 || 
-                !visitorCount || 
+                selectedTimes.length === 0 ||
+                !visitorCount ||
                 (tourData.event_subtype === TourType.INDIVIDUAL && selectedMajors.length !== 3)
               }
             >
