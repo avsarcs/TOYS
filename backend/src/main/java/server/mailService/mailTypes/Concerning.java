@@ -5,4 +5,5 @@ public enum Concerning {
     GUIDE,
     ADVISOR,
     COORDINATOR,
+    USER
 }

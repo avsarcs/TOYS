@@ -68,12 +68,12 @@ public class DBToursService {
 
     // tour applicastions are handled by DBApplicationsService
     public boolean addTour(TourRegistry tour) {
-        DocumentReference reference = firestore.collection("events").document("tours");
 
+        DocumentReference reference = firestore.collection("events").document("tours");
         try {
             Map<String, Object> data = (Map<String, Object>) reference.get().get().getData().get("tours");
+            //Map<String, Object> data = new HashMap<>();
             data.putIfAbsent(tour.getTour_id(), tour);
-
 
             ApiFuture<WriteResult> result = reference.set(
                     mapper.convertValue(
