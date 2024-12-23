@@ -166,16 +166,16 @@ const FairPage: React.FC = () => {
                   {fair.status === FairStatus.RECEIVED && (
                     <>
                     <Button color="green" onClick={handleAcceptFair}>
-                      Accept Fair
+                      Kabul Et
                     </Button>
                     <Button color="red" onClick={handleRejectFair}>
-                      Reject Fair
+                      Reddet
                     </Button>
                     </>
                   )}
                   {fair.status === FairStatus.CONFIRMED && (
                     <Button color="orange" onClick={() => setIsCancelModalOpen(true)}>
-                    Cancel Fair
+                    İpta Et
                     </Button>
                   )}
                   </>
@@ -193,8 +193,8 @@ const FairPage: React.FC = () => {
       centered
     >
       <Textarea
-        label="Reason for cancellation"
-        placeholder="Write your reason here"
+        label="İptal Etme Nedeni"
+        placeholder="Nedeninizi buraya yazınız..."
         value={cancelReason}
         onChange={(e) => setCancelReason(e.currentTarget.value)}
       />
