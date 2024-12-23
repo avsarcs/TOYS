@@ -29,7 +29,11 @@ public class User {
     }
 
     static public User nonnull() {
-        return new User().setFiscalState(FiscalState.nonnull()).setProfile(Profile.nonnull()).setAuthInfo(AuthInfo.nonnull()).setApplication(Application.nonnull());
+        return new User()
+                .setFiscalState(FiscalState.nonnull())
+                .setProfile(Profile.nonnull())
+                .setAuthInfo(AuthInfo.nonnull())
+                .setApplication(Application.nonnull());
     }
 
     public User modifyWithDTO(Map<String, Object> dto) {

@@ -124,9 +124,11 @@ public class RespondService {
 
         Map<String, Application> applications = database.applications.getAppicationsOfType(ApplicationType.FAIR);
         System.out.println("Trying to find fair application " + application_id);
+
         for (Map.Entry<String, Application> entry : applications.entrySet()) {
             System.out.println("Found fair application " + entry.getKey());
         }
+
         Map.Entry<String, Application> applicationEntry = applications.entrySet().stream().filter(e -> e.getKey().equals(application_id)).findFirst().orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No application found for the given application id!")
         );
@@ -134,11 +136,11 @@ public class RespondService {
         FairApplication application = (FairApplication) applicationEntry.getValue();
 
         application.setStatus(response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
-        database.applications.updateApplication(applicationEntry.getKey(), ApplicationType.TOUR, response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
+        database.applications.updateApplication(applicationEntry.getKey(), ApplicationType.FAIR, response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
 
         String passkey = "";
         if (response) {
-            FairRegistry fair = new FairRegistry(application);
+            FairRegistry fair = new FairRegistry(application).setFair_id(application_id);
             fair.setFair_status(FairStatus.CONFIRMED);
             database.fairs.addFair(fair);
 
@@ -162,16 +164,8 @@ public class RespondService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No request found for the given request id!")
         );
 
-        // check authentication respective to the requested_by
-        if (request.getRequested_by().getBilkent_id().isEmpty()) {
-            // use bilkent id
-            if (!authService.check(auth, Permission.AR_TOUR_REQUESTS)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this request!");
-            }
-        } else {
-            if (!authService.checkWithPasskey(auth, request.getTour_id(), Permission.AR_TOUR_REQUESTS)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this request!");
-            }
+        if (!authService.checkWithPasskey(auth, request.getTour_id(), Permission.AR_TOUR_REQUESTS)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You do not have permission to respond to this request!");
         }
 
         if (!request.getStatus().equals(RequestStatus.PENDING)) {
@@ -181,37 +175,82 @@ public class RespondService {
         request.setStatus(response ? RequestStatus.APPROVED : RequestStatus.REJECTED);
         database.requests.updateRequest(request);
 
-        if (response) {
-           TourRegistry tour = database.tours.fetchTour(request.getTour_id());
-           tour.modify(request.getModifications());
-           tour.setStatus(ApplicationStatus.APPROVED);
-           tour.setTour_status(TourStatus.CONFIRMED);
+        TourRegistry tour = database.tours.fetchTour(request.getTour_id());
+        if (tour != null) {
+            tour.modify(request.getModifications());
+            tour.setStatus(response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
+            tour.setTour_status(response ? TourStatus.CONFIRMED : TourStatus.REJECTED);
 
-           tour.getGuides().forEach( s -> {
-               try {
-                   Guide guide = database.people.fetchGuides(s).get(0);
-                   mail.sendMail(
+            tour.getGuides().forEach( s -> {
+                try {
+                    Guide guide = database.people.fetchGuides(s).get(0);
+                    mail.sendMail(
+                        guide.getProfile().getContact_info().getEmail(),
+                        Concerning.GUIDE,
+                        About.TOUR_MODIFICATION,
+                        response ? Status.APPROVAL : Status.REJECTION,
+                        Map.of("{tour_id}", tour.getTour_id())
+                    );
+                } catch (Exception e) {}
+            });
 
-                           guide.getProfile().getContact_info().getEmail(),
-                           Concerning.GUIDE,
-                           About.TOUR_MODIFICATION,
-                           Status.APPROVAL,
-                           Map.of("tour_id", tour.getTour_id())
-                   );
-               } catch (Exception e) {}
-           });
+            tour.setGuides(List.of());
+            database.tours.updateTour(tour, tour.getTour_id());
 
-           tour.setGuides(List.of());
-           database.tours.updateTour(tour, tour.getTour_id());
-        }
+            if (request.getRequested_by().getBilkent_id().isEmpty()) {
+                mail.sendMail(
+                    request.getRequested_by().getContactInfo().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.TOUR_MODIFICATION,
+                    response ? Status.APPROVAL : Status.REJECTION,
+                    Map.of("{tour_id}", request.getTour_id())
+                );
+            } else {
+                mail.sendMail(
+                    request.getRequested_by().getContactInfo().getEmail(),
+                    Concerning.ADVISOR,
+                    About.TOUR_MODIFICATION,
+                    response ? Status.APPROVAL : Status.REJECTION,
+                    Map.of("{tour_id}", request.getTour_id())
+                );
+            }
 
-        mail.sendMail(
+        } else {
+            TourApplication application = database.applications.getTourApplications().getOrDefault(request.getTour_id(), null);
+
+            if (application == null) {
+               throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found!");
+            }
+
+            application.setStatus(response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
+            database.applications.updateApplication(request.getTour_id(), ApplicationType.TOUR, response ? ApplicationStatus.APPROVED : ApplicationStatus.REJECTED);
+
+            if (response) {
+                TourRegistry newTour = new TourRegistry(application);
+                newTour.setTour_status(TourStatus.CONFIRMED);
+                newTour.setTour_id(request.getTour_id());
+                newTour.modify(request.getModifications());
+
+                database.tours.addTour(newTour);
+            }
+
+            mail.sendMail(
                 request.getRequested_by().getContactInfo().getEmail(),
-                Concerning.EVENT_APPLICANT,
+                Concerning.ADVISOR,
                 About.TOUR_MODIFICATION,
                 response ? Status.APPROVAL : Status.REJECTION,
-                Map.of("tour_id", request.getTour_id())
-        );
+                Map.of("{tour_id}", request.getTour_id())
+            );
+
+            mail.sendMail(
+                application.getApplicant().getContact_info().getEmail(),
+                Concerning.EVENT_APPLICANT,
+                About.TOUR_APPLICATION,
+                response ? Status.APPROVAL : Status.REJECTION,
+                Map.of("{tour_id}", request.getTour_id())
+            );
+        }
+
     }
 
 

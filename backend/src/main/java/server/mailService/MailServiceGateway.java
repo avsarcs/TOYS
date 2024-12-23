@@ -67,16 +67,21 @@ public class MailServiceGateway {
     }
     public void sendMail(String to, Concerning concerning, About about, Status status, Map<String,String> formFill) {
         authorize();
-        if (MailFactory.getTemplates().containsKey(concerning)) {
-            if (MailFactory.getTemplates().get(concerning).containsKey(about)) {
-                if (MailFactory.getTemplates().get(concerning).get(about).containsKey(status)) {
-                    MailTemplate template = mailFactory.getTemplates().get(concerning).get(about).get(status).fillDuplicate(formFill);
-                    sendActual(to, template.subject, template.body);
-                    //System.out.println("Sending mail to " + to + " with subject: " + template.subject + " and body: " + template.body);
-                    // This will be incorporated with Bilkent's internal mailing system
-                    return;
+        try {
+            if (MailFactory.getTemplates().containsKey(concerning)) {
+                if (MailFactory.getTemplates().get(concerning).containsKey(about)) {
+                    if (MailFactory.getTemplates().get(concerning).get(about).containsKey(status)) {
+                        MailTemplate template = mailFactory.getTemplates().get(concerning).get(about).get(status).fillDuplicate(formFill);
+                        sendActual(to, template.subject, template.body);
+                        //System.out.println("Sending mail to " + to + " with subject: " + template.subject + " and body: " + template.body);
+                        // This will be incorporated with Bilkent's internal mailing system
+                        return;
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.out.println("You are missing : " + concerning.name() + " : " + about.name() + " : " + status.name());
+            e.printStackTrace();
         }
         System.out.println("There was an error while sending the mail "
                 + "[" + concerning.name() + ":" + about.name() + ":" + status.name()+"]"

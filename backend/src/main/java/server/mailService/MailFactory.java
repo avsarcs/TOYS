@@ -15,49 +15,58 @@ public class MailFactory {
             templates = Map.of(
                     Concerning.EVENT_APPLICANT, Map.of(
                             About.TOUR_APPLICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("About your request for a tour at Bilkent", "Your request for a tour at Bilkent was received!"),
-                                    Status.APPROVAL, new MailTemplate("About your request for a tour at Bilkent", "Your tour request was accepted!\nPlease keep the following number safe and secure, as it is required to make changes: {tour_id}!"),
-                                    Status.REJECTION, new MailTemplate("About your request for a tour at Bilkent", "We are sad to inform you that your request for a tour at Bilkent was rejected!"),
-                                    Status.ERROR, new MailTemplate("About your request for a tour at Bilkent", "There was an error on our part on receiving your request. Please contact us for further assistance.")
+                                    Status.RECIEVED, new MailTemplate("Bilkent'e Tur İsteğiniz Hakkında", "Bilkent'e tur isteğiniz bize ulaştı. En yakın zamanda size geri dönüş yapacağız."),
+                                    Status.APPROVAL, new MailTemplate("Bilkent'e Tur İsteğiniz Hakkında", "Tur isteğiniz kabul edildi!\nLütfen bu kodu gizli ve güvenli tutun, değişiklik yapmak isterseniz için bu kod gerekecek: {pass}!"),
+                                    Status.REJECTION, new MailTemplate("Bilkent'e Tur İsteğiniz Hakkında", "Bilkent'e gelmek isteyen çok fazla okul var, ve sayılı sayıdaki gönüllülerimiz ancak belli bir sayıda ziyaretçi ağırlamamızı sağlıyor. Bu sebepler üzülerek bildirmek isteriz ki Bilkent'e tur isteğiniz kabul edilmemiştir."),
+                                    Status.ERROR, new MailTemplate("Bilkent'e Tur İsteğiniz Hakkında", "Başvurunuz alınırken bir hata oluştu ve başvurunuz bize ulaşmadı.\nLütfen bizimle iletişime geçin."),
+                                    Status.CANCELLED, new MailTemplate("Bilkent'e Tur İsteğiniz Hakkında", "Bilkent'e turunuz iptal edildi.")
                             ),
                             About.TOUR_MODIFICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("About your Bilkent tour modification request", "We received your request for a modification to your tour!"),
-                                    Status.APPROVAL, new MailTemplate("About your Bilkent tour modification request", "Your tour modification request was accepted!\nPlease keep the following number safe and secure, as it is required to make further changes: {tour_id}!"),
-                                    Status.REJECTION, new MailTemplate("About your Bilkent tour modification request", "We are sad to inform you that your modification request for the tour at Bilkent was rejected!"),
-                                    Status.ERROR, new MailTemplate("About your Bilkent tour modification request", "There was an error on our part on receiving your request. Please contact us for further assistance.")
+                                    Status.RECIEVED, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Turunuz için değişiklik isteğiniz bize ulaştı. En yakın zamanda size geri dönüş yapacağız."),
+                                    Status.APPROVAL, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Turunuz için değişiklikler kabul edildi!"),
+                                    Status.REJECTION, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Üzülerek bildirmek isteriz ki turunuz için değişiklik isteğiniz reddedildi."),
+                                    Status.ERROR, new MailTemplate("Bilkent Turu Değişiklik İsteğiniz Hakkında", "Başvurunuz alınırken bir hata oluştu ve başvurunuz bize ulaşmadı.\nLütfen bizimle iletişime geçin.")
                             ),
                             About.FAIR_APPLICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("About your fair invite for Bilkent", "We received your invite to your fair!\nWe will respond as soon as possible."),
-                                    Status.APPROVAL, new MailTemplate("About your fair invite for Bilkent", "Your fair invitation was accepted!\nPlease keep the following number private, safe and secure, as it is required to make changes: {fair_id}!"),
-                                    Status.REJECTION, new MailTemplate("About your fair invite for Bilkent", "We are sad to inform you that your fair invitation was rejected."),
-                                    Status.ERROR, new MailTemplate("About your fair invite for Bilkent", "There was an error on our part on receiving your request. Please contact us for further assistance.")
+                                    Status.RECIEVED, new MailTemplate("Fuar Davetiniz Hakkında", "Fuar davetiniz bize ulaştı!\nEn yakın zamanda size geri dönüş yapacağız."),
+                                    Status.APPROVAL, new MailTemplate("Fuar Davetiniz Hakkında", "Fuar davetiniz kabul edildi!"),
+                                    Status.REJECTION, new MailTemplate("Fuar Davetiniz Hakkında", "Üzülerek bildirityoruz ki maalesef fuarınıza katılamayacağız."),
+                                    Status.ERROR, new MailTemplate("Fuar Davetiniz Hakkında", "Başvurunuz alınırken bir hata oluştu ve başvurunuz bize ulaşmadı.\nLütfen bizimle iletişime geçin.")
                             ),
-                            About.FAIR_MODIFICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("About your fair invitation modification request", "We received your request for a modification to your fair!"),
-                                    Status.APPROVAL, new MailTemplate("About your fair invitation modification request", "Your fair modification request was accepted!\nPlease keep the following number safe and secure, as it is required to make further changes: {fair_id}!"),
-                                    Status.REJECTION, new MailTemplate("About your fair invitation modification request", "We are sad to inform you that your modification request for the fair was rejected!"),
-                                    Status.ERROR, new MailTemplate("About your fair invitation modification request", "There was an error on our part on receiving your request. Please contact us for further assistance.")
+                            About.REVIEW, Map.of(
+                                    Status.PENDING, new MailTemplate("Son turunuz hakkında", "Bilkent'e geldiğiniz için çok teşekkür ederiz! Diğer misafirlerimizi daha iyi ağırlayabilmek için bize geridönüt sağlamak isterseniz bu kodu kullanabilirsiniz: {pass} : {tour_id}")
                             )
                     ),
                     Concerning.GUIDE, Map.of(
                             About.GUIDE_APPLICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("FILL", "FILL"),
-                                    Status.APPROVAL, new MailTemplate("FILL", "FILL"),
-                                    Status.REJECTION, new MailTemplate("FILL", "FILL"),
-                                    Status.ERROR, new MailTemplate("FILL", "FILL")
+                                    Status.RECIEVED, new MailTemplate("Rehber Başvurunuz Hakkında", "Rehber başvurunuz bize ulaştı. En yakın zamanda size geri dönüş yapacağız."),
+                                    Status.APPROVAL, new MailTemplate("Rehber Başvurunuz Hakkında", "Rehber başvurunuz kabul edildi!\nLütfen bu kodu gizli ve güvenli tutun, bu kod sizin geçici şifrenizdir. En kısa zamanda değiştirin: {pass}!"),
+                                    Status.REJECTION, new MailTemplate("Rehber Başvurnuz Hakkında", "Üzülerek bildiriyoruz ki rehber başvurunuz kabul edilmemiştir."),
+                                    Status.ERROR, new MailTemplate("Rehber Başvurunuz Hakkında", "Başvurunuz alınırken bir hata oluştu ve başvurunuz bize ulaşmadı.\nLütfen bizimle iletişime geçin.")
                             ),
                             About.GUIDE_ASSIGNMENT, Map.of(
-                                    Status.RECIEVED, new MailTemplate("FILL", "FILL"),
-                                    Status.APPROVAL, new MailTemplate("FILL", "FILL"),
-                                    Status.REJECTION, new MailTemplate("FILL", "FILL"),
-                                    Status.ERROR, new MailTemplate("FILL", "FILL")
+                                    Status.RECIEVED, new MailTemplate("Yeni bir etkinliğe davet edildiniz", "Yeni bir etkinliğe davet edildiniz. Lütfen etkinlik detaylarını kontrol edin.")
+                            )
+                    ),
+                    Concerning.ADVISOR, Map.of(
+                            About.TOUR_APPLICATION, Map.of(
+                                    Status.RECIEVED, new MailTemplate("Yeni bir tur başvurusu geldi", "Yeni bir tur başvurusu geldi, lütfen en yakın zamanda geri dönüş yapmnız gerekmektedir."),
+                                    Status.CANCELLED, new MailTemplate("Bir tur başvurusu iptal edildi", "Bir tur başvurusu iptal edildi.")
                             ),
-                            About.ADVISOR_APPLICATION, Map.of(
-                                    Status.RECIEVED, new MailTemplate("FILL", "FILL"),
-                                    Status.APPROVAL, new MailTemplate("FILL", "FILL"),
-                                    Status.REJECTION, new MailTemplate("FILL", "FILL"),
-                                    Status.ERROR, new MailTemplate("FILL", "FILL")
-                            ))
+                            About.TOUR_MODIFICATION, Map.of(
+                                    Status.RECIEVED, new MailTemplate("Tur değişiklik isteği geldi", "Bir tur değişiklik isteği geldi, lütfen en yakın zamanda geri dönüş yapmnız gerekmektedir."),
+                                    Status.APPROVAL, new MailTemplate("Tur değişiklik isteği kabul edildi", "Bir tur değişiklik isteği kabul edildi."),
+                                    Status.CANCELLED, new MailTemplate("Bir tur değişiklik isteği iptal edildi", "Bir tur değişiklik isteği iptal edildi.")
+                            ),
+                            About.GUIDE_ASSIGNMENT, Map.of(
+                                    Status.APPROVAL, new MailTemplate("Yeni bir etkinliğe rehber atandı", "Yeni bir etkinliğe rehber atandı, lütfen etkinlik detaylarını kontrol edin."),
+                                    Status.REJECTION, new MailTemplate("Bir rehber ataması reddedildi", "Bir rehber ataması reddedildi."),
+                                    Status.CANCELLED, new MailTemplate("Bir rehber ataması iptal edildi", "Bir rehber ataması iptal edildi.")
+                            ),
+                            About.REVIEW, Map.of(
+                                    Status.RECIEVED, new MailTemplate("Yeni bir inceleme geldi", "Yeni bir inceleme geldi, lütfen en yakın zamanda geri dönüş yapmnız gerekmektedir.")
+                            )
+                    )
             );
         }
     }

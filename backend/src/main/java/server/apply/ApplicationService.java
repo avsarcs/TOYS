@@ -2,7 +2,6 @@ package server.apply;
 
 import server.auth.AuthService;
 import server.auth.JWTService;
-import server.auth.Passkey;
 import server.auth.Permission;
 import server.dbm.Database;
 import server.enums.status.ApplicationStatus;
@@ -176,7 +175,6 @@ public class ApplicationService {
 
 
     public void requestChanges(Map<String, Object> changes, String tourID, String passkey) {
-
         String requester = "";
 
         if (authService.check(passkey, Permission.REQUEST_TOUR_CHANGES)) {
@@ -188,7 +186,38 @@ public class ApplicationService {
         // Check if tour exists
         TourRegistry tour = db.tours.fetchTour(tourID);
         if (tour == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found!");
+
+            // check if application with given id exists
+
+            TourApplication app = db.applications.getTourApplications().getOrDefault(tourID, null);
+            if (app == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tour not found!");
+            }
+
+            // if it exists, mark it pending_changes
+            app.setStatus(ApplicationStatus.FROZEN);
+
+            // add a request to the system
+            TourModificationRequest request = new TourModificationRequest();
+            request.setStatus(RequestStatus.PENDING);
+            request.setRequested_at(new ZTime(ZonedDateTime.now()));
+            request.setRequested_by(new Requester().setBilkent_id(requester).setContactInfo(app.getApplicant().getContact_info()));
+            request.setTour_id(tourID);
+            request.setNotes((String) changes.get("notes"));
+            request.setType(RequestType.TOUR_MODIFICATION);
+            request.setModifications(TourApplication.fromMap(changes));
+
+            db.requests.addRequest(request);
+
+            // notify the applicant
+            mailServiceGateway.sendMail(
+                    app.getApplicant().getContact_info().getEmail(),
+                    Concerning.EVENT_APPLICANT,
+                    About.TOUR_MODIFICATION,
+                    Status.RECIEVED,
+                    Map.of("{tour_id}", tourID)
+            );
+
         }
 
         // Check if the tour is in a state that can be changed
@@ -284,14 +313,7 @@ public class ApplicationService {
             // if invalid, send email to the applicant notifying them of invalidity
             // the application is not valid
             System.out.println("Invalid tour application!");
-            mailServiceGateway.sendMail(
-                    tourApplication.getApplicant().getContact_info().getEmail(),
-                    Concerning.EVENT_APPLICANT,
-                    About.TOUR_APPLICATION,
-                    Status.ERROR,
-                    Map.of("name", tourApplication.getApplicant().getName())
-            );
-            throw new ResponseStatusException(HttpStatus.OK, "All ok");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid application!");
         }
 
         // check if there is a time - collision with another tour
@@ -318,7 +340,7 @@ public class ApplicationService {
             // if there is a time collision, set tour status type to "CONFLICT"
             // all requested dates are already taken
             // set status to CONFLICT
-            tourApplication.setStatus(ApplicationStatus.CONFILCT);
+            tourApplication.setStatus(ApplicationStatus.FROZEN);
         } else {
             // if there is no conflict, set tour status type to "Recieved"
             tourApplication.setStatus(ApplicationStatus.RECEIVED);
@@ -341,16 +363,10 @@ public class ApplicationService {
 
             if (fairs != null) {
                 for (FairRegistry fair : fairs.values()) {
-                    boolean overlaps = ZTime.overlap(
-                            application.getStarts_at(), application.getEnds_at(),
-                            fair.getStarts_at(), fair.getEnds_at()
-                    );
-                    if (overlaps) {
-                        if (fair.getApplicant().getSchool().equals(application.getApplicant().getSchool())) {
-                            // if the fair exists, reject application
-                            // the fair already exists, http OK is enough
-                            return;
-                        }
+                    if (fair.getApplicant().getSchool().equals(application.getApplicant().getSchool())) {
+                        // if the fair exists, reject application
+                        // the fair already exists, http OK is enough
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Fair already exists in the system");
                     }
                 }
             } else {

@@ -59,6 +59,51 @@ public class EventService {
     @Autowired
     MailServiceGateway mail;
 
+    public List<Map<String, Object>> getSoonEvents(String auth) {
+        if (!authService.check(auth)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to view this page!");
+        }
+
+        String userID = jwtService.decodeUserID(auth);
+
+        List<Map<String, Object>> events = new ArrayList<>();
+
+        final List<Object> acceptableStatus = List.of(TourStatus.CONFIRMED, TourStatus.ONGOING, FairStatus.CONFIRMED, FairStatus.ONGOING);
+        database.tours.fetchTours().entrySet().stream().filter(
+                e -> e.getValue().getGuides().contains(userID)
+        ).filter(
+                e -> acceptableStatus.contains(e.getValue().getTourStatus())
+        ).filter(
+                e -> {
+                    if (e.getValue().getTourStatus().equals(TourStatus.CONFIRMED)) {
+                        return Duration.between(ZonedDateTime.now(), e.getValue().getAccepted_time().getDate()).toHours() < 1;
+                    }
+                    return true;
+                }
+        ).forEach(
+                e -> events.add(dto.simpleEvent(e.getValue()))
+        );
+
+
+        database.fairs.fetchFairs().entrySet().stream().filter(
+                e -> e.getValue().getGuides().contains(userID)
+        ).filter(
+                e -> acceptableStatus.contains(e.getValue().getFair_status())
+        ).filter(
+                e -> {
+                    if (e.getValue().getFair_status().equals(FairStatus.CONFIRMED)) {
+                        return Duration.between(ZonedDateTime.now(), e.getValue().getStarts_at().getDate()).toHours() < 1;
+                    }
+                    return true;
+                }
+        ).forEach(
+                e -> events.add(dto.simpleEvent(e.getValue()))
+        );
+
+
+        return events;
+    }
+
     public void enroll(String auth, String event_id) {
         // People can only enroll themselves in tours, so this is enough
         // TODO : multi-event support

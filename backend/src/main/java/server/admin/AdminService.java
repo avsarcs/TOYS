@@ -8,6 +8,7 @@ import server.auth.AuthService;
 import server.auth.Permission;
 import server.dbm.Database;
 import server.enums.roles.UserRole;
+import server.enums.status.UserStatus;
 import server.models.DTO.DTOFactory;
 import server.models.payment.FiscalState;
 import server.models.people.*;
@@ -32,6 +33,7 @@ public class AdminService {
         }
 
         List<User> users = database.people.fetchUsers();
+        users = users.stream().filter(user -> !user.getRole().equals(UserRole.ADMIN)).toList();
 
         return users.stream().map(dto::simpleUser).toList();
     }
@@ -58,8 +60,6 @@ public class AdminService {
             User user = users.stream().filter(u -> u.getBilkent_id().equals(id)).findFirst().get();
 
             User newUser = null;
-
-
 
             if (user.getRole().equals(UserRole.GUIDE)) {
                 Guide guide = database.people.fetchGuides(id).get(0);
@@ -111,6 +111,12 @@ public class AdminService {
                 };
             }
 
+            if (newUser == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role.");
+            }
+
+            newUser.setRole(wantedRole);
+            newUser.setStatus(UserStatus.ACTIVE);
             database.people.addUser(newUser);
 
         } catch (Exception e) {
@@ -140,6 +146,7 @@ public class AdminService {
 
         user.setProfile(user.getProfile().setName(name));
         user.setBilkent_id(id);
+        user.setStatus(UserStatus.ACTIVE);
 
         database.people.addUser(user);
     }
