@@ -72,8 +72,8 @@ public class MailServiceGateway {
                 if (MailFactory.getTemplates().get(concerning).containsKey(about)) {
                     if (MailFactory.getTemplates().get(concerning).get(about).containsKey(status)) {
                         MailTemplate template = mailFactory.getTemplates().get(concerning).get(about).get(status).fillDuplicate(formFill);
-                        sendActual(to, template.subject, template.body);
-                        //System.out.println("Sending mail to " + to + " with subject: " + template.subject + " and body: " + template.body);
+                        //sendActual(to, template.subject, template.body);
+                        System.out.println("Sending mail to " + to + " with subject: " + template.subject + " and body: " + template.body);
                         // This will be incorporated with Bilkent's internal mailing system
                         return;
                     }

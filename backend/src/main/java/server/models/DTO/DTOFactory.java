@@ -407,7 +407,11 @@ public class DTOFactory {
 
         dto.put("event_type", "TOUR");
         dto.put("event_id", id);
-        dto.put("highschool", highschool(request.getModifications().getApplicant().getSchool()));
+        try {
+            dto.put("highschool", highschool(request.getModifications().getApplicant().getSchool()));
+        } catch (Exception e) {
+            System.out.println("Highschool with id " + request.getModifications().getApplicant().getSchool() + " not found");
+        }
         dto.put("accepted_time", "");
         dto.put("requested_times", request.getModifications().getRequested_hours());
         dto.put("visitor_count", request.getModifications().getExpected_souls());
@@ -788,7 +792,7 @@ public class DTOFactory {
         dto.put("for", "TOUR");
         dto.put("tour_id", tour.getTour_id());
         dto.put("tour_date", tour.getAccepted_time());
-        dto.put("guides", tour.getGuides().stream().map(this::simpleGuide).toList());
+        dto.put("guide", Map.of());
         dto.put("score", review.getEvent_review().getScore());
         dto.put("body", review.getEvent_review().getBody());
         return dto;
