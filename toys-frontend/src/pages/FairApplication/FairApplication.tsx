@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
-import { Button, Alert } from "@mantine/core";
-import { IconChevronRight, IconChevronLeft, IconAlertCircle } from "@tabler/icons-react";
+import { Button, Alert, Modal, Text } from '@mantine/core';
+import { IconChevronRight, IconChevronLeft, IconAlertCircle, IconCircleCheck, IconX } from "@tabler/icons-react";
+
 import { Stepper } from "@mantine/core";
 import "./FairApplication.css";
 import { FairApplicationModel } from "../../types/designed";
@@ -8,8 +9,9 @@ import isEmail from "validator/lib/isEmail";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import isEmpty from "validator/lib/isEmpty";
 import { useNavigate } from "react-router-dom";
-import { Container, Title, Text, Group, Stack, ThemeIcon } from '@mantine/core';
+import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
+
 
 import { UserContext } from "../../context/UserContext";
 import ApplicantInfoStage from "../../components/FairApplication/ApplicantInfoStage";
@@ -48,6 +50,10 @@ export const FairApplication: React.FC = () => {
         end_before_start: false,
     });
     const [isStage2Valid, setIsStage2Valid] = useState(false);
+
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
 
@@ -160,38 +166,75 @@ export const FairApplication: React.FC = () => {
     };
 
     const attemptSubmitForm = async () => {
-        if (validateStage1()) {
-            // Set the applicant role as "STUDENT"
-            setApplicationInfo((prev) => ({
-                ...prev,
-                applicant: {
-                    ...prev.applicant,
-                    role: "STUDENT",
-                },
-            }));
-    
-            const applicationUrl = new URL(FAIR_APPLICATION_URL);
-            const res = await fetch(applicationUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ...applicationInfo,
-                    applicant: {
-                        ...applicationInfo.applicant,
-                        role: "STUDENT",
+        if (validateStage1() && !isSubmitting) {
+            setIsSubmitting(true);
+
+            try {
+                const applicationUrl = new URL(FAIR_APPLICATION_URL);
+                const res = await fetch(applicationUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
                     },
-                }),
-            });
-    
-            if (res.status === 200) navigate("/application-success");
+                    body: JSON.stringify({
+                        ...applicationInfo,
+                        applicant: {
+                            ...applicationInfo.applicant,
+                            role: "STUDENT",
+                        },
+                    }),
+                });
+
+                if (res.ok) {
+                    setShowSuccessModal(true);
+                } else {
+                    setShowErrorModal(true);
+                }
+            } catch (error) {
+                setShowErrorModal(true);
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
-    
+
 
     return (
         <div className="application-wrapper p-8">
+            <Modal
+                opened={showSuccessModal}
+                onClose={() => { }}
+                closeOnClickOutside={false}
+                closeOnEscape={false}
+                withCloseButton={false}
+                centered
+            >
+                <div className="text-center py-4">
+                    <IconCircleCheck size={48} className="text-green-500 mx-auto mb-4" />
+                    <Text size="xl" fw={700} className="text-green-700">
+                        Fuar Başvurunuz Başarıyla İletildi!
+                    </Text>
+                    <Text className='text-green-600'>
+                        Size geri dönüş yapacağız.
+                    </Text>
+                </div>
+            </Modal>
+
+            <Modal
+                opened={showErrorModal}
+                onClose={() => setShowErrorModal(false)}
+                centered
+            >
+                <div className="text-center py-4">
+                    <IconX size={48} className="text-red-500 mx-auto mb-4" />
+                    <Text size="xl" fw={700} className="text-red-700 mb-2">
+                        Başvuru İletilirken Bir Hata Oluştu
+                    </Text>
+                    <Text size="sm" className="text-gray-600">
+                        Lütfen daha sonra tekrar deneyiniz.
+                    </Text>
+                </div>
+            </Modal>
             <Stepper active={currentStage} onStepClick={attemptStageChange}>
                 <Stepper.Step label="1. Aşama" description="Başvuru Yapan Kişi Hakkında Bilgiler" />
                 <Stepper.Step label="2. Aşama" description="Tarih ve Saat Seçimi" />
@@ -291,8 +334,10 @@ export const FairApplication: React.FC = () => {
                 )}
                 {currentStage === 2 && (
                     <Button
-                        className="fat-button bg-gray-600 hover:bg-gray-700 text-white rounded-full flex items-center px-4 py-2"
+                        className="fat-button bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center px-4 py-2"
                         onClick={attemptSubmitForm}
+                        disabled={isSubmitting}
+                        loading={isSubmitting}
                     >
                         Başvuruyu Tamamlayın
                     </Button>

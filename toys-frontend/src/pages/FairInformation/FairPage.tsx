@@ -8,7 +8,7 @@ import ApplicantInformation from "../../components/FairInformation/ApplicantInfo
 import GuideInformation from "../../components/FairInformation/GuideInformation.tsx";
 import { UserContext } from "../../context/UserContext.tsx";
 import { isObjectEmpty } from "../../lib/utils.tsx";
-import {FairStatus} from "../../types/enum.ts";
+import { FairStatus, UserRole } from "../../types/enum.ts";
 
 const FAIR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/fair");
 const ACTION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/fair");
@@ -22,6 +22,8 @@ const FairPage: React.FC = () => {
   const [fair, setFair] = useState<FairData>({} as FairData);
   const [cancelReason, setCancelReason] = useState("");
   if (!params.fairId) throw new Error("Fair ID is required");
+
+  const isCoordinator = userContext.user.role === UserRole.COORDINATOR;
 
   const handleAcceptFair = useCallback(async () => {
     const actionUrl = new URL(ACTION_URL);
@@ -39,6 +41,7 @@ const FairPage: React.FC = () => {
 
     setFair({ ...fair, status: FairStatus.CONFIRMED });
   }, []);
+
   const handleRejectFair = useCallback(async () => {
     const actionUrl = new URL(ACTION_URL);
     actionUrl.searchParams.append("application_id", params.fairId as string);
@@ -78,7 +81,6 @@ const FairPage: React.FC = () => {
     setFair(JSON.parse(fairText));
   }, []);
 
-
   const handleCancelFair = useCallback(async () => {
     const actionUrl = new URL(CANCEL_URL);
     actionUrl.searchParams.append("event_id", params.fairId as string);
@@ -98,10 +100,8 @@ const FairPage: React.FC = () => {
         throw new Error(errorMessage || "Something went wrong");
       }
   
-      // Refresh the fair data to reflect the status change
       await getFair(params.fairId as string);
   
-      // Close the modal and clear the reason
       setIsCancelModalOpen(false);
       setCancelReason("");
     } catch (error) {
@@ -109,8 +109,6 @@ const FairPage: React.FC = () => {
       alert("Failed to cancel the fair. Please try again.");
     }
   }, [cancelReason, params.fairId, userContext, getFair]);
-  
-
   
   useEffect(() => {
     getFair(params.fairId as string).catch((reason) => {
@@ -127,7 +125,6 @@ const FairPage: React.FC = () => {
   }
 
   const refreshFair = () => { getFair(params.fairId as string).catch(console.error); }
-  console.log(fair);
 
   return (
     <Flex direction="column" mih="100vh" className="overflow-y-clip">
@@ -161,52 +158,52 @@ const FairPage: React.FC = () => {
                 }
                 <Divider className="border-gray-200" />
                 <Group p="lg" align="center">
-                {fair.status === FairStatus.RECEIVED && (
+                {fair.status === FairStatus.RECEIVED && isCoordinator && (
                   <>
                     <Button color="green" onClick={handleAcceptFair}>
-                      Accept Fair
+                      Fuara Katılmayı Kabul Et
                     </Button>
                     <Button color="red" onClick={handleRejectFair}>
-                      Reject Fair
+                      Fuara Katılamayacağını Bildir
                     </Button>
                   </>
                 )}
-                {fair.status === FairStatus.CONFIRMED && (
+                {fair.status === FairStatus.CONFIRMED && isCoordinator && (
                   <Button color="orange" onClick={() => setIsCancelModalOpen(true)}>
-                    Cancel Fair
+                    Fuarı İptal Et
                   </Button>
                 )}
-              </Group>
+                </Group>
                 <Divider className="border-gray-200" />
               </Stack>
             </>
         }
       </Box>
       <Modal
-      opened={isCancelModalOpen}
-      onClose={() => setIsCancelModalOpen(false)}
-      title="Cancel Fair"
-      centered
-    >
-      <Textarea
-        label="Reason for cancellation"
-        placeholder="Write your reason here"
-        value={cancelReason}
-        onChange={(e) => setCancelReason(e.currentTarget.value)}
-      />
-      <Group align="right" mt="md">
-        <Button variant="default" onClick={() => setIsCancelModalOpen(false)}>
-          Close
-        </Button>
-        <Button
-          color="orange"
-          onClick={handleCancelFair}
-          disabled={!cancelReason.trim()}
-        >
-          Submit
-        </Button>
-      </Group>
-    </Modal>
+        opened={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        title="Cancel Fair"
+        centered
+      >
+        <Textarea
+          label="Fuarı İptal Etme Sebebi"
+          placeholder="Buraya başvurana ulaşacak fuarı iptal etme sebebini yazınız"
+          value={cancelReason}
+          onChange={(e) => setCancelReason(e.currentTarget.value)}
+        />
+        <Group align="right" mt="md">
+          <Button variant="default" onClick={() => setIsCancelModalOpen(false)}>
+           Kapat
+          </Button>
+          <Button
+            color="orange"
+            onClick={handleCancelFair}
+            disabled={!cancelReason.trim()}
+          >
+            Gönder
+          </Button>
+        </Group>
+      </Modal>
     </Flex>
   );
 }

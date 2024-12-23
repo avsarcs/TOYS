@@ -17,8 +17,8 @@ import {
   IconCreditCard,
   IconLayoutDashboard,
   IconMessage,
-  IconQuestionMark
-
+  IconQuestionMark,
+  IconInvoice
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
 import { UserContext } from '../../context/UserContext';
@@ -73,6 +73,7 @@ export const Navbar: React.FC = () => {
     });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
     links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+    links.push({ label: "Rehber Olma Davetiyeleri", icon:  IconInvoice, link: '/guide-invitations'});
   }
   else if (user.role === UserRole.COORDINATOR) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -85,6 +86,7 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Personel Yönetimi', icon: IconUsers, link: '/manage-personnel' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
     links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+    links.push({ label: "Rehber Olma Davetiyeleri", icon:  IconInvoice, link: '/guide-invitations'});
   }
   else if (user.role === UserRole.ADVISOR) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });
@@ -94,6 +96,8 @@ export const Navbar: React.FC = () => {
     links.push({ label: 'Rehberler', icon: IconUsers, link: '/guides' });
     links.push({ label: "İletişim", icon: IconMessage, link: '/contact' });
     links.push({ label: "Kullanıcı Kılavuzu", icon: IconQuestionMark, link: '/user-manual' });
+    links.push({ label: "Rehber Olma Davetiyeleri", icon:  IconInvoice, link: '/guide-invitations'});
+  
   }
   else if (user.role === UserRole.GUIDE) {
     links.push({ label: 'Profil', icon: IconUser, link: '/profile' });

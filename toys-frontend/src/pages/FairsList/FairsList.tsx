@@ -32,7 +32,14 @@ type CombinedFairData = FairData | (SimpleEventData & { event_type: EventType.FA
 
 const FairsList: React.FC = () => {
   const userContext = useContext(UserContext);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([
+    "RECEIVED",
+    "CONFIRMED", 
+    "REJECTED",
+    "CANCELLED",
+    "ONGOING",
+    "FINISHED"
+  ]);
   const [fairs, setFairs] = useState<CombinedFairData[]>([]);
   const [searchSchoolName, setSearchSchoolName] = useState("");
   const [fromDate, setFromDate] = useState<Date | null>(null);

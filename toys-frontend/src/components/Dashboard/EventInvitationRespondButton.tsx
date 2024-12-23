@@ -16,7 +16,7 @@ const EventInvitationRespondButton: React.FC<EventInvitationRespondButtonProps> 
 
       acceptUrl.searchParams.append("auth", await userContext.getAuthToken());
       acceptUrl.searchParams.append("request_id", props.item.event_id);
-      acceptUrl.searchParams.append("reponse", props.response.toString());
+      acceptUrl.searchParams.append("response", props.response.toString());
 
       const respondRes = await fetch(acceptUrl, {
         method: "POST"

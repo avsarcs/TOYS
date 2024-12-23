@@ -87,6 +87,7 @@ function App() {
             <Route path="/contact" element={<Contact />}/>
             <Route path="/admin" element={<CheckLogin required redirect children={<Admin />}/>}/>
             <Route path="/user-manual" element={<CheckLogin required redirect children={<UserManual />}/>}/>
+            <Route path="/guide-invitations" element={<CheckLogin required redirect children={<GuideInvitations />}/>}/>
           </Routes>
         </main>
       </div>
