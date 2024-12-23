@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
     Container,
     Title,
@@ -16,34 +16,33 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconUsers } from '@tabler/icons-react';
 import { SimpleEventData } from '../../types/data';
+import {City, EventType, FairStatus, TourStatus, TourType} from "../../types/enum.ts";
 
-const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/simple-tour");
 const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour/modification");
 
 const ApplicantRespond: React.FC = () => {
     const { passkey } = useParams();
-    const navigate = useNavigate();
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [fetchError, setFetchError] = useState<string | null>(null);
+    const [fetchError, ] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
     
     const sampleTourData = {
-        event_type: "TOUR",
-        event_subtype: "TOUR",
+        event_type: "TOUR" as EventType,
+        event_subtype: "TOUR" as TourType | "FAIR",
         event_id: "123",
-        event_status: "TOYS_WANTS_CHANGE",
+        event_status: "TOYS_WANTS_CHANGE" as TourStatus | FairStatus,
         highschool: {
             id: "1",
             name: "Ankara Fen Lisesi",
-            location: "Ankara",
+            location: "Ankara" as City,
             priority: 1,
             ranking: 1
         },
-        accepted_time: null,
+        accepted_time: "",
         requested_times: [
             "2024-12-19T14:00:00+03:00",
             "2024-12-20T10:00:00+03:00",
@@ -53,7 +52,7 @@ const ApplicantRespond: React.FC = () => {
     };
 
 
-    const [tourData, setTourData] = useState<SimpleEventData | null>(sampleTourData);
+    const [tourData, ] = useState<SimpleEventData | null>(sampleTourData);
     // Fetch tour data
     useEffect(() => {
         // const fetchTour = async () => {

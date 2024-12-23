@@ -11,11 +11,10 @@ import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
 import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
-
 import TeacherInfoStage from '../../components/TourApplication/TeacherInfoStage';
 import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import NotesStage from '../../components/TourApplication/NotesStage';
+import {City} from "../../types/enum.ts";
 const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
 
 export const GroupTourApplication: React.FC = () => {
@@ -27,7 +26,7 @@ export const GroupTourApplication: React.FC = () => {
 
   const [applicationInfo, setApplicationInfo] = useState<GroupApplication>({
     "highschool": {
-      "id": "", "name": "", "location": "", "priority": 1
+      "id": "", "name": "", "location": "" as City, "priority": 1, "ranking": 1
     },
     "requested_times": [],
     "visitor_count": -1,
@@ -70,7 +69,7 @@ export const GroupTourApplication: React.FC = () => {
     "invalid_student_count": false
   })
   
-  const [isStage3Valid, setIsStage3Valid] = useState(false)
+  const [, setIsStage3Valid] = useState(false)
 
   // Validate if Stage 1 is done
   const validateStage1 = () => {

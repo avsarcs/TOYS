@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
-  Box,
   Card,
   Container,
   Group,
@@ -143,8 +142,8 @@ const ToysApplications: React.FC = () => {
               </Group>
 
               <Group justify="flex-end" gap="md">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   color="red"
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent card collapse
@@ -153,7 +152,7 @@ const ToysApplications: React.FC = () => {
                 >
                   Başvuruyu Reddet
                 </Button>
-                <Button 
+                <Button
                   color="blue"
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent card collapse

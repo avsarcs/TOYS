@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { GroupApplicationStageProps } from '../../types/designed';
 import isEmpty from 'validator/lib/isEmpty';
-import { TextInput, Select, Autocomplete, OptionsFilter, ComboboxItem } from '@mantine/core';
+import { TextInput, Select, Autocomplete } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconSearch } from '@tabler/icons-react';
 import { HighschoolData } from '../../types/data';
 import { HoverCard, Group, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import {City} from "../../types/enum.ts";
 
 const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({
   applicationInfo,
@@ -44,7 +45,7 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({
           return acc;
         }, {});
 
-        const uniqueSchools = Object.values(schoolsByName);
+        const uniqueSchools: HighschoolData[] = Object.values(schoolsByName);
 
         if (uniqueSchools.length === 0) {
           notifications.show({
@@ -83,15 +84,16 @@ const TeacherInfoStage: React.FC<GroupApplicationStageProps> = ({
       }));
     } else {
       // If the value doesn't match any school, reset the highschool data
-      setApplicationInfo(prev => ({
-        ...prev,
+      setApplicationInfo({
+        ...applicationInfo,
         highschool: {
           id: "",
           name: "",
-          location: "",
-          priority: -1
+          location: "" as City,
+          priority: -1,
+          ranking: 1,
         }
-      }));
+      });
     }
   };
 

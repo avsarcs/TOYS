@@ -18,11 +18,6 @@ import {
 } from '@mantine/core';
 import { IconChevronDown, IconChevronUp, IconInfoCircle, IconMessageCircle } from '@tabler/icons-react';
 
-interface Guide {
-    id: string;
-    name: string;
-}
-
 interface TourToReviewModel {
     tour_id: string;
     tour_date: string;
@@ -112,11 +107,11 @@ const TourReviewPage: React.FC = () => {
         setHasComments(hasAnyComments);
     }, [tourComment, guideReviews]);
 
-    const handleOptionalFieldsToggle = () => {
+/*    const handleOptionalFieldsToggle = () => {
         setOptionalFieldsOpen(!optionalFieldsOpen);
         setHasOpenedOptionalFields(true);
         setShowPrompt(false);
-    };
+    };*/
 
     const handleGuideReviewChange = (index: number, field: 'score' | 'comment', value: number | string): void => {
         setGuideReviews(prev => {

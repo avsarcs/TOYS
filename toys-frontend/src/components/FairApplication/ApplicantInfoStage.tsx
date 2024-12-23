@@ -43,7 +43,7 @@ const ApplicantInfoStage: React.FC<FairApplicationProps> = ({ applicationInfo, s
         }, {});
 
         // Convert back to array
-        const uniqueSchools = Object.values(schoolsByName);
+        const uniqueSchools: HighschoolData[] = Object.values(schoolsByName);
         
         if (uniqueSchools.length === 0) {
           notifications.show({

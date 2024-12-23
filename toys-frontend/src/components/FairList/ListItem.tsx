@@ -2,8 +2,9 @@ import {Box, Center, Flex, Paper, Text} from "@mantine/core";
 import {FairListItemProps} from "../../types/designed.ts";
 import {Link} from "react-router-dom";
 import React from "react";
-import {FairStatusText} from "../../types/enum.ts";
+import {EventType, FairStatusText} from "../../types/enum.ts";
 import {FairStatus} from "../../types/enum.ts";
+import {SimpleEventData} from "../../types/data.ts";
 
 // Map status to appropriate semantic colors
 const statusColorMap = {
@@ -16,6 +17,8 @@ const statusColorMap = {
 } as const;
 
 const ListItem: React.FC<FairListItemProps> = (props: FairListItemProps) => {
+  props.fair = props.fair as SimpleEventData & { event_type: EventType.FAIR };
+
   // Get color for current status, defaulting to black if status not found
   const statusColor = statusColorMap[props.fair.event_status as keyof typeof statusColorMap] || "black";
   

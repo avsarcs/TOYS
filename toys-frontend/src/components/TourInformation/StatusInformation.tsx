@@ -1,8 +1,6 @@
-import React, { useContext, useMemo } from "react";
-import { Box, Group, Stack, Text } from "@mantine/core";
+import React, { useMemo } from "react";
+import { Group, Stack, Text } from "@mantine/core";
 import { TourSectionProps } from "../../types/designed.ts";
-import { UserRole } from "../../types/enum.ts";
-import { UserContext } from "../../context/UserContext.tsx";
 import { TourTypeText } from "../../types/enum.ts";
 import TourStatusActions from "../TourStatusActions/TourStatusActions.tsx";
 import GuideStatus from "../GuideStatus/GuideStatus.tsx";

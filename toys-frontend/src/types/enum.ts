@@ -29,7 +29,8 @@ export enum UserRoleText {
   GUIDE = "Rehber",
   ADVISOR = "Danışman",
   COORDINATOR = "Koordinatör",
-  DIRECTOR = "Direktör"
+  DIRECTOR = "Direktör",
+  ADMIN = "Yönetici",
 }
 export enum BackendDepartment{
   ARCHITECTURE = "ARCHITECTURE",
@@ -138,6 +139,7 @@ export enum TourType {
 export enum TourTypeText {
   GROUP = "Grup Turu",
   INDIVIDUAL = "Kişisel Tur",
+  FAIR = "",
 }
 
 export enum TourStatus {

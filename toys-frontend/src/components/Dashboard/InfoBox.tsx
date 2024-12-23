@@ -77,7 +77,7 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
           />
         </Center>
         <Space h="sm"/>
-        <Title order={3} fw={700} className="font-main">{ TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type] }</Title>
+        <Title order={3} fw={700} className="font-main">{ (TourTypeText[props.item.event_subtype]) || EventTypeText[props.item.event_type] }</Title>
         <Space h="sm"/>
         <Card.Section inheritPadding ta="start">
           <Text size="lg" className="text-gray-600 max-w-72 break-all break-words whitespace-break-spaces">

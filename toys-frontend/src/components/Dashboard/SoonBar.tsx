@@ -49,6 +49,10 @@ const SoonBar: React.FC<DashboardUrgentBarProps> = (props: DashboardUrgentBarPro
   }
 
   const sendTourTimeRequest = async (endpoint: string) => {
+    if(item === null) {
+      return;
+    }
+
     const tourStartUrl = new URL(TOUR_URL + endpoint);
     tourStartUrl.searchParams.append("auth", await userContext.getAuthToken());
     tourStartUrl.searchParams.append("tour_id", item.event_id);

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Button, Alert, Modal, Text } from '@mantine/core';
 import { IconChevronRight, IconChevronLeft, IconAlertCircle, IconCircleCheck, IconX } from "@tabler/icons-react";
 
@@ -8,15 +8,14 @@ import { FairApplicationModel } from "../../types/designed";
 import isEmail from "validator/lib/isEmail";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import isEmpty from "validator/lib/isEmpty";
-import { useNavigate } from "react-router-dom";
 import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 
 
-import { UserContext } from "../../context/UserContext";
 import ApplicantInfoStage from "../../components/FairApplication/ApplicantInfoStage";
 import TimeSelectionStage from "../../components/FairApplication/TimeSelectionStage";
 import NotesStage from "../../components/FairApplication/NotesStage";
+import {City} from "../../types/enum.ts";
 
 const FAIR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/fair");
 
@@ -32,7 +31,7 @@ export const FairApplication: React.FC = () => {
         highschool: {
             id: "",
             name: "",
-            location: "",
+            location: "" as City,
             priority: 1,
             ranking: 1,
         },
@@ -49,13 +48,11 @@ export const FairApplication: React.FC = () => {
         time_in_past: false,
         end_before_start: false,
     });
-    const [isStage2Valid, setIsStage2Valid] = useState(false);
+    const [, setIsStage2Valid] = useState(false);
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const navigate = useNavigate();
 
     const attemptStageChange = (newStage: number) => {
         if (newStage < currentStage) {
@@ -348,7 +345,7 @@ export const FairApplication: React.FC = () => {
                     <Title order={2} style={{ marginBottom: '20px', textAlign: 'center', color: '#ecf0f1' }}>
                         Bize Ulaşın
                     </Title>
-                    <Stack spacing="md">
+                    <Stack>
                         <Group>
                             <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
                                 <IconMail size={24} color="#ecf0f1" />

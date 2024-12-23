@@ -3,10 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Group, Code, ScrollArea, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconGauge,
   IconPresentationAnalytics,
-  IconFileAnalytics,
-  IconLock,
   IconUsers,
   IconUser,
   IconLogout,
@@ -18,7 +15,7 @@ import {
   IconLayoutDashboard,
   IconMessage,
   IconQuestionMark,
-  IconInvoice
+  IconInvoice, Icon
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
 import { UserContext } from '../../context/UserContext';
@@ -27,7 +24,7 @@ import { UserRole } from '../../types/enum';
 
 type LinkType = {
   label: string;
-  icon: React.ComponentType<Icon['props']>;
+  icon: Icon;
   link?: string;
   onClick?: () => void;
   subLinks?: { label: string; link: string }[];
