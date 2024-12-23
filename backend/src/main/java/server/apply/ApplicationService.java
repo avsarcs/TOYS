@@ -258,8 +258,8 @@ public class ApplicationService {
                     About.TOUR_MODIFICATION,
                     Status.RECIEVED,
                     Map.of(
-                            "{tour_id}", tourID,
-                            "{pass}", pk.getKey()
+                            "tour_id", tourID,
+                            "pass", pk.getKey()
                             )
             );
 

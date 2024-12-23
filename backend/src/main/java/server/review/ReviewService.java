@@ -62,12 +62,17 @@ public class ReviewService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
         }
         if (reviewRecord.get(reviewerID).getStatus() != ReviewResponse.PENDING) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review already submitted!");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Review already submitted!");
         }
 
         EventReview review = dto.reviewCreateModel(reviewMap);
 
         database.reviews.addReview(review);
+
+        ReviewRecord rr = reviewRecord.get(reviewerID);
+        rr.setStatus(ReviewResponse.RECEIVED);
+        reviewRecord.put(reviewerID, rr);
+        database.reviews.updateReviewRecords(reviewRecord);
         try {
 
             mailService.sendMail(
