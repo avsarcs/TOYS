@@ -36,7 +36,7 @@ const CheckLogin: React.FC<CheckLoginProps> = (props: CheckLoginProps) => {
     ? (
       <>
         {
-          userContext.profileFetchStatus === FetchingStatus.DONE
+          userContext.profileFetchStatus === FetchingStatus.DONE || userContext.profileFetchStatus === FetchingStatus.FETCHING
             ?
             validRole
               ?

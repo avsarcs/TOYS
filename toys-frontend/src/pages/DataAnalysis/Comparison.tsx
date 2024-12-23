@@ -1,24 +1,12 @@
 import React, {useCallback, useContext} from "react";
-import {Box, Container, Divider, Space, Text, Title} from '@mantine/core';
+import {Box, Divider, Space, Text, Title, Stack, LoadingOverlay} from '@mantine/core';
 import ComparisonSelector from "../../components/DataAnalysis/Comparison/ComparisonSelector.tsx";
 import ComparisonTable from "../../components/DataAnalysis/Comparison/ComparisonTable.tsx";
 import ComparisonGraph from "../../components/DataAnalysis/Comparison/ComparisonGraph.tsx";
 import {useLocation} from 'react-router-dom';
 import {UserContext} from "../../context/UserContext.tsx";
-import {notifications} from '@mantine/notifications';
 
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
-
-//test data
+// Default data
 const defaultUniversities: {name: string, id: string}[] = [
     { name: "Yükleniyor...", id: "1" },
 ];
@@ -46,6 +34,9 @@ const Comparison: React.FC = () => {
     const params = new URLSearchParams(location.search);
     const otherUniversityID = params.get('otherUniversity');
 
+    const [fetchedBilkentDepartments, setFetchedBilkentDepartments] = React.useState(false);
+    const [fetchedOtherUniversity, setFetchedOtherUniversity] = React.useState(false);
+
     const [universities, setUniversities] = React.useState<{ name: string, id: string }[]>(defaultUniversities);
     const otherUniversity = universities.find(u => u.id === otherUniversityID) || null;
 
@@ -62,16 +53,20 @@ const Comparison: React.FC = () => {
 
     React.useEffect(() => {
         if(otherUniversityID != null && otherUniversity == null && !shownWarning) {
+            /*
             notifications.show({
                 color: "red",
                 title: "Üniversite bulunamadı.",
                 message: "Belirtilen üniversite bulunamadı. Lütfen tekrar seçim yapın.",
             });
+            */
             setShownWarning(true);
         }
     }, [otherUniversityID, otherUniversity]);
 
     const getUniversities = useCallback(async () => {
+        setFetchedOtherUniversity(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/universities/all-simple");
         url.searchParams.append("auth", await userContext.getAuthToken());
 
@@ -95,9 +90,12 @@ const Comparison: React.FC = () => {
         });
 
         setUniversities(uniqueFetched);
+        setFetchedOtherUniversity(true);
     }, [userContext.getAuthToken]);
 
     const getBilkentDepartments = useCallback(async () => {
+        setFetchedBilkentDepartments(false)
+
         const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
         url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", "bilkent");
@@ -126,9 +124,12 @@ const Comparison: React.FC = () => {
         })
 
         setBilkentDepartments(uniqueFetched);
+        setFetchedBilkentDepartments(true);
     }, [userContext.getAuthToken]);
 
     const getOtherUniversityDepartments = useCallback(async (university_id: string) => {
+        setFetchedOtherUniversity(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/universities/departments");
         url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", university_id);
@@ -157,9 +158,12 @@ const Comparison: React.FC = () => {
         })
 
         setOtherDepartments(uniqueFetched);
+        setFetchedOtherUniversity(true);
     }, [userContext.getAuthToken]);
 
     const getBilkentData = useCallback(async (department_name: string, university_id: string) => {
+        setFetchedOtherUniversity(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/universities/details");
         url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", university_id);
@@ -185,9 +189,12 @@ const Comparison: React.FC = () => {
         }
 
         setBilkentData(fetched);
+        setFetchedOtherUniversity(true);
     }, [userContext.getAuthToken]);
 
     const getOtherData = useCallback(async (department_name: string, university_id: string) => {
+        setFetchedOtherUniversity(false);
+
         const url = new URL(TOUR_URL + "internal/analytics/universities/details");
         url.searchParams.append("auth", await userContext.getAuthToken());
         url.searchParams.append("university_id", university_id);
@@ -213,7 +220,12 @@ const Comparison: React.FC = () => {
         }
 
         setOtherData(fetched);
+        setFetchedOtherUniversity(true);
     }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        setSelectedOtherUniversity(otherUniversity);
+    }, [otherUniversity]);
 
     // useEffect hook to watch for changes in the state variables
     React.useEffect(() => {
@@ -289,7 +301,7 @@ const Comparison: React.FC = () => {
         setData(combinedData);
     }, [bilkentData, otherData]);
 
-    const ComparisonSelectorContainer = <Container style={defaultContainerStyle}>
+    const ComparisonSelectorContainer = <div style={{ padding: '0 20%' }}>
         <Space h="xs" />
         <ComparisonSelector
             universities={universities}
@@ -303,34 +315,36 @@ const Comparison: React.FC = () => {
             selectedOtherDepartment={selectedOtherDepartment}
         />
         <Space h="xs" />
-    </Container>
+    </div>
 
-    const ComparisonTableContainer = <Container style={defaultContainerStyle}>
-        <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+    const ComparisonTableContainer = <div style={{padding: '0 10%'}}>
+        <Space h="xs"/>
+        <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Yıl Bazlı YKS Sıralamaları
         </Text>
-        <Space h="xs" />
+        <Space h="xs"/>
         <ComparisonTable years={years} data={data}/>
-        <Space h="xs" />
-    </Container>
+        <Space h="xs"/>
+    </div>
 
-    const ComparisonGraphContainer = <Container style={defaultContainerStyle} >
-        <Space h="xs" />
-        <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
+    const ComparisonGraphContainer = <div style={{padding: '0 10%'}}>
+        <Space h="xs"/>
+        <Text fw={700} style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             YKS Tavan Sıralama Yıllık Karşılaştırma
         </Text>
-        <Space h="xs" />
-        <ComparisonGraph data={data} style={{ margin: '20px' }}/>
-        <Space h="xs" />
-    </Container>
+        <Space h="xs"/>
+        <ComparisonGraph data={data} style={{margin: '20px'}}/>
+        <Space h="xs"/>
+    </div>
 
     let ShownDataContainer: JSX.Element;
 
     if(selectedBilkentDepartment && selectedOtherUniversity && selectedOtherDepartment && Object.keys(data).length > 0) {
         ShownDataContainer = <div>
             {ComparisonTableContainer}
-            <Space h="xl"/>
+            <Space h="md"/>
+            <Divider size="sm" className="border-gray-300"/>
+            <Space h="md"/>
             {ComparisonGraphContainer}
         </div>
     }
@@ -346,23 +360,36 @@ const Comparison: React.FC = () => {
     }
 
     return <div style={{width: "100%", minHeight: '100vh'}} className={"w-full h-full"}>
-        <Box className="flex-grow-0 flex-shrink-0">
-            <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
-                Üniversite Karşılaşırma Sistemi
-            </Title>
-            <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-                Bilkent ile diğer üniversiteleri karşılaştırın.
-            </Title>
-            <Space h="xl"/>
-            <Divider className="border-gray-400"/>
-        </Box>
-        <Space h="xl"/>
-        {ComparisonSelectorContainer}
-        <Space h="xl"/>
-        <Space h="xl"/>
-        {ShownDataContainer}
-        <Space h="xl"/>
-        <Space h="xl"/>
+        {
+            fetchedBilkentDepartments && fetchedOtherUniversity
+                ?
+                <>
+                    <Box className="flex-grow-0 flex-shrink-0">
+                        <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
+                            Üniversite Karşılaşırma Sistemi
+                        </Title>
+                        <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
+                            Bilkent ile diğer üniversiteleri karşılaştırın.
+                        </Title>
+                        <Space h="xl"/>
+                        <Divider className="border-gray-400"/>
+                    </Box>
+                    <Stack gap="0" bg="white">
+                        <Space h="md"/>
+                        {ComparisonSelectorContainer}
+                        <Space h="md"/>
+                        <Divider size="sm" className="border-gray-300"/>
+                        <Space h="md"/>
+                        {ShownDataContainer}
+                        <Space h="xl"/>
+                    </Stack>
+                </>
+                :
+                <LoadingOverlay
+                    visible={!(fetchedBilkentDepartments && fetchedOtherUniversity)} zIndex={10}
+                    overlayProps={{blur: 1, color: "#444", opacity: 0.8}}/>
+        }
+
     </div>
 }
 

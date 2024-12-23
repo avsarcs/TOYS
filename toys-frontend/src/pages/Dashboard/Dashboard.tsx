@@ -98,6 +98,7 @@ const Dashboard: React.FC = () => {
       <Flex direction="row" gap="xl" p="md" justify="center" wrap="nowrap" className="flex-grow flex-shrink">
         <Box className="flex-grow flex-shrink">
           <SoonBar setItem={setItem} setCategory={setCategory} />
+          <Space h="md"/>
           <ItemList loading={loading} categories={categories} category={category} setCategory={setCategory} items={items} setItem={setItem}/>
         </Box>
         <Box className="max-w-96 min-w-96 flex-shrink-0 flex-grow-0">

@@ -28,7 +28,7 @@ interface GuideSectionProps {
 
 export const VISITOR_PER_GUIDE = 60;
 
-export const GuideInformation: React.FC<TourSectionProps> = ({ tour }) => {
+export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour }) => {
   const userContext = useContext(UserContext);
   const [manageGuidesOpen, setManageGuidesOpen] = useState(false);
   const totalGuidesNeeded = Math.ceil(tour.visitor_count / VISITOR_PER_GUIDE);
@@ -167,6 +167,7 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour }) => {
           onClose={() => setManageGuidesOpen(false)}
           tour={tour}
           totalGuidesNeeded={totalGuidesNeeded}
+          refreshTour={refreshTour}
         />
       )}
     </Card>

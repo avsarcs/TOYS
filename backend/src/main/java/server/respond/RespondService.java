@@ -86,7 +86,7 @@ public class RespondService {
 
         TourApplication application = applications.get(application_id);
         boolean response = !time.isEmpty();
-        if (!response) {
+        if (response) {
             if (application.getRequested_hours().stream().noneMatch(
                     rh -> rh.getDate().equals(new ZTime(time).getDate()))) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Accepted time is not in the list of requested times!");

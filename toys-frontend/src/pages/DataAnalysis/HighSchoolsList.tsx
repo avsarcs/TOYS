@@ -1,22 +1,11 @@
 import React, {useContext, useCallback} from "react";
-import {Space, Container, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
+import {Space, LoadingOverlay, Box, Title, Divider, Stack} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
 import HighSchoolAdd from "./HighSchoolAdd.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
 import {City} from "../../types/enum.ts";
-
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
 
 // Default data
 const defaultCities: string[] = ["Yükleniyor..."];
@@ -102,21 +91,21 @@ const HighSchoolsList: React.FC = () => {
         setAddModalOpened(true);
     }
 
-    const TableFilterContainer = <Container style={defaultContainerStyle}>
+    const TableFilterContainer = <div style={{ padding: '0 20%' }}>
         <Space h="xs" />
         <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
         <Space h="xs" />
-    </Container>
+    </div>
 
-    const HighSchoolsTableContainer = <Container style={defaultContainerStyle}>
+    const HighSchoolsTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
         <HighSchoolsTable data={highSchools} search={selectedSearch} cities={selectedCities} openDetails={openDetails} addHighSchool={addHighSchool}/>
         <Space h="xs" />
-    </Container>
+    </div>
 
     return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         {
-            fetchedData && highSchools.length > 0
+            fetchedData
               ?
               <>
           <Box className="flex-grow-0 flex-shrink-0">
@@ -129,14 +118,15 @@ const HighSchoolsList: React.FC = () => {
               <Space h="xl"/>
               <Divider className="border-gray-400"/>
           </Box>
-            <hr style={{border: '1px solid black'}}/>
-            <Space h="xl"/>
-            {TableFilterContainer}
-            <Space h="xl"/>
-            <Space h="xl"/>
-            {HighSchoolsTableContainer}
-            <Space h="xl"/>
-            <Space h="xl" />
+          <Stack gap="0" bg="white">
+              <Space h="md"/>
+              {TableFilterContainer}
+              <Space h="md"/>
+              <Divider size="sm" className="border-gray-300"/>
+              <Space h="md"/>
+              {HighSchoolsTableContainer}
+              <Space h="xl" />
+          </Stack>
             {selectedHighSchoolID && (
                 <HighSchoolDetails
                     opened={detailsModalOpened}

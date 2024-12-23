@@ -9,12 +9,10 @@ import {
   Divider,
   Stack,
   Title,
-  Progress,
   Badge,
   Alert,
   Paper,
   ThemeIcon,
-  Box,
   ActionIcon,
   Tooltip
 } from "@mantine/core";
@@ -27,8 +25,6 @@ import {
   IconUsers,
   IconCheck,
   IconAlertCircle,
-  IconUserPlus,
-  IconChevronRight,
   IconX
 } from '@tabler/icons-react';
 

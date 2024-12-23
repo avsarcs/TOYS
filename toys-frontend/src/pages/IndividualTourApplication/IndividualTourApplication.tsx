@@ -14,7 +14,6 @@ import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import MajorSelectionStage from '../../components/TourApplication/MajorSelectionStage';
 import IndividualNotesStage from '../../components/TourApplication/IndividualNotesStage';
 import { City } from "../../types/enum.ts";
-import { Department } from '../../types/enum.ts';
 
 const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
 

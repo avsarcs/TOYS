@@ -10,15 +10,21 @@ import {
   Text,
   Stack,
   Badge,
+  Button,
   Space,
   Chip
 } from '@mantine/core';
+
+import { showNotification } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { UserContext } from '../../context/UserContext';
+import { UserRole } from '../../types/enum';
 import { IconSearch, IconUser, IconStarFilled, IconBriefcase } from '@tabler/icons-react';
 import { SimpleGuideData } from '../../types/data';
-import {Department} from "../../types/enum.ts";
+import { Department } from '../../types/enum.ts';
 
 const GUIDES_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/user/guides");
+const PROMOTION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/people/promote");
 
 const ManagePersonnel: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +37,7 @@ const ManagePersonnel: React.FC = () => {
     const guidesUrl = new URL(GUIDES_URL);
     guidesUrl.searchParams.append("auth", await userContext.getAuthToken());
     guidesUrl.searchParams.append("name", searchQuery);
-    
+
     // Always send type parameter, but as empty if nothing selected
     if (selectedTypes.length > 0) {
       selectedTypes.forEach(type => {
@@ -50,6 +56,36 @@ const ManagePersonnel: React.FC = () => {
       setGuides(data);
     }
   }, [searchQuery, selectedTypes]);
+
+
+  const handlePromotion = async (guideId: string) => {
+    const promoteUrl = new URL(PROMOTION_URL);
+    promoteUrl.searchParams.append("auth", await userContext.getAuthToken());
+    promoteUrl.searchParams.append("user_id", guideId);
+
+    const res = await fetch(promoteUrl, {
+      method: "POST"
+    });
+
+    if (res.ok) {
+      await fetchGuides();
+      showNotification({
+        title: 'Başarılı',
+        message: 'Yükseltme işlemi başarıyla gerçekleşmiştir!',
+        color: 'green',
+        icon: <IconCheck />,
+        autoClose: 5000,
+      });
+    } else {
+      showNotification({
+        title: 'Başarısız',
+        message: 'Yükseltme işlemi başarısız!',
+        color: 'red',
+        icon: <IconX />,
+        autoClose: 5000,
+      });
+    }
+  };
 
   useEffect(() => {
     fetchGuides().catch(console.error);
@@ -103,7 +139,7 @@ const ManagePersonnel: React.FC = () => {
       <Title order={1} className="text-blue-700 font-bold mb-6">
         Personel Yönetimi
       </Title>
-      
+
       <Card shadow="sm" p="lg" radius="md" withBorder className="mb-6">
         <Stack gap="md">
           <TextInput
@@ -112,7 +148,7 @@ const ManagePersonnel: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          
+
           <Group>
             <Text fw={500}>Filtrele:</Text>
             <Chip.Group multiple value={selectedTypes} onChange={setSelectedTypes}>
@@ -134,20 +170,18 @@ const ManagePersonnel: React.FC = () => {
 
       <Stack gap="md">
         {guides.map((guide) => (
-          <Card 
-            key={guide.id} 
-            shadow="sm" 
-            p="lg" 
-            radius="md" 
-            withBorder 
+          <Card
+            key={guide.id}
+            shadow="sm"
+            p="lg"
+            radius="md"
+            withBorder
             className="hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => navigate(`/profile/${guide.id}`)}
           >
             <Group wrap="nowrap" justify="space-between">
               <Group wrap="nowrap" gap="md">
-                <Box>
-                  {getRoleIcon(guide.role)}
-                </Box>
+                <Box>{getRoleIcon(guide.role)}</Box>
                 <Stack gap="xs">
                   <Group gap="sm">
                     <Text fw={700}>{guide.name}</Text>
@@ -156,13 +190,55 @@ const ManagePersonnel: React.FC = () => {
                     </Badge>
                   </Group>
                   <Group gap="lg">
-                    <Text size="sm" c="dimmed">Bölüm: {Department[guide.major]}</Text>
-                    <Text size="sm" c="dimmed">Deneyim: {formatExperience(guide.experience)}</Text>
+                    <Text size="sm" c="dimmed">
+                      Bölüm: {Department[guide.major]}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      Deneyim: {formatExperience(guide.experience)}
+                    </Text>
                   </Group>
                 </Stack>
               </Group>
-              
-              <Text c="dimmed" size="sm">Kimlik: {guide.id}</Text>
+
+              <Stack align="center">
+                <Text c="dimmed" size="sm">Kimlik: {guide.id}</Text>
+                {guide.role === 'GUIDE' && (
+                  <Button
+                    style={{
+                      backgroundColor: 'lightblue',
+                      color: 'darkblue',
+                      borderRadius: '20px',
+                      padding: '8px 16px',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click
+                      handlePromotion(guide.id);
+                    }}
+                  >
+                    <b>Danışman'a Yükselt</b>
+                  </Button>
+                )}
+                {guide.role === 'ADVISOR' && (
+                  <Button
+                    style={{
+                      backgroundColor: '#f7bf8b',
+                      color: '#c44123',
+                      borderRadius: '20px',
+                      padding: '8px 16px',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click
+                      handlePromotion(guide.id);
+                    }}
+                  >
+                    <b>Koordinatör'e Yükselt</b>
+                  </Button>
+                )}
+              </Stack>
             </Group>
           </Card>
         ))}

@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, Divider, LoadingOverlay, Stack} from '@mantine/core';
 import DetailsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/DetailsTable.tsx";
 import ToursTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/ToursTable.tsx";
 import StudentsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/StudentsTable.tsx";
@@ -9,18 +9,6 @@ import HighSchoolEdit from "./HighSchoolEdit.tsx";
 import HighSchoolStudentDetails from "./HighSchoolStudentDetails.tsx";
 import HighSchoolTourReviewDetails from "./HighSchoolTourReviewDetails.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
-import HighSchoolAdd from "./HighSchoolAdd.tsx";
-
-// Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
 
 // Default data
 const defaultData = {
@@ -117,18 +105,18 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
     }
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
-        <Text style={{fontSize: 'xx-large'}}>
+        <Text fw={700} style={{fontSize: 'xx-large', textAlign: 'center'}}>
             {highSchoolName}
         </Text>
     </Container>
 
-    const DetailsTableContainer = <Container style={defaultContainerStyle}>
+    const DetailsTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
         <DetailsTable priority={data.priority} ranking={data.ranking} city={data.city}/>
         <Space h="xs" />
-    </Container>
+    </div>
 
-    const ToursTableContainer = <Container style={defaultContainerStyle}>
+    const ToursTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
         <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bu Okul İçin Düzenlenmiş Turlar
@@ -136,9 +124,9 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
         <Space h="xs" />
         <ToursTable data={data["tours"]} openDetails={showTourReviewDetails}/>
         <Space h="xs" />
-    </Container>
+    </div>
 
-    const StudentsTableContainer = <Container style={defaultContainerStyle}>
+    const StudentsTableContainer = <div style={{ padding: '0 10%' }}>
         <Space h="xs" />
         <Text style={{fontSize: 'x-large', display: "flex", justifyContent: "center"}}>
             Bilkent'e Gelen Mezunlar
@@ -146,11 +134,11 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
         <Space h="xs" />
         <StudentsTable data={data["students"]} openDetails={showStudentDetails}/>
         <Space h="xs" />
-    </Container>
+    </div>
 
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
-        <Modal.Content style={{borderRadius: '20px', overflowY: "clip", boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
+        <Modal.Content style={{borderRadius: '10px', overflowY: "clip", boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
             {
                 fetchedData
                     ?
@@ -169,16 +157,22 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                                 </Container>
                             </Group>
 
-                            <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
+                            <Divider size="sm" className="border-gray-300"/>
 
                             <ScrollArea.Autosize mah="75vh" mx="auto">
-                                <Space h="xl"/>
-                                {DetailsTableContainer}
-                                <Space h="xl"/>
-                                {ToursTableContainer}
-                                <Space h="xl"/>
-                                {StudentsTableContainer}
-                                <Space h="xl"/>
+                                <Stack gap="0" bg="white">
+                                    <Space h="md"/>
+                                    {DetailsTableContainer}
+                                    <Space h="md"/>
+                                    <Divider size="sm" className="border-gray-300"/>
+                                    <Space h="md"/>
+                                    {ToursTableContainer}
+                                    <Space h="md"/>
+                                    <Divider size="sm" className="border-gray-300"/>
+                                    <Space h="md"/>
+                                    {StudentsTableContainer}
+                                    <Space h="xl"/>
+                                </Stack>
                             </ScrollArea.Autosize>
 
                         </Modal.Body>
