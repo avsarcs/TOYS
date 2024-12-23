@@ -69,7 +69,7 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour, refreshTour
             <IconUsers size={24} className="text-blue-600" />
             <Title order={3} className="text-blue-800">Rehber Bilgileri</Title>
           </Group>
-          {userContext.user.role === UserRole.ADVISOR && tour.status === TourStatus.CONFIRMED && (
+          {(userContext.user.role === UserRole.ADVISOR || userContext.user.role === UserRole.COORDINATOR || userContext.user.role === UserRole.DIRECTOR) && tour.status === TourStatus.CONFIRMED && (
             <Button
               variant="light"
               leftSection={<IconUserCheck size={18} />}

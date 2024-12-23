@@ -19,7 +19,9 @@ const ComparisonButton: React.FC<ComparisonButtonProps> = ({universityID, compar
         size="compact-md"
         color={"blue"}
         onClick={() => {
+            if (universityID) {
             window.open(`${comparisonPageLink}?otherUniversity=${encodeURIComponent(universityID)}`, '_blank');
+            }
         }}
         style={{width: "60%"}}
     >

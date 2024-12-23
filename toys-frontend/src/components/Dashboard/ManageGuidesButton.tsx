@@ -25,7 +25,7 @@ const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
       : new URL(FAIR_URL);
 
     eventUrl.searchParams.append("auth", await userContext.getAuthToken());
-    eventUrl.searchParams.append(`${props.item.event_type.toLowerCase()}_id`, await userContext.getAuthToken());
+    eventUrl.searchParams.append(`${props.item.event_type.toLowerCase()}_id`, props.item.event_id);
 
     try {
       const eventRes = await fetch(eventUrl, {
@@ -66,10 +66,11 @@ const ManageGuidesButton: React.FC<DashboardInfoBoxButtonProps> = (props) => {
               fullWidth
               leftSection={loading ? <IconLoader2 className="animate-spin" /> : <IconUsers />}
               disabled={loading}
+              onClick={() => fetchEventData().then(() => setIsOpen(true))}
               className={`${loading ? "brightness-75" : ""} text-center border-white bg-blue-600 border-2 outline outline-0
-              hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800focus:outline-blue-800 hover:outline-blue-800
+              hover:bg-blue-500 hover:border-blue-800 focus:border-blue-800 focus:outline-blue-800 hover:outline-blue-800
               focus:outline-2 hover:outline-2 transition-colors duration-300`}>
-        Rehberleri Yönet
+        {props.children}
       </Button>
       {
         eventData &&

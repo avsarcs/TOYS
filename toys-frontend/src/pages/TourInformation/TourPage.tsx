@@ -86,10 +86,14 @@ const TourPage: React.FC = () => {
                 }
                 <Divider className="border-gray-200" />
                 <TimeInformation tour={tour} refreshTour={refreshTour} />
-                <Divider className="border-gray-200" />
-                <Box p="lg" className="bg-white">
-                  <TourReviews tourId={tour.tour_id} />
-                </Box>
+                {tour.status === TourStatus.FINISHED && (
+                  <>
+                    <Divider className="border-gray-200" />
+                    <Box p="lg" className="bg-white">
+                      <TourReviews tourId={tour.tour_id} />
+                    </Box>
+                  </>
+                )}
               </Stack>
             </>
         }
@@ -97,4 +101,5 @@ const TourPage: React.FC = () => {
     </Flex>
   );
 }
+
 export default TourPage;
