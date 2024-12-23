@@ -29,7 +29,7 @@ const useGuideReviews = (guideId: string) => {
         const reviewUrl = new URL(GUIDE_REVIEW_URL);
         reviewUrl.searchParams.append('guide_id', guideId);
         reviewUrl.searchParams.append('auth', authToken);
-        
+
         const response = await fetch(reviewUrl);
         if (!response.ok) {
           throw new Error('İncelemeler alınırken bir hata oluştu');
@@ -42,9 +42,9 @@ const useGuideReviews = (guideId: string) => {
         setLoading(false);
       }
     };
-    
+
     userContext.getAuthToken().then((authToken) => {
-      if(authToken) {
+      if (authToken) {
         fetchReviews(authToken);
       }
     });
@@ -73,11 +73,11 @@ export const ProfileRatingCard: React.FC<ProfileRatingProps> = ({ guideId }) => 
   };
 
   return (
-    <Card 
-      shadow="sm" 
-      p="xl" 
-      radius="md" 
-      withBorder 
+    <Card
+      shadow="sm"
+      p="xl"
+      radius="md"
+      withBorder
       className="bg-blue-50 mb-8"
     >
       <Stack align="center" gap="xs">
@@ -130,10 +130,10 @@ export const ProfileReviewsList: React.FC<ProfileRatingProps> = ({ guideId }) =>
 
   if (!reviewData || reviewData.count === 0) {
     return (
-      <Alert 
-        icon={<IconAlertCircle size={16} />} 
-        color="blue" 
-        variant="light" 
+      <Alert
+        icon={<IconAlertCircle size={16} />}
+        color="blue"
+        variant="light"
         title="Henüz inceleme yapılmadı"
       >
         Bu rehber için henüz inceleme bulunmuyor.
@@ -144,16 +144,18 @@ export const ProfileReviewsList: React.FC<ProfileRatingProps> = ({ guideId }) =>
   return (
     <Container size="md" px={0} id="profile-reviews-section">
       <Stack gap="xl">
-        <Title order={3} className="text-gray-800">
-          Tur İncelemeleri
-        </Title>
-        
+        { reviewData.reviews.length > 0 &&
+          (<Title order={3} className="text-gray-800">
+            Tur İncelemeleri
+          </Title>)
+        }
+
         {reviewData.reviews.map((review) => (
-          <Paper 
-            key={review.id} 
-            shadow="sm" 
-            radius="lg" 
-            p="xl" 
+          <Paper
+            key={review.id}
+            shadow="sm"
+            radius="lg"
+            p="xl"
             withBorder
             className="border-l-4 border-l-violet-500"
           >
@@ -172,7 +174,7 @@ export const ProfileReviewsList: React.FC<ProfileRatingProps> = ({ guideId }) =>
                   <Text size="sm" c="gray.6">/10</Text>
                 </Group>
               </Group>
-              
+
               {review.body ? (
                 <Text className="text-gray-600 leading-relaxed">
                   {review.body}

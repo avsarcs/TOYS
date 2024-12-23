@@ -5,6 +5,7 @@ import { UserContext } from "../../context/UserContext";
 import { TourStatus, UserRole } from "../../types/enum";
 import ManageGuidesWindow from "./ManageGuidesWindow";
 import { TourData } from "../../types/data";
+import { Link } from 'react-router-dom';
 
 interface TourSectionProps {
   tour: TourData;
@@ -37,21 +38,23 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour }) => {
       {guides && guides.length > 0 && guides[0]?.full_name ? (
         <Group gap="sm">
           {guides.map((guide, index) => (
-            <Tooltip 
-              key={index} 
+            <Tooltip
+              key={index}
               label={guide?.highschool?.name ? `${guide.full_name} (${guide.highschool.name})` : guide.full_name}
             >
-              <Card withBorder p="xs" className={`bg-${color}-50`}>
-                <Group gap="sm">
-                  <Avatar size="sm" color={color} radius="xl">
-                    {guide.full_name.charAt(0)}
-                  </Avatar>
-                  <Box>
-                    <Text size="sm" fw={500}>{guide.full_name}</Text>
-                    <Text size="xs" c="gray.6">{guide.highschool?.name || ''}</Text>
-                  </Box>
-                </Group>
-              </Card>
+              <Link to={`/profile/${guide?.id}`}>
+                <Card withBorder p="xs" className={`bg-${color}-50`}>
+                  <Group gap="sm">
+                    <Avatar size="sm" color={color} radius="xl">
+                      {guide.full_name.charAt(0)}
+                    </Avatar>
+                    <Box>
+                      <Text size="sm" fw={500}>{guide.full_name}</Text>
+                      <Text size="xs" c="gray.6">{guide.highschool?.name || ''}</Text>
+                    </Box>
+                  </Group>
+                </Card>
+              </Link>
             </Tooltip>
           ))}
         </Group>
@@ -81,18 +84,18 @@ export const GuideInformation: React.FC<TourSectionProps> = ({ tour }) => {
         </Group>
       </Card.Section>
       <Stack p="md" gap="lg">
-        <GuideSection 
-          title="Rehberler" 
-          guides={tour?.guides || []} 
-          color="blue" 
+        <GuideSection
+          title="Rehberler"
+          guides={tour?.guides || []}
+          color="blue"
         />
         <Divider variant="dashed" />
-        <GuideSection 
-          title="Amatör Rehberler" 
-          guides={tour?.trainee_guides || []} 
-          color="cyan" 
+        <GuideSection
+          title="Amatör Rehberler"
+          guides={tour?.trainee_guides || []}
+          color="cyan"
         />
-        
+
         <Box>
           <Text size="sm" c="gray.6">
             Bu tur için gereken toplam rehber sayısı: {totalGuidesNeeded}
