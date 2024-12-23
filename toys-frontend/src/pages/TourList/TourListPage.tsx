@@ -13,13 +13,13 @@ import {
   Container,
   useMatches,
   ScrollArea,
-  Autocomplete, 
-  Pagination, 
-  LoadingOverlay
+  Autocomplete,
+  Pagination,
+  LoadingOverlay, ActionIcon
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext.tsx";
-import { IconSearch } from "@tabler/icons-react";
+import {IconFilter, IconFilterCancel, IconSearch} from "@tabler/icons-react";
 import ListItem from "../../components/TourList/ListItem.tsx";
 import { SimpleEventData } from "../../types/data";
 import { UserRole } from "../../types/enum";
@@ -30,6 +30,7 @@ const TOURS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/
 
 const TourListPage: React.FC = () => {
   const userContext = useContext(UserContext);
+  const [filterEnabled, setFilterEnabled] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string[]>([
     "RECEIVED",
     "TOYS_WANTS_CHANGE",
@@ -98,7 +99,7 @@ const TourListPage: React.FC = () => {
   const listHeight = useMatches({
     base: "",
     sm: "",
-    md: "45vh",
+    md: "65vh",
   });
 
   const visibleTours = useMemo(() => 
@@ -151,101 +152,113 @@ const TourListPage: React.FC = () => {
       <Space h="xl"/>
       <Divider className="border-gray-400"/>
       <Stack gap="0" bg="white">
-        <Box p="lg">
+        <Group p="lg" gap="md">
           <Title order={3}>
             Filtre
           </Title>
-        </Box>
-        <Group grow ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
-          <Text size="md" fw={700} className="flex-grow-0">
-            Okul:
-          </Text>
-          <Autocomplete
-            leftSection={<IconSearch />}
-            placeholder="Okul ismi..."
-            limit={7}
-            value={searchSchoolName}
-            data={[""]}
-            onChange={setSearchSchoolName}/>
-          <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
+          <ActionIcon size="xl" onClick={() => { setFilterEnabled(!filterEnabled); }}>
+            {filterEnabled ? <IconFilterCancel /> : <IconFilter />}
+          </ActionIcon>
         </Group>
-        <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
-          <Text size="md" fw={700}>
-            Durum:
-          </Text>
-          <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
-            <Group wrap="wrap">
-              <Chip color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
-              <Chip color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
-              <Chip color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
-              <Chip color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
-              <Chip color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
-              <Chip color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
-              <Chip color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
-              <Chip color="blue" variant="outline" value="FINISHED">Tamamlandı</Chip>
+        {
+          filterEnabled &&
+          (
+            <Box pos="relative" className="w-full">
+            <Box p={0} bg="white" className="absolute top-0 z-10 w-full">
+            <Group grow ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100">
+              <Text size="md" fw={700} className="flex-grow-0">
+                Okul:
+              </Text>
+              <Autocomplete
+                leftSection={<IconSearch />}
+                placeholder="Okul ismi..."
+                limit={7}
+                value={searchSchoolName}
+                data={[""]}
+                onChange={setSearchSchoolName}/>
+              <Button className="flex-grow-0" onClick={handleSearch}>Ara</Button>
             </Group>
-          </Chip.Group>
-          <Button onClick={handleClearFilters}>Temizle</Button>
-        </Group>
-        <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100" grow preventGrowOverflow={false} wrap="wrap">
-          <Group>
-            <Text size="md" fw={700}>
-              Başvuru Tarihi:
-            </Text>
-            <Group wrap="nowrap">
-              <DateInput 
-                clearable
-                value={fromDate}
-                onChange={handleFromDateChange}
-              />
-              <Text>-</Text>
-              <DateInput 
-                clearable
-                value={toDate}
-                onChange={handleToDateChange}
-                minDate={fromDate || undefined}
-              />
+            <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-200">
+              <Text size="md" fw={700}>
+                Durum:
+              </Text>
+              <Chip.Group multiple value={statusFilter} onChange={setStatusFilter}>
+                <Group wrap="wrap">
+                  <Chip color="blue" variant="outline" value="RECEIVED">Onay Bekliyor</Chip>
+                  <Chip color="blue" variant="outline" value="TOYS_WANTS_CHANGE">TOYS Değişim İstiyor</Chip>
+                  <Chip color="blue" variant="outline" value="APPLICANT_WANTS_CHANGE">Başvuran Değişim İstiyor</Chip>
+                  <Chip color="blue" variant="outline" value="CONFIRMED">Onaylandı</Chip>
+                  <Chip color="blue" variant="outline" value="REJECTED">Reddedildi</Chip>
+                  <Chip color="blue" variant="outline" value="CANCELLED">İptal Edildi</Chip>
+                  <Chip color="blue" variant="outline" value="ONGOING">Devam Ediyor</Chip>
+                  <Chip color="blue" variant="outline" value="FINISHED">Tamamlandı</Chip>
+                </Group>
+              </Chip.Group>
+              <Button onClick={handleClearFilters}>Temizle</Button>
             </Group>
-          </Group>
-          <Group>
-            <Divider orientation="vertical" className="border-gray-400"/>
-            <Text size="md" fw={700}>
-              Diğer:
-            </Text>
-            {isGuide ? (
-              <>
-                <Checkbox 
-                  label="Davet Edildiğim Turlar" 
-                  size="md"
-                  checked={amInvited}
-                  onChange={(event) => setAmInvited(event.currentTarget.checked)}
-                />
-                <Checkbox 
-                  label="Rehberlik Edeceğim Turlar" 
-                  size="md"
-                  checked={amEnrolled}
-                  onChange={(event) => setAmEnrolled(event.currentTarget.checked)}
-                />
-              </>
-            ) : (
-              <>
-                <Checkbox 
-                  label="Rehber atanmamış." 
-                  size="md"
-                  checked={guideMissing}
-                  onChange={(event) => setGuideMissing(event.currentTarget.checked)}
-                />
-                <Checkbox 
-                  label="Acemi rehber atanmamış." 
-                  size="md"
-                  checked={traineeMissing}
-                  onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
-                />
-              </>
-            )}
-          </Group>
-        </Group>
-        <Space h="md"/>
+            <Group ml="lg" p="xl" pt="lg" pb="lg" className="bg-gray-100" grow preventGrowOverflow={false} wrap="wrap">
+              <Group>
+                <Text size="md" fw={700}>
+                  Başvuru Tarihi:
+                </Text>
+                <Group wrap="nowrap">
+                  <DateInput
+                    clearable
+                    value={fromDate}
+                    onChange={handleFromDateChange}
+                  />
+                  <Text>-</Text>
+                  <DateInput
+                    clearable
+                    value={toDate}
+                    onChange={handleToDateChange}
+                    minDate={fromDate || undefined}
+                  />
+                </Group>
+              </Group>
+              <Group>
+                <Divider orientation="vertical" className="border-gray-400"/>
+                <Text size="md" fw={700}>
+                  Diğer:
+                </Text>
+                {isGuide ? (
+                  <>
+                    <Checkbox
+                      label="Davet Edildiğim Turlar"
+                      size="md"
+                      checked={amInvited}
+                      onChange={(event) => setAmInvited(event.currentTarget.checked)}
+                    />
+                    <Checkbox
+                      label="Rehberlik Edeceğim Turlar"
+                      size="md"
+                      checked={amEnrolled}
+                      onChange={(event) => setAmEnrolled(event.currentTarget.checked)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Checkbox
+                      label="Rehber atanmamış."
+                      size="md"
+                      checked={guideMissing}
+                      onChange={(event) => setGuideMissing(event.currentTarget.checked)}
+                    />
+                    <Checkbox
+                      label="Acemi rehber atanmamış."
+                      size="md"
+                      checked={traineeMissing}
+                      onChange={(event) => setTraineeMissing(event.currentTarget.checked)}
+                    />
+                  </>
+                )}
+              </Group>
+            </Group>
+            <Space h="md"/>
+          </Box>
+          </Box>
+        )
+      }
       </Stack>
       <Divider size="sm" className="border-gray-300"/>
       <Container p="0" fluid bg="white">
