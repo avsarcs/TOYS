@@ -89,13 +89,13 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
 
     const TourDetailsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <TourDetails tour_date={data["tour_date"]} contact={data["contact"]} authorName={"Yazar"} guideNames={data["guides"]}/>
+        <TourDetails tour_date={data["tour_date"]} guides={data["guides"]} contact={data["contact"]} score={data["score"]}/>
         <Space h="xs" />
     </Container>
 
     const ReviewDetailsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <ReviewDetails body={data["body"]} score={data["score"]}/>
+        <ReviewDetails body={data["body"]}/>
         <Space h="xs" />
     </Container>
 
