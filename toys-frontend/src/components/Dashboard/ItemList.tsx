@@ -17,58 +17,10 @@ const ItemList: React.FC<DashboardItemListProps> & { Item: React.FC<DashboardIte
   const gridElements = props.items.map((value, i) => {
     return (
       <>
-      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>      <Grid.Col span={col} key={i}>
-        <ItemList.Item item={value} setItem={props.setItem}/>
-      </Grid.Col>
-        </>
+        <Grid.Col span={col} key={i}>
+          <ItemList.Item item={value} setItem={props.setItem}/>
+        </Grid.Col>
+      </>
     );
   });
 
