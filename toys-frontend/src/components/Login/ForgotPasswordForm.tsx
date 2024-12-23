@@ -44,6 +44,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPass
           title: "Şifre sıfırlama isteğiniz alındı.",
           message: "Şifrenizi sıfırlamanız için e-postanıza bir mail attık.."
         });
+        props.setForgotPassword(false);
       }
       else {
         notifications.show({
