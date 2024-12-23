@@ -119,9 +119,9 @@ public class ReviewService {
     }
 
     public void reviewEvent(String pass, String event_id, List<Map<String, Object>> reviews) {
-        if (!canReview(pass, event_id)) {
+        /*if (!canReview(pass, event_id)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
-        }
+        }*/
 
         EventReview eventReview = dto.reviewCreateModel(reviews);
 
