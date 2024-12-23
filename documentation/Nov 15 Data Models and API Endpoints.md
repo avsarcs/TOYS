@@ -440,13 +440,11 @@ API endpoints:
                 id: user-id
             method: post
 
-        /reset
+        /change
             parameter:
-                accessKey: access key provided through the mail link
-            body:
-            {
-                "password": "new password"
-            }
+                auth: auth token
+            body: (content type, plaintext)
+		"new password"
             method: post
 
 !!! NEW ADMIN ENDPOINT !!! 
