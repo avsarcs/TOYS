@@ -37,8 +37,6 @@ import CheckLogin from "./components/CheckLogin.tsx";
 import ManagePersonnel from "./pages/ManagePersonnel/ManagePersonnel.tsx";
 import FairsList from "./pages/FairsList/FairsList.tsx";
 import FairPage from "./pages/FairInformation/FairPage.tsx";
-import GuidesPage from "./pages/GuidesPage/GuidesPage.tsx";
-import GuideInvitations from "./pages/GuideInvitations/GuideInvitations.tsx";
 import Admin from "./pages/Admin/Admin.tsx";
 import UserManual from "./pages/UserManual/UserManual.tsx";
 

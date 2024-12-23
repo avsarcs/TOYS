@@ -73,6 +73,7 @@ const Dashboard: React.FC = () => {
     const abortController = new AbortController();
     setCurrentAbortController(abortController);
     fetchDashboardItems(abortController).catch(console.error);
+    setItem(null);
   }
 
   useEffect(() => {
