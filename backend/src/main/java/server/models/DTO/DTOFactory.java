@@ -193,7 +193,11 @@ public class DTOFactory {
                 "name", inviterName
         ));
 
-        String inviteeName = database.people.fetchUser(request.getGuide_id()).getProfile().getName();
+        String inviteeName = " ";
+        User invitee = database.people.fetchUser(request.getGuide_id());
+        if (invitee != null) {
+            inviteeName = invitee.getProfile().getName();
+        }
 
         dto.put("invited", Map.of(
                 "id", request.getGuide_id(),

@@ -90,7 +90,7 @@ public class MailServiceGateway {
 
     private static void sendActual(String to, String subject, String body) {
         Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", "asmtp.bilkent.edu.tr");
+        properties.setProperty("mail.smtp.host", "smtp.gmail.com");
         properties.setProperty("mail.smtp.port", "465");
         properties.setProperty("mail.smtp.ssl.enable", "true");
         properties.setProperty("mail.smtp.auth", "true");
