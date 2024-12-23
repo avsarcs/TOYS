@@ -16,8 +16,7 @@ const DirectorTexts: UserManualItem[] = [
         dynamicSteps: [
             { title: "Liseler listesi sayfasını açın.", image: "manual/addhighschool1.png" },
             { title: "Lise ekleme tuşuna tıklayın.", image: "manual/addhighschool2.png" },
-            { title: "Lise bilgilerini girin.", image: "manual/addhighschool3.png" },
-            { title: "Kaydet tuşuna tıklayın.", image: "manual/addhighschool4.png" }
+            { title: "Lise bilgilerini girin ve kaydet tuşuna tıklayın", image: "manual/addhighschool3.png" }
         ]
     },
     {
@@ -26,7 +25,7 @@ const DirectorTexts: UserManualItem[] = [
         dynamicSteps: [
             { title: "Liseler listesi sayfasını açın.", image: "manual/edithighschool1.png" },
             { title: "Düzenlemek istediğiniz liseyi belirleyin.", image: "manual/edithighschool2.png" },
-            { title: "Düzeleme tuşuna tıklayın.", image: "manual/edithighschool3.png" },
+            { title: "Düzenleme tuşuna tıklayın.", image: "manual/edithighschool3.png" },
             { title: "İstedğiniz değişiklikleri yapın.", image: "manual/edithighschool4.png" },
             { title: "Kaydet tuşuna tıklayın.", image: "manual/edithighschool5.png" }
         ]
