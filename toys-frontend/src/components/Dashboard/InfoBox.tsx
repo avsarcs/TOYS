@@ -29,14 +29,14 @@ const InfoBox: React.FC<DashboardInfoBoxProps> = (props: DashboardInfoBoxProps) 
             <EventApplicationAcceptButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_ACCEPT">
               Kabul Et
             </EventApplicationAcceptButton>
-            <EventApplicationRejectButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_ACCEPT">
+            <EventApplicationRejectButton item={props.item} updateDashboard={props.updateDashboard} key="APPLICATION_REJECT">
               Reddet
             </EventApplicationRejectButton>
           </>
         );
       case DashboardCategory.GUIDELESS:
         return (
-          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard} key="MANAGE_GUIDES">
+          <ManageGuidesButton item={props.item} updateDashboard={props.updateDashboard} key="MANAGE_GUIDES_">
             Rehberleri Yönet
           </ManageGuidesButton>
         );

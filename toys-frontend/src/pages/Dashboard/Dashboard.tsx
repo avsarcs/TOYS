@@ -31,7 +31,6 @@ const Dashboard: React.FC = () => {
           {value: DashboardCategory.PENDING_APPLICATION, label: DashboardCategoryText.PENDING_APPLICATION},
           {value: DashboardCategory.EVENT_INVITATION, label: DashboardCategoryText.EVENT_INVITATION},
           {value: DashboardCategory.GUIDELESS, label: DashboardCategoryText.GUIDELESS},
-          {value: DashboardCategory.GUIDE_ASSIGNED, label: DashboardCategoryText.GUIDE_ASSIGNED},
           {value: DashboardCategory.PENDING_MODIFICATION, label: DashboardCategoryText.PENDING_MODIFICATION}
         ];
       default:
@@ -85,7 +84,7 @@ const Dashboard: React.FC = () => {
     setCategory(categories.length > 0 ? categories[0].value : DashboardCategory.NONE);
   }, [categories]);
   return (
-    <Flex direction="column" mih="100vh" className="overflow-y-clip">
+    <Flex direction="column" mih="100vh" className="overflow-y-hidden">
       <Box className="flex-grow-0 flex-shrink-0">
         <Title p="xl" pb="" order={1} className="text-blue-700 font-bold font-main">
           Pano
@@ -96,13 +95,12 @@ const Dashboard: React.FC = () => {
         <Space h="xl"/>
         <Divider className="border-gray-400"/>
       </Box>
-      <Flex p="xl" direction="row" gap="xl" justify="center" wrap="wrap" className="flex-grow flex-shrink">
-        <Box className="basis-1 flex-grow flex-shrink">
+      <Flex direction="row" gap="xl" p="md" justify="center" wrap="nowrap" className="flex-grow flex-shrink">
+        <Box className="flex-grow flex-shrink">
           <SoonBar setItem={setItem} setCategory={setCategory} />
-          <Space h="sm" />
           <ItemList loading={loading} categories={categories} category={category} setCategory={setCategory} items={items} setItem={setItem}/>
         </Box>
-        <Box className="min-w-96 flex-shrink-0 flex-grow-0">
+        <Box className="max-w-96 min-w-96 flex-shrink-0 flex-grow-0">
           {
             item !== null ?
               <InfoBox category={category} item={item} updateDashboard={updateDashboard}/>
