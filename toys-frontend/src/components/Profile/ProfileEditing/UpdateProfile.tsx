@@ -7,7 +7,7 @@ import {BackendDepartment, DayOfTheWeek, Department, UserRole} from "../../../ty
 import {notifications} from "@mantine/notifications";
 
 // Mapping between Department and BackendDepartment
-const departmentMapping: { [key in BackendDepartment]: Department } = {
+export const departmentMapping: { [key in BackendDepartment]: Department } = {
     [BackendDepartment.ARCHITECTURE]: Department.ARCHITECTURE,
     [BackendDepartment.COMMUNICATION_AND_DESIGN]: Department.COMMUNICATION_AND_DESIGN,
     [BackendDepartment.FINE_ARTS]: Department.FINE_ARTS,
@@ -83,7 +83,7 @@ const UpdateProfile: React.FC = () => {
                     responsible_days: profileData.responsible_days || [], // Set responsible_days
                     profile_picture: profileData.profile_picture || "",
                     iban: profileData.iban || "", // Set iban
-                    major: profileData.major || "", // Set major
+                    major: departmentMapping[profileData.major as BackendDepartment] || "", // Set major
                 });
 
                 setSelectedHighSchool(profileData.highschool); // Set the high school

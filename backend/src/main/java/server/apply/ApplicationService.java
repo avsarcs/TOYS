@@ -234,7 +234,12 @@ public class ApplicationService {
             request.setTour_id(tourID);
             request.setNotes((String) changes.get("notes"));
             request.setType(RequestType.TOUR_MODIFICATION);
-            TourApplication chang = TourApplication.fromMap(changes);
+            TourApplication chang = null;
+            if(changes.containsKey("requested_majors")) {
+                chang = dto.individualTourApplication(changes);
+            } else {
+                chang = dto.groupTourApplication(changes);
+            }
             chang.setStatus(ApplicationStatus.RECEIVED);
             request.setModifications(chang);
 

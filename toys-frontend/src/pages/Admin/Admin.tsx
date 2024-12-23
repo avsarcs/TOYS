@@ -100,7 +100,7 @@ const Admin: React.FC = () => {
     removeUserUrl.searchParams.append('id', id);
 
     const res = await fetch(removeUserUrl, {
-      method: 'DELETE',
+      method: 'POST',
     });
 
     if (res.ok) {
