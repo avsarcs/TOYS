@@ -33,7 +33,7 @@ const HighSchoolStudentDetails: React.FC<HighSchoolStudentDetailsProps> = ({year
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
-    const [fetchedData, setFetchedData] = React.useState(false);
+    const [fetchedData, ] = React.useState(false);
     const [data, setData] = React.useState(defaultData);
 
     const getData = useCallback(async (high_school_id: string, year: number) => {

@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay} from '@mantine/core';
 import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/BackButton.tsx";
 import InputSelector from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/InputSelector.tsx";
 import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolEdit/EditButton.tsx";

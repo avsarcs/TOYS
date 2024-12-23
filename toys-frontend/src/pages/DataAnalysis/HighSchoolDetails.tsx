@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Modal, Group, ScrollArea, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Container, Text, Modal, Group, ScrollArea, LoadingOverlay} from '@mantine/core';
 import DetailsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/DetailsTable.tsx";
 import ToursTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/ToursTable.tsx";
 import StudentsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/StudentsTable.tsx";
@@ -9,7 +9,6 @@ import HighSchoolEdit from "./HighSchoolEdit.tsx";
 import HighSchoolStudentDetails from "./HighSchoolStudentDetails.tsx";
 import HighSchoolTourReviewDetails from "./HighSchoolTourReviewDetails.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
-import HighSchoolAdd from "./HighSchoolAdd.tsx";
 
 // Container styling
 const defaultContainerStyle = {

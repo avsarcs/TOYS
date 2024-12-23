@@ -4,7 +4,6 @@ import BackButton from "../../components/DataAnalysis/HighSchoolsList/HighSchool
 import TourDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/TourDetails.tsx";
 import ReviewDetails from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/HighSchoolTourReviewDetails/ReviewDetails.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
-import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/EditButton.tsx";
 
 // Container styling
 const defaultContainerStyle = {

@@ -1,22 +1,11 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
+import {Space, Text, Stack, Box, Title, Divider, LoadingOverlay} from '@mantine/core';
 import DaysGraph from "../../components/TourStatistics/DaysGraph.tsx";
 import StatusGraph from "../../components/TourStatistics/StatusGraph.tsx";
 import CitiesGraph from "../../components/TourStatistics/CitiesGraph.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
-import HighSchoolDetails from "../DataAnalysis/HighSchoolDetails.tsx";
-import HighSchoolAdd from "../DataAnalysis/HighSchoolAdd.tsx";
 
 // Container styling
-const defaultContainerStyle = {
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    minWidth: '500px', // Set a minimum width to keep it consistent
-    maxWidth: '1200px', // Set a maximum width to keep it consistent
-    padding: '10px',
-};
 
 //test data
 const defaultDays: { [key: string]: number } = {"Yükleniyor...": 1};
