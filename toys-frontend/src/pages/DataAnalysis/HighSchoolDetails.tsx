@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useContext} from "react";
 import {Space, Container, Text, Modal, Group, ScrollArea} from '@mantine/core';
 import DetailsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/DetailsTable.tsx";
 import ToursTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolDetails/ToursTable.tsx";
@@ -8,7 +8,7 @@ import EditButton from "../../components/DataAnalysis/HighSchoolsList/HighSchool
 import HighSchoolEdit from "./HighSchoolEdit.tsx";
 import HighSchoolStudentDetails from "./HighSchoolStudentDetails.tsx";
 import HighSchoolTourReviewDetails from "./HighSchoolTourReviewDetails.tsx";
-import {HighschoolData} from "../../types/data.ts";
+import {UserContext} from "../../context/UserContext.tsx";
 
 // Container styling
 const defaultContainerStyle = {
@@ -21,68 +21,76 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-//test data
-const data = {
-    "priority": 1, "ranking": 1, "city": "Ankara",
+// Default data
+const defaultData = {
+    "priority": 1, "ranking": 1, "city": "Yükleniyor...",
     "tours": [
         {
-            "date": "18/11/2024",
-            "attendance": 50,
-            "type": "Tur",
-            "reviewRating": 4,
-            "reviewID": "12345",
-            "contact": "can.tucer@ug.bilkent.edu.tr"
-        },
-        {
-            "date": "25/11/2024",
-            "attendance": 60,
-            "type": "Tur",
-            "reviewRating": null,
-            "reviewID": "12346",
-            "contact": "john.doe@example.com"
-        },
-        {
-            "date": "02/12/2024",
-            "attendance": 45,
-            "type": "Tur",
-            "reviewRating": 3,
-            "reviewID": "12347",
-            "contact": "jane.doe@example.com"
+            "date": "1970-01-01T00:00:00Z",
+            "attendance": 1,
+            "type": "Yükleniyor...",
+            "review_rating": null,
+            "tour_id": "",
+            "contact": "Yükleniyor..."
         }
     ],
     "students": [
-        {"year": 2018, "count": 100,},
-        {"year": 2019, "count": 120,},
-        {"year": 2020, "count": 150,},
-        {"year": 2021, "count": 130,},
-        {"year": 2022, "count": 140,},
-        {"year": 2023, "count": 160,},
-        {"year": 2024, "count": 170,},
-        {"year": 2025, "count": 180,},
-        {"year": 2026, "count": 190,},
-        {"year": 2027, "count": 200,},
-        {"year": 2028, "count": 210,},
-        {"year": 2029, "count": 220,},
-        {"year": 2030, "count": 230,},
-        {"year": 2031, "count": 240,},
-        {"year": 2032, "count": 250,},
+        {"year": 0, "count": 1}
     ]
 }
 
 interface HighSchoolDetailsProps {
     opened: boolean;
     onClose: () => void;
-    highSchool: HighschoolData;
+    highSchoolName: string;
+    highSchoolID: string;
 }
 
-const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, highSchool}) => {
-    console.log(highSchool);
+const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, highSchoolName, highSchoolID}) => {
+    const userContext = useContext(UserContext);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
     const [editModalOpened, setEditModalOpened] = React.useState(false);
     const [studentDetailsModalOpened, setStudentDetailsModalOpened] = React.useState(false);
     const [studentDetailsModalYear, setStudentDetailsModalYear] = React.useState(0);
     const [tourReviewDetailsModalOpened, setTourReviewDetailsModalOpened] = React.useState(false);
-    const [tourReviewDetailsModalDate, setTourReviewDetailsModalDate] = React.useState("");
+    const [tourReviewDetailsModalID, setTourReviewDetailsModalID] = React.useState("");
+    const [data, setData] = React.useState(defaultData);
+
+    const getData = useCallback(async (high_school_id: string) => {
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/details");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+        url.searchParams.append("high_school_id", high_school_id);
+
+        console.log("Sent request for high school details.");
+
+        const res = await fetch(url, {
+            method: "GET",
+        });
+
+        console.log("Received response for high school details.");
+
+        if (!res.ok) {
+            throw new Error("Response not OK.");
+        }
+
+        const resText = await res.text();
+        const fetched = JSON.parse(resText);
+
+        if(fetched.length === 0) {
+            throw new Error("No high school found.");
+        }
+
+        fetched.students = fetched.students.filter((student: { count: number }) => student.count > 0);
+
+        setData(fetched);
+    }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        getData(highSchoolID).catch((reason) => {
+            console.error(reason);
+        });
+    }, [opened]);
 
     function editHighSchool() {
         setEditModalOpened(true);
@@ -93,20 +101,20 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
         setStudentDetailsModalYear(year);
     }
 
-    function showTourReviewDetails(date: string) {
+    function showTourReviewDetails(ID: string) {
         setTourReviewDetailsModalOpened(true);
-        setTourReviewDetailsModalDate(date);
+        setTourReviewDetailsModalID(ID);
     }
 
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
-            {highSchool.name}
+            {highSchoolName}
         </Text>
     </Container>
 
     const DetailsTableContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <DetailsTable priority={highSchool.priority} ranking={highSchool.ranking} city={highSchool.location}/>
+        <DetailsTable priority={data.priority} ranking={data.ranking} city={data.city}/>
         <Space h="xs" />
     </Container>
 
@@ -132,7 +140,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
-        <Modal.Content style={{borderRadius: '20px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
+        <Modal.Content style={{borderRadius: '20px', overflowY: "clip", boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
             <Modal.Body style={{maxHeight: "100vh"}}>
                     <Space h="xl"/>
                     <Group>
@@ -147,45 +155,49 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                         </Container>
                     </Group>
 
-                    <hr style={{border: '1px solid black'}}/>
+                <hr style={{border: '1px solid rgba(0, 0, 0, 0.5)', borderRadius: '5px'}}/>
 
-                    <ScrollArea.Autosize mah="75vh" mx="auto">
-                        <Space h="xl"/>
-                        {DetailsTableContainer}
-                        <Space h="xl"/>
-                        {ToursTableContainer}
-                        <Space h="xl"/>
-                        {StudentsTableContainer}
-                        <Space h="xl"/>
-                    </ScrollArea.Autosize>
+                <ScrollArea.Autosize mah="75vh" mx="auto">
+                    <Space h="xl"/>
+                    {DetailsTableContainer}
+                    <Space h="xl"/>
+                    {ToursTableContainer}
+                    <Space h="xl"/>
+                    {StudentsTableContainer}
+                    <Space h="xl"/>
+                </ScrollArea.Autosize>
 
             </Modal.Body>
         </Modal.Content>
-        {
+        {editModalOpened && (
             <HighSchoolEdit
                 opened={editModalOpened}
+                highSchoolID={highSchoolID}
                 onClose={() => setEditModalOpened(false)}
-                currentName={highSchool.name}
-                currentCity={highSchool.location}
-                currentPriority={highSchool.priority.toString()}
+                currentName={highSchoolName}
+                currentCity={data.city}
+                currentRanking={data.ranking.toString()}
+                currentPriority={data.priority.toString()}
             />
-        }
-        {
+        )}
+        {studentDetailsModalOpened && studentDetailsModalYear != 0 && (
             <HighSchoolStudentDetails
                 opened={studentDetailsModalOpened}
                 onClose={() => setStudentDetailsModalOpened(false)}
                 year={studentDetailsModalYear}
-                name={highSchool.name}
+                highSchoolName={highSchoolName}
+                highSchoolID={highSchoolID}
             />
-        }
-        {
+        )}
+        {tourReviewDetailsModalOpened && (
             <HighSchoolTourReviewDetails
                 opened={tourReviewDetailsModalOpened}
                 onClose={() => setTourReviewDetailsModalOpened(false)}
-                tourDate={tourReviewDetailsModalDate}
-                highSchoolName={highSchool.name}
+                tourID={tourReviewDetailsModalID}
+                highSchoolName={highSchoolName}
+                highSchoolID={highSchoolID}
             />
-        }
+        )}
     </Modal.Root>
 
 }

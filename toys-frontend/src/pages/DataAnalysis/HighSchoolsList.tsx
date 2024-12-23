@@ -1,13 +1,11 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useCallback} from "react";
 import {Space, Container, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";
 import HighSchoolAdd from "./HighSchoolAdd.tsx";
-import {City} from "../../types/enum.ts";
-import {HighschoolData} from "../../types/data.ts";
-import {notifications} from "@mantine/notifications";
 import {UserContext} from "../../context/UserContext.tsx";
+import {City} from "../../types/enum.ts";
 
 // Container styling
 const defaultContainerStyle = {
@@ -20,45 +18,81 @@ const defaultContainerStyle = {
     padding: '10px',
 };
 
-const HIGHSCHOOL_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/analytics/high-schools/all");
+// Default data
+const defaultCities: string[] = ["Yükleniyor..."];
+const defaultHighSchools = [
+    {
+        name: "Yükleniyor...",
+        city: "Yükleniyor...",
+        ranking: "1",
+        priority: "1",
+        id: ""
+    }
+];
+
 const HighSchoolsList: React.FC = () => {
     const userContext = useContext(UserContext);
-    const [fetchedHighschools, setFetchedHighschools] = useState(false);
-    const [highSchools, setHighSchools] = useState<HighschoolData[]>([]);
-    const [selectedSearch, setSearch] = useState<string>('');
-    const [selectedCities, setSelectedCities] = useState<City[]>([]);
-    const [selectedHighSchool, setSelectedHighSchool] = useState<HighschoolData | null>(null);
-    const [detailsModalOpened, setDetailsModalOpened] = useState(false);
-    const [addModalOpened, setAddModalOpened] = useState(false);
+    const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
-    const fetchHighschools = async () => {
-        const highSchoolURL = new URL(HIGHSCHOOL_URL);
-        highSchoolURL.searchParams.append("auth", await userContext.getAuthToken());
+    const [fetchedHighschools, setFetchedHighschools] = React.useState(false);
+    const [selectedSearch, setSearch] = React.useState<string>('');
+    const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
+    const [selectedHighSchoolName, setSelectedHighSchoolName] = React.useState<any>("");
+    const [selectedHighSchoolID, setSelectedHighSchoolID] = React.useState<any>("");
+    const [detailsModalOpened, setDetailsModalOpened] = React.useState(false);
+    const [addModalOpened, setAddModalOpened] = React.useState(false);
+    const [cities, setCities] = React.useState(defaultCities);
+    const [highSchools, setHighSchools] = React.useState(defaultHighSchools);
 
-        const highSchoolRes = await fetch(highSchoolURL, {
+    const getCities = useCallback(async () => {
+        const cityNames = Object.values(City);
+        setCities(cityNames);
+    }, []);
+
+    const getHighSchools = useCallback(async () => {
+        const url = new URL(TOUR_URL + "internal/analytics/high-schools/all-dto");
+        url.searchParams.append("auth", await userContext.getAuthToken());
+
+        console.log("Sent request for high schools list.");
+
+        const res = await fetch(url, {
             method: "GET",
         });
 
-        if(!highSchoolRes.ok) {
-            notifications.show({
-                color: "red",
-                title: "Hay aksi!",
-                message: "Bir şeyler yanlış gitti. Sayfayı yenileyin veya site yöneticisine haber verin."
-            });
-            return;
+        console.log("Received response for high schools list.");
+
+        if (!res.ok) {
+            console.log(res);
+            throw new Error("Response not OK.");
         }
 
-        const fetchedHighSchools = await highSchoolRes.json();
-        setHighSchools(fetchedHighSchools);
-        setFetchedHighschools(true);
-    }
+        const resText = await res.text();
 
-    useEffect(() => {
-        fetchHighschools().catch(console.error);
+        const fetched = (JSON.parse(resText));
+
+        if(fetched.length === 0) {
+            throw new Error("No university found.");
+        }
+
+        setHighSchools(fetched);
+        setFetchedHighschools(true);
+    }, [userContext.getAuthToken]);
+
+    React.useEffect(() => {
+        getCities().catch((reason) => {
+            console.error(reason);
+        });
     }, []);
 
-    function openDetails(highSchool: HighschoolData): void {
-        setSelectedHighSchool(highSchool);
+    React.useEffect(() => {
+        getHighSchools().catch((reason) => {
+            console.error(reason);
+        });
+    }, []);
+
+    function openDetails(highSchoolName: string, highSchoolID: string): void {
+        setSelectedHighSchoolName(highSchoolName);
+        setSelectedHighSchoolID(highSchoolID);
         setDetailsModalOpened(true);
     }
 
@@ -68,7 +102,7 @@ const HighSchoolsList: React.FC = () => {
 
     const TableFilterContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <TableFilter setSearch={setSearch} setSelectedCities={setSelectedCities}/>
+        <TableFilter cities={cities} setSearch={setSearch} setSelectedCities={setSelectedCities}/>
         <Space h="xs" />
     </Container>
 
@@ -78,8 +112,7 @@ const HighSchoolsList: React.FC = () => {
         <Space h="xs" />
     </Container>
 
-
-    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full relative"}>
+    return <div style={{width: "100%", minHeight: '100vh' }} className={"w-full h-full"}>
         {
             fetchedHighschools && highSchools.length > 0
               ?
@@ -102,11 +135,12 @@ const HighSchoolsList: React.FC = () => {
             {HighSchoolsTableContainer}
             <Space h="xl"/>
             <Space h="xl" />
-            {selectedHighSchool && (
+            {selectedHighSchoolID && (
                 <HighSchoolDetails
                     opened={detailsModalOpened}
                     onClose={() => setDetailsModalOpened(false)}
-                    highSchool={selectedHighSchool}
+                    highSchoolName={selectedHighSchoolName}
+                    highSchoolID={selectedHighSchoolID}
                 />
             )}
             {

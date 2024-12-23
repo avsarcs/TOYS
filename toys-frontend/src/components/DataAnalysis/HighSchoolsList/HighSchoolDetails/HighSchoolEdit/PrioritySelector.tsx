@@ -21,7 +21,7 @@ const PrioritySelector: React.FC<PrioritySelectorProps> = ({priorities, selected
     return <Select
         label = "Öncelik Seçin"
         data = {priorities.map((priority) => ({ value: priority, label: priority }))}
-        defaultValue = {selectedPriority}
+        defaultValue = {selectedPriority || null}
         placeholder="Seçmek için tıklayın."
         radius = "10"
         leftSection={<IconLabelImportant style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
