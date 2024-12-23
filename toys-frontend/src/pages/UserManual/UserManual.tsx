@@ -15,13 +15,13 @@ export interface UserManualItem  {
     title: string;
     content?: string;
     image?: string;
-    dynamicSteps?: {title: string; content: string; image?: string }[];
-    staticSteps?: {title: string; content: string; image?: string }[];
+    dynamicSteps?: {title: string; content?: string; image?: string }[];
+    staticSteps?: {title: string; content?: string; image?: string }[];
 }
 
-const DynamicStepGenerator: React.FC<{ steps: {title: string; content: string; image?: string }[] }> = ({ steps }) => {
+const DynamicStepGenerator: React.FC<{ steps: {title: string; content?: string; image?: string }[] }> = ({ steps }) => {
     const [active, setActive] = useState(0);
-    const nextStep = () => setActive((current) => (current < steps.length - 1 ? current + 1 : current));
+    const nextStep = () => setActive((current) => (current < steps.length ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
     return (
@@ -33,6 +33,9 @@ const DynamicStepGenerator: React.FC<{ steps: {title: string; content: string; i
                         {step.content}
                     </Stepper.Step>
                 ))}
+                <Stepper.Completed>
+                    <Text>Rehber tamamlandı!</Text>
+                </Stepper.Completed>
             </Stepper>
 
             <Group justify="center" mt="xl">
@@ -43,7 +46,7 @@ const DynamicStepGenerator: React.FC<{ steps: {title: string; content: string; i
     );
 }
 
-const StaticStepGenerator: React.FC<{ steps: {title: string; content: string; image?: string }[] }> = ({ steps }) => {
+const StaticStepGenerator: React.FC<{ steps: {title: string; content?: string; image?: string }[] }> = ({ steps }) => {
     return (
         <ol style={{ listStyleType: 'decimal' }}>
             {steps.map((step, index) => (
