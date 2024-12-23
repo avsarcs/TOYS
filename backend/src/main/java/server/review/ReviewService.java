@@ -70,9 +70,9 @@ public class ReviewService {
                     e -> e.getValue().getEvent_id().equals(reviewerID)
             ).findFirst().orElse(null).getKey();
 
-            if (canReview(reviewerID, event_id)) {
+            /*if (canReview(reviewerID, event_id)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authorized to review");
-            }
+            }*/
 
             reviewEvent(reviewerID, event_id, reviewMap);
 
