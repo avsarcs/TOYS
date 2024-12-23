@@ -18,12 +18,14 @@ const defaultContainerStyle = {
 
 // Default data
 const defaultData = {
-    "author": "Yükleniyor...",
-    "email": "Yükleniyor...",
-    "date": "1970-01-01T00:00:00Z",
+    "tour_id": "",
+    "score": 0,
+    "for": "TOUR",
+    "tour_date": "1970-01-01T00:00:00Z",
+    "body": "Yükleniyor...",
+    "guide": {},
     "guides": ["Yükleniyor..."],
-    "review": "Yükleniyor...",
-    "reviewRating": 0
+    "contact": "Yükleniyor...",
 };
 
 interface HighSchoolTourReviewDetailsProps {
@@ -32,15 +34,16 @@ interface HighSchoolTourReviewDetailsProps {
     highSchoolID: string;
     opened: boolean;
     onClose: () => void;
+    contact: string;
 }
 
-const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = ({tourID, highSchoolName, highSchoolID, opened, onClose}) => {
+const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = ({tourID, highSchoolName, highSchoolID, opened, onClose, contact}) => {
     const userContext = useContext(UserContext);
     const TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS);
 
     const [data, setData] = React.useState(defaultData);
 
-    const getData = useCallback(async (high_school_id: string, tour_id: string) => {
+    const getData = useCallback(async (high_school_id: string, tour_id: string, contact: string) => {
         const url = new URL(TOUR_URL + "internal/analytics/high-schools/tour-" +
             "reviews");
         url.searchParams.append("auth", await userContext.getAuthToken());
@@ -60,15 +63,20 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
         }
 
         const resText = await res.text();
-        if(resText.length === 0) {
+        const fetched = JSON.parse(resText);
+
+        if(fetched.length === 0) {
             throw new Error("No high school found.");
         }
 
-        setData(JSON.parse(resText));
+        fetched.contact = contact;
+        fetched.guides = fetched.guide.fullname ? [fetched.guide.fullname] : [];
+
+        setData(fetched);
     }, [userContext.getAuthToken]);
 
     React.useEffect(() => {
-        getData(highSchoolID, tourID).catch((reason) => {
+        getData(highSchoolID, tourID, contact).catch((reason) => {
             console.error(reason);
         });
     }, [opened]);
@@ -81,13 +89,13 @@ const HighSchoolTourReviewDetails: React.FC<HighSchoolTourReviewDetailsProps> = 
 
     const TourDetailsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <TourDetails tourDate={data.date} authorEmail={data["email"]} authorName={data["author"]} guideNames={data["guides"]}/>
+        <TourDetails tour_date={data["tour_date"]} contact={data["contact"]} authorName={"Yazar"} guideNames={data["guides"]}/>
         <Space h="xs" />
     </Container>
 
     const ReviewDetailsContainer = <Container style={defaultContainerStyle}>
         <Space h="xs" />
-        <ReviewDetails review={data["review"]} tourRating={data["reviewRating"]}/>
+        <ReviewDetails body={data["body"]} score={data["score"]}/>
         <Space h="xs" />
     </Container>
 

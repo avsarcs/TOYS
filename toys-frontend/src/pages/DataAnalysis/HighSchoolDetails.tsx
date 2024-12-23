@@ -106,6 +106,11 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
         setTourReviewDetailsModalID(ID);
     }
 
+    function getTourContact(tourID: string): string {
+        const tour = data.tours.find(tour => tour.tour_id === tourID);
+        return tour ? tour.contact : "Unknown";
+    }
+
     const HeaderTextContainer = <Container style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
         <Text style={{fontSize: 'xx-large'}}>
             {highSchoolName}
@@ -196,6 +201,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
                 tourID={tourReviewDetailsModalID}
                 highSchoolName={highSchoolName}
                 highSchoolID={highSchoolID}
+                contact={getTourContact(tourReviewDetailsModalID)}
             />
         )}
     </Modal.Root>
