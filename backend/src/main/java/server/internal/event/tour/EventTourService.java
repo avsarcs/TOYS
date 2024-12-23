@@ -376,7 +376,28 @@ public class EventTourService {
                             }
                         })
                 .collect(ArrayList::new,
-                        (list, tour) -> list.add(dto.simpleEvent(tour)),
+                        (list, tour) -> {
+                            Map<String,Object> dot = dto.simpleEvent(tour);
+
+                            if (tour.getTourStatus().equals(TourStatus.PENDING_MODIFICATION)) {
+                                try {
+                                    TourModificationRequest tmr =  database.requests.getTourModificationRequests().stream().filter(
+                                            r -> r.getTour_id().equals(tour.getTour_id())
+                                    ).findFirst().orElseThrow(
+                                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Modification request not found!")
+                                    );
+                                    if (tmr.getRequested_by().getBilkent_id().isEmpty()) {
+                                        dot.put("status", "APPLICANT_WANTS_CHANGE");
+                                    } else {
+                                        dot.put("status", "TOYS_WANTS_CHANGE");
+                                    }
+                                } catch (Exception e) {
+                                    dot.put("status", "");
+                                }
+                            }
+
+                            list.add(dot);
+                        },
                         ArrayList::addAll);
 
         if (status.isEmpty() || status.contains(TourStatus.RECEIVED.name())) {
