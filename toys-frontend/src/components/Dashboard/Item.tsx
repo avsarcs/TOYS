@@ -7,7 +7,7 @@ import React from "react";
 const Item: React.FC<DashboardItemProps> = (props: DashboardItemProps) => {
   return (
     <Card onClick={() => props.setItem(props.item)} withBorder shadow="sm" radius="md" key={props.item.event_id}
-          className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200">
+          className="hover:cursor-pointer hover:-translate-y-1 transition-transform duration-200 h-full">
       <Text fw={700}>{TourTypeText[props.item.event_subtype] || EventTypeText[props.item.event_type]}</Text>
       <Divider h="md"/>
       <Text>
