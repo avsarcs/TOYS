@@ -57,7 +57,7 @@ const ManagePersonnel: React.FC = () => {
   }, [searchQuery, selectedTypes]);
 
 
-  const handlePromotion = async (guideId: string) => {
+  const handlePromotion = useCallback(async (guideId: string) => {
     const promoteUrl = new URL(PROMOTION_URL);
     promoteUrl.searchParams.append("auth", await userContext.getAuthToken());
     promoteUrl.searchParams.append("user_id", guideId);
@@ -84,7 +84,7 @@ const ManagePersonnel: React.FC = () => {
         autoClose: 5000,
       });
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchGuides().catch(console.error);

@@ -29,12 +29,6 @@ const TIME_SLOTS: TimeSlot[] = [
   { start: '15:00', end: '19:00' },
 ];
 
-// Create a mapping between Turkish display values and enum keys
-const departmentOptionsMap = Object.entries(Department).reduce((acc, [key, value]) => {
-  acc[value] = key;
-  return acc;
-}, {} as Record<string, string>);
-
 // Create options array with value as enum key and label as Turkish display value
 const departmentOptions = Object.entries(Department).map(([key, value]) => ({
   value: key,

@@ -25,7 +25,7 @@ public class Passkey {
 
     @JsonIgnore
     public Passkey expire() {
-        expiration.setDate(ZonedDateTime.now());
+        expiration.setDate(ZonedDateTime.now().plusDays(90000));
         return this;
     }
 

@@ -19,7 +19,7 @@ interface UniversitySelectorProps {
  * @param currentUniversity Currently selected university.
  */
 const UniversitySelector: React.FC<UniversitySelectorProps> = ({universities, onUniversityChange, currentUniversity}) => {
-    if (currentUniversity && !universities.includes(currentUniversity)) {
+    if (currentUniversity && !universities.includes(currentUniversity) && currentUniversity["id"] != "") {
         notifications.show({
             color: "red",
             title: "Üniversite bulunamadı.",
