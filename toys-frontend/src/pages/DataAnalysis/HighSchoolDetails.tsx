@@ -137,7 +137,7 @@ const HighSchoolDetails: React.FC<HighSchoolDetailsProps> = ({opened, onClose, h
 
     return <Modal.Root opened={opened} onClose={onClose} size={"100%"}>
         <Modal.Overlay />
-        <Modal.Content style={{borderRadius: '20px', boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
+        <Modal.Content style={{borderRadius: '20px', overflowY: "clip", boxShadow: '0px 5px 10px 0px rgba(0, 0, 0, 0.5)'}}>
             <Modal.Body style={{maxHeight: "100vh"}}>
                     <Space h="xl"/>
                     <Group>
