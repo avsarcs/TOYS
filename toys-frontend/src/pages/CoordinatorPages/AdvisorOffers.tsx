@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { IconSearch, IconFilter, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconSearch, IconFilter,  } from '@tabler/icons-react';
 import { TextInput, Button, Group, Center, Box, Collapse, Modal, Text } from '@mantine/core';
 import { DatePickerInput } from "@mantine/dates";
 import { UserContext } from "../../context/UserContext";
@@ -29,7 +29,6 @@ const AdvisorOffers = () => {
   const [offers, setOffers] = useState<AdvisorOffer[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);

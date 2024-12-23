@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
     Container,
     Title,
@@ -16,6 +16,7 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconUsers } from '@tabler/icons-react';
 import { SimpleEventData } from '../../types/data';
+import {City, EventType, FairStatus, TourStatus, TourType} from "../../types/enum.ts";
 
 const SIMPLE_TOUR_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/event/tour/modifications");
 const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour/modification");
@@ -25,7 +26,7 @@ const ApplicantRespond: React.FC = () => {
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [fetchError, setFetchError] = useState<string | null>(null);
+    const [fetchError, ] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [tourData, setTourData] = useState<SimpleEventData | null>(null);

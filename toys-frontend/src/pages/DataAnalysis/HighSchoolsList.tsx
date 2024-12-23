@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Space, Container, Text, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
+import {Space, Container, LoadingOverlay, Box, Title, Divider} from '@mantine/core';
 import HighSchoolsTable from "../../components/DataAnalysis/HighSchoolsList/HighSchoolsTable.tsx";
 import TableFilter from "../../components/DataAnalysis/HighSchoolsList/TableFilter.tsx";
 import HighSchoolDetails from "./HighSchoolDetails.tsx";

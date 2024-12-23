@@ -15,15 +15,6 @@ const defaultContainerStyle = {
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
 };
-const defaultHeaderStyle = {
-    backgroundColor: 'white',
-    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    padding: '10px',
-    display: 'flex',
-    alignItems: 'center', // Center vertically
-    justifyContent: 'center', // Center horizontally
-};
 
 //test data
 const defaultDays: { [key: string]: number } = {"Yükleniyor...": 1};

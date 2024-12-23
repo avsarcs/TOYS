@@ -22,7 +22,7 @@ const EventInvitationRespondButton: React.FC<EventInvitationRespondButtonProps> 
       );
 
       acceptUrl.searchParams.append("auth", await userContext.getAuthToken());
-      acceptUrl.searchParams.append("request_id", props.item.event_id);
+      acceptUrl.searchParams.append("event_id", props.item.event_id);
       acceptUrl.searchParams.append("response", props.response.toString());
 
     try {

@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from "react";
-import {Space, Container, Text, Box, Title, Divider} from '@mantine/core';
+import {Space, Container, Box, Title, Divider} from '@mantine/core';
 import TableFilter from "../../components/DataAnalysis/RivalsList/TableFilter.tsx";
 import RivalsTable from "../../components/DataAnalysis/RivalsList/RivalsTable.tsx";
 import {UserContext} from "../../context/UserContext.tsx";
@@ -14,15 +14,6 @@ const defaultContainerStyle = {
     minWidth: '500px', // Set a minimum width to keep it consistent
     maxWidth: '1200px', // Set a maximum width to keep it consistent
     padding: '10px',
-};
-const defaultHeaderStyle = {
-    backgroundColor: 'white',
-    boxShadow: '0px 5px 5px 0px rgba(0, 0, 0, 0.5)',
-    width: '100%', // Ensure the container takes the full width of its parent
-    padding: '10px',
-    display: 'flex',
-    alignItems: 'center', // Center vertically
-    justifyContent: 'center', // Center horizontally
 };
 
 //test data

@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 export function UserButton() {
   const userContext = useContext(UserContext);
   return (
-    <Link className={classes.user} component={UnstyledButton} to={'/profile'}>
+    <UnstyledButton className={classes.user} component={Link} to={'/profile'}>
       <Group>
         <Avatar
           src={userContext.user.profile.profile_picture}
@@ -30,6 +30,6 @@ export function UserButton() {
 
         
       </Group>
-    </Link>
+    </UnstyledButton>
   );
 }

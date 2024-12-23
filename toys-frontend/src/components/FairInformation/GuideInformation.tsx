@@ -1,13 +1,10 @@
 import React, { useContext, useState } from "react";
 import { FairSectionProps } from "../../types/designed.ts";
 import { Box, Button, Group, Space, Text } from "@mantine/core";
-import { IconUserPlus, IconUsers } from "@tabler/icons-react";
+import { IconUsers } from "@tabler/icons-react";
 import { UserContext } from "../../context/UserContext.tsx";
 import {FairStatus, UserRole} from "../../types/enum.ts";
 import ManageGuidesWindow from "./ManageGuidesWindow.tsx";
-import {notifications} from "@mantine/notifications";
-
-const VISITOR_PER_GUIDE = 60;
 
 const GuideInformation: React.FC<FairSectionProps> = (props: FairSectionProps) => {
   const userContext = useContext(UserContext);

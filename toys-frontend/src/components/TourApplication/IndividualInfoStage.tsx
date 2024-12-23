@@ -43,7 +43,7 @@ const IndividualInfoStage: React.FC<IndividualApplicationStageProps> = ({
           return acc;
         }, {});
 
-        const uniqueSchools = Object.values(schoolsByName);
+        const uniqueSchools: HighschoolData[] = Object.values(schoolsByName);
 
         if (uniqueSchools.length === 0) {
           notifications.show({

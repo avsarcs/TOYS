@@ -7,17 +7,13 @@ import { IndividualApplication } from '../../types/designed';
 import isEmail from 'validator/lib/isEmail'
 import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
-import { useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
 import { Container, Title, Group, Stack, ThemeIcon } from '@mantine/core';
 import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
-
-import { useNavigate } from 'react-router-dom';
-
 import IndividualInfoStage from '../../components/TourApplication/IndividualInfoStage';
 import TimeSlotStage from '../../components/TourApplication/TimeSlotStage';
 import MajorSelectionStage from '../../components/TourApplication/MajorSelectionStage';
 import IndividualNotesStage from '../../components/TourApplication/IndividualNotesStage';
+import {City} from "../../types/enum.ts";
 const TOUR_APPLICATION_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour")
 
 
@@ -27,11 +23,9 @@ const IndividualTourApplication: React.FC = () => {
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const userContext = useContext(UserContext);
-
     const [applicationInfo, setApplicationInfo] = useState<IndividualApplication>({
         "highschool": {
-            "id": "", "name": "", "location": "", "priority": -1
+            "id": "", "name": "", "location": "" as City, "priority": -1, "ranking": -1
         },
         "requested_times": [],
         "requested_majors": [""],
@@ -86,14 +80,14 @@ const IndividualTourApplication: React.FC = () => {
         "visitor_count_too_high": false
     })
 
-    const clearWarnings = () => {
+/*    const clearWarnings = () => {
         for (const field in warnings) {
             setWarnings((warnings) => ({
                 ...warnings,
                 [field]: false
             }))
         }
-    }
+    }*/
 
     // Validate if Stage 1 is done
     const validateStage1 = () => {
@@ -375,7 +369,7 @@ const IndividualTourApplication: React.FC = () => {
                         <Title order={2} style={{ marginBottom: '20px', textAlign: 'center', color: '#ecf0f1' }}>
                             Bize Ulaşın
                         </Title>
-                        <Stack spacing="md">
+                        <Stack>
                             <Group>
                                 <ThemeIcon variant="light" size={40} style={{ backgroundColor: '#34495e' }}>
                                     <IconMail size={24} color="#ecf0f1" />

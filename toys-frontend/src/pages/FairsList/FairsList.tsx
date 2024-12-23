@@ -88,7 +88,7 @@ const FairsList: React.FC = () => {
         ...filteredPendingData.map((fair) => ({
           ...fair,
           event_type: EventType.FAIR, // Ensure event_type is explicitly EventType.FAIR
-        })),
+        } as SimpleEventData & { event_type: EventType.FAIR })),
       ];
   
       // Remove duplicates by event_id

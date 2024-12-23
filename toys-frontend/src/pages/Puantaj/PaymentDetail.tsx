@@ -10,7 +10,7 @@ const RECORDS_PER_PAGE = 5;
 
 const PaymentDetail: React.FC = () => {
     const navigate = useNavigate();
-    const [tourPayments, setTourPayments] = useState<MoneyForEvent[]>(defaultPayment);
+    const [tourPayments, setTourPayments] = useState<MoneyForEvent[]>(defaultPayment as MoneyForEvent[]);
     const [filter, setFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const { guideId } = useParams<{ guideId: string }>();

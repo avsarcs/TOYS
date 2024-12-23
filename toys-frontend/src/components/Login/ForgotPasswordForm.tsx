@@ -1,14 +1,12 @@
 import {Button, TextInput} from "@mantine/core";
-import React, {FormEvent, useContext, useState} from "react";
+import React, {FormEvent, useState} from "react";
 import {useForm} from "@mantine/form";
 import validate from "validate.js";
 import {ForgotPasswordFormProps} from "../../types/designed.ts";
-import {UserContext} from "../../context/UserContext.tsx";
 import {notifications} from "@mantine/notifications";
 
 const FORGOT_PASSWORD_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/auth/pass/forgot");
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPasswordFormProps) => {
-  const userContext = useContext(UserContext);
   const [working, setWorking] = useState(false);
 
   const form = useForm({
@@ -33,7 +31,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = (props: ForgotPass
 
     const formData = form.getValues();
     const forgotUrl = new URL(FORGOT_PASSWORD_URL);
-    forgotUrl.searchParams.append("auth", await userContext.getAuthToken());
+    forgotUrl.searchParams.append("id", formData.bilkentId);
     forgotUrl.searchParams.append("email", formData.email);
 
     try {
