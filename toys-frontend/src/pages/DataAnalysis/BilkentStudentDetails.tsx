@@ -92,7 +92,13 @@ const BilkentStudentDetails: React.FC = () => {
 
         const response = JSON.parse(resText);
         setYears(response["years"]);
-        setScholarshipData(response["rankings"]);
+        setScholarshipData(Object.fromEntries(Object.entries(response["rankings"]).map(([year, scholarships]) => {
+            const sortedScholarships = Object.fromEntries(Object.entries(scholarships as Record<string, number>).sort(([a], [b]) => {
+                const order: Record<string, number> = {"%0 Burs": 0, "%50 Burs": 1, "%100 Burs": 2};
+                return order[a] - order[b];
+            }));
+            return [year, sortedScholarships];
+        })));
     }, [userContext.getAuthToken]);
 
     const getDepartmentData = useCallback(async (department: string, year: string) => {
