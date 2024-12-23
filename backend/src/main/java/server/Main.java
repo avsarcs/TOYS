@@ -39,6 +39,7 @@ public class Main implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Running");
+        db.people.addUser(Administrator.getDefault());
     }
 
     private static void setRankings(Database db) {

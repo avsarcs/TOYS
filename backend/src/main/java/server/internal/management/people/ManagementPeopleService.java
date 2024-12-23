@@ -71,6 +71,7 @@ public class ManagementPeopleService {
 
             Advisor advisor = new Advisor(guide);
 
+            advisor.setRole(UserRole.ADVISOR);
             database.people.addUser(advisor);
 
             try{

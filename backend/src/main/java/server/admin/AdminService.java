@@ -12,6 +12,7 @@ import server.enums.status.UserStatus;
 import server.models.DTO.DTOFactory;
 import server.models.payment.FiscalState;
 import server.models.people.*;
+import server.models.people.details.AuthInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -147,6 +148,7 @@ public class AdminService {
         user.setProfile(user.getProfile().setName(name));
         user.setBilkent_id(id);
         user.setStatus(UserStatus.ACTIVE);
+        user.setAuthInfo(new AuthInfo().setPassword("password"));
         user.setRole(role);
 
         database.people.addUser(user);
