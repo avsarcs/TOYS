@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -11,8 +10,10 @@ import {
   Badge,
   LoadingOverlay,
   Collapse,
-  Divider
+  Divider,
+  Button
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { UserContext } from '../../context/UserContext';
 import { 
   IconSchool, 
@@ -25,10 +26,10 @@ import {
 } from '@tabler/icons-react';
 import { TraineeGuideApplicationData } from '../../types/data';
 
-const APPLICATIONS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/management/people/applications");
+const APPLICATIONS_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/internal/management/people/applications");
+const RESPOND_URL = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/guide");
 
 const ToysApplications: React.FC = () => {
-  const navigate = useNavigate();
   const userContext = useContext(UserContext);
   const [applications, setApplications] = useState<TraineeGuideApplicationData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,38 @@ const ToysApplications: React.FC = () => {
       setLoading(false);
     }
   }, [userContext]);
+
+  const handleApplicationResponse = async (applicantId: string, accept: boolean) => {
+    try {
+      const respondUrl = new URL(RESPOND_URL);
+      respondUrl.searchParams.append("auth", await userContext.getAuthToken());
+      respondUrl.searchParams.append("applicant_id", applicantId);
+      respondUrl.searchParams.append("response", accept.toString());
+
+      const res = await fetch(respondUrl, {
+        method: "POST"
+      });
+
+      if (res.ok) {
+        notifications.show({
+          title: 'Başarılı',
+          message: accept ? 'Başvuru kabul edildi.' : 'Başvuru reddedildi.',
+          color: 'green'
+        });
+        // Refresh the applications list
+        fetchApplications();
+      } else {
+        throw new Error('Response not ok');
+      }
+    } catch (error) {
+      console.error('Error responding to application:', error);
+      notifications.show({
+        title: 'Hata',
+        message: 'Bir şeyler yanlış gitti. Lütfen tekrar deneyin.',
+        color: 'red'
+      });
+    }
+  };
 
   useEffect(() => {
     fetchApplications();
@@ -107,6 +140,28 @@ const ToysApplications: React.FC = () => {
                   <IconPhone size={16} />
                   <Text size="sm">{application.phone}</Text>
                 </Group>
+              </Group>
+
+              <Group justify="flex-end" gap="md">
+                <Button 
+                  variant="outline" 
+                  color="red"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card collapse
+                    handleApplicationResponse(application.id, false);
+                  }}
+                >
+                  Başvuruyu Reddet
+                </Button>
+                <Button 
+                  color="blue"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card collapse
+                    handleApplicationResponse(application.id, true);
+                  }}
+                >
+                  Başvuruyu Kabul Et
+                </Button>
               </Group>
 
               <Collapse in={openCardId === application.id}>

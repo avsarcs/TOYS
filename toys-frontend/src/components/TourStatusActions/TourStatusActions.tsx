@@ -17,6 +17,7 @@ import { UserRole, TourStatus } from '../../types/enum';
 import { TourData } from '../../types/data';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
+import { Textarea } from '@mantine/core';
 
 dayjs.locale('tr');
 
@@ -47,6 +48,8 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedModificationTimes, setSelectedModificationTimes] = useState<string[]>([]);
   const [visitorCount, setVisitorCount] = useState<number>(tour.visitor_count);
+  const [cancelOpened, { open: openCancel, close: closeCancel }] = useDisclosure(false);
+  const [cancelReason, setCancelReason] = useState('');
 
   const canManageTour = user.role === UserRole.ADVISOR ||
     user.role === UserRole.COORDINATOR ||
@@ -72,11 +75,11 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
       respondUrl.searchParams.append("auth", await getAuthToken());
       respondUrl.searchParams.append("application_id", tour.tour_id);
       respondUrl.searchParams.append("timeslot", selectedTime);
-  
+
       const res = await fetch(respondUrl, {
         method: "POST",
       });
-  
+
       if (res.ok) {
         notifications.show({
           title: 'Başarılı!',
@@ -99,18 +102,18 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
       });
     }
   };
-  
+
   const handleReject = async () => {
     try {
       const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
       respondUrl.searchParams.append("auth", await getAuthToken());
       respondUrl.searchParams.append("application_id", tour.tour_id);
       respondUrl.searchParams.append("timeslot", "");
-  
+
       const res = await fetch(respondUrl, {
         method: "POST",
       });
-  
+
       if (res.ok) {
         notifications.show({
           title: 'Başarılı!',
@@ -132,7 +135,7 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
       });
     }
   };
-  
+
 
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     if (!selectedDate) return;
@@ -166,18 +169,18 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
         visitor_count: visitorCount,
         applicant: tour.applicant
       };
-  
+
       const applicationModel = tour.type === "INDIVIDUAL"
         ? {
-            ...baseApplication,
-            requested_majors: tour.requested_majors
-          }
+          ...baseApplication,
+          requested_majors: tour.requested_majors
+        }
         : baseApplication;
-  
+
       const modUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/tour/request_changes");
       modUrl.searchParams.append("auth", await getAuthToken());
       modUrl.searchParams.append("tour_id", tour.tour_id);
-  
+
       const res = await fetch(modUrl, {
         method: "POST",
         headers: {
@@ -185,7 +188,7 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
         },
         body: JSON.stringify(applicationModel)
       });
-  
+
       if (res.ok) {
         notifications.show({
           title: 'Başarılı!',
@@ -213,15 +216,20 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
 
   const handleCancel = async () => {
     try {
-      const respondUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/respond/application/tour");
-      respondUrl.searchParams.append("auth", await getAuthToken());
-      respondUrl.searchParams.append("application_id", tour.tour_id);
-      respondUrl.searchParams.append("timeslot", "");
-  
-      const res = await fetch(respondUrl, {
+      const cancelUrl = new URL(import.meta.env.VITE_BACKEND_API_ADDRESS + "/apply/cancel");
+      cancelUrl.searchParams.append("auth", await getAuthToken());
+      cancelUrl.searchParams.append("event_id", tour.tour_id);
+
+      const res = await fetch(cancelUrl, {
         method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reason: cancelReason
+        })
       });
-  
+
       if (res.ok) {
         notifications.show({
           title: 'Başarılı!',
@@ -229,6 +237,8 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
           color: 'orange',
           icon: <IconBan size={16} />,
         });
+        closeCancel();
+        setCancelReason('');
         onRefresh();
       } else {
         throw new Error('Tur iptal edilirken bir hata oluştu.');
@@ -242,6 +252,40 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
       });
     }
   };
+
+  const cancelModal = (
+    <Modal
+      opened={cancelOpened}
+      onClose={closeCancel}
+      title="Turu İptal Et"
+      size="md"
+      centered
+    >
+      <Stack>
+        <Text size="sm" c="dimmed">
+          Lütfen turun iptal edilme sebebini belirtiniz:
+        </Text>
+        <Textarea
+          value={cancelReason}
+          onChange={(event) => setCancelReason(event.currentTarget.value)}
+          placeholder="İptal sebebi..."
+          minRows={3}
+          required
+        />
+        <Group justify="flex-end" mt="xl">
+          <Button variant="light" onClick={closeCancel}>Vazgeç</Button>
+          <Button
+            color="red"
+            onClick={handleCancel}
+            disabled={!cancelReason.trim()}
+            leftSection={<IconBan size={16} />}
+          >
+            İptal Et
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
 
   const isTimeSlotSelected = (timeSlot: TimeSlot): boolean => {
     if (!selectedDate) return false;
@@ -407,9 +451,9 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
             {selectedModificationTimes.map((time, index) => (
               <div key={index} className='flex mb-2'>
                 <Text className='mr-2'>{formatTimeDisplay(time)}</Text>
-                <Button 
-                  size='compact-sm' 
-                  color='red' 
+                <Button
+                  size='compact-sm'
+                  color='red'
                   onClick={() => setSelectedModificationTimes(prev => prev.filter(t => t !== time))}
                 >
                   İptal
@@ -467,7 +511,7 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
           </Group>
         </>
       );
-  
+
     case TourStatus.APPLICANT_WANTS_CHANGE:
       return (
         <>
@@ -483,13 +527,14 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
           </Group>
         </>
       );
-  
+
     case TourStatus.CONFIRMED:
       return (
         <>
           {modificationModal}
+          {cancelModal}
           <Group p="md">
-            <Button color="red" onClick={handleCancel} leftSection={<IconBan size={16} />}>
+            <Button color="red" onClick={openCancel} leftSection={<IconBan size={16} />}>
               Turu İptal Et
             </Button>
             <Button color="blue" onClick={handleRequestChange} leftSection={<IconClockEdit size={16} />}>
@@ -498,11 +543,11 @@ const TourStatusActions: React.FC<TourStatusActionsProps> = ({ tour, onRefresh }
           </Group>
         </>
       );
-  
+
     case TourStatus.REJECTED:
     case TourStatus.CANCELLED:
       return reapplyMessage;
-  
+
     case TourStatus.TOYS_WANTS_CHANGE:
     default:
       return null;
