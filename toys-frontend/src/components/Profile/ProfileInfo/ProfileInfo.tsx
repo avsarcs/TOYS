@@ -89,7 +89,7 @@ const ProfileInfo: React.FC<ProfileComponentProps> = (props: ProfileComponentPro
                     TOYS'a Dair Bilgiler
                 </Title>
                 <p><strong>Rol:</strong> {UserRoleText[profile.role as keyof typeof UserRoleText]} </p>
-                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience} </p> : null}
+                {(profile.role !== UserRole.DIRECTOR && profile.role !== UserRole.COORDINATOR) ? <p><strong>Deneyim:</strong> {profile.experience.replace(/(\d+)\s+events?/, '$1 etkinlik')} </p> : null}
                 {(profile.role === UserRole.ADVISOR) ? (
                     <p><strong>Sorumlu Olunan Gün: </strong> {translateDays(profile.responsible_days)} </p>
                 ) : null}

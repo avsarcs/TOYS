@@ -236,16 +236,11 @@ public class AnalyticsHighschoolService {
                                                         resp.get(dep.getName()).put(
                                                                 dep.getScholarship(), h.getTotal()
                                                         );
-
                                                     } else {
-                                                        resp.put(
-                                                                dep.getName(),
-                                                                Map.of(
-                                                                        dep.getScholarship(), h.getTotal()
-                                                                )
-                                                        );
+                                                        Map<String, Long> scholarshipMap = new HashMap<>();
+                                                        scholarshipMap.put(dep.getScholarship(), h.getTotal());
+                                                        resp.put(dep.getName(), scholarshipMap);
                                                     }
-
                                                 }
                                         );
                             }

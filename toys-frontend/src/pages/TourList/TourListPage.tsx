@@ -146,7 +146,7 @@ const TourListPage: React.FC = () => {
         Turlar
       </Title>
       <Title order={3} pl="xl" className="text-gray-400 font-bold font-main">
-        bottom text.
+        Tüm turları burada görüntüleyebilirsiniz.
       </Title>
       <Space h="xl"/>
       <Divider className="border-gray-400"/>
