@@ -30,11 +30,12 @@ Tour attendees can review guides and tours, and through an interface old reviews
 ### Front-End Build Instructions
 
 1. Clone the repo to a folder. The GitHub repo can be found through this link: [https://github.com/avsarcs/TOYS](https://github.com/avsarcs/TOYS). When the green **Code** button is clicked, different instructions to clone the repo will be given, based on the way you wish to clone the repo.  
-2. Change directory (`cd`) to the `toys-frontend` directory.  
-3. Run the `npm install` command. Wait for the installation to complete.  
-4. Run the `npm run build` command to build.  
-5. Run `npm run preview` to run the build in localhost.  
-6. Visit the URL `localhost:4173` in your browser to view the front-end.  
+2. Change directory (`cd`) to the `toys-frontend` directory.
+3. Create a file named .env and place it in toys-frontend folder.
+4. Run the `npm install` command. Wait for the installation to complete.  
+5. Run the `npm run build` command to build.  
+6. Run `npm run preview` to run the build in localhost.  
+7. Visit the URL `localhost:4173` in your browser to view the front-end.  
 
 ### Back-End Build Instructions
 
